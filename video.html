@@ -36,7 +36,7 @@
       flex-direction: column;
     }
 
-    /* -------------- HEADER + NAV -------------- */
+    /* HEADER */
 
     header {
       border-bottom: 1px solid var(--border-soft);
@@ -48,7 +48,7 @@
     }
 
     .header-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 14px 16px;
       display: flex;
@@ -123,16 +123,16 @@
       box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
     }
 
-    /* -------------- MAIN LAYOUT -------------- */
+    /* HERO */
 
     main {
       flex: 1;
     }
 
     .hero {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 26px auto 0;
-      padding: 0 16px 8px;
+      padding: 0 16px 10px;
     }
 
     .hero-kicker {
@@ -152,18 +152,25 @@
 
     .hero-title span {
       display: inline-block;
-      background: linear-gradient(90deg, #a855f7, #3b82f6, #f97316, #22c55e, #a855f7);
+      background: linear-gradient(
+        90deg,
+        #a855f7,
+        #3b82f6,
+        #f97316,
+        #22c55e,
+        #a855f7
+      );
       background-size: 220% 220%;
       -webkit-background-clip: text;
       color: transparent;
-      text-shadow: 0 0 18px rgba(168, 85, 247, 0.4);
+      text-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
       animation: shimmer 6s linear infinite;
     }
 
     .hero-sub {
       font-size: 14px;
       color: var(--text-muted);
-      max-width: 700px;
+      max-width: 800px;
       line-height: 1.6;
       margin-bottom: 14px;
     }
@@ -186,21 +193,23 @@
       background: rgba(15, 23, 42, 0.9);
     }
 
+    /* PLAN BAR */
+
     .plan-bar {
+      max-width: 1200px;
+      margin: 4px auto 14px;
+      padding: 0 16px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
       align-items: center;
       justify-content: space-between;
-      max-width: 1100px;
-      margin: 4px auto 12px;
-      padding: 0 16px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .plan-toggle {
       display: flex;
-      gap: 8px;
       flex-wrap: wrap;
+      gap: 8px;
     }
 
     .plan-button {
@@ -238,14 +247,113 @@
       color: var(--text-muted);
     }
 
-    .layout {
-      max-width: 1100px;
-      margin: 0 auto 24px;
+    /* LAYOUT: SIDEBAR + CONTENT */
+
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto 32px;
       padding: 0 16px;
       display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
-      gap: 20px;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 18px;
       align-items: flex-start;
+    }
+
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      padding: 12px 10px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .menu-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .menu-icon span {
+      display: block;
+      width: 11px;
+      height: 1.6px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      margin: 1.5px 0;
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .side-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .side-link {
+      font-size: 12px;
+      padding: 7px 9px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s ease;
+    }
+
+    .side-link span.label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .side-link span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+    }
+
+    .side-link.active-section {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.6);
+      color: var(--text-main);
+    }
+
+    .side-link.active-section span.dot {
+      background: #22c55e;
+    }
+
+    .side-link small {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .panel {
@@ -260,8 +368,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
       gap: 8px;
+      margin-bottom: 10px;
     }
 
     .panel-title {
@@ -286,7 +394,7 @@
       background: rgba(15, 23, 42, 0.9);
     }
 
-    /* -------------- FIELDS & FORMS -------------- */
+    /* FORMS */
 
     label {
       font-size: 13px;
@@ -295,27 +403,12 @@
       margin-bottom: 6px;
     }
 
-    textarea {
-      width: 100%;
-      min-height: 90px;
-      border-radius: 10px;
-      border: 1px solid var(--border-soft);
-      background: #020617;
-      color: var(--text-main);
-      padding: 10px;
-      font-size: 14px;
-      resize: vertical;
-      outline: none;
-    }
-
-    textarea::placeholder {
-      color: #6b7280;
-    }
-
+    textarea,
     select,
     input[type="number"],
     input[type="file"],
-    input[type="checkbox"] {
+    input[type="text"] {
+      width: 100%;
       border-radius: 9px;
       border: 1px solid var(--border-soft);
       background: #020617;
@@ -325,15 +418,19 @@
       outline: none;
     }
 
-    select,
-    input[type="number"] {
-      width: 100%;
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    textarea::placeholder,
+    input::placeholder {
+      color: #6b7280;
     }
 
     input[type="file"] {
-      width: 100%;
-      padding: 6px 10px;
       cursor: pointer;
+      padding: 6px 10px;
     }
 
     .field-group {
@@ -374,8 +471,6 @@
       border-radius: 4px;
     }
 
-    /* -------------- BUTTONS -------------- */
-
     .btn-main {
       border-radius: 999px;
       padding: 9px 16px;
@@ -410,79 +505,68 @@
       opacity: 0.97;
     }
 
-    /* -------------- PREVIEW PANEL -------------- */
+    /* CREATE TABS */
 
-    .preview-header {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+    .create-tabs {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-wrap: wrap;
       gap: 8px;
+      margin-bottom: 10px;
     }
 
-    .status-pill {
-      font-size: 11px;
-      padding: 3px 8px;
+    .create-tab-btn {
+      font-size: 12px;
+      padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid var(--border-soft);
       background: rgba(15, 23, 42, 0.9);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .preview-box {
-      border-radius: 16px;
-      border: 1px dashed var(--border-soft);
-      background:
-        radial-gradient(circle at top left, rgba(168, 85, 247, 0.2), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.22), transparent 60%);
-      min-height: 230px;
+    .create-tab-btn.active-create {
+      color: var(--text-main);
+      background: rgba(30, 64, 175, 0.7);
+      border-color: rgba(129, 140, 248, 0.9);
+    }
+
+    .create-mode {
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* DISABLED PANEL (PLAN GATING) */
+
+    .disabled-panel {
+      position: relative;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .disabled-panel::after {
+      content: "Upgrade your plan to access this feature";
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
-      color: var(--text-muted);
+      font-size: 11px;
+      color: #f9fafb;
       text-align: center;
-      padding: 14px;
-    }
-
-    .preview-box strong {
-      color: var(--text-main);
-    }
-
-    .preview-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-      font-size: 11px;
-    }
-
-    .preview-slot {
-      border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      background: rgba(15, 23, 42, 0.9);
-      padding: 8px;
-      text-align: left;
-    }
-
-    .preview-slot-title {
-      font-size: 11px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    /* -------------- GENERATIONS & MEDIA -------------- */
-
-    .bottom-layout {
-      max-width: 1100px;
-      margin: 0 auto 32px;
+      background: linear-gradient(
+        to bottom,
+        rgba(15, 23, 42, 0.9),
+        rgba(15, 23, 42, 0.95)
+      );
+      border-radius: 12px;
       padding: 0 16px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
-      gap: 16px;
-      align-items: flex-start;
     }
+
+    /* PREVIEW / GENERATIONS / MEDIA */
 
     .list-empty {
       font-size: 12px;
@@ -555,7 +639,7 @@
       margin-left: 4px;
     }
 
-    /* -------------- FOOTER -------------- */
+    /* FOOTER */
 
     footer {
       border-top: 1px solid var(--border-soft);
@@ -566,7 +650,7 @@
       background: rgba(2, 6, 23, 0.97);
     }
 
-    /* -------------- ANIMATIONS -------------- */
+    /* ANIMATIONS */
 
     @keyframes spinGlow {
       0% { transform: rotate(0deg); }
@@ -589,11 +673,8 @@
       }
     }
 
-    @media (max-width: 900px) {
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .bottom-layout {
+    @media (max-width: 960px) {
+      .shell {
         grid-template-columns: minmax(0, 1fr);
       }
     }
@@ -614,79 +695,125 @@
 </head>
 
 <body>
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <div class="logo-circle"></div>
-        <div>
-          <div class="logo-text-main">Sulandra AI Studio</div>
-          <div class="logo-text-sub">Video · Edit · Characters · Effects</div>
-        </div>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-circle"></div>
+      <div>
+        <div class="logo-text-main">Sulandra AI Studio</div>
+        <div class="logo-text-sub">Video · Edit · Characters · Effects</div>
       </div>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="image.html">Image</a>
-        <a href="video.html" class="active">Video</a>
-        <a href="music.html">Music</a>
-        <a href="film.html">Short Films</a>
-        <a href="education.html">Explore</a>
-      </nav>
     </div>
-  </header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="image.html">Image</a>
+      <a href="video.html" class="active">Video</a>
+      <a href="music.html">Music</a>
+      <a href="film.html">Short Films</a>
+      <a href="education.html">Explore</a>
+    </nav>
+  </div>
+</header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-kicker">Video Lab</div>
-      <h1 class="hero-title">
-        Turn prompts, images and clips into <span>smart AI videos</span>
-      </h1>
-      <p class="hero-sub">
-        Sulandra Video Lab supports text-to-video, images-to-video, AI video editing
-        and AI script assistance. Plans and engine versions control which features
-        are unlocked for each user level: Basic, Creator and Pro.
-      </p>
-      <div class="hero-tags">
-        <div class="hero-tag-pill">Text → Video</div>
-        <div class="hero-tag-pill">Images → Video</div>
-        <div class="hero-tag-pill">Upload video → Edit & effects</div>
-        <div class="hero-tag-pill">AI script assistance</div>
-      </div>
-    </section>
+<main>
+  <section class="hero">
+    <div class="hero-kicker">Video Lab</div>
+    <h1 class="hero-title">
+      Turn prompts, references and clips into <span>smart AI videos</span>
+    </h1>
+    <p class="hero-sub">
+      Sulandra Video Lab connects your subscription plan to what you can do:
+      Basic, Creator and Pro control engine versions, output quality, watermark
+      control, and access to advanced tools like YouTube style reference and lip sync.
+    </p>
+    <div class="hero-tags">
+      <div class="hero-tag-pill">Text → Video</div>
+      <div class="hero-tag-pill">Image / Script → Video</div>
+      <div class="hero-tag-pill">YouTube style reference</div>
+      <div class="hero-tag-pill">Lip sync & script tools</div>
+    </div>
+  </section>
 
-    <!-- PLAN & VERSION BAR -->
-    <section class="plan-bar">
-      <div class="plan-toggle">
-        <button type="button" class="plan-button active-plan" data-plan="basic" onclick="setPlan('basic')">
-          BASIC
-          <span class="badge">Watermark</span>
-        </button>
-        <button type="button" class="plan-button" data-plan="creator" onclick="setPlan('creator')">
-          CREATOR
-          <span class="badge">Most features</span>
-        </button>
-        <button type="button" class="plan-button" data-plan="pro" onclick="setPlan('pro')">
-          PRO
-          <span class="badge">All versions</span>
-        </button>
-      </div>
-      <div class="plan-note" id="plan-note">
-        Basic: watermark, limited length, access to v1 engine only.
-      </div>
-    </section>
+  <!-- PLAN SELECTION -->
+  <section class="plan-bar">
+    <div class="plan-toggle">
+      <button type="button" class="plan-button active-plan" data-plan="basic" onclick="setPlan('basic')">
+        BASIC
+        <span class="badge">Watermark · SD</span>
+      </button>
+      <button type="button" class="plan-button" data-plan="creator" onclick="setPlan('creator')">
+        CREATOR
+        <span class="badge">SD / HD / UHD</span>
+      </button>
+      <button type="button" class="plan-button" data-plan="pro" onclick="setPlan('pro')">
+        PRO
+        <span class="badge">All features · 4K</span>
+      </button>
+    </div>
+    <div class="plan-note" id="plan-note">
+      Basic: v1 only, SD output, watermark required. Some advanced tools are locked.
+    </div>
+  </section>
 
-    <section class="layout">
-      <!-- LEFT: VIDEO WORKFLOWS -->
-      <div class="panel">
+  <section class="shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="menu-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="sidebar-title">Video Lab</div>
+      </div>
+      <nav class="side-nav">
+        <button class="side-link active-section" data-section="create" onclick="setActiveSection('create')">
+          <span class="label">
+            <span class="dot"></span>
+            Create
+          </span>
+          <small>Text / images / ref</small>
+        </button>
+        <button class="side-link" data-section="generations" onclick="setActiveSection('generations')">
+          <span class="label">
+            <span class="dot"></span>
+            My Generations
+          </span>
+          <small>Per session</small>
+        </button>
+        <button class="side-link" data-section="script" onclick="setActiveSection('script')">
+          <span class="label">
+            <span class="dot"></span>
+            AI Script Assistance
+          </span>
+          <small>Structure & shots</small>
+        </button>
+        <button class="side-link" data-section="media" onclick="setActiveSection('media')">
+          <span class="label">
+            <span class="dot"></span>
+            Media · Community
+          </span>
+          <small>Feed · likes</small>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- CONTENT -->
+    <section class="content">
+      <!-- CREATE SECTION -->
+      <section id="create-section" class="panel">
         <div class="panel-header">
-          <div class="panel-title">AI Video Workflows</div>
-          <div class="pill-label">Phase 1 · UI only</div>
+          <div class="panel-title">Create · Video</div>
+          <div class="pill-label">Plan-aware · UI only</div>
         </div>
         <p class="panel-sub">
-          Choose a workflow, select an engine version, and decide if your result
-          should be private or added to the public Media section.
+          Choose how you want to create video. Your subscription plan will
+          automatically unlock engine versions, output quality, watermark control,
+          and advanced modes like script-to-video, YouTube style reference and lip sync.
         </p>
 
-        <div class="field-group" style="margin-bottom: 10px;">
+        <!-- Engine version selection -->
+        <div class="field-group">
           <label for="engine-version">Engine version</label>
           <select id="engine-version" onchange="handleVersionChange()">
             <option value="v1">v1 – Stable (all plans)</option>
@@ -694,577 +821,716 @@
             <option value="v3">v3 – Experimental (Pro only)</option>
           </select>
           <p class="note">
-            Different versions represent different model generations. As you
-            upgrade your backend, you can route each version to a new model.
+            In your backend, each version can point to a different model or pipeline.
           </p>
         </div>
 
-        <!-- MODE 0: TEXT → VIDEO -->
-        <form onsubmit="event.preventDefault(); handleTextToVideo();">
-          <div class="field-group">
-            <label for="prompt-text-video">
-              1. Prompt only – generate a new AI video
-            </label>
-            <textarea
-              id="prompt-text-video"
-              placeholder="Example: A 12-second vertical Afrobeat dance video in a neon-lit club, smooth camera moves, two dancers in white outfits, slow zoom-in."
-            ></textarea>
-            <p class="note">
-              Later, this will send your prompt to your video generation model
-              (text-to-video) with the selected engine version.
-            </p>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="text-video-length">
-                Target length (seconds)
-              </label>
-              <input
-                id="text-video-length"
-                type="number"
-                min="3"
-                max="60"
-                value="12"
-              />
-            </div>
-            <div>
-              <label for="text-video-ratio">
-                Aspect ratio
-              </label>
-              <select id="text-video-ratio">
-                <option value="9:16">9:16 – Vertical</option>
-                <option value="16:9">16:9 – Horizontal</option>
-                <option value="1:1">1:1 – Square</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="text-video-style">
-                Visual style
-              </label>
-              <select id="text-video-style">
-                <option>Cinematic, realistic</option>
-                <option>Music video, glossy</option>
-                <option>Cartoon / stylized</option>
-                <option>Documentary feel</option>
-              </select>
-            </div>
-            <div>
-              <label for="text-video-audio">
-                Audio
-              </label>
-              <select id="text-video-audio">
-                <option>No audio</option>
-                <option>Use temp beat (later)</option>
-                <option>Sync with uploaded song (later)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="text-video-privacy">Visibility</label>
-              <select id="text-video-privacy">
-                <option value="private">Private (only you)</option>
-                <option value="unlisted">Unlisted link</option>
-                <option value="public">Public in Media</option>
-              </select>
-            </div>
-            <div>
-              <label for="text-watermark">Watermark</label>
-              <select id="text-watermark">
-                <option value="auto">Auto (based on plan)</option>
-                <option value="force-on">Force ON</option>
-                <option value="force-off">Force OFF (Pro)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="small-inline">
-            <input type="checkbox" id="text-add-media" />
-            <label for="text-add-media" style="margin:0;">Add this to public Media if allowed</label>
-          </div>
-
-          <button type="submit" class="btn-main" style="margin-top: 8px;">
-            <span class="plus">+</span>
-            Generate video from text (UI only)
+        <!-- Create mode tabs -->
+        <div class="create-tabs">
+          <button
+            type="button"
+            class="create-tab-btn active-create"
+            data-mode-btn="text"
+            onclick="setCreateMode('text')"
+          >
+            Text → Video
           </button>
-        </form>
-
-        <hr style="border:none;border-top:1px solid var(--border-soft); margin:16px 0;" />
-
-        <!-- MODE 1: IMAGES → VIDEO -->
-        <form onsubmit="event.preventDefault(); handleImagesToVideo();">
-          <div class="field-group">
-            <label>
-              2. Upload images + prompt – generate a short video
-            </label>
-            <input
-              id="video-images"
-              type="file"
-              accept="image/*"
-              multiple
-            />
-            <p class="note">
-              Later, your backend will accept multiple frames (e.g., poses,
-              locations) and animate between them to create a smooth clip.
-            </p>
-          </div>
-
-          <div class="field-group">
-            <label for="prompt-images-video">
-              Describe the video you want
-            </label>
-            <textarea
-              id="prompt-images-video"
-              placeholder="Example: Create a 10-second vertical video where this model slowly turns, lights flicker, and soft camera movement reveals the outfit."
-            ></textarea>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="video-length">
-                Target length (seconds)
-              </label>
-              <input
-                id="video-length"
-                type="number"
-                min="3"
-                max="60"
-                value="10"
-              />
-            </div>
-            <div>
-              <label for="video-ratio">
-                Aspect ratio
-              </label>
-              <select id="video-ratio">
-                <option value="9:16">9:16 – Vertical (TikTok / Reels)</option>
-                <option value="16:9">16:9 – Horizontal</option>
-                <option value="1:1">1:1 – Square</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="images-video-privacy">Visibility</label>
-              <select id="images-video-privacy">
-                <option value="private">Private</option>
-                <option value="unlisted">Unlisted</option>
-                <option value="public">Public in Media</option>
-              </select>
-            </div>
-            <div>
-              <label for="images-watermark">Watermark</label>
-              <select id="images-watermark">
-                <option value="auto">Auto (based on plan)</option>
-                <option value="force-on">Force ON</option>
-                <option value="force-off">Force OFF (Pro)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="small-inline">
-            <input type="checkbox" id="images-add-media" />
-            <label for="images-add-media" style="margin:0;">Add this to public Media if allowed</label>
-          </div>
-
-          <button type="submit" class="btn-main" style="margin-top: 8px;">
-            <span class="plus">+</span>
-            Upload images & build video (UI only)
+          <button
+            type="button"
+            class="create-tab-btn"
+            data-mode-btn="images"
+            onclick="setCreateMode('images')"
+          >
+            Images → Video
           </button>
-        </form>
+          <button
+            type="button"
+            class="create-tab-btn"
+            data-mode-btn="scriptvideo"
+            onclick="setCreateMode('scriptvideo')"
+          >
+            Script → Video
+          </button>
+          <button
+            type="button"
+            class="create-tab-btn"
+            data-mode-btn="videoref"
+            onclick="setCreateMode('videoref')"
+          >
+            YouTube style reference
+          </button>
+          <button
+            type="button"
+            class="create-tab-btn"
+            data-mode-btn="lipsync"
+            onclick="setCreateMode('lipsync')"
+          >
+            Lip sync
+          </button>
+        </div>
 
-        <hr style="border:none;border-top:1px solid var(--border-soft); margin:16px 0;" />
+        <!-- Text → Video -->
+        <div
+          class="create-mode"
+          data-mode="text"
+          data-min-plan="basic"
+        >
+          <form onsubmit="event.preventDefault(); handleTextToVideo();">
+            <div class="field-group">
+              <label for="text-prompt">
+                Text prompt
+              </label>
+              <textarea
+                id="text-prompt"
+                placeholder="Example: 12-second vertical Afrobeat dance video in a neon-lit club, slow zoom, two dancers in white outfits, smooth camera motion."
+              ></textarea>
+              <p class="note">
+                This is a pure text-to-video flow. Later you’ll post this to a
+                /api/video/text-to-video endpoint with the selected engine version.
+              </p>
+            </div>
 
-        <!-- MODE 2: VIDEO EDIT & EFFECTS -->
-        <form onsubmit="event.preventDefault(); handleVideoEdit();">
+            <div class="field-row field-group">
+              <div>
+                <label for="text-length">Target length (seconds)</label>
+                <input id="text-length" type="number" min="3" max="60" value="12" />
+              </div>
+              <div>
+                <label for="text-ratio">Aspect ratio</label>
+                <select id="text-ratio">
+                  <option value="9:16">9:16 – Vertical</option>
+                  <option value="16:9">16:9 – Horizontal</option>
+                  <option value="1:1">1:1 – Square</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row field-group">
+              <div>
+                <label for="text-style">Visual style</label>
+                <select id="text-style">
+                  <option>Cinematic, realistic</option>
+                  <option>Music video, glossy</option>
+                  <option>Cartoon / stylized</option>
+                  <option>Documentary feel</option>
+                </select>
+              </div>
+              <div>
+                <label for="text-audio">Audio</label>
+                <select id="text-audio">
+                  <option>No audio</option>
+                  <option>Use temp beat (later)</option>
+                  <option>Sync with uploaded song (later)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="text-quality">Output quality</label>
+                <select id="text-quality" class="quality-select">
+                  <!-- Options will be set by plan -->
+                </select>
+              </div>
+              <div>
+                <label for="text-visibility">Visibility</label>
+                <select id="text-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="text-watermark">Watermark</label>
+                <select id="text-watermark" class="watermark-select">
+                  <!-- Options set by plan -->
+                </select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="text-add-media" />
+              <label for="text-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Generate video from text (UI only)
+            </button>
+          </form>
+        </div>
+
+        <!-- Images → Video -->
+        <div
+          class="create-mode hidden"
+          data-mode="images"
+          data-min-plan="basic"
+        >
+          <form onsubmit="event.preventDefault(); handleImagesToVideo();">
+            <div class="field-group">
+              <label>Upload images (sequence frames)</label>
+              <input id="images-files" type="file" accept="image/*" multiple />
+              <p class="note">
+                Later your backend will animate between frames, respecting the
+                prompt and timing to create a smooth clip.
+              </p>
+            </div>
+
+            <div class="field-group">
+              <label for="images-prompt">Describe the motion and style</label>
+              <textarea
+                id="images-prompt"
+                placeholder="Example: 10-second vertical video where the model slowly turns, lights flicker, camera moves from feet to face."
+              ></textarea>
+            </div>
+
+            <div class="field-row field-group">
+              <div>
+                <label for="images-length">Target length (seconds)</label>
+                <input id="images-length" type="number" min="3" max="60" value="10" />
+              </div>
+              <div>
+                <label for="images-ratio">Aspect ratio</label>
+                <select id="images-ratio">
+                  <option value="9:16">9:16 – Vertical</option>
+                  <option value="16:9">16:9 – Horizontal</option>
+                  <option value="1:1">1:1 – Square</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="images-quality">Output quality</label>
+                <select id="images-quality" class="quality-select"></select>
+              </div>
+              <div>
+                <label for="images-visibility">Visibility</label>
+                <select id="images-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="images-watermark">Watermark</label>
+                <select id="images-watermark" class="watermark-select"></select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="images-add-media" />
+              <label for="images-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Upload images & build video (UI only)
+            </button>
+          </form>
+        </div>
+
+        <!-- Script → Video (Creator & Pro) -->
+        <div
+          class="create-mode hidden"
+          data-mode="scriptvideo"
+          data-min-plan="creator"
+        >
+          <form onsubmit="event.preventDefault(); handleScriptToVideo();">
+            <div class="field-group">
+              <label>Upload script (PDF / text / doc)</label>
+              <input
+                id="scriptvideo-file"
+                type="file"
+                accept=".pdf,.txt,.doc,.docx"
+              />
+              <p class="note">
+                Later your backend will read the script, break it into scenes,
+                and generate visual sequences based on your prompt and plan limits.
+              </p>
+            </div>
+
+            <div class="field-group">
+              <label for="scriptvideo-prompt">Describe the visual style</label>
+              <textarea
+                id="scriptvideo-prompt"
+                placeholder="Example: Turn this into a cinematic 20-second trailer with fast cuts, dramatic lighting and bold text overlays."
+              ></textarea>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="scriptvideo-quality">Output quality</label>
+                <select id="scriptvideo-quality" class="quality-select"></select>
+              </div>
+              <div>
+                <label for="scriptvideo-visibility">Visibility</label>
+                <select id="scriptvideo-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="scriptvideo-watermark">Watermark</label>
+                <select id="scriptvideo-watermark" class="watermark-select"></select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="scriptvideo-add-media" />
+              <label for="scriptvideo-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Script → Video (UI only)
+            </button>
+          </form>
+        </div>
+
+        <!-- YouTube style reference (Creator & Pro) -->
+        <div
+          class="create-mode hidden"
+          data-mode="videoref"
+          data-min-plan="creator"
+        >
+          <form onsubmit="event.preventDefault(); handleVideoReference();">
+            <div class="field-group">
+              <label for="videoref-url">YouTube URL</label>
+              <input
+                id="videoref-url"
+                type="text"
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+              <p class="note">
+                This simulates a “learn the style” flow. Later, your backend
+                can analyze rhythm, camera movement, color and pacing from the
+                reference link.
+              </p>
+            </div>
+
+            <div class="field-group">
+              <label for="videoref-prompt">
+                What should Sulandra learn and recreate?
+              </label>
+              <textarea
+                id="videoref-prompt"
+                placeholder="Example: Learn the dance style and camera movement, then create a 15-second vertical clip with my model dancing in a similar style."
+              ></textarea>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="videoref-quality">Output quality</label>
+                <select id="videoref-quality" class="quality-select"></select>
+              </div>
+              <div>
+                <label for="videoref-visibility">Visibility</label>
+                <select id="videoref-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="videoref-watermark">Watermark</label>
+                <select id="videoref-watermark" class="watermark-select"></select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="videoref-add-media" />
+              <label for="videoref-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Create from YouTube style (UI only)
+            </button>
+          </form>
+        </div>
+
+        <!-- Lip Sync (Creator & Pro) -->
+        <div
+          class="create-mode hidden"
+          data-mode="lipsync"
+          data-min-plan="creator"
+        >
+          <form onsubmit="event.preventDefault(); handleLipSync();">
+            <div class="field-group">
+              <label>Upload face video (close-up)</label>
+              <input id="lipsync-video" type="file" accept="video/*" />
+            </div>
+
+            <div class="field-group">
+              <label>Upload audio / song</label>
+              <input id="lipsync-audio" type="file" accept="audio/*" />
+              <p class="note">
+                Later, your model can align mouth shapes to the audio (lip sync)
+                and output a new synced video.
+              </p>
+            </div>
+
+            <div class="field-group">
+              <label for="lipsync-prompt">
+                Notes about emotion and camera framing
+              </label>
+              <textarea
+                id="lipsync-prompt"
+                placeholder="Example: Keep the original framing, make the lips match perfectly, and add light camera sway for a music video feel."
+              ></textarea>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="lipsync-quality">Output quality</label>
+                <select id="lipsync-quality" class="quality-select"></select>
+              </div>
+              <div>
+                <label for="lipsync-visibility">Visibility</label>
+                <select id="lipsync-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="lipsync-watermark">Watermark</label>
+                <select id="lipsync-watermark" class="watermark-select"></select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="lipsync-add-media" />
+              <label for="lipsync-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Generate lip-synced video (UI only)
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- MY GENERATIONS SECTION -->
+      <section id="generations-section" class="panel hidden">
+        <div class="panel-header">
+          <div class="panel-title">My Generations · Video</div>
+          <div class="pill-label">Session only · Demo</div>
+        </div>
+        <p class="panel-sub">
+          Every time you use a Create flow, a record is stored here in this
+          browser. In the real app, this would be tied to user accounts and
+          cloud storage with real download links.
+        </p>
+        <div id="my-generations-list">
+          <div class="list-empty">
+            No generations yet. Use any of the Create modes first.
+          </div>
+        </div>
+      </section>
+
+      <!-- AI SCRIPT ASSISTANCE SECTION -->
+      <section id="script-section" class="panel hidden">
+        <div class="panel-header">
+          <div class="panel-title">AI Script Assistance</div>
+          <div class="pill-label">Structure · Dialogue · Shots</div>
+        </div>
+        <p class="panel-sub">
+          This section focuses on script improvement and shot planning, separate
+          from script-to-video rendering. Think of it like a Sulandra writing
+          room and director assistant combined.
+        </p>
+
+        <form onsubmit="event.preventDefault(); handleScriptAssist();">
           <div class="field-group">
-            <label>
-              3. Upload a short video – edit, add characters or effects
-            </label>
-            <input
-              id="input-video"
-              type="file"
-              accept="video/*"
-            />
-            <p class="note">
-              Think of this like your Sulandra “Kling editor”: trim, color grade,
-              add overlays, add AI characters, or generate extra shots around
-              what you already filmed.
-            </p>
+            <label>Upload script / treatment</label>
+            <input id="assist-file" type="file" accept=".pdf,.txt,.doc,.docx" />
           </div>
 
           <div class="field-group">
-            <label for="prompt-video-edit">
-              Describe what you want changed or added
-            </label>
+            <label for="assist-prompt">What do you want help with?</label>
             <textarea
-              id="prompt-video-edit"
-              placeholder="Example: Keep the same pacing, but add a futuristic background, glow effects around the dancer, and overlay lyrics in bold white text."
+              id="assist-prompt"
+              placeholder="Example: Tighten this into a 60-second short film, improve dialogue and suggest 8 shots with camera angles."
             ></textarea>
           </div>
 
           <div class="field-row-3 field-group">
             <div>
-              <label for="edit-type">
-                Edit focus
-              </label>
-              <select id="edit-type">
-                <option>Color & mood</option>
-                <option>Transitions & pacing</option>
-                <option>Add characters</option>
-                <option>Add VFX / overlays</option>
-                <option>Combine all</option>
-              </select>
-            </div>
-            <div>
-              <label for="video-resolution">
-                Output
-              </label>
-              <select id="video-resolution">
-                <option>1080p</option>
-                <option>4K</option>
-              </select>
-            </div>
-            <div>
-              <label for="video-audio">
-                Audio</label>
-              <select id="video-audio">
-                <option>Keep original audio</option>
-                <option>Mute video</option>
-                <option>Replace with new track</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="edit-privacy">Visibility</label>
-              <select id="edit-privacy">
-                <option value="private">Private</option>
-                <option value="unlisted">Unlisted</option>
-                <option value="public">Public in Media</option>
-              </select>
-            </div>
-            <div>
-              <label for="edit-watermark">Watermark</label>
-              <select id="edit-watermark">
-                <option value="auto">Auto (based on plan)</option>
-                <option value="force-on">Force ON</option>
-                <option value="force-off">Force OFF (Pro)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="small-inline">
-            <input type="checkbox" id="edit-add-media" />
-            <label for="edit-add-media" style="margin:0;">Add this to public Media if allowed</label>
-          </div>
-
-          <button type="submit" class="btn-main" style="margin-top: 8px;">
-            <span class="plus">+</span>
-            Upload video & request edit (UI only)
-          </button>
-        </form>
-
-        <hr style="border:none;border-top:1px solid var(--border-soft); margin:16px 0;" />
-
-        <!-- MODE 3: SCRIPT / PDF + AI SCRIPT ASSISTANCE -->
-        <form onsubmit="event.preventDefault(); handleScriptAssist();">
-          <div class="field-group">
-            <label>
-              4. Upload script / PDF – AI script assistance & shot planning
-            </label>
-            <input
-              id="video-script-file"
-              type="file"
-              accept=".pdf,.txt,.doc,.docx"
-            />
-            <p class="note">
-              This is your AI script assistant for the Video section. Later,
-              your backend will read the script and help with rewrites, beats
-              and shot suggestions.
-            </p>
-          </div>
-
-          <div class="field-group">
-            <label for="prompt-script-assist">
-              What should the AI help you with?
-            </label>
-            <textarea
-              id="prompt-script-assist"
-              placeholder="Example: Tighten the dialogue, keep the same story, and suggest a 6-shot list for a dramatic intro sequence."
-            ></textarea>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="assist-style">
-                Assistance focus
-              </label>
-              <select id="assist-style">
+              <label for="assist-focus">Focus</label>
+              <select id="assist-focus">
                 <option>Rewrite for clarity</option>
                 <option>Improve dialogue</option>
                 <option>Convert to shot list</option>
-                <option>Turn into short trailer concept</option>
+                <option>Shorten to trailer script</option>
               </select>
             </div>
             <div>
-              <label for="tone">
-                Tone / style
-              </label>
-              <select id="tone">
+              <label for="assist-tone">Tone / genre</label>
+              <select id="assist-tone">
                 <option>Cinematic drama</option>
                 <option>Afrobeat party video</option>
                 <option>Emotional gospel story</option>
-                <option>Comedy / school vibes</option>
+                <option>Comedy (school / family)</option>
                 <option>Documentary style</option>
               </select>
             </div>
-          </div>
-
-          <div class="field-row field-group">
             <div>
-              <label for="assist-privacy">Visibility</label>
-              <select id="assist-privacy">
+              <label for="assist-visibility">Visibility</label>
+              <select id="assist-visibility">
                 <option value="private">Private</option>
                 <option value="unlisted">Unlisted</option>
                 <option value="public">Public in Media</option>
-              </select>
-            </div>
-            <div>
-              <label for="assist-watermark">Watermark</label>
-              <select id="assist-watermark">
-                <option value="auto">Auto (based on plan)</option>
-                <option value="force-on">Force ON</option>
-                <option value="force-off">Force OFF (Pro)</option>
               </select>
             </div>
           </div>
 
           <div class="small-inline">
             <input type="checkbox" id="assist-add-media" />
-            <label for="assist-add-media" style="margin:0;">Add this to public Media if allowed</label>
+            <label for="assist-add-media" style="margin:0;">Share a summary to Media (no full script)</label>
           </div>
 
           <button type="submit" class="btn-main" style="margin-top: 8px;">
             <span class="plus">+</span>
-            Upload script & ask AI (UI only)
+            Ask AI for script help (UI only)
           </button>
         </form>
 
         <p class="note" style="margin-top: 10px;">
-          All actions here are placeholders for now. They do not send files
-          anywhere yet – we will connect them to your backend API and Runpod
-          when your generation engines are ready.
+          In the real system, responses from your AI script model would appear here,
+          including suggested rewrites, dialogue changes and shot lists.
         </p>
-      </div>
+      </section>
 
-      <!-- RIGHT: PREVIEW & JOB STATUS -->
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Preview & job status</div>
-          <div class="status-pill">
-            Status: <span style="color:#f97316;">Frontend only</span>
-          </div>
-        </div>
-        <p class="panel-sub">
-          This area will summarize recent activity and how your backend routes
-          will eventually work. It also hints at the API endpoints you’ll build.
-        </p>
-
-        <div class="preview-box">
-          <div>
-            <strong>No video jobs yet.</strong>
-            <br /><br />
-            Start with any workflow on the left:
-            <br />
-            • Text → Video  
-            • Images + prompt → video  
-            • Upload a video → edits & effects  
-            • Upload script/PDF → AI script assistance
-            <br /><br />
-            Later, this panel can show:
-            <div class="preview-grid">
-              <div class="preview-slot">
-                <div class="preview-slot-title">Latest text → video</div>
-                <div>Thumbnail, duration, version, plan, link.</div>
-              </div>
-              <div class="preview-slot">
-                <div class="preview-slot-title">Latest images → video</div>
-                <div>Sequence preview, length, aspect ratio.</div>
-              </div>
-              <div class="preview-slot">
-                <div class="preview-slot-title">Latest edited clip</div>
-                <div>Before / after comparison, notes.</div>
-              </div>
-              <div class="preview-slot">
-                <div class="preview-slot-title">AI script summary</div>
-                <div>Key changes, shot list, export to PDF.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top: 12px; font-size: 11px; color: var(--text-muted);">
-          Example future API routes:
-          <br />
-          • <code>/api/video/text-to-video</code>  
-          • <code>/api/video/images-to-video</code>  
-          • <code>/api/video/edit</code>  
-          • <code>/api/video/script-assist</code>
-        </div>
-      </div>
-    </section>
-
-    <!-- BOTTOM: MY GENERATIONS + MEDIA HUB -->
-    <section class="bottom-layout">
-      <!-- MY GENERATIONS -->
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">My Generations (Video)</div>
-          <div class="pill-label">Session only · Demo</div>
-        </div>
-        <p class="panel-sub">
-          Every time you trigger a workflow above, it will be listed here for
-          this browser session. Later, this would be driven by user accounts
-          and a database.
-        </p>
-        <div id="my-generations-list">
-          <div class="list-empty">
-            No generations yet. Use any of the + buttons above and the job will
-            appear here with its plan, version and visibility.
-          </div>
-        </div>
-      </div>
-
-      <!-- MEDIA HUB -->
-      <div class="panel">
+      <!-- MEDIA SECTION -->
+      <section id="media-section" class="panel hidden">
         <div class="panel-header">
           <div class="panel-title">Media · Community Video Feed</div>
           <div class="pill-label">Likes · Comments (UI)</div>
         </div>
         <p class="panel-sub">
-          This is the “Media” section for Video. When you mark a generation as
-          public, it can appear here. For now this is a simple demo feed stored
-          only in this browser.
+          Public generations appear here when “Add to Media” is checked and
+          visibility is set to Public. For now this is stored only in this
+          browser as a preview of your future community hub.
         </p>
         <div id="media-feed">
           <div class="list-empty">
-            No public posts yet. Mark a generation as public and “Add to Media”
-            to simulate a community post.
+            No public posts yet. Make a generation public and add it to Media to
+            simulate a community post.
           </div>
         </div>
-      </div>
+      </section>
     </section>
-  </main>
+  </section>
+</main>
 
-  <footer>
-    Video Lab · Plans (Basic / Creator / Pro), version routing (v1 / v2 / v3), per-user generations
-    and Media feed UI are ready. Next step: connect them to real authentication and backend APIs.
-  </footer>
+<footer>
+  Video Lab · Plan-based access (Basic / Creator / Pro), feature gating, output
+  quality control, YouTube style reference, lip sync, My Generations and Media
+  feed UI are ready. Next step: connect to authentication and real APIs.
+</footer>
 
-  <script>
-    let currentPlan = "basic";
-    let myGenerations = [];
-    let mediaFeed = [];
+<script>
+  let currentPlan = "basic";
+  let myGenerations = [];
+  let mediaFeed = [];
 
-    function getEngineVersion() {
-      return document.getElementById("engine-version").value;
+  const planRank = { basic: 1, creator: 2, pro: 3 };
+
+  function setPlan(plan) {
+    currentPlan = plan;
+    document.querySelectorAll(".plan-button").forEach(btn => {
+      btn.classList.toggle("active-plan", btn.dataset.plan === plan);
+    });
+
+    const note = document.getElementById("plan-note");
+    if (plan === "basic") {
+      note.textContent =
+        "Basic: v1 only, SD output, watermark required. Advanced modes (script-to-video, YouTube reference, lip sync) are locked.";
+    } else if (plan === "creator") {
+      note.textContent =
+        "Creator: v1 & v2, SD / HD / UHD, watermark optional, access to script-to-video, YouTube style reference and lip sync.";
+    } else {
+      note.textContent =
+        "Pro: v1 / v2 / v3, SD / HD / UHD / 4K, full watermark control, all tools unlocked.";
     }
 
-    function setPlan(plan) {
-      currentPlan = plan;
-      updatePlanUI();
-    }
+    applyPlanGating();
+    configureQualitySelects();
+    configureWatermarkSelects();
+  }
 
-    function updatePlanUI() {
-      document.querySelectorAll(".plan-button").forEach(btn => {
-        btn.classList.toggle("active-plan", btn.dataset.plan === currentPlan);
-      });
-      const note = document.getElementById("plan-note");
-      if (currentPlan === "basic") {
-        note.textContent = "Basic: watermark, limited length, access to v1 engine only.";
-      } else if (currentPlan === "creator") {
-        note.textContent = "Creator: longer clips, watermark optional, v1 & v2 engines.";
+  function handleVersionChange() {
+    const select = document.getElementById("engine-version");
+    const value = select.value;
+    if (value === "v2" && planRank[currentPlan] < planRank["creator"]) {
+      alert("v2 is available for Creator and Pro plans. You are on Basic, staying on v1.");
+      select.value = "v1";
+      return;
+    }
+    if (value === "v3" && currentPlan !== "pro") {
+      alert("v3 is available for Pro plan only. Staying on v1 for this plan.");
+      select.value = "v1";
+      return;
+    }
+  }
+
+  function getEngineVersion() {
+    return document.getElementById("engine-version").value;
+  }
+
+  function applyPlanGating() {
+    document.querySelectorAll(".create-mode").forEach(el => {
+      const minPlan = el.dataset.minPlan || "basic";
+      if (planRank[currentPlan] < planRank[minPlan]) {
+        el.classList.add("disabled-panel");
       } else {
-        note.textContent = "Pro: all features, all versions (v1–v3), watermark can be removed.";
+        el.classList.remove("disabled-panel");
       }
-    }
+    });
+  }
 
-    function handleVersionChange() {
-      const select = document.getElementById("engine-version");
-      const value = select.value;
-      if (value === "v2" && currentPlan === "basic") {
-        alert("v2 is available for Creator and Pro plans. Staying on v1 for Basic.");
-        select.value = "v1";
-        return;
+  function configureQualitySelects() {
+    document.querySelectorAll(".quality-select").forEach(sel => {
+      let optionsHtml = "";
+      if (currentPlan === "basic") {
+        optionsHtml = `<option value="sd">SD (Basic)</option>`;
+      } else if (currentPlan === "creator") {
+        optionsHtml = `
+          <option value="sd">SD</option>
+          <option value="hd">HD</option>
+          <option value="uhd">UHD</option>
+        `;
+      } else {
+        optionsHtml = `
+          <option value="sd">SD</option>
+          <option value="hd">HD</option>
+          <option value="uhd">UHD</option>
+          <option value="4k">4K</option>
+        `;
       }
-      if (value === "v3" && currentPlan !== "pro") {
-        alert("v3 is available for Pro users only. Staying on v1 for this plan.");
-        select.value = "v1";
-        return;
-      }
-    }
+      sel.innerHTML = optionsHtml;
+    });
+  }
 
-    function addGeneration(entry) {
-      myGenerations.unshift(entry);
-      renderGenerations();
-      if (entry.addToMedia && entry.visibility === "public") {
-        mediaFeed.unshift({
-          title: entry.title,
-          type: entry.type,
-          plan: entry.plan,
-          version: entry.version,
-          likes: 0,
-          comments: 0,
-          visibility: entry.visibility
-        });
-        renderMedia();
+  function configureWatermarkSelects() {
+    document.querySelectorAll(".watermark-select").forEach(sel => {
+      let optionsHtml = "";
+      if (currentPlan === "basic") {
+        optionsHtml = `<option value="on">Watermark ON (Basic)</option>`;
+      } else if (currentPlan === "creator") {
+        optionsHtml = `
+          <option value="on">Watermark ON</option>
+          <option value="off">Watermark OFF (may be limited)</option>
+        `;
+      } else {
+        optionsHtml = `
+          <option value="on">Watermark ON</option>
+          <option value="off">Watermark OFF</option>
+        `;
       }
-    }
+      sel.innerHTML = optionsHtml;
+    });
+  }
 
-    function renderGenerations() {
-      const container = document.getElementById("my-generations-list");
-      if (!myGenerations.length) {
-        container.innerHTML = '<div class="list-empty">No generations yet. Use any of the + buttons above and the job will appear here.</div>';
-        return;
-      }
-      container.innerHTML = myGenerations.map((g, idx) => `
+  function setActiveSection(sectionId) {
+    document.querySelectorAll(".side-link").forEach(btn => {
+      btn.classList.toggle("active-section", btn.dataset.section === sectionId);
+    });
+
+    document.getElementById("create-section").classList.add("hidden");
+    document.getElementById("generations-section").classList.add("hidden");
+    document.getElementById("script-section").classList.add("hidden");
+    document.getElementById("media-section").classList.add("hidden");
+
+    document.getElementById(sectionId + "-section").classList.remove("hidden");
+  }
+
+  function setCreateMode(mode) {
+    document.querySelectorAll(".create-tab-btn").forEach(btn => {
+      btn.classList.toggle("active-create", btn.dataset.modeBtn === mode);
+    });
+    document.querySelectorAll(".create-mode").forEach(panel => {
+      panel.classList.toggle("hidden", panel.dataset.mode !== mode);
+    });
+  }
+
+  function getCommonOutputSettings(prefix) {
+    const quality = document.getElementById(prefix + "-quality")?.value || "sd";
+    const visibility = document.getElementById(prefix + "-visibility")?.value || "private";
+    const watermark = document.getElementById(prefix + "-watermark")?.value || "on";
+    const addToMedia = document.getElementById(prefix + "-add-media")?.checked || false;
+    return { quality, visibility, watermark, addToMedia };
+  }
+
+  function addGeneration(entry) {
+    myGenerations.unshift(entry);
+    renderGenerations();
+    if (entry.addToMedia && entry.visibility === "public") {
+      mediaFeed.unshift({
+        title: entry.title,
+        type: entry.type,
+        plan: entry.plan,
+        version: entry.version,
+        quality: entry.quality,
+        likes: 0,
+        comments: 0,
+        visibility: entry.visibility
+      });
+      renderMedia();
+    }
+  }
+
+  function renderGenerations() {
+    const container = document.getElementById("my-generations-list");
+    if (!myGenerations.length) {
+      container.innerHTML = `
+        <div class="list-empty">
+          No generations yet. Use any of the Create modes first.
+        </div>
+      `;
+      return;
+    }
+    container.innerHTML = myGenerations
+      .map((g, idx) => `
         <div class="gen-item">
           <div class="gen-header">
             <div class="gen-title">${g.title}</div>
             <div class="gen-meta">#${myGenerations.length - idx}</div>
           </div>
           <div class="gen-meta">
-            Type: ${g.type} · Plan: ${g.plan.toUpperCase()} · Version: ${g.version.toUpperCase()} · Visibility: ${g.visibility}
+            Type: ${g.type} · Plan: ${g.plan.toUpperCase()} · Version: ${g.version.toUpperCase()} · Quality: ${g.quality.toUpperCase()} · Visibility: ${g.visibility}
           </div>
           <div class="gen-meta">
             Notes: ${g.description || "—"}
           </div>
         </div>
-      `).join("");
-    }
+      `)
+      .join("");
+  }
 
-    function renderMedia() {
-      const container = document.getElementById("media-feed");
-      if (!mediaFeed.length) {
-        container.innerHTML = '<div class="list-empty">No public posts yet. Mark a generation as public and “Add to Media” to simulate a community post.</div>';
-        return;
-      }
-      container.innerHTML = mediaFeed.map((m, idx) => `
+  function renderMedia() {
+    const container = document.getElementById("media-feed");
+    if (!mediaFeed.length) {
+      container.innerHTML = `
+        <div class="list-empty">
+          No public posts yet. Make a generation public and add it to Media to simulate a community post.
+        </div>
+      `;
+      return;
+    }
+    container.innerHTML = mediaFeed
+      .map((m, idx) => `
         <div class="media-card">
           <div class="media-header">
             <div class="media-title">${m.title}</div>
             <div class="media-meta">#${mediaFeed.length - idx} · ${m.type}</div>
           </div>
           <div class="media-meta">
-            Plan: ${m.plan.toUpperCase()} · Version: ${m.version.toUpperCase()}
+            Plan: ${m.plan.toUpperCase()} · Version: ${m.version.toUpperCase()} · Quality: ${m.quality.toUpperCase()}
             <span class="media-badge">Public</span>
           </div>
           <div class="media-actions">
@@ -1276,174 +1542,258 @@
             </button>
           </div>
         </div>
-      `).join("");
-    }
+      `)
+      .join("");
+  }
 
-    function likePost(index) {
-      mediaFeed[index].likes += 1;
-      renderMedia();
-    }
-
-    function commentPost(index) {
-      mediaFeed[index].comments += 1;
-      alert("In the real app, this would open a comment box. For now we just count comments.");
-      renderMedia();
-    }
-
-    function resolveWatermark(option) {
-      if (option === "force-on") return "on";
-      if (option === "force-off") return "off";
-      if (currentPlan === "basic") return "on";
-      if (currentPlan === "creator") return "on";
-      return "off"; // Pro default
-    }
-
-    // --- Handlers for flows ---
-
-    function handleTextToVideo() {
-      const prompt = document.getElementById("prompt-text-video").value.trim();
-      if (!prompt) {
-        alert("Please enter a text prompt for your video.");
-        return;
-      }
-      const version = getEngineVersion();
-      const length = document.getElementById("text-video-length").value;
-      const visibility = document.getElementById("text-video-privacy").value;
-      const watermark = resolveWatermark(document.getElementById("text-watermark").value);
-      const addToMedia = document.getElementById("text-add-media").checked;
-
-      alert(
-        "Text → Video flow selected.\n\n" +
-        "- Plan: " + currentPlan.toUpperCase() + "\n" +
-        "- Version: " + version.toUpperCase() + "\n" +
-        "- Target length: " + length + "s\n" +
-        "- Visibility: " + visibility + "\n" +
-        "- Watermark: " + watermark + "\n\n" +
-        "Later, this will send your prompt and settings to your text-to-video backend."
-      );
-
-      addGeneration({
-        title: "Text video (" + length + "s)",
-        type: "Text → Video",
-        plan: currentPlan,
-        version,
-        visibility,
-        description: prompt.slice(0, 80) + (prompt.length > 80 ? "..." : ""),
-        addToMedia
-      });
-    }
-
-    function handleImagesToVideo() {
-      const files = document.getElementById("video-images").files;
-      if (!files.length) {
-        alert("Please upload at least one image to build a video.");
-        return;
-      }
-      const version = getEngineVersion();
-      const length = document.getElementById("video-length").value;
-      const visibility = document.getElementById("images-video-privacy").value;
-      const watermark = resolveWatermark(document.getElementById("images-watermark").value);
-      const addToMedia = document.getElementById("images-add-media").checked;
-      const prompt = document.getElementById("prompt-images-video").value.trim();
-
-      alert(
-        "Images → Video flow selected.\n\n" +
-        "- Plan: " + currentPlan.toUpperCase() + "\n" +
-        "- Version: " + version.toUpperCase() + "\n" +
-        "- Images: " + files.length + "\n" +
-        "- Target length: " + length + "s\n" +
-        "- Visibility: " + visibility + "\n" +
-        "- Watermark: " + watermark + "\n\n" +
-        "Later, this will upload your images and instructions to your video generation backend."
-      );
-
-      addGeneration({
-        title: "Images video (" + files.length + " imgs)",
-        type: "Images → Video",
-        plan: currentPlan,
-        version,
-        visibility,
-        description: prompt ? prompt.slice(0, 80) + (prompt.length > 80 ? "..." : "") : "Images stitched into a clip.",
-        addToMedia
-      });
-    }
-
-    function handleVideoEdit() {
-      const file = document.getElementById("input-video").files[0];
-      if (!file) {
-        alert("Please upload a short video first.");
-        return;
-      }
-      const version = getEngineVersion();
-      const editType = document.getElementById("edit-type").value;
-      const visibility = document.getElementById("edit-privacy").value;
-      const watermark = resolveWatermark(document.getElementById("edit-watermark").value);
-      const addToMedia = document.getElementById("edit-add-media").checked;
-      const prompt = document.getElementById("prompt-video-edit").value.trim();
-
-      alert(
-        "Video edit flow selected.\n\n" +
-        "- Plan: " + currentPlan.toUpperCase() + "\n" +
-        "- Version: " + version.toUpperCase() + "\n" +
-        "- File: " + file.name + "\n" +
-        "- Edit focus: " + editType + "\n" +
-        "- Visibility: " + visibility + "\n" +
-        "- Watermark: " + watermark + "\n\n" +
-        "Later, this will send your clip and instructions to your AI video editor."
-      );
-
-      addGeneration({
-        title: "Edited clip (" + editType + ")",
-        type: "Video edit",
-        plan: currentPlan,
-        version,
-        visibility,
-        description: prompt ? prompt.slice(0, 80) + (prompt.length > 80 ? "..." : "") : "Edit existing video.",
-        addToMedia
-      });
-    }
-
-    function handleScriptAssist() {
-      const file = document.getElementById("video-script-file").files[0];
-      if (!file) {
-        alert("Please upload a script or PDF first.");
-        return;
-      }
-      const version = getEngineVersion();
-      const focus = document.getElementById("assist-style").value;
-      const tone = document.getElementById("tone").value;
-      const visibility = document.getElementById("assist-privacy").value;
-      const watermark = resolveWatermark(document.getElementById("assist-watermark").value);
-      const addToMedia = document.getElementById("assist-add-media").checked;
-      const prompt = document.getElementById("prompt-script-assist").value.trim();
-
-      alert(
-        "AI script assistance flow selected.\n\n" +
-        "- Plan: " + currentPlan.toUpperCase() + "\n" +
-        "- Version: " + version.toUpperCase() + "\n" +
-        "- File: " + file.name + "\n" +
-        "- Focus: " + focus + "\n" +
-        "- Tone: " + tone + "\n" +
-        "- Visibility: " + visibility + "\n" +
-        "- Watermark: " + watermark + "\n\n" +
-        "Later, this will read your script and return rewrites, dialogue fixes and shot lists."
-      );
-
-      addGeneration({
-        title: "Script assist (" + focus + ")",
-        type: "Script assist",
-        plan: currentPlan,
-        version,
-        visibility,
-        description: prompt ? prompt.slice(0, 80) + (prompt.length > 80 ? "..." : "") : "AI script help.",
-        addToMedia
-      });
-    }
-
-    // Initialize UI state
-    updatePlanUI();
-    renderGenerations();
+  function likePost(index) {
+    mediaFeed[index].likes += 1;
     renderMedia();
-  </script>
+  }
+
+  function commentPost(index) {
+    mediaFeed[index].comments += 1;
+    alert("In the real app this would open a comment box. For now, we just increase the comment count.");
+    renderMedia();
+  }
+
+  // ---- CREATE HANDLERS ----
+
+  function modeLocked(modeName) {
+    // Helper to avoid submitting disabled panels
+    const panel = document.querySelector(`.create-mode[data-mode="${modeName}"]`);
+    return panel && panel.classList.contains("disabled-panel");
+  }
+
+  function handleTextToVideo() {
+    if (modeLocked("text")) {
+      alert("This feature is locked for your current plan.");
+      return;
+    }
+    const prompt = document.getElementById("text-prompt").value.trim();
+    if (!prompt) {
+      alert("Please enter a text prompt.");
+      return;
+    }
+    const length = document.getElementById("text-length").value || "12";
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("text");
+
+    alert(
+      "Text → Video (preview)\n\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\n" +
+      "- Version: " + version.toUpperCase() + "\n" +
+      "- Length: " + length + "s\n" +
+      "- Quality: " + quality.toUpperCase() + "\n" +
+      "- Visibility: " + visibility + "\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
+      "Later this will send your request to the text-to-video backend."
+    );
+
+    addGeneration({
+      title: "Text video (" + length + "s)",
+      type: "Text → Video",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt.slice(0, 90) + (prompt.length > 90 ? "..." : ""),
+      addToMedia
+    });
+  }
+
+  function handleImagesToVideo() {
+    if (modeLocked("images")) {
+      alert("This feature is locked for your current plan.");
+      return;
+    }
+    const files = document.getElementById("images-files").files;
+    if (!files.length) {
+      alert("Please upload at least one image.");
+      return;
+    }
+    const prompt = document.getElementById("images-prompt").value.trim();
+    const length = document.getElementById("images-length").value || "10";
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("images");
+
+    alert(
+      "Images → Video (preview)\n\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\n" +
+      "- Version: " + version.toUpperCase() + "\n" +
+      "- Frames: " + files.length + "\n" +
+      "- Length: " + length + "s\n" +
+      "- Quality: " + quality.toUpperCase() + "\n" +
+      "- Visibility: " + visibility + "\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
+      "Later this will upload your frames to the images-to-video backend."
+    );
+
+    addGeneration({
+      title: "Images video (" + files.length + " frames)",
+      type: "Images → Video",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Images animated into a clip.",
+      addToMedia
+    });
+  }
+
+  function handleScriptToVideo() {
+    if (modeLocked("scriptvideo")) {
+      alert("Script → Video is available for Creator and Pro plans.");
+      return;
+    }
+    const file = document.getElementById("scriptvideo-file").files[0];
+    if (!file) {
+      alert("Please upload a script file.");
+      return;
+    }
+    const prompt = document.getElementById("scriptvideo-prompt").value.trim();
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("scriptvideo");
+
+    alert(
+      "Script → Video (preview)\n\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\n" +
+      "- Version: " + version.toUpperCase() + "\n" +
+      "- File: " + file.name + "\n" +
+      "- Quality: " + quality.toUpperCase() + "\n" +
+      "- Visibility: " + visibility + "\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
+      "Later this will send your script and instructions to a script-to-video engine."
+    );
+
+    addGeneration({
+      title: "Script video (" + file.name + ")",
+      type: "Script → Video",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Script converted into visual scenes.",
+      addToMedia
+    });
+  }
+
+  function handleVideoReference() {
+    if (modeLocked("videoref")) {
+      alert("YouTube style reference is available for Creator and Pro plans.");
+      return;
+    }
+    const url = document.getElementById("videoref-url").value.trim();
+    if (!url) {
+      alert("Please paste a YouTube URL.");
+      return;
+    }
+    const prompt = document.getElementById("videoref-prompt").value.trim();
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("videoref");
+
+    alert(
+      "YouTube style reference (preview)\n\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\n" +
+      "- Version: " + version.toUpperCase() + "\n" +
+      "- URL: " + url + "\n" +
+      "- Quality: " + quality.toUpperCase() + "\n" +
+      "- Visibility: " + visibility + "\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
+      "Later this will analyze the reference and generate a similar-style clip."
+    );
+
+    addGeneration({
+      title: "Style ref video",
+      type: "YouTube style reference",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Video generated from a YouTube style reference.",
+      addToMedia
+    });
+  }
+
+  function handleLipSync() {
+    if (modeLocked("lipsync")) {
+      alert("Lip sync is available for Creator and Pro plans.");
+      return;
+    }
+    const videoFile = document.getElementById("lipsync-video").files[0];
+    const audioFile = document.getElementById("lipsync-audio").files[0];
+    if (!videoFile || !audioFile) {
+      alert("Please upload both a face video and an audio file.");
+      return;
+    }
+    const prompt = document.getElementById("lipsync-prompt").value.trim();
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("lipsync");
+
+    alert(
+      "Lip sync (preview)\n\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\n" +
+      "- Version: " + version.toUpperCase() + "\n" +
+      "- Video: " + videoFile.name + "\n" +
+      "- Audio: " + audioFile.name + "\n" +
+      "- Quality: " + quality.toUpperCase() + "\n" +
+      "- Visibility: " + visibility + "\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
+      "Later this will send your files to a lip-sync engine."
+    );
+
+    addGeneration({
+      title: "Lip-synced video",
+      type: "Lip sync",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Face video synced to audio.",
+      addToMedia
+    });
+  }
+
+  // AI Script Assistance (separate section)
+  function handleScriptAssist() {
+    const file = document.getElementById("assist-file").files[0];
+    if (!file) {
+      alert("Please upload a script file.");
+      return;
+    }
+    const prompt = document.getElementById("assist-prompt").value.trim();
+    const focus = document.getElementById("assist-focus").value;
+    const tone = document.getElementById("assist-tone").value;
+    const visibility = document.getElementById("assist-visibility").value;
+    const addToMedia = document.getElementById("assist-add-media").checked;
+
+    alert(
+      "AI Script Assistance (preview)\n\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\n" +
+      "- File: " + file.name + "\n" +
+      "- Focus: " + focus + "\n" +
+      "- Tone: " + tone + "\n" +
+      "- Visibility: " + visibility + "\n\n" +
+      "Later this will send your script to a script analysis / rewrite model."
+    );
+
+    addGeneration({
+      title: "Script assist (" + focus + ")",
+      type: "Script assistance",
+      plan: currentPlan,
+      version: "n/a",
+      quality: "n/a",
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Script assistance request.",
+      addToMedia
+    });
+  }
+
+  // INIT
+  setPlan("basic");
+  setCreateMode("text");
+  renderGenerations();
+  renderMedia();
+</script>
 </body>
 </html>
