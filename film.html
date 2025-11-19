@@ -3,94 +3,350 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sulandra AI Studio – Short Films</title>
+  <title>Sulandra AI Studio – Short-Film Creator</title>
 
   <style>
+    :root {
+      --bg: #050816;
+      --card-bg: #0b1020;
+      --accent: #a855f7;
+      --accent-soft: rgba(168, 85, 247, 0.18);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148, 163, 184, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      color: #222;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #111827, #020617 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
-      background: #000;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
-    nav {
-      background: #222;
-      padding: 10px 0;
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 16px;
       display: flex;
-      justify-content: center;
-      gap: 30px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #f97316, #a855f7 55%, #3b82f6);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+    }
+
+    .logo-text-main { font-weight: 700; font-size: 17px; letter-spacing: 0.03em; }
+    .logo-text-sub {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+    }
+
+    nav { display: flex; gap: 14px; flex-wrap: wrap; }
     nav a {
-      color: white;
+      color: var(--text-muted);
       text-decoration: none;
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
     }
-
     nav a:hover {
-      text-decoration: underline;
+      color: var(--text-main);
+      border-color: var(--border-soft);
+      background: rgba(15, 23, 42, 0.8);
+    }
+    nav a.active {
+      color: var(--text-main);
+      background: var(--accent-soft);
+      border-color: rgba(168, 85, 247, 0.6);
     }
 
-    .section {
-      padding: 60px 20px;
-      text-align: center;
-      background: white;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 900px;
+    main { flex: 1; }
+
+    .layout {
+      max-width: 1100px;
+      margin: 26px auto 32px;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      padding: 18px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.85);
+    }
+
+    .panel h1 { font-size: 22px; margin-bottom: 6px; }
+    .panel-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+
+    label {
+      font-size: 13px;
+      color: var(--text-main);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      padding: 10px;
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
     }
 
-    h1 {
-      font-size: 32px;
+    textarea::placeholder { color: #6b7280; }
+
+    select, input[type="number"] {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .field-group { margin-bottom: 14px; }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    button {
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 25px rgba(168, 85, 247, 0.6);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(168, 85, 247, 0.8);
+      opacity: 0.97;
+    }
+
+    .note { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+    .steps {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .steps span strong { color: var(--text-main); }
+
+    .preview-header {
+      font-size: 13px;
+      color: var(--text-muted);
       margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    p {
-      font-size: 18px;
-      line-height: 1.6;
+    .preview-box {
+      border-radius: 14px;
+      border: 1px dashed var(--border-soft);
+      background: radial-gradient(circle at top left, rgba(168, 85, 247, 0.18), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.2), transparent 60%);
+      min-height: 230px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 14px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-soft);
+      padding: 10px 16px 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      background: rgba(2, 6, 23, 0.95);
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
     }
   </style>
 </head>
 
 <body>
-
   <header>
-    Sulandra AI Studio
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-circle"></div>
+        <div>
+          <div class="logo-text-main">Sulandra AI Studio</div>
+          <div class="logo-text-sub">AI Short-Film Creator</div>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="image.html">Image</a>
+        <a href="video.html">Video</a>
+        <a href="music.html">Music</a>
+        <a href="film.html" class="active">Short Films</a>
+      </nav>
+    </div>
   </header>
 
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="image.html">Image Generator</a>
-    <a href="video.html">Video Generator</a>
-    <a href="music.html">Music Generator</a>
-    <a href="film.html">Short Films</a>
-  </nav>
+  <main>
+    <section class="layout">
+      <div class="panel">
+        <h1>AI Short-Film Creator</h1>
+        <p class="panel-sub">
+          This module will orchestrate the full pipeline: script → scenes →
+          video clips → music → final edit. For now it is a high-level
+          control panel design.
+        </p>
 
-  <div class="section">
-    <h1>AI Short-Film Creator</h1>
-    <p>
-      This page will become the control center for your AI short-film pipeline:
-      script generation, scene creation, music, and automatic editing.
-    </p>
-    <p>
-      Later we will connect this to a workflow that talks to your image, video,
-      and music generators, combines everything, and produces final mini-movies.
-    </p>
-  </div>
+        <form onsubmit="event.preventDefault(); alert('Later this will trigger a multi-step pipeline: script, scenes, music, and final film rendering. For now, it is just a UI mockup.');">
+          <div class="field-group">
+            <label for="idea">Film idea / story prompt</label>
+            <textarea
+              id="idea"
+              placeholder="Example: A young nurse leaving Cameroon to work in the US, facing culture shock, but finding purpose in helping patients. Emotional, hopeful, 2-minute short film."
+            ></textarea>
+          </div>
 
+          <div class="field-row field-group">
+            <div>
+              <label for="length">Target length</label>
+              <select id="length">
+                <option>60 seconds</option>
+                <option>90 seconds</option>
+                <option>120 seconds</option>
+                <option>180 seconds</option>
+              </select>
+            </div>
+            <div>
+              <label for="mood">Overall mood</label>
+              <select id="mood">
+                <option>Emotional / inspiring</option>
+                <option>Dark / dramatic</option>
+                <option>Romantic</option>
+                <option>Action / energetic</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row field-group">
+            <div>
+              <label for="music-role">Music role</label>
+              <select id="music-role">
+                <option>Background score only</option>
+                <option>Score + vocal hooks</option>
+                <option>No music (dialogue focus)</option>
+              </select>
+            </div>
+            <div>
+              <label for="resolution">Resolution</label>
+              <select id="resolution">
+                <option>1080p</option>
+                <option>720p</option>
+                <option>4K (future)</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit">
+            Generate Short-Film Plan (UI only)
+          </button>
+          <p class="note">
+            Later this will first call a script-generation service, then schedule
+            separate jobs for image, video and music modules, and finally call
+            an editing/assembly worker.
+          </p>
+
+          <div class="steps">
+            <span><strong>Step 1:</strong> Generate script & scenes outline</span>
+            <span><strong>Step 2:</strong> Generate key visuals / shots per scene</span>
+            <span><strong>Step 3:</strong> Generate short video clips per scene</span>
+            <span><strong>Step 4:</strong> Generate music / score</span>
+            <span><strong>Step 5:</strong> Assemble into final short film file</span>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="preview-header">
+          <span>Pipeline status / output</span>
+          <span style="font-size: 11px;">
+            Status: <strong>Disconnected</strong>
+          </span>
+        </div>
+        <div class="preview-box">
+          In the full version, this panel will display the current pipeline
+          status – e.g. “Script done”, “Generating scenes”, “Rendering clips”,
+          “Mixing audio”, “Exporting final MP4”.
+          <br /><br />
+          For now, it is a concept area while you design Sulandra’s film
+          experience.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Short-film module · This will become your signature feature combining
+    image, video and music into one pipeline.
+  </footer>
 </body>
 </html>
