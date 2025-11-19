@@ -9,10 +9,10 @@
     :root {
       --bg: #050816;
       --card-bg: #0b1020;
-      --accent: #3b82f6;
-      --accent-soft: rgba(59, 130, 246, 0.16);
-      --accent2: #f97316;
-      --accent3: #a855f7;
+      --accent: #a855f7;
+      --accent-soft: rgba(168, 85, 247, 0.18);
+      --accent2: #3b82f6;
+      --accent3: #f97316;
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
       --border-soft: rgba(148, 163, 184, 0.2);
@@ -36,7 +36,7 @@
       flex-direction: column;
     }
 
-    /* -------------- HEADER + NAV -------------- */
+    /* HEADER */
 
     header {
       border-bottom: 1px solid var(--border-soft);
@@ -48,7 +48,7 @@
     }
 
     .header-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 14px 16px;
       display: flex;
@@ -68,14 +68,14 @@
       height: 32px;
       border-radius: 999px;
       background: conic-gradient(
-        from 200deg,
-        #3b82f6,
+        from 140deg,
         #a855f7,
+        #3b82f6,
         #f97316,
         #22c55e,
-        #3b82f6
+        #a855f7
       );
-      box-shadow: 0 0 18px rgba(59, 130, 246, 0.6);
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.6);
       animation: spinGlow 8s linear infinite;
     }
 
@@ -119,20 +119,20 @@
     nav a.active {
       color: var(--text-main);
       background: var(--accent-soft);
-      border-color: rgba(59, 130, 246, 0.6);
-      box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+      border-color: rgba(168, 85, 247, 0.7);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
     }
 
-    /* -------------- MAIN LAYOUT -------------- */
+    /* HERO */
 
     main {
       flex: 1;
     }
 
     .hero {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 26px auto 0;
-      padding: 0 16px 8px;
+      padding: 0 16px 10px;
     }
 
     .hero-kicker {
@@ -148,24 +148,29 @@
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 8px;
-      perspective: 800px;
     }
 
     .hero-title span {
       display: inline-block;
-      background: linear-gradient(90deg, #3b82f6, #a855f7, #f97316, #22c55e);
+      background: linear-gradient(
+        90deg,
+        #a855f7,
+        #3b82f6,
+        #f97316,
+        #22c55e,
+        #a855f7
+      );
+      background-size: 220% 220%;
       -webkit-background-clip: text;
       color: transparent;
-      text-shadow: 0 0 18px rgba(59, 130, 246, 0.5);
-      transform: rotateX(14deg) rotateY(-10deg) translateY(0);
-      transform-origin: left center;
-      animation: floatTitle 6s ease-in-out infinite alternate;
+      text-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
+      animation: shimmer 6s linear infinite;
     }
 
     .hero-sub {
       font-size: 14px;
       color: var(--text-muted);
-      max-width: 650px;
+      max-width: 800px;
       line-height: 1.6;
       margin-bottom: 14px;
     }
@@ -174,7 +179,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
 
     .hero-tag-pill {
@@ -188,14 +193,167 @@
       background: rgba(15, 23, 42, 0.9);
     }
 
-    .layout {
-      max-width: 1100px;
+    /* PLAN BAR */
+
+    .plan-bar {
+      max-width: 1200px;
+      margin: 4px auto 14px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .plan-toggle {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .plan-button {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .plan-button span.badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.2);
+    }
+
+    .plan-button.active-plan {
+      border-color: rgba(168, 85, 247, 0.9);
+      color: var(--text-main);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+      background: radial-gradient(circle at top, rgba(88, 28, 135, 0.9), #020617);
+    }
+
+    .plan-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* LAYOUT: SIDEBAR + CONTENT */
+
+    .shell {
+      max-width: 1200px;
       margin: 0 auto 32px;
       padding: 0 16px;
       display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
-      gap: 20px;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 18px;
       align-items: flex-start;
+    }
+
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      padding: 12px 10px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .menu-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .menu-icon span {
+      display: block;
+      width: 11px;
+      height: 1.6px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      margin: 1.5px 0;
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .side-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .side-link {
+      font-size: 12px;
+      padding: 7px 9px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s ease;
+    }
+
+    .side-link span.label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .side-link span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+    }
+
+    .side-link.active-section {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.6);
+      color: var(--text-main);
+    }
+
+    .side-link.active-section span.dot {
+      background: #22c55e;
+    }
+
+    .side-link small {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .panel {
@@ -210,8 +368,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
       gap: 8px;
+      margin-bottom: 10px;
     }
 
     .panel-title {
@@ -232,11 +390,11 @@
       color: var(--accent);
       padding: 4px 8px;
       border-radius: 999px;
-      border: 1px dashed rgba(59, 130, 246, 0.7);
+      border: 1px dashed rgba(168, 85, 247, 0.7);
       background: rgba(15, 23, 42, 0.9);
     }
 
-    /* -------------- FORMS & FIELDS -------------- */
+    /* FORMS */
 
     label {
       font-size: 13px;
@@ -245,26 +403,11 @@
       margin-bottom: 6px;
     }
 
-    textarea {
-      width: 100%;
-      min-height: 90px;
-      border-radius: 10px;
-      border: 1px solid var(--border-soft);
-      background: #020617;
-      color: var(--text-main);
-      padding: 10px;
-      font-size: 14px;
-      resize: vertical;
-      outline: none;
-    }
-
-    textarea::placeholder {
-      color: #6b7280;
-    }
-
+    textarea,
     select,
     input[type="number"],
-    input[type="file"] {
+    input[type="file"],
+    input[type="text"] {
       width: 100%;
       border-radius: 9px;
       border: 1px solid var(--border-soft);
@@ -275,9 +418,19 @@
       outline: none;
     }
 
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    textarea::placeholder,
+    input::placeholder {
+      color: #6b7280;
+    }
+
     input[type="file"] {
-      padding: 6px 10px;
       cursor: pointer;
+      padding: 6px 10px;
     }
 
     .field-group {
@@ -302,7 +455,21 @@
       margin-top: 4px;
     }
 
-    /* -------------- BUTTONS -------------- */
+    .small-inline {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .small-inline input[type="checkbox"] {
+      width: auto;
+      height: auto;
+      padding: 0;
+      border-radius: 4px;
+    }
 
     .btn-main {
       border-radius: 999px;
@@ -311,12 +478,12 @@
       font-weight: 600;
       border: none;
       cursor: pointer;
-      background: linear-gradient(135deg, #3b82f6, #a855f7);
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
       color: #f9fafb;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 12px 28px rgba(59, 130, 246, 0.6);
+      box-shadow: 0 12px 28px rgba(129, 140, 248, 0.6);
       transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
     }
 
@@ -334,104 +501,145 @@
 
     .btn-main:hover {
       transform: translateY(-1px);
-      box-shadow: 0 16px 36px rgba(59, 130, 246, 0.8);
+      box-shadow: 0 16px 36px rgba(129, 140, 248, 0.8);
       opacity: 0.97;
     }
 
-    .btn-ghost {
-      border-radius: 999px;
-      padding: 8px 13px;
+    /* CREATE TABS */
+
+    .create-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .create-tab-btn {
       font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
       border: 1px solid var(--border-soft);
       background: rgba(15, 23, 42, 0.9);
       color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
-    .btn-ghost span.plus {
-      width: 16px;
-      height: 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      display: inline-flex;
+    .create-tab-btn.active-create {
+      color: var(--text-main);
+      background: rgba(30, 64, 175, 0.7);
+      border-color: rgba(129, 140, 248, 0.9);
+    }
+
+    .create-mode {
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* DISABLED PANEL */
+
+    .disabled-panel {
+      position: relative;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .disabled-panel::after {
+      content: "Upgrade your plan to access this feature";
+      position: absolute;
+      inset: 0;
+      display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 11px;
+      color: #f9fafb;
+      text-align: center;
+      background: linear-gradient(
+        to bottom,
+        rgba(15, 23, 42, 0.9),
+        rgba(15, 23, 42, 0.95)
+      );
+      border-radius: 12px;
+      padding: 0 16px;
+    }
+
+    /* LISTS / MEDIA */
+
+    .list-empty {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .gen-item,
+    .media-card {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.95);
+      padding: 10px;
+      margin-bottom: 8px;
       font-size: 12px;
     }
 
-    .btn-ghost:hover {
-      color: var(--text-main);
-      border-color: rgba(148, 163, 184, 0.9);
-      background: rgba(15, 23, 42, 1);
-    }
-
-    /* -------------- PREVIEW PANEL -------------- */
-
-    .preview-header {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+    .gen-header,
+    .media-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+      margin-bottom: 4px;
     }
 
-    .status-pill {
+    .gen-title,
+    .media-title {
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .gen-meta,
+    .media-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .media-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .media-btn {
       font-size: 11px;
       padding: 3px 8px;
       border-radius: 999px;
       border: 1px solid var(--border-soft);
       background: rgba(15, 23, 42, 0.9);
-    }
-
-    .preview-box {
-      border-radius: 16px;
-      border: 1px dashed var(--border-soft);
-      background:
-        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.22), transparent 60%);
-      min-height: 230px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
       color: var(--text-muted);
-      text-align: center;
-      padding: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
     }
 
-    .preview-box strong {
+    .media-btn:hover {
       color: var(--text-main);
+      border-color: rgba(148, 163, 184, 0.9);
+      background: rgba(15, 23, 42, 1);
     }
 
-    .preview-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-      font-size: 11px;
+    .media-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.12);
+      color: #bbf7d0;
+      margin-left: 4px;
     }
 
-    .preview-slot {
-      border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      background: rgba(15, 23, 42, 0.9);
-      padding: 8px;
-      text-align: left;
-    }
-
-    .preview-slot-title {
-      font-size: 11px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    /* -------------- FOOTER -------------- */
+    /* FOOTER */
 
     footer {
       border-top: 1px solid var(--border-soft);
@@ -442,7 +650,7 @@
       background: rgba(2, 6, 23, 0.97);
     }
 
-    /* -------------- ANIMATIONS -------------- */
+    /* ANIMATIONS */
 
     @keyframes spinGlow {
       0% { transform: rotate(0deg); }
@@ -450,23 +658,23 @@
     }
 
     @keyframes glowPulse {
-      0%, 100% { opacity: 0.7; text-shadow: 0 0 6px rgba(250, 204, 21, 0.3); }
-      50% { opacity: 1; text-shadow: 0 0 16px rgba(250, 204, 21, 0.7); }
+      0%, 100% { opacity: 0.7; text-shadow: 0 0 6px rgba(244, 114, 182, 0.3); }
+      50% { opacity: 1; text-shadow: 0 0 16px rgba(244, 114, 182, 0.7); }
     }
 
-    @keyframes floatTitle {
+    @keyframes shimmer {
       0% {
-        transform: rotateX(14deg) rotateY(-10deg) translateY(0);
-        text-shadow: 0 0 18px rgba(59, 130, 246, 0.7);
+        background-position: 0% 50%;
+        text-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
       }
       100% {
-        transform: rotateX(10deg) rotateY(6deg) translateY(-3px);
-        text-shadow: 0 0 26px rgba(168, 85, 247, 0.8);
+        background-position: 200% 50%;
+        text-shadow: 0 0 22px rgba(59, 130, 246, 0.8);
       }
     }
 
-    @media (max-width: 900px) {
-      .layout {
+    @media (max-width: 960px) {
+      .shell {
         grid-template-columns: minmax(0, 1fr);
       }
     }
@@ -476,11 +684,9 @@
         flex-direction: column;
         align-items: flex-start;
       }
-
       nav {
         justify-content: flex-start;
       }
-
       .hero-title {
         font-size: 24px;
       }
@@ -489,308 +695,958 @@
 </head>
 
 <body>
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <div class="logo-circle"></div>
-        <div>
-          <div class="logo-text-main">Sulandra AI Studio</div>
-          <div class="logo-text-sub">Image · Edit · Remix · Storyboards</div>
-        </div>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-circle"></div>
+      <div>
+        <div class="logo-text-main">Sulandra AI Studio</div>
+        <div class="logo-text-sub">Image · Edit · Style · Outfit</div>
       </div>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="image.html" class="active">Image</a>
-        <a href="video.html">Video</a>
-        <a href="music.html">Music</a>
-        <a href="film.html">Short Films</a>
-        <a href="education.html">Explore</a>
-      </nav>
     </div>
-  </header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="image.html" class="active">Image</a>
+      <a href="video.html">Video</a>
+      <a href="music.html">Music</a>
+      <a href="film.html">Short Films</a>
+      <a href="education.html">Explore</a>
+    </nav>
+  </div>
+</header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-kicker">Image Lab</div>
-      <h1 class="hero-title">
-        Design, upload and <span>rebuild your visuals with AI</span>
-      </h1>
-      <p class="hero-sub">
-        Use Sulandra Image Lab to generate new images from text, upload a
-        reference image for outfit changes or edits, or upload scripts and
-        storyboards (PDFs) to turn scenes into visual frames. This is the
-        control room – your future backend will connect to these tools.
-      </p>
-      <div class="hero-tags">
-        <div class="hero-tag-pill">Text → Image</div>
-        <div class="hero-tag-pill">Image → Image (Edit / Change outfits)</div>
-        <div class="hero-tag-pill">Script / PDF → Storyboard Frames</div>
+<main>
+  <section class="hero">
+    <div class="hero-kicker">Image Lab</div>
+    <h1 class="hero-title">
+      Recreate, restyle and <span>rebuild images</span> with Sulandra
+    </h1>
+    <p class="hero-sub">
+      Upload a reference, write a prompt, or drop a script page for storyboards.
+      Your plan (Basic, Creator, Pro) controls which models you can use, how
+      sharp your outputs are, and how watermarks behave.
+    </p>
+    <div class="hero-tags">
+      <div class="hero-tag-pill">Text → Image</div>
+      <div class="hero-tag-pill">Image → Variation / Outfit</div>
+      <div class="hero-tag-pill">Image editing / inpaint</div>
+      <div class="hero-tag-pill">AI prompt & layout assistance</div>
+    </div>
+  </section>
+
+  <!-- PLAN SELECTION -->
+  <section class="plan-bar">
+    <div class="plan-toggle">
+      <button type="button" class="plan-button active-plan" data-plan="basic" onclick="setPlan('basic')">
+        BASIC
+        <span class="badge">Watermark · SD</span>
+      </button>
+      <button type="button" class="plan-button" data-plan="creator" onclick="setPlan('creator')">
+        CREATOR
+        <span class="badge">SD / HD / UHD</span>
+      </button>
+      <button type="button" class="plan-button" data-plan="pro" onclick="setPlan('pro')">
+        PRO
+        <span class="badge">All features · 4K</span>
+      </button>
+    </div>
+    <div class="plan-note" id="plan-note">
+      Basic: v1 only, SD output, watermark required. Advanced style tools are limited.
+    </div>
+  </section>
+
+  <section class="shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="menu-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="sidebar-title">Image Lab</div>
       </div>
-    </section>
+      <nav class="side-nav">
+        <button class="side-link active-section" data-section="create" onclick="setActiveSection('create')">
+          <span class="label">
+            <span class="dot"></span>
+            Create
+          </span>
+          <small>Text / refs / edits</small>
+        </button>
+        <button class="side-link" data-section="generations" onclick="setActiveSection('generations')">
+          <span class="label">
+            <span class="dot"></span>
+            My Generations
+          </span>
+          <small>Per session</small>
+        </button>
+        <button class="side-link" data-section="assist" onclick="setActiveSection('assist')">
+          <span class="label">
+            <span class="dot"></span>
+            AI Image Assistance
+          </span>
+          <small>Prompts & layouts</small>
+        </button>
+        <button class="side-link" data-section="media" onclick="setActiveSection('media')">
+          <span class="label">
+            <span class="dot"></span>
+            Media · Community
+          </span>
+          <small>Feed · likes</small>
+        </button>
+      </nav>
+    </aside>
 
-    <section class="layout">
-      <!-- LEFT: FORMS / MODES -->
-      <div class="panel">
+    <!-- CONTENT -->
+    <section class="content">
+      <!-- CREATE SECTION -->
+      <section id="create-section" class="panel">
         <div class="panel-header">
-          <div class="panel-title">AI Image Workflows</div>
-          <div class="pill-label">Phase 1 · UI only</div>
+          <div class="panel-title">Create · Image</div>
+          <div class="pill-label">Plan-aware · UI only</div>
         </div>
         <p class="panel-sub">
-          Choose how you want to work: pure text prompts, upload images for
-          edits, or upload documents with scenes that the AI will later use
-          to create storyboards and visual plans.
+          Choose how you want to create images. Upload a model, ask for a new
+          pose or outfit, edit an existing picture, or use a style reference
+          image. Your subscription decides engine version, quality and
+          watermark options.
         </p>
 
-        <!-- MODE 1: TEXT TO IMAGE -->
-        <form onsubmit="event.preventDefault(); handleTextToImage();">
-          <div class="field-group">
-            <label for="prompt-text">
-              1. Prompt only – generate a brand new image
-            </label>
-            <textarea
-              id="prompt-text"
-              placeholder="Example: A beautiful African woman in a white dress, studio lighting, full body 9:16, 4K, soft shadows, confident pose"
-            ></textarea>
-            <p class="note">
-              Later, this will send your prompt and settings to your image
-              generation model running on Runpod.
-            </p>
-          </div>
+        <!-- Engine version -->
+        <div class="field-group">
+          <label for="engine-version">Engine version</label>
+          <select id="engine-version" onchange="handleVersionChange()">
+            <option value="v1">v1 – Stable (all plans)</option>
+            <option value="v2">v2 – Enhanced (Creator & Pro)</option>
+            <option value="v3">v3 – Experimental (Pro only)</option>
+          </select>
+          <p class="note">
+            In the real backend, each version can map to a different image model
+            or checkpoint.
+          </p>
+        </div>
 
-          <div class="field-row field-group">
-            <div>
-              <label for="ratio">Aspect ratio</label>
-              <select id="ratio">
-                <option value="9:16">9:16 – Vertical (TikTok / Reels)</option>
-                <option value="4:5">4:5 – Portrait</option>
-                <option value="1:1">1:1 – Square</option>
-                <option value="16:9">16:9 – Landscape</option>
-              </select>
-            </div>
-            <div>
-              <label for="steps">Quality / Steps</label>
-              <input id="steps" type="number" value="30" min="10" max="60" />
-            </div>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="style">Style preset</label>
-              <select id="style">
-                <option>Realistic model</option>
-                <option>Studio fashion</option>
-                <option>Cinematic portrait</option>
-                <option>Album cover art</option>
-                <option>Concept art</option>
-              </select>
-            </div>
-            <div>
-              <label for="seed">Seed (optional)</label>
-              <input id="seed" type="number" placeholder="Random if empty" />
-            </div>
-          </div>
-
-          <button type="submit" class="btn-main">
-            <span class="plus">+</span>
-            Generate from text (UI only)
+        <!-- Create tabs -->
+        <div class="create-tabs">
+          <button
+            type="button"
+            class="create-tab-btn active-create"
+            data-mode-btn="text"
+            onclick="setCreateMode('text')"
+          >
+            Text → Image
           </button>
-        </form>
+          <button
+            type="button"
+            class="create-tab-btn"
+            data-mode-btn="variation"
+            onclick="setCreateMode('variation')"
+          >
+            Image → Variation / Outfit
+          </button>
+          <button
+            type="button"
+            class="create-tab-btn"
+            data-mode-btn="edit"
+            onclick="setCreateMode('edit')"
+          >
+            Image → Edit / Inpaint
+          </button>
+          <button
+            type="button"
+            class="create-tab-btn"
+            data-mode-btn="style"
+            onclick="setCreateMode('style')"
+          >
+            Style reference (image)
+          </button>
+        </div>
 
-        <hr style="border:none;border-top:1px solid var(--border-soft); margin:16px 0;" />
+        <!-- Text → Image -->
+        <div
+          class="create-mode"
+          data-mode="text"
+          data-min-plan="basic"
+        >
+          <form onsubmit="event.preventDefault(); handleTextToImage();">
+            <div class="field-group">
+              <label for="text-prompt">
+                Text prompt
+              </label>
+              <textarea
+                id="text-prompt"
+                placeholder="Example: Full-body portrait of a confident Black woman with huge curvy hips, white skirt, studio lighting, 4K, clean background."
+              ></textarea>
+              <p class="note">
+                This is your classic text-to-image flow. Later, you’ll send this
+                to a /api/image/text-to-image route with the chosen engine version.
+              </p>
+            </div>
 
-        <!-- MODE 2: IMAGE + PROMPT -->
-        <form onsubmit="event.preventDefault(); handleImageEdit();">
+            <div class="field-row field-group">
+              <div>
+                <label for="text-style">Visual style</label>
+                <select id="text-style">
+                  <option>Photorealistic</option>
+                  <option>Editorial fashion</option>
+                  <option>3D render / stylized</option>
+                  <option>Digital art / illustration</option>
+                </select>
+              </div>
+              <div>
+                <label for="text-ratio">Aspect ratio</label>
+                <select id="text-ratio">
+                  <option value="9:16">9:16 – Vertical</option>
+                  <option value="16:9">16:9 – Horizontal</option>
+                  <option value="1:1">1:1 – Square</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="text-quality">Output quality</label>
+                <select id="text-quality" class="quality-select"></select>
+              </div>
+              <div>
+                <label for="text-visibility">Visibility</label>
+                <select id="text-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="text-watermark">Watermark</label>
+                <select id="text-watermark" class="watermark-select"></select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="text-add-media" />
+              <label for="text-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Generate image from text (UI only)
+            </button>
+          </form>
+        </div>
+
+        <!-- Image → Variation / Outfit -->
+        <div
+          class="create-mode hidden"
+          data-mode="variation"
+          data-min-plan="basic"
+        >
+          <form onsubmit="event.preventDefault(); handleImageVariation();">
+            <div class="field-group">
+              <label>Upload reference image</label>
+              <input id="variation-file" type="file" accept="image/*" />
+              <p class="note">
+                Later your backend can lock identity / pose and only change
+                outfit, environment, expression and styling.
+              </p>
+            </div>
+
+            <div class="field-group">
+              <label for="variation-prompt">
+                What should change?
+              </label>
+              <textarea
+                id="variation-prompt"
+                placeholder="Example: Same woman, same pose, huge curvy hips, white skirt instead of black, bright studio, 4K."
+              ></textarea>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="variation-quality">Output quality</label>
+                <select id="variation-quality" class="quality-select"></select>
+              </div>
+              <div>
+                <label for="variation-visibility">Visibility</label>
+                <select id="variation-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="variation-watermark">Watermark</label>
+                <select id="variation-watermark" class="watermark-select"></select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="variation-add-media" />
+              <label for="variation-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Recreate / change outfit (UI only)
+            </button>
+          </form>
+        </div>
+
+        <!-- Image → Edit / Inpaint -->
+        <div
+          class="create-mode hidden"
+          data-mode="edit"
+          data-min-plan="basic"
+        >
+          <form onsubmit="event.preventDefault(); handleImageEdit();">
+            <div class="field-group">
+              <label>Upload image to edit</label>
+              <input id="edit-file" type="file" accept="image/*" />
+              <p class="note">
+                Later you can add masking UI so users paint the area to change;
+                here we only capture the prompt.
+              </p>
+            </div>
+
+            <div class="field-group">
+              <label for="edit-prompt">
+                Describe the edit clearly
+              </label>
+              <textarea
+                id="edit-prompt"
+                placeholder="Example: Keep pose and hips, change skirt to white, clean hair edges, smooth skin, keep same background."
+              ></textarea>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="edit-quality">Output quality</label>
+                <select id="edit-quality" class="quality-select"></select>
+              </div>
+              <div>
+                <label for="edit-visibility">Visibility</label>
+                <select id="edit-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="edit-watermark">Watermark</label>
+                <select id="edit-watermark" class="watermark-select"></select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="edit-add-media" />
+              <label for="edit-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Apply edit / inpaint (UI only)
+            </button>
+          </form>
+        </div>
+
+        <!-- Style reference (image) – Creator & Pro -->
+        <div
+          class="create-mode hidden"
+          data-mode="style"
+          data-min-plan="creator"
+        >
+          <form onsubmit="event.preventDefault(); handleStyleReference();">
+            <div class="field-group">
+              <label>Upload style reference image</label>
+              <input id="style-file" type="file" accept="image/*" />
+              <p class="note">
+                Later this mode can analyze color, lighting, composition and vibe,
+                then re-apply it to new prompts or subjects.
+              </p>
+            </div>
+
+            <div class="field-group">
+              <label for="style-prompt">
+                What should Sulandra create in this style?
+              </label>
+              <textarea
+                id="style-prompt"
+                placeholder="Example: Use this fashion photo style and create a new full-body portrait of my model, white skirt, same lighting."
+              ></textarea>
+            </div>
+
+            <div class="field-row-3 field-group">
+              <div>
+                <label for="style-quality">Output quality</label>
+                <select id="style-quality" class="quality-select"></select>
+              </div>
+              <div>
+                <label for="style-visibility">Visibility</label>
+                <select id="style-visibility" class="visibility-select">
+                  <option value="private">Private</option>
+                  <option value="unlisted">Unlisted</option>
+                  <option value="public">Public in Media</option>
+                </select>
+              </div>
+              <div>
+                <label for="style-watermark">Watermark</label>
+                <select id="style-watermark" class="watermark-select"></select>
+              </div>
+            </div>
+
+            <div class="small-inline">
+              <input type="checkbox" id="style-add-media" />
+              <label for="style-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            </div>
+
+            <button type="submit" class="btn-main" style="margin-top: 8px;">
+              <span class="plus">+</span>
+              Generate in this style (UI only)
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- MY GENERATIONS -->
+      <section id="generations-section" class="panel hidden">
+        <div class="panel-header">
+          <div class="panel-title">My Generations · Image</div>
+          <div class="pill-label">Session only · Demo</div>
+        </div>
+        <p class="panel-sub">
+          Every time you run a Create flow, a record appears here for this
+          browser session. In the real platform, this will connect to your user
+          account and storage.
+        </p>
+        <div id="my-generations-list">
+          <div class="list-empty">
+            No generations yet. Use any of the Create modes first.
+          </div>
+        </div>
+      </section>
+
+      <!-- AI IMAGE ASSISTANCE -->
+      <section id="assist-section" class="panel hidden">
+        <div class="panel-header">
+          <div class="panel-title">AI Image Assistance</div>
+          <div class="pill-label">Prompts · Layouts · Storyboards</div>
+        </div>
+        <p class="panel-sub">
+          This area is for planning: help users craft strong prompts, define
+          poses, camera framing, or turn a script into storyboard panels before
+          they generate anything.
+        </p>
+
+        <form onsubmit="event.preventDefault(); handleImageAssist();">
           <div class="field-group">
-            <label>
-              2. Upload an image + prompt – edit, restyle or change outfits
-            </label>
-            <input
-              id="image-file"
-              type="file"
-              accept="image/*"
-            />
+            <label>Upload reference / moodboard (optional)</label>
+            <input id="assist-file" type="file" accept="image/*,.pdf" />
             <p class="note">
-              Example use cases: change dress color, adjust pose slightly, add
-              jewelry, generate alternate outfits, different background, etc.
+              Could be a single photo, collage, PDF moodboard or frame from a video.
             </p>
           </div>
 
           <div class="field-group">
-            <label for="prompt-image">
-              Describe the edit you want
+            <label for="assist-prompt">
+              What should Sulandra help you design?
             </label>
             <textarea
-              id="prompt-image"
-              placeholder="Example: Keep the same woman and pose but change the dress to a long white gown, add soft backlight and a pastel studio background."
+              id="assist-prompt"
+              placeholder="Example: Help me design 4 vertical images for a dance challenge: same model, huge curvy hips, different outfits and simple colorful backgrounds."
             ></textarea>
           </div>
 
           <div class="field-row-3 field-group">
             <div>
-              <label for="edit-strength">Edit strength</label>
-              <select id="edit-strength">
-                <option>Subtle tweaks</option>
-                <option>Medium changes</option>
-                <option>Strong transformation</option>
+              <label for="assist-focus">Focus</label>
+              <select id="assist-focus">
+                <option>Improve prompt</option>
+                <option>Storyboard sequence</option>
+                <option>Pose & camera guide</option>
+                <option>Outfit & styling ideas</option>
               </select>
             </div>
             <div>
-              <label for="keep-face">Keep original face</label>
-              <select id="keep-face">
-                <option>Yes, keep face</option>
-                <option>Allow changes</option>
+              <label for="assist-tone">Style / tone</label>
+              <select id="assist-tone">
+                <option>Photorealistic studio</option>
+                <option>Afrobeats / club visual</option>
+                <option>Soft gospel / worship</option>
+                <option>High fashion editorial</option>
               </select>
             </div>
             <div>
-              <label for="upscale">Upscale</label>
-              <select id="upscale">
-                <option>No</option>
-                <option>2x upscale</option>
-                <option>4x upscale</option>
+              <label for="assist-visibility">Visibility</label>
+              <select id="assist-visibility">
+                <option value="private">Private</option>
+                <option value="unlisted">Unlisted</option>
+                <option value="public">Public in Media</option>
               </select>
             </div>
           </div>
 
-          <button type="submit" class="btn-main">
-            <span class="plus">+</span>
-            Upload image & edit (UI only)
-          </button>
-        </form>
-
-        <hr style="border:none;border-top:1px solid var(--border-soft); margin:16px 0;" />
-
-        <!-- MODE 3: SCRIPT / PDF TO STORYBOARD -->
-        <form onsubmit="event.preventDefault(); handleScriptToImages();">
-          <div class="field-group">
-            <label>
-              3. Upload script / PDF – generate storyboards & key frames
-            </label>
-            <input
-              id="script-file"
-              type="file"
-              accept=".pdf,.txt,.doc,.docx"
-            />
-            <p class="note">
-              Later, your backend can read the script and ask your image model
-              to generate one frame per scene or per key moment – perfect for
-              films, music videos and social media stories.
-            </p>
+          <div class="small-inline">
+            <input type="checkbox" id="assist-add-media" />
+            <label for="assist-add-media" style="margin:0;">Share a summary to Media (no full file)</label>
           </div>
 
-          <div class="field-group">
-            <label for="prompt-script">
-              Optional: describe the visual style for the storyboard
-            </label>
-            <textarea
-              id="prompt-script"
-              placeholder="Example: Cinematic, moody lighting, shallow depth of field, handheld camera feel, 9:16 vertical frames."
-            ></textarea>
-          </div>
-
-          <button type="submit" class="btn-main">
+          <button type="submit" class="btn-main" style="margin-top: 8px;">
             <span class="plus">+</span>
-            Upload script & plan visuals (UI only)
+            Ask AI for image guidance (UI only)
           </button>
         </form>
 
         <p class="note" style="margin-top: 10px;">
-          All upload actions are placeholders for now. They do not send files
-          anywhere yet – we will connect them to your backend API and Runpod
-          later.
+          In the real build, this section will show prompt suggestions, pose
+          descriptions, and storyboard notes returned from your backend model.
         </p>
-      </div>
+      </section>
 
-      <!-- RIGHT: PREVIEW & STATUS -->
-      <div class="panel">
+      <!-- MEDIA SECTION -->
+      <section id="media-section" class="panel hidden">
         <div class="panel-header">
-          <div class="panel-title">Preview & job status</div>
-          <div class="status-pill">
-            Status: <span style="color:#f97316;">Frontend only</span>
-          </div>
+          <div class="panel-title">Media · Community Image Feed</div>
+          <div class="pill-label">Likes · Comments (UI)</div>
         </div>
         <p class="panel-sub">
-          When your backend is ready, this side will show thumbnails, recent
-          jobs and links to download final images.
+          Any public image generation with “Add to Media” checked will appear
+          here. For now this is local to your browser, just to preview how the
+          community feed will feel.
         </p>
-
-        <div class="preview-box">
-          <div>
-            <strong>Nothing generated yet.</strong>
-            <br /><br />
-            Use any of the workflows on the left:
-            <br />
-            • Text → Image  
-            • Image + prompt → Edited / restyled image  
-            • Script / PDF → Storyboard frames
-            <br /><br />
-            Here you’ll eventually see:
-            <div class="preview-grid">
-              <div class="preview-slot">
-                <div class="preview-slot-title">Latest text prompt image</div>
-                <div>Thumbnail + “Download”</div>
-              </div>
-              <div class="preview-slot">
-                <div class="preview-slot-title">Latest image edit</div>
-                <div>Before / After view</div>
-              </div>
-              <div class="preview-slot">
-                <div class="preview-slot-title">Latest storyboard</div>
-                <div>Scene 1 · Scene 2 · Scene 3…</div>
-              </div>
-              <div class="preview-slot">
-                <div class="preview-slot-title">Queue status</div>
-                <div>Jobs in progress when connected to Runpod.</div>
-              </div>
-            </div>
+        <div id="media-feed">
+          <div class="list-empty">
+            No public posts yet. Make a generation public and add it to Media
+            from the Create tab.
           </div>
         </div>
-
-        <div style="margin-top: 12px; font-size: 11px; color: var(--text-muted);">
-          Tip: later, each button on the left can call a different API route,
-          for example:
-          <br />
-          • <code>/api/image/text-to-image</code>  
-          • <code>/api/image/edit</code>  
-          • <code>/api/image/storyboard-from-script</code>
-        </div>
-      </div>
+      </section>
     </section>
-  </main>
+  </section>
+</main>
 
-  <footer>
-    Image Lab · Next steps: build backend endpoints for text, image-edit and script-to-storyboard,
-    then connect them to this UI.
-  </footer>
+<footer>
+  Image Lab · Plan-based access (Basic / Creator / Pro), quality control,
+  watermark logic, My Generations and Media feed UI are ready. Next step:
+  connect to real models and storage.
+</footer>
 
-  <script>
-    // Placeholder handlers: these show how flows will connect later.
-    function handleTextToImage() {
-      alert(
-        "Text → Image flow selected. In the future, this will send your prompt and settings to your image backend."
-      );
+<script>
+  let currentPlan = "basic";
+  let myGenerations = [];
+  let mediaFeed = [];
+
+  const planRank = { basic: 1, creator: 2, pro: 3 };
+
+  function setPlan(plan) {
+    currentPlan = plan;
+    document.querySelectorAll(".plan-button").forEach(btn => {
+      btn.classList.toggle("active-plan", btn.dataset.plan === plan);
+    });
+
+    const note = document.getElementById("plan-note");
+    if (plan === "basic") {
+      note.textContent =
+        "Basic: v1 only, SD output, watermark required. Advanced style tools are limited.";
+    } else if (plan === "creator") {
+      note.textContent =
+        "Creator: v1 & v2, SD / HD / UHD, watermark optional, access to style-reference mode.";
+    } else {
+      note.textContent =
+        "Pro: v1 / v2 / v3, SD / HD / UHD / 4K, full watermark control, all tools unlocked.";
     }
 
-    function handleImageEdit() {
-      const fileInput = document.getElementById("image-file");
-      if (!fileInput.files.length) {
-        alert("Please choose an image to upload first.");
-        return;
+    applyPlanGating();
+    configureQualitySelects();
+    configureWatermarkSelects();
+  }
+
+  function handleVersionChange() {
+    const select = document.getElementById("engine-version");
+    const value = select.value;
+    if (value === "v2" && planRank[currentPlan] < planRank["creator"]) {
+      alert("v2 is available for Creator and Pro plans. You are on Basic, staying on v1.");
+      select.value = "v1";
+      return;
+    }
+    if (value === "v3" && currentPlan !== "pro") {
+      alert("v3 is available for Pro plan only. Staying on v1 for this plan.");
+      select.value = "v1";
+      return;
+    }
+  }
+
+  function getEngineVersion() {
+    return document.getElementById("engine-version").value;
+  }
+
+  function applyPlanGating() {
+    document.querySelectorAll(".create-mode").forEach(el => {
+      const minPlan = el.dataset.minPlan || "basic";
+      if (planRank[currentPlan] < planRank[minPlan]) {
+        el.classList.add("disabled-panel");
+      } else {
+        el.classList.remove("disabled-panel");
       }
-      alert(
-        "Image + Prompt flow selected. Later, this will upload the image and edit instructions to your AI model for outfit changes, retouching, etc."
-      );
-    }
+    });
+  }
 
-    function handleScriptToImages() {
-      const fileInput = document.getElementById("script-file");
-      if (!fileInput.files.length) {
-        alert("Please choose a script or PDF to upload first.");
-        return;
+  function configureQualitySelects() {
+    document.querySelectorAll(".quality-select").forEach(sel => {
+      let optionsHtml = "";
+      if (currentPlan === "basic") {
+        optionsHtml = `<option value="sd">SD (Basic)</option>`;
+      } else if (currentPlan === "creator") {
+        optionsHtml = `
+          <option value="sd">SD</option>
+          <option value="hd">HD</option>
+          <option value="uhd">UHD</option>
+        `;
+      } else {
+        optionsHtml = `
+          <option value="sd">SD</option>
+          <option value="hd">HD</option>
+          <option value="uhd">UHD</option>
+          <option value="4k">4K</option>
+        `;
       }
-      alert(
-        "Script / PDF → Storyboard flow selected. In the future, this will read your script and generate key visual frames."
-      );
+      sel.innerHTML = optionsHtml;
+    });
+  }
+
+  function configureWatermarkSelects() {
+    document.querySelectorAll(".watermark-select").forEach(sel => {
+      let optionsHtml = "";
+      if (currentPlan === "basic") {
+        optionsHtml = `<option value="on">Watermark ON (Basic)</option>`;
+      } else if (currentPlan === "creator") {
+        optionsHtml = `
+          <option value="on">Watermark ON</option>
+          <option value="off">Watermark OFF (may be limited)</option>
+        `;
+      } else {
+        optionsHtml = `
+          <option value="on">Watermark ON</option>
+          <option value="off">Watermark OFF</option>
+        `;
+      }
+      sel.innerHTML = optionsHtml;
+    });
+  }
+
+  function setActiveSection(sectionId) {
+    document.querySelectorAll(".side-link").forEach(btn => {
+      btn.classList.toggle("active-section", btn.dataset.section === sectionId);
+    });
+
+    document.getElementById("create-section").classList.add("hidden");
+    document.getElementById("generations-section").classList.add("hidden");
+    document.getElementById("assist-section").classList.add("hidden");
+    document.getElementById("media-section").classList.add("hidden");
+
+    document.getElementById(sectionId + "-section").classList.remove("hidden");
+  }
+
+  function setCreateMode(mode) {
+    document.querySelectorAll(".create-tab-btn").forEach(btn => {
+      btn.classList.toggle("active-create", btn.dataset.modeBtn === mode);
+    });
+    document.querySelectorAll(".create-mode").forEach(panel => {
+      panel.classList.toggle("hidden", panel.dataset.mode !== mode);
+    });
+  }
+
+  function getCommonOutputSettings(prefix) {
+    const quality = document.getElementById(prefix + "-quality")?.value || "sd";
+    const visibility = document.getElementById(prefix + "-visibility")?.value || "private";
+    const watermark = document.getElementById(prefix + "-watermark")?.value || "on";
+    const addToMedia = document.getElementById(prefix + "-add-media")?.checked || false;
+    return { quality, visibility, watermark, addToMedia };
+  }
+
+  function addGeneration(entry) {
+    myGenerations.unshift(entry);
+    renderGenerations();
+    if (entry.addToMedia && entry.visibility === "public") {
+      mediaFeed.unshift({
+        title: entry.title,
+        type: entry.type,
+        plan: entry.plan,
+        version: entry.version,
+        quality: entry.quality,
+        likes: 0,
+        comments: 0,
+        visibility: entry.visibility
+      });
+      renderMedia();
     }
-  </script>
+  }
+
+  function renderGenerations() {
+    const container = document.getElementById("my-generations-list");
+    if (!myGenerations.length) {
+      container.innerHTML = `
+        <div class="list-empty">
+          No generations yet. Use any of the Create modes first.
+        </div>
+      `;
+      return;
+    }
+    container.innerHTML = myGenerations
+      .map((g, idx) => `
+        <div class="gen-item">
+          <div class="gen-header">
+            <div class="gen-title">${g.title}</div>
+            <div class="gen-meta">#${myGenerations.length - idx}</div>
+          </div>
+          <div class="gen-meta">
+            Type: ${g.type} · Plan: ${g.plan.toUpperCase()} · Version: ${g.version.toUpperCase()} · Quality: ${g.quality.toUpperCase()} · Visibility: ${g.visibility}
+          </div>
+          <div class="gen-meta">
+            Notes: ${g.description || "—"}
+          </div>
+        </div>
+      `)
+      .join("");
+  }
+
+  function renderMedia() {
+    const container = document.getElementById("media-feed");
+    if (!mediaFeed.length) {
+      container.innerHTML = `
+        <div class="list-empty">
+          No public posts yet. Make a generation public and add it to Media from the Create tab.
+        </div>
+      `;
+      return;
+    }
+    container.innerHTML = mediaFeed
+      .map((m, idx) => `
+        <div class="media-card">
+          <div class="media-header">
+            <div class="media-title">${m.title}</div>
+            <div class="media-meta">#${mediaFeed.length - idx} · ${m.type}</div>
+          </div>
+          <div class="media-meta">
+            Plan: ${m.plan.toUpperCase()} · Version: ${m.version.toUpperCase()} · Quality: ${m.quality.toUpperCase()}
+            <span class="media-badge">Public</span>
+          </div>
+          <div class="media-actions">
+            <button type="button" class="media-btn" onclick="likePost(${idx})">
+              ❤️ Like (${m.likes})
+            </button>
+            <button type="button" class="media-btn" onclick="commentPost(${idx})">
+              💬 Comment (${m.comments})
+            </button>
+          </div>
+        </div>
+      `)
+      .join("");
+  }
+
+  function likePost(index) {
+    mediaFeed[index].likes += 1;
+    renderMedia();
+  }
+
+  function commentPost(index) {
+    mediaFeed[index].comments += 1;
+    alert("In the real app this would open a comment box. For now, we just increase the comment count.");
+    renderMedia();
+  }
+
+  function modeLocked(modeName) {
+    const panel = document.querySelector(\`.create-mode[data-mode="\${modeName}"]\`);
+    return panel && panel.classList.contains("disabled-panel");
+  }
+
+  // ---- CREATE HANDLERS ----
+
+  function handleTextToImage() {
+    if (modeLocked("text")) {
+      alert("This feature is locked for your current plan.");
+      return;
+    }
+    const prompt = document.getElementById("text-prompt").value.trim();
+    if (!prompt) {
+      alert("Please enter a text prompt.");
+      return;
+    }
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("text");
+
+    alert(
+      "Text → Image (preview)\\n\\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
+      "- Version: " + version.toUpperCase() + "\\n" +
+      "- Quality: " + quality.toUpperCase() + "\\n" +
+      "- Visibility: " + visibility + "\\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\\n\\n" +
+      "Later this will send your prompt to your image model."
+    );
+
+    addGeneration({
+      title: "Text image",
+      type: "Text → Image",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt.slice(0, 90) + (prompt.length > 90 ? "..." : ""),
+      addToMedia
+    });
+  }
+
+  function handleImageVariation() {
+    if (modeLocked("variation")) {
+      alert("This feature is locked for your current plan.");
+      return;
+    }
+    const file = document.getElementById("variation-file").files[0];
+    if (!file) {
+      alert("Please upload a reference image.");
+      return;
+    }
+    const prompt = document.getElementById("variation-prompt").value.trim();
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("variation");
+
+    alert(
+      "Image → Variation / Outfit (preview)\\n\\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
+      "- Version: " + version.toUpperCase() + "\\n" +
+      "- File: " + file.name + "\\n" +
+      "- Quality: " + quality.toUpperCase() + "\\n" +
+      "- Visibility: " + visibility + "\\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\\n\\n" +
+      "Later this will call your variation / outfit backend."
+    );
+
+    addGeneration({
+      title: "Variation (" + file.name + ")",
+      type: "Image → Variation / Outfit",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Variation / outfit change.",
+      addToMedia
+    });
+  }
+
+  function handleImageEdit() {
+    if (modeLocked("edit")) {
+      alert("This feature is locked for your current plan.");
+      return;
+    }
+    const file = document.getElementById("edit-file").files[0];
+    if (!file) {
+      alert("Please upload an image to edit.");
+      return;
+    }
+    const prompt = document.getElementById("edit-prompt").value.trim();
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("edit");
+
+    alert(
+      "Image → Edit / Inpaint (preview)\\n\\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
+      "- Version: " + version.toUpperCase() + "\\n" +
+      "- File: " + file.name + "\\n" +
+      "- Quality: " + quality.toUpperCase() + "\\n" +
+      "- Visibility: " + visibility + "\\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\\n\\n" +
+      "Later this will send your edit request to your inpaint backend."
+    );
+
+    addGeneration({
+      title: "Edit (" + file.name + ")",
+      type: "Image → Edit / Inpaint",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Image edit / inpaint.",
+      addToMedia
+    });
+  }
+
+  function handleStyleReference() {
+    if (modeLocked("style")) {
+      alert("Style reference is available for Creator and Pro plans.");
+      return;
+    }
+    const file = document.getElementById("style-file").files[0];
+    if (!file) {
+      alert("Please upload a style reference image.");
+      return;
+    }
+    const prompt = document.getElementById("style-prompt").value.trim();
+    const version = getEngineVersion();
+    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("style");
+
+    alert(
+      "Style reference (preview)\\n\\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
+      "- Version: " + version.toUpperCase() + "\\n" +
+      "- File: " + file.name + "\\n" +
+      "- Quality: " + quality.toUpperCase() + "\\n" +
+      "- Visibility: " + visibility + "\\n" +
+      "- Watermark: " + watermark.toUpperCase() + "\\n\\n" +
+      "Later this will analyze style and generate new images in this look."
+    );
+
+    addGeneration({
+      title: "Style reference (" + file.name + ")",
+      type: "Style reference (image)",
+      plan: currentPlan,
+      version,
+      quality,
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "New image in style of reference.",
+      addToMedia
+    });
+  }
+
+  // AI Image Assistance handler
+  function handleImageAssist() {
+    const file = document.getElementById("assist-file").files[0];
+    const prompt = document.getElementById("assist-prompt").value.trim();
+    if (!file && !prompt) {
+      alert("Upload a reference or describe what you need help with.");
+      return;
+    }
+    const focus = document.getElementById("assist-focus").value;
+    const tone = document.getElementById("assist-tone").value;
+    const visibility = document.getElementById("assist-visibility").value;
+    const addToMedia = document.getElementById("assist-add-media").checked;
+
+    alert(
+      "AI Image Assistance (preview)\\n\\n" +
+      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
+      "- File: " + (file ? file.name : "none") + "\\n" +
+      "- Focus: " + focus + "\\n" +
+      "- Tone: " + tone + "\\n" +
+      "- Visibility: " + visibility + "\\n\\n" +
+      "Later this will send your request to an AI assistant that returns prompts, poses and layouts."
+    );
+
+    addGeneration({
+      title: "Image assist (" + focus + ")",
+      type: "Image assistance",
+      plan: currentPlan,
+      version: "n/a",
+      quality: "n/a",
+      visibility,
+      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Guidance request.",
+      addToMedia
+    });
+  }
+
+  // INIT
+  setPlan("basic");
+  setCreateMode("text");
+  renderGenerations();
+  renderMedia();
+</script>
 </body>
 </html>
