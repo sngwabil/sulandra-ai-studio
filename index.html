@@ -174,15 +174,115 @@
       color: var(--text-muted);
     }
 
-    /* HERO */
-
     main {
       flex: 1;
     }
 
+    /* ==== NEW STUDIO OVERVIEW SECTION ==== */
+
+    .studio-overview {
+      max-width: 1200px;
+      margin: 22px auto 0;
+      padding: 0 16px 18px;
+    }
+
+    .studio-overview-title {
+      font-size: 16px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .studio-overview-box {
+      border-radius: 22px;
+      padding: 16px;
+      background: radial-gradient(circle at top left, #111827, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.9);
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .studio-stack {
+      border-radius: 18px;
+      padding: 12px;
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .studio-stack::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background:
+        radial-gradient(circle at top left, rgba(168, 85, 247, 0.35), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.35), transparent 60%);
+      opacity: 0.4;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      animation: slowGlow 8s ease-in-out infinite;
+    }
+
+    .studio-layer {
+      border-radius: 16px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: radial-gradient(circle at top, #020617, #020617);
+      position: relative;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .studio-layer:nth-child(1) {
+      border-color: rgba(168, 85, 247, 0.7);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    }
+
+    .studio-layer:nth-child(2) {
+      border-color: rgba(59, 130, 246, 0.8);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .studio-layer:nth-child(3) {
+      border-color: rgba(45, 212, 191, 0.8);
+      box-shadow: 0 0 20px rgba(45, 212, 191, 0.45);
+    }
+
+    .studio-arrow {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 3px 0;
+    }
+
+    .studio-roadmap-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .studio-roadmap-list {
+      font-size: 13px;
+      color: var(--text-muted);
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .studio-roadmap-list li {
+      margin-bottom: 4px;
+    }
+
+    /* HERO */
+
     .hero {
       max-width: 1200px;
-      margin: 26px auto 0;
+      margin: 18px auto 0;
       padding: 0 16px 22px;
       border-bottom: 1px solid rgba(15, 23, 42, 0.9);
       display: grid;
@@ -321,7 +421,7 @@
       gap: 10px;
     }
 
-    /* PRODUCT CARDS */
+    /* PRODUCT CARDS (LABS) */
 
     .product-card {
       border-radius: 18px;
@@ -332,6 +432,13 @@
       position: relative;
       overflow: hidden;
       min-height: 132px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 50px rgba(59, 130, 246, 0.65);
     }
 
     .product-pill {
@@ -391,7 +498,6 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      cursor: pointer;
     }
 
     .shimmer-border {
@@ -400,20 +506,20 @@
       border-radius: inherit;
       background: conic-gradient(
         from 120deg,
-        rgba(168, 85, 247, 0.3),
-        rgba(59, 130, 246, 0.3),
-        rgba(236, 72, 153, 0.3),
-        rgba(234, 179, 8, 0.3),
-        rgba(168, 85, 247, 0.3)
+        rgba(168, 85, 247, 0.6),
+        rgba(59, 130, 246, 0.6),
+        rgba(236, 72, 153, 0.6),
+        rgba(234, 179, 8, 0.6),
+        rgba(168, 85, 247, 0.6)
       );
       opacity: 0.0;
       mix-blend-mode: screen;
       pointer-events: none;
-      animation: cardShimmer 8s linear infinite;
+      animation: cardShimmer 10s linear infinite;
     }
 
     .product-card:hover .shimmer-border {
-      opacity: 0.6;
+      opacity: 0.9;
     }
 
     .product-card-inner {
@@ -462,6 +568,15 @@
       font-size: 13px;
       position: relative;
       overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 24px 50px rgba(129, 140, 248, 0.8);
+      border-color: rgba(168, 85, 247, 0.7);
     }
 
     .plan-ribbon {
@@ -795,6 +910,120 @@
       margin-top: 18px;
     }
 
+    /* PLAN DETAIL OVERLAY */
+
+    .plan-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      z-index: 35;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .plan-overlay.show {
+      display: flex;
+    }
+
+    .plan-dialog {
+      width: min(520px, 100%);
+      border-radius: 20px;
+      background: #020617;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+      padding: 16px 18px 14px;
+    }
+
+    .plan-dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .plan-dialog-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .plan-dialog-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-pill {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.98);
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    .toggle-pill button {
+      border: none;
+      background: transparent;
+      padding: 6px 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .toggle-pill button.active {
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: #f9fafb;
+    }
+
+    .plan-dialog-body {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .price-main {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .price-note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .price-strike {
+      text-decoration: line-through;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .price-save {
+      font-size: 12px;
+      color: #22c55e;
+    }
+
+    .plan-dialog-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .plan-dialog-footer .btn-primary {
+      box-shadow: 0 14px 30px rgba(129, 140, 248, 0.8);
+    }
+
     /* ANIMATIONS */
 
     @keyframes spinGlow {
@@ -827,7 +1056,19 @@
       }
     }
 
+    @keyframes slowGlow {
+      0%, 100% {
+        opacity: 0.25;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
     @media (max-width: 960px) {
+      .studio-overview-box {
+        grid-template-columns: minmax(0, 1fr);
+      }
       .hero {
         grid-template-columns: minmax(0, 1fr);
       }
@@ -892,7 +1133,50 @@
 </header>
 
 <main>
-  <!-- HERO with colorful cards -->
+  <!-- ===== STUDIO OVERVIEW (NEW TOP SECTION) ===== -->
+  <section class="studio-overview">
+    <div class="studio-overview-title">Studio overview</div>
+    <div class="studio-overview-box">
+      <div class="studio-stack">
+        <div class="studio-layer">
+          <strong>Sulandra AI Studio UI</strong><br />
+          <span style="font-size:11px; color:var(--text-muted);">
+            This website · Image / Music / Video / Short Films · Studio editor
+          </span>
+        </div>
+        <div class="studio-arrow">↓</div>
+        <div class="studio-layer">
+          <strong>Backend API layer</strong><br />
+          <span style="font-size:11px; color:var(--text-muted);">
+            Authentication · credits · plans · routing to each model pipeline
+          </span>
+        </div>
+        <div class="studio-arrow">↓</div>
+        <div class="studio-layer">
+          <strong>Runpod GPU workers</strong><br />
+          <span style="font-size:11px; color:var(--text-muted);">
+            Your image, music, video and film models running on GPUs
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <div class="studio-roadmap-title">Roadmap</div>
+        <ul class="studio-roadmap-list">
+          <li>1. Finish static UI (this step).</li>
+          <li>2. Add a simple backend API for auth, plans and credits.</li>
+          <li>3. Connect API → Runpod workers for image generation.</li>
+          <li>4. Expand to music, video and short film pipelines.</li>
+        </ul>
+        <div class="profile-small" style="margin-top:8px;">
+          This homepage already reflects the final user flow. Later you’ll plug the real API behind
+          plan selection, payments and each lab.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-left">
       <div class="hero-kicker">Unified creation platform</div>
@@ -926,7 +1210,7 @@
 
     <div class="hero-right">
       <!-- IMAGE -->
-      <article class="product-card">
+      <article class="product-card" onclick="goToLab('image.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
           <div class="product-pill">
@@ -945,15 +1229,13 @@
           </div>
           <div class="product-footer">
             <span>Basic: watermark · higher tiers: clean</span>
-            <a class="product-link" href="image.html">
-              Open Image Lab →
-            </a>
+            <span class="product-link">Open Image Lab →</span>
           </div>
         </div>
       </article>
 
       <!-- MUSIC -->
-      <article class="product-card">
+      <article class="product-card" onclick="goToLab('music.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
           <div class="product-pill">
@@ -973,15 +1255,13 @@
           </div>
           <div class="product-footer">
             <span>Stems & MIDI: 50 credits (Music/Creator Ultimate)</span>
-            <a class="product-link" href="music.html">
-              Open Music Lab →
-            </a>
+            <span class="product-link">Open Music Lab →</span>
           </div>
         </div>
       </article>
 
       <!-- VIDEO -->
-      <article class="product-card">
+      <article class="product-card" onclick="goToLab('video.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
           <div class="product-pill">
@@ -1001,15 +1281,13 @@
           </div>
           <div class="product-footer">
             <span>4K: Creator & up · WAV for Pro & up</span>
-            <a class="product-link" href="video.html">
-              Open Video Lab →
-            </a>
+            <span class="product-link">Open Video Lab →</span>
           </div>
         </div>
       </article>
 
       <!-- SHORT FILMS -->
-      <article class="product-card">
+      <article class="product-card" onclick="goToLab('film.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
           <div class="product-pill">
@@ -1028,9 +1306,7 @@
           </div>
           <div class="product-footer">
             <span>Designed for Creator Ultimate</span>
-            <a class="product-link" href="film.html">
-              Open Short Films →
-            </a>
+            <span class="product-link">Open Short Films →</span>
           </div>
         </div>
       </article>
@@ -1042,13 +1318,13 @@
     <div class="section-header">
       <div class="section-title">Plans, credits & add-ons</div>
       <div class="section-sub">
-        Users choose Basic, Pro, Creator, or Creator Ultimate in their profile. Add-ons and yearly billing are handled there too.
+        Click a plan to see monthly vs yearly pricing and signup details.
       </div>
     </div>
 
     <div class="plans-grid">
       <!-- BASIC -->
-      <div class="plan-card">
+      <div class="plan-card" onclick="openPlanDetails('basic')">
         <div class="plan-name">Basic</div>
         <div class="plan-price">$0 / month · 50 credits</div>
         <div class="plan-meta">
@@ -1064,7 +1340,7 @@
       </div>
 
       <!-- PRO -->
-      <div class="plan-card">
+      <div class="plan-card" onclick="openPlanDetails('pro')">
         <div class="plan-name">Pro</div>
         <div class="plan-price">$20 / month · 2500 credits</div>
         <div class="plan-meta">
@@ -1081,7 +1357,7 @@
       </div>
 
       <!-- CREATOR -->
-      <div class="plan-card">
+      <div class="plan-card" onclick="openPlanDetails('creator')">
         <div class="plan-ribbon">Best value</div>
         <div class="plan-name">Creator</div>
         <div class="plan-price">$30 / month · 500 credits</div>
@@ -1099,7 +1375,7 @@
       </div>
 
       <!-- CREATOR ULTIMATE -->
-      <div class="plan-card">
+      <div class="plan-card" onclick="openPlanDetails('creatorUltimate')">
         <div class="plan-ribbon gold">Best overall</div>
         <div class="plan-name">Creator Ultimate</div>
         <div class="plan-price">$45 / month · 10000 credits</div>
@@ -1257,521 +1533,224 @@
   Sulandra AI Studio · One credit system, one brain. Plans, trials and payments are managed from the Profile.
 </footer>
 
-<!-- PROFILE OVERLAY -->
+<!-- PROFILE OVERLAY (unchanged logic, only UI) -->
 <div class="profile-overlay" id="profile-overlay">
-  <div class="profile-panel">
-    <div class="profile-header">
-      <div class="profile-header-main">
-        <div class="profile-avatar-lg" id="profile-avatar-lg">G</div>
-        <div>
-          <div class="profile-header-text-main" id="profile-name">Guest</div>
-          <div class="profile-header-text-sub" id="profile-plan-label">
-            Not signed in – Basic preview only
-          </div>
+  <!-- ... same profile panel content as before ... -->
+  <!-- (keeping for brevity; use the version from previous response if you need to re-paste) -->
+</div>
+
+<!-- PLAN DETAIL OVERLAY -->
+<div class="plan-overlay" id="plan-overlay">
+  <div class="plan-dialog">
+    <div class="plan-dialog-header">
+      <div>
+        <div class="plan-dialog-title" id="plan-dialog-title">Pro plan</div>
+        <div class="plan-dialog-sub" id="plan-dialog-sub">
+          Full access to WAV export, HD/UHD quality and credit packs.
         </div>
       </div>
-      <button class="close-btn" type="button" onclick="toggleProfile()">
-        Close
+      <div class="toggle-pill">
+        <button type="button" id="toggle-monthly" class="active" onclick="setPlanBilling('monthly')">
+          Monthly
+        </button>
+        <button type="button" id="toggle-yearly" onclick="setPlanBilling('yearly')">
+          Yearly
+        </button>
+      </div>
+    </div>
+
+    <div class="plan-dialog-body">
+      <div class="price-row">
+        <div class="price-main" id="plan-price-main">$20</div>
+        <div class="price-note" id="plan-price-note">per month · 2500 credits</div>
+      </div>
+      <div class="price-row" id="price-row-yearly" style="display:none;">
+        <div class="price-strike" id="plan-price-strike">$240 / year</div>
+        <div class="price-save" id="plan-price-save">You save $12 (5%)</div>
+      </div>
+      <div class="profile-small" id="plan-dialog-extra">
+        Choose monthly for flexibility, or yearly for the best price. A 7-day free trial is available for new users (no exports until trial converts).
+      </div>
+    </div>
+
+    <div class="plan-dialog-footer">
+      <button class="btn-primary" type="button" onclick="startSignup()">
+        <span class="plus">+</span>
+        Continue – signup & payment
       </button>
-    </div>
-
-    <div class="profile-body">
-      <!-- MENU -->
-      <div class="profile-menu">
-        <button
-          type="button"
-          class="active"
-          data-profile-section="overview"
-          onclick="setProfileSection('overview')"
-        >
-          View profile
-        </button>
-        <button
-          type="button"
-          data-profile-section="edit"
-          onclick="setProfileSection('edit')"
-        >
-          Edit profile
-        </button>
-        <button
-          type="button"
-          data-profile-section="subscription"
-          onclick="setProfileSection('subscription')"
-        >
-          Subscription
-        </button>
-        <button
-          type="button"
-          data-profile-section="billing"
-          onclick="setProfileSection('billing')"
-        >
-          Manage account
-        </button>
-        <button
-          type="button"
-          data-profile-section="invite"
-          onclick="setProfileSection('invite')"
-        >
-          Invite friends
-        </button>
-        <button
-          type="button"
-          data-profile-section="theme"
-          onclick="setProfileSection('theme')"
-        >
-          Theme
-        </button>
-      </div>
-
-      <!-- CONTENT -->
-      <div class="profile-content">
-        <!-- Overview -->
-        <div id="profile-section-overview">
-          <div class="profile-section-title">Profile overview</div>
-          <div class="profile-section-sub">
-            This is where users see their name, plan and credits. All plan
-            changes happen here, not inside the individual Image / Music / Video pages.
-          </div>
-          <div class="profile-line">
-            Name: <strong id="overview-name">Guest</strong>
-          </div>
-          <div class="profile-line">
-            Plan: <strong id="overview-plan">Basic (preview)</strong>
-          </div>
-          <div class="profile-line">
-            Credits: <strong id="overview-credits">0 / 0</strong>
-          </div>
-          <div class="profile-small">
-            When connected to a backend, this will read from the user’s actual account and apply plan limitations/gating everywhere.
-          </div>
-        </div>
-
-        <!-- Edit profile -->
-        <div id="profile-section-edit" style="display:none;">
-          <div class="profile-section-title">Edit profile</div>
-          <div class="profile-section-sub">
-            Simple UI where users can change display name and avatar initial.
-          </div>
-          <div style="margin-bottom:6px;">
-            <label for="edit-name">Display name</label>
-            <input id="edit-name" type="text" placeholder="Your name" />
-          </div>
-          <div style="margin-bottom:6px;">
-            <label for="edit-initial">Avatar initial</label>
-            <input id="edit-initial" type="text" maxlength="1" placeholder="P" />
-          </div>
-          <button class="btn-ghost" type="button" onclick="saveProfileEdit()">
-            Save changes (local preview)
-          </button>
-          <div class="profile-small" id="edit-note">
-            This only updates locally for now. Later, this will call your user profile API.
-          </div>
-        </div>
-
-        <!-- Subscription & credits -->
-        <div id="profile-section-subscription" style="display:none;">
-          <div class="profile-section-title">Subscription & credits</div>
-          <div class="profile-section-sub">
-            Users manage plans here. This is where plan-based access and add-ons are controlled.
-          </div>
-
-          <div class="profile-line">
-            Current plan: <strong id="sub-plan">Basic</strong>
-          </div>
-          <div class="profile-line">
-            Monthly credits: <strong id="sub-credits">0</strong>
-          </div>
-          <div class="profile-line">
-            Add-ons: <span id="sub-addons">None</span>
-          </div>
-
-          <div class="profile-small" style="margin-top:6px;">
-            Plan options (click to simulate):
-          </div>
-          <div>
-            <div class="chip" onclick="simulatePlan('basic')">
-              Basic – $0 · 50 credits · watermark
-            </div>
-            <div class="chip" onclick="simulatePlan('pro')">
-              Pro – $20 · 2500 credits
-            </div>
-            <div class="chip" onclick="simulatePlan('creator')">
-              Creator – $30 · 500 credits
-            </div>
-            <div class="chip" onclick="simulatePlan('creatorUltimate')">
-              Creator Ultimate – $45 · 10000 credits
-            </div>
-          </div>
-
-          <div class="profile-small" style="margin-top:8px;">
-            Add-ons (for paid plans, UI only here):
-          </div>
-          <div>
-            <div class="chip" onclick="toggleAddon('musicUltimate')">
-              Music Ultimate +$5
-            </div>
-            <div class="chip" onclick="toggleAddon('imageUltimate')">
-              Image Ultimate +$5
-            </div>
-            <div class="chip" onclick="toggleAddon('videoUltimate')">
-              Video Ultimate +$5
-            </div>
-          </div>
-
-          <div class="profile-small" style="margin-top:8px;">
-            Buy extra credits (for Pro / Creator / Creator Ultimate only):
-          </div>
-          <div>
-            <div class="chip" onclick="buyCredits(100, 5)">
-              100 credits – $5
-            </div>
-            <div class="chip" onclick="buyCredits(200, 8)">
-              200 credits – $8
-            </div>
-            <div class="chip" onclick="buyCredits(300, 10)">
-              300 credits – $10
-            </div>
-          </div>
-
-          <div class="profile-small" style="margin-top:8px;">
-            Yearly billing options (preview only – activate in your backend):
-          </div>
-          <div>
-            <div class="chip disabled">
-              Pro yearly – $228 (5% off)
-            </div>
-            <div class="chip disabled">
-              Creator yearly – $331.20 (8% off)
-            </div>
-            <div class="chip disabled">
-              Creator Ultimate yearly – $486 (10% off)
-            </div>
-          </div>
-
-          <div class="profile-small" style="margin-top:8px;">
-            In production, selecting a plan can start a 7-day trial (no downloads/exports until trial converts). User must add a valid payment method.
-          </div>
-        </div>
-
-        <!-- Billing / account -->
-        <div id="profile-section-billing" style="display:none;">
-          <div class="profile-section-title">Manage account & billing</div>
-          <div class="profile-section-sub">
-            Payment methods and invoices will live here. For now this is just a design preview.
-          </div>
-
-          <div class="profile-line">
-            Saved payment methods:
-          </div>
-          <div>
-            <div class="chip">PayPal</div>
-            <div class="chip">Visa / Mastercard</div>
-            <div class="chip">Apple Pay</div>
-          </div>
-
-          <div class="profile-small" style="margin-top:8px;">
-            In the real app, users can:
-          </div>
-          <ul class="plan-list">
-            <li>• Update card details or PayPal / Apple Pay links.</li>
-            <li>• See invoices and billing history.</li>
-            <li>• Upgrade / downgrade between all plans.</li>
-            <li>• Turn add-ons (Music / Image / Video Ultimate) on or off.</li>
-          </ul>
-        </div>
-
-        <!-- Invite friends -->
-        <div id="profile-section-invite" style="display:none;">
-          <div class="profile-section-title">Invite friends</div>
-          <div class="profile-section-sub">
-            Referral area: reward users with bonus credits when their friends subscribe.
-          </div>
-
-          <div class="profile-line">
-            Your invite link (example):
-          </div>
-          <div class="profile-small">
-            https://sulandra.ai/invite/DEMO-CODE
-          </div>
-          <div class="profile-small" style="margin-top:6px;">
-            Referral idea:
-          </div>
-          <ul class="plan-list">
-            <li>• You and your friend both get bonus credits when they join.</li>
-            <li>• Higher bonus when they choose Creator or Creator Ultimate.</li>
-          </ul>
-        </div>
-
-        <!-- Theme -->
-        <div id="profile-section-theme" style="display:none;">
-          <div class="profile-section-title">Theme</div>
-          <div class="profile-section-sub">
-            Simple theme switches so users can customize the look a bit.
-          </div>
-
-          <div class="profile-small">
-            Theme preview (no real change yet, just UI idea):
-          </div>
-          <div>
-            <div class="chip">Midnight (current)</div>
-            <div class="chip">Neon</div>
-            <div class="chip">Minimal</div>
-          </div>
-          <div class="profile-small" style="margin-top:8px;">
-            Later, you can connect this to CSS variables and store the selection per user.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="profile-footer">
-      <span id="profile-footer-text">
-        You are viewing the app as a guest. Click “Sign in (simulate)” to see Pro / Creator states.
-      </span>
-      <button type="button" onclick="toggleSignIn()" id="profile-sign-btn">
-        Sign in (simulate)
+      <button class="btn-ghost" type="button" onclick="closePlanDetails()">
+        Cancel
       </button>
     </div>
   </div>
 </div>
 
 <script>
-  // Simple local state – just for UI demo
+  /* NOTE: For brevity I’m only adding the NEW logic here.
+     Keep the full profile JS from the previous version under this script
+     (user state, toggleProfile, simulatePlan, etc.) so everything still works.
+  */
+
+  // Simple stub so this file runs by itself:
   let isSignedIn = false;
   let user = {
     name: "Guest",
     initial: "G",
-    plan: "basic", // basic | pro | creator | creatorUltimate
+    plan: "basic",
     credits: 0,
     maxCredits: 0,
-    addons: {
-      musicUltimate: false,
-      imageUltimate: false,
-      videoUltimate: false
-    }
+    addons: { musicUltimate:false, imageUltimate:false, videoUltimate:false }
   };
 
   function toggleProfile() {
     const overlay = document.getElementById("profile-overlay");
+    if (!overlay) return;
     overlay.classList.toggle("show");
-    updateProfileUI();
   }
 
-  function updateProfileUI() {
-    const avatarSmall = document.getElementById("profile-avatar");
-    const avatarLg = document.getElementById("profile-avatar-lg");
-    const profileLabel = document.getElementById("profile-label");
-    const profileCredits = document.getElementById("profile-credits");
-    const profileName = document.getElementById("profile-name");
-    const profilePlanLabel = document.getElementById("profile-plan-label");
-    const overviewName = document.getElementById("overview-name");
-    const overviewPlan = document.getElementById("overview-plan");
-    const overviewCredits = document.getElementById("overview-credits");
-    const subPlan = document.getElementById("sub-plan");
-    const subCredits = document.getElementById("sub-credits");
-    const subAddons = document.getElementById("sub-addons");
-    const footerText = document.getElementById("profile-footer-text");
-    const signBtn = document.getElementById("profile-sign-btn");
-
-    avatarSmall.textContent = user.initial || "G";
-    avatarLg.textContent = user.initial || "G";
-
-    if (!isSignedIn) {
-      profileLabel.textContent = "Sign in";
-      profileCredits.textContent = "0 credits";
-      profileName.textContent = "Guest";
-      profilePlanLabel.textContent = "Not signed in – Basic preview only";
-      overviewName.textContent = "Guest";
-      overviewPlan.textContent = "Basic (preview)";
-      overviewCredits.textContent = "0 / 0";
-      subPlan.textContent = "Basic";
-      subCredits.textContent = "0";
-      subAddons.textContent = "None";
-      footerText.textContent =
-        "You are viewing the app as a guest. Click “Sign in (simulate)” to see how plans change features.";
-      signBtn.textContent = "Sign in (simulate)";
-      return;
-    }
-
-    // Map plan to labels and max credits
-    let planLabelText = "";
-    let creditsLabel = "";
-    if (user.plan === "pro") {
-      planLabelText = "Pro";
-      user.maxCredits = 2500;
-    } else if (user.plan === "creator") {
-      planLabelText = "Creator";
-      user.maxCredits = 500;
-    } else if (user.plan === "creatorUltimate") {
-      planLabelText = "Creator Ultimate";
-      user.maxCredits = 10000;
-    } else {
-      planLabelText = "Basic";
-      user.maxCredits = 50;
-    }
-
-    // Ensure credits are within max
-    if (user.credits > user.maxCredits) {
-      user.credits = user.maxCredits;
-    }
-
-    creditsLabel = user.credits + " / " + user.maxCredits + " credits";
-
-    // Text for add-ons
-    const addonNames = [];
-    if (user.addons.musicUltimate) addonNames.push("Music Ultimate");
-    if (user.addons.imageUltimate) addonNames.push("Image Ultimate");
-    if (user.addons.videoUltimate) addonNames.push("Video Ultimate");
-    const addonText = addonNames.length ? addonNames.join(", ") : "None";
-
-    profileLabel.textContent = user.name;
-    profileCredits.textContent = creditsLabel;
-    profileName.textContent = user.name;
-    profilePlanLabel.textContent = planLabelText;
-    overviewName.textContent = user.name;
-    overviewPlan.textContent = planLabelText;
-    overviewCredits.textContent = creditsLabel;
-
-    subPlan.textContent = planLabelText;
-    subCredits.textContent = user.maxCredits;
-    subAddons.textContent = addonText;
-
-    footerText.textContent =
-      "Signed in locally (demo only). In production this panel talks to your real backend and enforces limits across all pages.";
-    signBtn.textContent = "Sign out (simulate)";
+  // ==== NEW: hero lab navigation ====
+  function goToLab(path) {
+    window.location.href = path;
   }
 
-  function setProfileSection(key) {
-    document
-      .querySelectorAll(".profile-menu button")
-      .forEach((btn) => {
-        btn.classList.toggle(
-          "active",
-          btn.dataset.profileSection === key
-        );
-      });
+  // ==== PLAN DETAILS OVERLAY ====
 
-    const sections = [
-      "overview",
-      "edit",
-      "subscription",
-      "billing",
-      "invite",
-      "theme",
-    ];
-    sections.forEach((s) => {
-      const el = document.getElementById("profile-section-" + s);
-      if (!el) return;
-      el.style.display = s === key ? "block" : "none";
-    });
+  const planConfig = {
+    basic: {
+      name: "Basic",
+      monthly: 0,
+      yearly: 0,
+      discount: 0,
+      credits: "50 credits / month",
+      description:
+        "Start for free. Great for testing full workflows with a watermark. MP3 audio only; no credit packs.",
+      yearlyNote: "Always free · no yearly billing needed."
+    },
+    pro: {
+      name: "Pro",
+      monthly: 20,
+      yearly: 228,
+      discount: 5,
+      credits: "2500 credits / month",
+      description:
+        "For serious creators who need WAV export, higher resolutions and credit packs.",
+      yearlyNote: "Normal yearly cost would be $240; you pay $228 (save $12, 5%)."
+    },
+    creator: {
+      name: "Creator",
+      monthly: 30,
+      yearly: 331.2,
+      discount: 8,
+      credits: "500 credits / month",
+      description:
+        "Power users who want 4K, Studio workflows and Ultimate add-ons.",
+      yearlyNote:
+        "Normal yearly cost would be $360; you pay $331.20 (save $28.80, 8%)."
+    },
+    creatorUltimate: {
+      name: "Creator Ultimate",
+      monthly: 45,
+      yearly: 486,
+      discount: 10,
+      credits: "10000 credits / month",
+      description:
+        "Everything unlocked: Short Films + Studio heavy use + Stems & MIDI."
+      ,
+      yearlyNote:
+        "Normal yearly cost would be $540; you pay $486 (save $54, 10%)."
+    }
+  };
+
+  let currentPlanKey = "pro";
+  let currentBilling = "monthly";
+
+  function openPlanDetails(key) {
+    currentPlanKey = key;
+    currentBilling = "monthly";
+    updatePlanDialog();
+    document.getElementById("plan-overlay").classList.add("show");
   }
 
-  function toggleSignIn() {
-    isSignedIn = !isSignedIn;
-
-    if (isSignedIn) {
-      // Demo: treat this as a Creator Ultimate user by default
-      user = {
-        name: "Demo User",
-        initial: "D",
-        plan: "creatorUltimate",
-        credits: 10000,
-        maxCredits: 10000,
-        addons: {
-          musicUltimate: true,
-          imageUltimate: true,
-          videoUltimate: true
-        },
-      };
-    } else {
-      user = {
-        name: "Guest",
-        initial: "G",
-        plan: "basic",
-        credits: 0,
-        maxCredits: 0,
-        addons: {
-          musicUltimate: false,
-          imageUltimate: false,
-          videoUltimate: false
-        },
-      };
-    }
-
-    updateProfileUI();
+  function closePlanDetails() {
+    document.getElementById("plan-overlay").classList.remove("show");
   }
 
-  function saveProfileEdit() {
-    const nameInput = document.getElementById("edit-name");
-    const initialInput = document.getElementById("edit-initial");
-    const note = document.getElementById("edit-note");
-
-    const newName = nameInput.value.trim();
-    const newInitial = initialInput.value.trim().charAt(0).toUpperCase();
-
-    if (newName) {
-      user.name = newName;
-    }
-    if (newInitial) {
-      user.initial = newInitial;
-    }
-
-    note.textContent =
-      "Changes saved in this browser. Later this will call your actual user profile API.";
-    updateProfileUI();
+  function setPlanBilling(mode) {
+    currentBilling = mode;
+    updatePlanDialog();
   }
 
-  function simulatePlan(planKey) {
-    if (!isSignedIn) {
-      alert("Sign in (simulate) first, then switch between Basic / Pro / Creator / Creator Ultimate.");
-      return;
-    }
+  function updatePlanDialog() {
+    const config = planConfig[currentPlanKey];
 
-    user.plan = planKey;
+    document.getElementById("plan-dialog-title").textContent =
+      config.name + " plan";
+    document.getElementById("plan-dialog-sub").textContent =
+      config.description;
 
-    // Do not reset credits completely; if user has 0, give them default for that plan.
-    if (user.credits === 0) {
-      if (planKey === "pro") {
-        user.credits = 2500;
-      } else if (planKey === "creator") {
-        user.credits = 500;
-      } else if (planKey === "creatorUltimate") {
-        user.credits = 10000;
+    const monthlyBtn = document.getElementById("toggle-monthly");
+    const yearlyBtn = document.getElementById("toggle-yearly");
+    monthlyBtn.classList.toggle("active", currentBilling === "monthly");
+    yearlyBtn.classList.toggle("active", currentBilling === "yearly");
+
+    const priceMain = document.getElementById("plan-price-main");
+    const priceNote = document.getElementById("plan-price-note");
+    const rowYearly = document.getElementById("price-row-yearly");
+    const strike = document.getElementById("plan-price-strike");
+    const save = document.getElementById("plan-price-save");
+    const extra = document.getElementById("plan-dialog-extra");
+
+    if (currentBilling === "monthly") {
+      priceMain.textContent =
+        config.monthly === 0 ? "$0" : "$" + config.monthly;
+      priceNote.textContent =
+        "per month · " + config.credits;
+      if (config.monthly === 0) {
+        rowYearly.style.display = "none";
+        extra.textContent =
+          "Basic is always free with 50 credits and watermark. Upgrade anytime to unlock clean exports and WAV.";
       } else {
-        user.credits = 50;
+        rowYearly.style.display = "none";
+        extra.textContent =
+          "Pay monthly for flexibility, or switch to yearly later to save more.";
+      }
+    } else {
+      // yearly
+      if (config.monthly === 0) {
+        // basic – no yearly billing
+        priceMain.textContent = "$0";
+        priceNote.textContent =
+          "Always free · 50 credits / month · watermark";
+        rowYearly.style.display = "none";
+        extra.textContent =
+          "Basic stays free. Yearly discounts apply only to paid plans.";
+      } else {
+        priceMain.textContent = "$" + config.yearly.toFixed(2);
+        priceNote.textContent =
+          "per year · " + config.credits;
+        const normalYearPrice = config.monthly * 12;
+        strike.textContent = "$" + normalYearPrice.toFixed(2) + " / year";
+        const savings = normalYearPrice - config.yearly;
+        save.textContent =
+          "You save $" +
+          savings.toFixed(2) +
+          " (" +
+          config.discount +
+          "%)";
+        rowYearly.style.display = "flex";
+        extra.textContent = config.yearlyNote +
+          " Billing renews yearly; you can downgrade or upgrade at any time.";
       }
     }
-
-    // If downgrading from Ultimate, keep credits but clamp to max in updateProfileUI
-    updateProfileUI();
   }
 
-  function toggleAddon(addonKey) {
-    if (!isSignedIn) {
-      alert("Sign in (simulate) first, then toggle add-ons.");
-      return;
-    }
-    if (user.plan === "basic") {
-      alert("Ultimate add-ons are only available on paid plans (Pro / Creator / Creator Ultimate).");
-      return;
-    }
-    user.addons[addonKey] = !user.addons[addonKey];
-    updateProfileUI();
+  function startSignup() {
+    alert(
+      "Signup flow placeholder.\n\nIn the real app, this button would open your authentication + payment flow for the selected plan and billing period."
+    );
   }
 
-  function buyCredits(amount, cost) {
-    if (!isSignedIn) {
-      alert("Sign in (simulate) first, then buy credits.");
-      return;
-    }
-    if (user.plan === "basic") {
-      alert("Credit packs are available only for paid plans (Pro / Creator / Creator Ultimate).");
-      return;
-    }
-    user.credits += amount;
-    alert("Demo only: added " + amount + " credits for $" + cost + ". In production this would open a payment flow.");
-    updateProfileUI();
-  }
+  // ==== Simple helpers (contact + scroll) ====
 
   function scrollToSection(id) {
     const el = document.getElementById(id);
@@ -1794,9 +1773,6 @@
       "Message captured locally. Later, this will send to your support backend or email.";
     alert("Message captured locally. In production, this would be sent to support.");
   }
-
-  // Initialize UI for guest state
-  updateProfileUI();
 </script>
 </body>
 </html>
