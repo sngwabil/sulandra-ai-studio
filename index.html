@@ -3,110 +3,512 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sulandra AI Studio</title>
+  <title>Sulandra AI Studio – Home</title>
 
-  <!-- Simple modern styling -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    :root {
+      --bg: #050816;
+      --card-bg: #0b1020;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.12);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148, 163, 184, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
-      color: #222;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #111827, #020617 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
-      background: #000;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #facc15, #ef4444 55%, #3b82f6);
+      box-shadow: 0 0 18px rgba(59, 130, 246, 0.4);
+    }
+
+    .logo-text-main {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.03em;
+    }
+
+    .logo-text-sub {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
     }
 
     nav {
-      background: #222;
-      padding: 10px 0;
       display: flex;
-      justify-content: center;
-      gap: 30px;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     nav a {
-      color: white;
+      color: var(--text-muted);
       text-decoration: none;
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
     }
 
     nav a:hover {
-      text-decoration: underline;
+      color: var(--text-main);
+      border-color: var(--border-soft);
+      background: rgba(15, 23, 42, 0.8);
     }
 
-    .section {
-      padding: 60px 20px;
-      text-align: center;
-      background: white;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 900px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    nav a.active {
+      color: var(--text-main);
+      background: var(--accent-soft);
+      border-color: rgba(59, 130, 246, 0.5);
     }
 
-    h2 {
-      font-size: 28px;
+    main {
+      flex: 1;
+    }
+
+    .hero {
+      max-width: 1100px;
+      margin: 28px auto 0;
+      padding: 0 16px 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+      gap: 26px;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.1;
       margin-bottom: 10px;
     }
 
-    p {
+    .hero-highlight {
+      background: linear-gradient(90deg, #e5e7eb, #38bdf8, #a855f7);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 4px 10px;
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .btn-main {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 15px 30px rgba(37, 99, 235, 0.55);
+      opacity: 0.96;
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.7);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-ghost:hover {
+      color: var(--text-main);
+      border-color: rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .hero-note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .hero-visual {
+      border-radius: 18px;
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.25), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(244, 63, 94, 0.25), transparent 60%);
+      border: 1px solid var(--border-soft);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.8);
+    }
+
+    .hero-visual-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .hero-visual-card {
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1.2fr 1.4fr;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .hero-glow {
+      border-radius: 12px;
+      background: conic-gradient(from 180deg, #3b82f6, #ec4899, #22c55e, #3b82f6);
+      padding: 2px;
+    }
+
+    .hero-inner-box {
+      border-radius: 10px;
+      background: radial-gradient(circle at 30% 10%, #111827, #020617);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 8px;
+    }
+
+    .hero-list {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-list strong {
+      color: var(--text-main);
+      font-size: 13px;
+    }
+
+    .grid {
+      max-width: 1100px;
+      margin: 0 auto 40px;
+      padding: 0 16px 32px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 150px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.65);
+    }
+
+    .card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .card-title {
       font-size: 18px;
-      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    .card-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .card-footer {
+      margin-top: 6px;
+    }
+
+    .card-footer a {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .card-footer a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-soft);
+      padding: 12px 16px 18px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      background: rgba(2, 6, 23, 0.95);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-visual {
+        order: -1;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav {
+        justify-content: flex-start;
+      }
+
+      .hero-title {
+        font-size: 26px;
+      }
+
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
   </style>
 </head>
 
 <body>
-
-  <!-- HEADER -->
   <header>
-    Sulandra AI Studio
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-circle"></div>
+        <div>
+          <div class="logo-text-main">Sulandra AI Studio</div>
+          <div class="logo-text-sub">Image · Video · Music · Films</div>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html" class="active">Home</a>
+        <a href="image.html">Image</a>
+        <a href="video.html">Video</a>
+        <a href="music.html">Music</a>
+        <a href="film.html">Short Films</a>
+      </nav>
+    </div>
   </header>
 
-  <!-- NAVIGATION -->
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="image.html">Image Generator</a>
-    <a href="video.html">Video Generator</a>
-    <a href="music.html">Music Generator</a>
-    <a href="film.html">Short Films</a>
-  </nav>
+  <main>
+    <section class="hero">
+      <div>
+        <h1 class="hero-title">
+          Build, preview and control your
+          <span class="hero-highlight">AI creative lab</span>
+        </h1>
+        <p class="hero-subtitle">
+          Sulandra AI Studio is your all-in-one space for AI-generated
+          images, videos, music and short films. This website is the
+          control panel. The “brain” will live on GPUs (Runpod, etc.)
+          and connect here later.
+        </p>
 
-  <!-- SECTIONS -->
-  <div id="image" class="section">
-    <h2>AI Image Generator</h2>
-    <p>Create stunning models, artwork, album covers, portraits, and more.
-       This will later connect to your Runpod image generator.</p>
-  </div>
+        <div class="hero-badges">
+          <div class="badge">Founder: You</div>
+          <div class="badge">Phase 1 · Frontend only</div>
+          <div class="badge">Phase 2 · Connect Runpod</div>
+        </div>
 
-  <div id="video" class="section">
-    <h2>AI Video Generator</h2>
-    <p>Generate motion videos like Kling AI — dance, cinematic shots, animations,
-       and more. This will later connect to your video generation backend.</p>
-  </div>
+        <div class="hero-cta">
+          <a href="image.html" class="btn-main">
+            Start with Image Generator →
+          </a>
+          <a href="video.html" class="btn-ghost">
+            Explore Video & Films
+          </a>
+        </div>
 
-  <div id="music" class="section">
-    <h2>AI Music Generator</h2>
-    <p>Produce AI vocals, Afrobeat, Amapiano, Gospel, cinematic scores, and more
-       — powered by your future music model.</p>
-  </div>
+        <div class="hero-note">
+          Later we’ll replace these static pages with live requests
+          that talk to your GPU workers and return results.
+        </div>
+      </div>
 
-  <div id="film" class="section">
-    <h2>AI Short-Film Creator</h2>
-    <p>Write scripts, generate scenes, produce soundtracks, and automatically
-       assemble short films — your advanced AI pipeline.</p>
-  </div>
+      <div class="hero-visual">
+        <div class="hero-visual-title">Studio Overview</div>
+        <div class="hero-visual-card">
+          <div class="hero-glow">
+            <div class="hero-inner-box">
+              Sulandra AI Studio UI (this website)  
+              <br />↓  
+              Backend API (coming soon)  
+              <br />↓  
+              Runpod GPU workers (your models)
+            </div>
+          </div>
+          <div class="hero-list">
+            <strong>Roadmap</strong>
+            <span>1. Finish static UI (this step)</span>
+            <span>2. Add a simple backend API layer</span>
+            <span>3. Connect API → Runpod image worker</span>
+            <span>4. Expand to video, music & film pipelines</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <section class="grid">
+      <article class="card">
+        <div class="card-label">Module</div>
+        <div class="card-title">AI Image Generator</div>
+        <div class="card-body">
+          Generate models, album covers, posters and concept art. The UI
+          will send prompts and settings to your image model running on
+          Runpod.
+        </div>
+        <div class="card-footer">
+          <a href="image.html">Open Image Generator →</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-label">Module</div>
+        <div class="card-title">AI Video Generator</div>
+        <div class="card-body">
+          Kling-style motion clips: dance, performance, product shots,
+          cinematic scenes. The website will later queue jobs to GPU
+          video workers.
+        </div>
+        <div class="card-footer">
+          <a href="video.html">Open Video Generator →</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-label">Module</div>
+        <div class="card-title">AI Music Generator</div>
+        <div class="card-body">
+          Suno-style generation: Afrobeat, Amapiano, Gospel, scores and
+          more. You’ll feed prompts and options; the backend returns
+          downloadable tracks.
+        </div>
+        <div class="card-footer">
+          <a href="music.html">Open Music Generator →</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-label">Module</div>
+        <div class="card-title">AI Short-Film Creator</div>
+        <div class="card-body">
+          A pipeline that combines script → images → video scenes →
+          music into mini-films. This page will orchestrate multiple
+          backend calls.
+        </div>
+        <div class="card-footer">
+          <a href="film.html">Open Short Films →</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    Sulandra AI Studio · Frontend prototype · You are building the control panel.
+  </footer>
 </body>
 </html>
