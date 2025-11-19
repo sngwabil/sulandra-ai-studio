@@ -333,4 +333,473 @@
     }
 
     .btn-main:hover {
-      transform:
+      transform: translateY(-1px);
+      box-shadow: 0 16px 36px rgba(129, 140, 248, 0.8);
+      opacity: 0.97;
+    }
+
+    /* -------------- PREVIEW PANEL -------------- */
+
+    .preview-header {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .preview-box {
+      border-radius: 16px;
+      border: 1px dashed var(--border-soft);
+      background:
+        radial-gradient(circle at top left, rgba(168, 85, 247, 0.2), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.22), transparent 60%);
+      min-height: 230px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 14px;
+    }
+
+    .preview-box strong {
+      color: var(--text-main);
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 11px;
+    }
+
+    .preview-slot {
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 8px;
+      text-align: left;
+    }
+
+    .preview-slot-title {
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    /* -------------- FOOTER -------------- */
+
+    footer {
+      border-top: 1px solid var(--border-soft);
+      padding: 10px 16px 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      background: rgba(2, 6, 23, 0.97);
+    }
+
+    /* -------------- ANIMATIONS -------------- */
+
+    @keyframes spinGlow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.7; text-shadow: 0 0 6px rgba(244, 114, 182, 0.3); }
+      50% { opacity: 1; text-shadow: 0 0 16px rgba(244, 114, 182, 0.7); }
+    }
+
+    @keyframes floatTitle {
+      0% {
+        transform: rotateX(16deg) rotateY(-8deg) translateY(0);
+        text-shadow: 0 0 20px rgba(168, 85, 247, 0.7);
+      }
+      100% {
+        transform: rotateX(10deg) rotateY(8deg) translateY(-3px);
+        text-shadow: 0 0 28px rgba(59, 130, 246, 0.8);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav {
+        justify-content: flex-start;
+      }
+      .hero-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-circle"></div>
+        <div>
+          <div class="logo-text-main">Sulandra AI Studio</div>
+          <div class="logo-text-sub">Video · Edit · Characters · Effects</div>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="image.html">Image</a>
+        <a href="video.html" class="active">Video</a>
+        <a href="music.html">Music</a>
+        <a href="film.html">Short Films</a>
+        <a href="education.html">Explore</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-kicker">Video Lab</div>
+      <h1 class="hero-title">
+        Turn images, clips and <span>scripts into smart AI videos</span>
+      </h1>
+      <p class="hero-sub">
+        Use Sulandra Video Lab to generate videos from images, upload clips
+        for editing and effects, and send scripts or PDFs for AI script
+        assistance and shot planning. This is where your future Kling-style
+        engine will plug in.
+      </p>
+      <div class="hero-tags">
+        <div class="hero-tag-pill">Images → Video</div>
+        <div class="hero-tag-pill">Upload video → Edit & effects</div>
+        <div class="hero-tag-pill">AI script assistance for scenes</div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <!-- LEFT: VIDEO WORKFLOWS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">AI Video Workflows</div>
+          <div class="pill-label">Phase 1 · UI only</div>
+        </div>
+        <p class="panel-sub">
+          Choose how you want to work: upload still images to build a sequence,
+          upload a short video to edit it with Sulandra effects, or upload a
+          script/PDF and ask the AI to help with structure and shot ideas.
+        </p>
+
+        <!-- MODE 1: IMAGES → VIDEO -->
+        <form onsubmit="event.preventDefault(); handleImagesToVideo();">
+          <div class="field-group">
+            <label>
+              1. Upload images + prompt – generate a short video
+            </label>
+            <input
+              id="video-images"
+              type="file"
+              accept="image/*"
+              multiple
+            />
+            <p class="note">
+              Later, your backend will accept multiple frames (e.g., poses,
+              locations) and animate between them to create a smooth clip.
+            </p>
+          </div>
+
+          <div class="field-group">
+            <label for="prompt-images-video">
+              Describe the video you want
+            </label>
+            <textarea
+              id="prompt-images-video"
+              placeholder="Example: Create a 10-second vertical video where this model slowly turns, lights flicker, and soft camera movement reveals the outfit."
+            ></textarea>
+          </div>
+
+          <div class="field-row field-group">
+            <div>
+              <label for="video-length">
+                Target length (seconds)
+              </label>
+              <input
+                id="video-length"
+                type="number"
+                min="3"
+                max="60"
+                value="10"
+              />
+            </div>
+            <div>
+              <label for="video-ratio">
+                Aspect ratio
+              </label>
+              <select id="video-ratio">
+                <option value="9:16">9:16 – Vertical (TikTok / Reels)</option>
+                <option value="16:9">16:9 – Horizontal</option>
+                <option value="1:1">1:1 – Square</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-main">
+            <span class="plus">+</span>
+            Upload images & build video (UI only)
+          </button>
+        </form>
+
+        <hr style="border:none;border-top:1px solid var(--border-soft); margin:16px 0;" />
+
+        <!-- MODE 2: VIDEO EDIT & EFFECTS -->
+        <form onsubmit="event.preventDefault(); handleVideoEdit();">
+          <div class="field-group">
+            <label>
+              2. Upload a short video – edit, add characters or effects
+            </label>
+            <input
+              id="input-video"
+              type="file"
+              accept="video/*"
+            />
+            <p class="note">
+              Think of this like your Sulandra “Kling editor”: trim, color grade,
+              add overlays, add AI characters, or generate extra shots around
+              what you already filmed.
+            </p>
+          </div>
+
+          <div class="field-group">
+            <label for="prompt-video-edit">
+              Describe what you want changed or added
+            </label>
+            <textarea
+              id="prompt-video-edit"
+              placeholder="Example: Keep the same pacing, but add a futuristic background, glow effects around the dancer, and overlay lyrics in bold white text."
+            ></textarea>
+          </div>
+
+          <div class="field-row-3 field-group">
+            <div>
+              <label for="edit-type">
+                Edit focus
+              </label>
+              <select id="edit-type">
+                <option>Color & mood</option>
+                <option>Transitions & pacing</option>
+                <option>Add characters</option>
+                <option>Add VFX / overlays</option>
+                <option>Combine all</option>
+              </select>
+            </div>
+            <div>
+              <label for="video-resolution">
+                Output
+              </label>
+              <select id="video-resolution">
+                <option>1080p</option>
+                <option>4K</option>
+              </select>
+            </div>
+            <div>
+              <label for="video-audio">
+                Audio
+              </label>
+              <select id="video-audio">
+                <option>Keep original audio</option>
+                <option>Mute video</option>
+                <option>Replace with new track</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-main">
+            <span class="plus">+</span>
+            Upload video & request edit (UI only)
+          </button>
+        </form>
+
+        <hr style="border:none;border-top:1px solid var(--border-soft); margin:16px 0;" />
+
+        <!-- MODE 3: SCRIPT / PDF + AI SCRIPT ASSISTANCE -->
+        <form onsubmit="event.preventDefault(); handleScriptAssist();">
+          <div class="field-group">
+            <label>
+              3. Upload script / PDF – AI script assistance & shot planning
+            </label>
+            <input
+              id="video-script-file"
+              type="file"
+              accept=".pdf,.txt,.doc,.docx"
+            />
+            <p class="note">
+              This is your AI script assistant for the Video section. Later,
+              your backend will read the script and help with rewrites, beats
+              and shot suggestions.
+            </p>
+          </div>
+
+          <div class="field-group">
+            <label for="prompt-script-assist">
+              What should the AI help you with?
+            </label>
+            <textarea
+              id="prompt-script-assist"
+              placeholder="Example: Tighten the dialogue, keep the same story, and suggest a 6-shot list for a dramatic intro sequence."
+            ></textarea>
+          </div>
+
+          <div class="field-row field-group">
+            <div>
+              <label for="assist-style">
+                Assistance focus
+              </label>
+              <select id="assist-style">
+                <option>Rewrite for clarity</option>
+                <option>Improve dialogue</option>
+                <option>Convert to shot list</option>
+                <option>Turn into short trailer concept</option>
+              </select>
+            </div>
+            <div>
+              <label for="tone">
+                Tone / style
+              </label>
+              <select id="tone">
+                <option>Cinematic drama</option>
+                <option>Afrobeat party video</option>
+                <option>Emotional gospel story</option>
+                <option>Comedy / school vibes</option>
+                <option>Documentary style</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-main">
+            <span class="plus">+</span>
+            Upload script & ask AI (UI only)
+          </button>
+        </form>
+
+        <p class="note" style="margin-top: 10px;">
+          All actions here are placeholders for now. They do not send files
+          anywhere yet – we will connect them to your backend API and Runpod
+          when your generation engines are ready.
+        </p>
+      </div>
+
+      <!-- RIGHT: PREVIEW & JOB STATUS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Preview & job status</div>
+          <div class="status-pill">
+            Status: <span style="color:#f97316;">Frontend only</span>
+          </div>
+        </div>
+        <p class="panel-sub">
+          This area will show recent generated clips, edited versions and AI
+          script-assist summaries once your backend is hooked up.
+        </p>
+
+        <div class="preview-box">
+          <div>
+            <strong>No video jobs yet.</strong>
+            <br /><br />
+            Start a workflow on the left:
+            <br />
+            • Upload images + prompt → video  
+            • Upload a video → request edits, characters, VFX  
+            • Upload script/PDF → AI script assistance & shot ideas
+            <br /><br />
+            Here you will eventually see:
+            <div class="preview-grid">
+              <div class="preview-slot">
+                <div class="preview-slot-title">Latest images → video</div>
+                <div>Thumbnail, duration, link to download.</div>
+              </div>
+              <div class="preview-slot">
+                <div class="preview-slot-title">Latest edited clip</div>
+                <div>Before / After comparison and notes.</div>
+              </div>
+              <div class="preview-slot">
+                <div class="preview-slot-title">AI script summary</div>
+                <div>Key changes + short shot list.</div>
+              </div>
+              <div class="preview-slot">
+                <div class="preview-slot-title">Queue status</div>
+                <div>Jobs running on your GPU pod.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 12px; font-size: 11px; color: var(--text-muted);">
+          Later, each workflow can map to its own API route, like:
+          <br />
+          • <code>/api/video/images-to-video</code>  
+          • <code>/api/video/edit</code>  
+          • <code>/api/video/script-assist</code>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Video Lab · Next steps: connect images-to-video, video editing, and AI script assistance
+    to your backend and GPU workers.
+  </footer>
+
+  <script>
+    function handleImagesToVideo() {
+      const files = document.getElementById("video-images").files;
+      if (!files.length) {
+        alert("Please upload at least one image to build a video.");
+        return;
+      }
+      alert(
+        "Images → Video flow selected. Later, this will upload your images and prompt to your video generation backend."
+      );
+    }
+
+    function handleVideoEdit() {
+      const file = document.getElementById("input-video").files[0];
+      if (!file) {
+        alert("Please upload a short video first.");
+        return;
+      }
+      alert(
+        "Video edit flow selected. In the future, this will send your clip and instructions to your AI video editor (effects, characters, color, etc.)."
+      );
+    }
+
+    function handleScriptAssist() {
+      const file = document.getElementById("video-script-file").files[0];
+      if (!file) {
+        alert("Please upload a script or PDF first.");
+        return;
+      }
+      alert(
+        "AI script assistance flow selected. Later, this will read your script and return rewrites, dialogue fixes, and shot lists."
+      );
+    }
+  </script>
+</body>
+</html>
