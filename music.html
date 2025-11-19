@@ -1,84 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sulandra AI Studio – Music Generator</title>
 
   <style>
+    :root {
+      --bg: #050816;
+      --card-bg: #0b1020;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.12);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148, 163, 184, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      color: #222;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #111827, #020617 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
-      background: #000;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
-    nav {
-      background: #222;
-      padding: 10px 0;
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 16px;
       display: flex;
-      justify-content: center;
-      gap: 30px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #a3e635, #22c55e 55%, #16a34a);
+      box-shadow: 0 0 16px rgba(34, 197, 94, 0.5);
+    }
+
+    .logo-text-main { font-weight: 700; font-size: 17px; letter-spacing: 0.03em; }
+    .logo-text-sub {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+    }
+
+    nav { display: flex; gap: 14px; flex-wrap: wrap; }
     nav a {
-      color: white;
+      color: var(--text-muted);
       text-decoration: none;
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
     }
-
     nav a:hover {
-      text-decoration: underline;
+      color: var(--text-main);
+      border-color: var(--border-soft);
+      background: rgba(15, 23, 42, 0.8);
+    }
+    nav a.active {
+      color: var(--text-main);
+      background: var(--accent-soft);
+      border-color: rgba(34, 197, 94, 0.6);
     }
 
-    .section {
-      padding: 60px 20px;
-      text-align: center;
-      background: white;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 900px;
+    main { flex: 1; }
+
+    .layout {
+      max-width: 1100px;
+      margin: 26px auto 32px;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      padding: 18px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.85);
+    }
+
+    .panel h1 { font-size: 22px; margin-bottom: 6px; }
+    .panel-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+
+    label {
+      font-size: 13px;
+      color: var(--text-main);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      padding: 10px;
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
     }
 
-    h1 {
-      font-size: 32px;
+    textarea::placeholder { color: #6b7280; }
+
+    select, input[type="number"] {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .field-group { margin-bottom: 14px; }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    button {
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 25px rgba(22, 163, 74, 0.6);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(22, 163, 74, 0.8);
+      opacity: 0.97;
+    }
+
+    .note { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+    .preview-header {
+      font-size: 13px;
+      color: var(--text-muted);
       margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    p {
-      font-size: 18px;
-      line-height: 1.6;
+    .preview-box {
+      border-radius: 14px;
+      border: 1px dashed var(--border-soft);
+      background: radial-gradient(circle at top left, rgba(52, 211, 153, 0.18), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.24), transparent 60%);
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 14px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-soft);
+      padding: 10px 16px 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      background: rgba(2, 6, 23, 0.95);
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
     }
   </style>
 </head>
 
 <body>
-
   <header>
-    Sulandra AI Studio
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-circle"></div>
+        <div>
+          <div class="logo-text-main">Sulandra AI Studio</div>
+          <div class="logo-text-sub">AI Music Generator</div>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="image.html">Image</a>
+        <a href="video.html">Video</a>
+        <a href="music.html" class="active">Music</a>
+        <a href="film.html">Short Films</a>
+      </nav>
+    </div>
   </header>
 
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="image.html">Image Generator</a>
-    <a href="video.html">Video Generator</a>
-    <a href="music.html">Music Generator</a>
-    <a href="film.html">Short Films</a>
-  </nav>
+  <main>
+    <section class="layout">
+      <div class="panel">
+        <h1>AI Music Generator</h1>
+        <p class="panel-sub">
+          Suno-style tracks: Afrobeat, Amapiano, Gospel, film scores and more.
+          This UI will later send prompts and settings to your music model and
+          receive finished audio files.
+        </p>
 
-  <div class="section">
-    <h1>AI Music Generator</h1
+        <form onsubmit="event.preventDefault(); alert('In the future this will create a music generation job. For now it is a design prototype.');">
+          <div class="field-group">
+            <label for="prompt">Song description / lyrics idea</label>
+            <textarea
+              id="prompt"
+              placeholder="Example: Emotional Afrobeat worship song about breakthrough, mid-tempo, female lead, gentle choir in the background"
+            ></textarea>
+          </div>
+
+          <div class="field-row field-group">
+            <div>
+              <label for="genre">Genre / style</label>
+              <select id="genre">
+                <option>Afrobeat</option>
+                <option>Amapiano</option>
+                <option>Gospel / Worship</option>
+                <option>Lo-fi / Chill</option>
+                <option>Film score / Cinematic</option>
+              </select>
+            </div>
+            <div>
+              <label for="length">Length (seconds)</label>
+              <input id="length" type="number" min="15" max="240" value="60" />
+            </div>
+          </div>
+
+          <div class="field-row field-group">
+            <div>
+              <label for="bpm">Tempo (BPM)</label>
+              <input id="bpm" type="number" min="60" max="180" value="120" />
+            </div>
+            <div>
+              <label for="vocals">Vocals</label>
+              <select id="vocals">
+                <option>Lead vocal + backing</option>
+                <option>Lead vocal only</option>
+                <option>Instrumental only</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit">
+            Generate Music (UI only for now)
+          </button>
+          <p class="note">
+            Later this will call something like <code>/api/generate-music</code>,
+            and the backend will respond with an audio URL (MP3/WAV) that you
+            can play here.
+          </p>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="preview-header">
+          <span>Preview / Player</span>
+          <span style="font-size: 11px;">
+            Status: <strong>Disconnected</strong>
+          </span>
+        </div>
+        <div class="preview-box">
+          This panel will eventually display a small audio player, waveform, or
+          recent tracks generated by the studio.
+          <br /><br />
+          For now, it is a visual placeholder so you can design your user
+          experience first.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Music module · Next step: connect this to a music generation backend
+    that returns ready-to-stream audio.
+  </footer>
+</body>
+</html>
