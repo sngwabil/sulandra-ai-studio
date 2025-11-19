@@ -185,6 +185,14 @@
       margin: 26px auto 0;
       padding: 0 16px 22px;
       border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .hero-left {
+      padding-right: 4px;
     }
 
     .hero-kicker {
@@ -307,37 +315,13 @@
       background: rgba(15, 23, 42, 0.9);
     }
 
-    /* MAIN GRID */
-
-    .section {
-      max-width: 1200px;
-      margin: 22px auto 0;
-      padding: 0 16px 22px;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .section-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .product-grid {
+    .hero-right {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
+
+    /* PRODUCT CARDS */
 
     .product-card {
       border-radius: 18px;
@@ -347,10 +331,11 @@
       box-shadow: 0 14px 32px rgba(15, 23, 42, 0.95);
       position: relative;
       overflow: hidden;
+      min-height: 132px;
     }
 
     .product-pill {
-      font-size: 10px;
+      font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       padding: 3px 8px;
@@ -364,28 +349,28 @@
     }
 
     .product-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       margin-bottom: 4px;
     }
 
     .product-desc {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .product-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .product-tag {
-      font-size: 10px;
+      font-size: 9px;
       border-radius: 999px;
-      padding: 3px 7px;
+      padding: 2px 6px;
       border: 1px solid rgba(55, 65, 81, 0.9);
       color: #e5e7eb;
       background: rgba(15, 23, 42, 0.9);
@@ -395,13 +380,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       margin-top: 4px;
     }
 
     .product-link {
-      font-size: 11px;
+      font-size: 10px;
       color: #e5e7eb;
       display: inline-flex;
       align-items: center;
@@ -436,11 +421,35 @@
       z-index: 1;
     }
 
-    /* PLANS & CREDITS OVERVIEW */
+    /* SECTIONS BELOW HERO */
+
+    .section {
+      max-width: 1200px;
+      margin: 22px auto 0;
+      padding: 0 16px 22px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .section-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
 
     .plans-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
     }
 
@@ -451,6 +460,27 @@
       padding: 14px 12px;
       box-shadow: 0 14px 32px rgba(15, 23, 42, 0.95);
       font-size: 13px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plan-ribbon {
+      position: absolute;
+      top: 8px;
+      right: -28px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #e5e7eb;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 28px;
+      transform: rotate(38deg);
+      box-shadow: 0 8px 18px rgba(22, 163, 74, 0.6);
+    }
+
+    .plan-ribbon.gold {
+      background: linear-gradient(135deg, #f97316, #eab308);
+      box-shadow: 0 8px 18px rgba(234, 179, 8, 0.7);
     }
 
     .plan-name {
@@ -496,6 +526,13 @@
       display: flex;
       justify-content: space-between;
       margin-bottom: 3px;
+    }
+
+    .yearly-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.5;
     }
 
     /* CONTACT SECTION */
@@ -717,6 +754,12 @@
       background: rgba(15, 23, 42, 0.96);
       margin-right: 4px;
       margin-bottom: 4px;
+      cursor: pointer;
+    }
+
+    .chip.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
     .profile-footer {
@@ -785,11 +828,14 @@
     }
 
     @media (max-width: 960px) {
-      .product-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .hero-right {
+        order: -1;
       }
       .plans-grid {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .contact-grid {
         grid-template-columns: minmax(0, 1fr);
@@ -803,6 +849,9 @@
       }
       .hero-title {
         font-size: 24px;
+      }
+      .plans-grid {
+        grid-template-columns: minmax(0, 1fr);
       }
     }
   </style>
@@ -826,8 +875,8 @@
         <a href="video.html">Video</a>
         <a href="music.html">Music</a>
         <a href="film.html">Short Films</a>
-        <a href="education.html">Explore</a>
         <a href="studio.html">Studio</a>
+        <a href="education.html">Explore</a>
       </nav>
 
       <!-- Profile / Sign in -->
@@ -843,47 +892,39 @@
 </header>
 
 <main>
-  <!-- HERO -->
+  <!-- HERO with colorful cards -->
   <section class="hero">
-    <div class="hero-kicker">Unified creation platform</div>
-    <h1 class="hero-title">
-      One brain for <span>images, music, video and short films.</span>
-    </h1>
-    <p class="hero-sub">
-      Sulandra AI Studio connects everything: generate images, songs, videos and
-      short films in one place. Use your credits across all tools, move a
-      generated image into a video, or drop a song straight into a short film or
-      Studio project without downloading anything.
-    </p>
+    <div class="hero-left">
+      <div class="hero-kicker">Unified creation platform</div>
+      <h1 class="hero-title">
+        One brain for <span>images, music, video and short films.</span>
+      </h1>
+      <p class="hero-sub">
+        Sulandra AI Studio connects everything: generate images, songs, videos
+        and short films in one place. Use your credits across all tools, move a
+        generated image into a video, or drop a song straight into a short film
+        or Studio project without downloading anything.
+      </p>
 
-    <div class="hero-actions">
-      <button class="btn-primary" onclick="toggleProfile()">
-        <span class="plus">+</span>
-        Get started – Sign in
-      </button>
-      <button class="btn-ghost" onclick="scrollToSection('plans')">
-        View plans & credits
-      </button>
-    </div>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="toggleProfile()">
+          <span class="plus">+</span>
+          Get started – Choose a plan
+        </button>
+        <button class="btn-ghost" onclick="scrollToSection('plans')">
+          View plans & credits
+        </button>
+      </div>
 
-    <div class="hero-tags">
-      <div class="hero-tag-pill">Basic – Free</div>
-      <div class="hero-tag-pill">Pro – $10 · 2500 credits</div>
-      <div class="hero-tag-pill">Creator Ultimate – $45 · 10000 credits</div>
-      <div class="hero-tag-pill">Add-ons: Music Ultimate, more coming</div>
-    </div>
-  </section>
-
-  <!-- MAIN PRODUCT GRID -->
-  <section class="section">
-    <div class="section-header">
-      <div class="section-title">Choose your lab</div>
-      <div class="section-sub">
-        Each lab shares the same credits and brain. Plans are managed in your profile only.
+      <div class="hero-tags">
+        <div class="hero-tag-pill">Basic – Free · 50 credits · watermark</div>
+        <div class="hero-tag-pill">Pro – $20 · WAV export</div>
+        <div class="hero-tag-pill">Creator – $30 · 4K access</div>
+        <div class="hero-tag-pill">Creator Ultimate – $45 · 10000 credits</div>
       </div>
     </div>
 
-    <div class="product-grid">
+    <div class="hero-right">
       <!-- IMAGE -->
       <article class="product-card">
         <div class="shimmer-border"></div>
@@ -903,7 +944,7 @@
             <span class="product-tag">Storyboards</span>
           </div>
           <div class="product-footer">
-            <span>Basic & up · higher quality with Pro / Creator</span>
+            <span>Basic: watermark · higher tiers: clean</span>
             <a class="product-link" href="image.html">
               Open Image Lab →
             </a>
@@ -920,18 +961,18 @@
           </div>
           <h3 class="product-title">Music · Lyrics · Vocals</h3>
           <p class="product-desc">
-            Generate full songs, stems, and lyric drafts. Train vocal styles and
+            Generate full songs, stems and lyric drafts. Train vocal styles and
             reuse them across videos and short films. Each song uses
             <strong>10 credits</strong>.
           </p>
           <div class="product-tags">
             <span class="product-tag">Song generation</span>
             <span class="product-tag">AI lyric help</span>
-            <span class="product-tag">Stems & mastering</span>
             <span class="product-tag">Vocal training</span>
+            <span class="product-tag">Stems & MIDI (Ultimate)</span>
           </div>
           <div class="product-footer">
-            <span>Music Ultimate add-on unlocks all music tools</span>
+            <span>Stems & MIDI: 50 credits (Music/Creator Ultimate)</span>
             <a class="product-link" href="music.html">
               Open Music Lab →
             </a>
@@ -949,9 +990,8 @@
           <h3 class="product-title">Video · Edits · Lip sync</h3>
           <p class="product-desc">
             Text-to-video, image-to-video and reference-based clips. Add lip sync
-            to characters or dancers using generated or uploaded audio.
-            Base video uses <strong>10 credits</strong>, lip sync adds
-            <strong>+10 credits</strong>.
+            using generated or uploaded audio. Base video uses
+            <strong>10 credits</strong>, lip sync adds <strong>+10 credits</strong>.
           </p>
           <div class="product-tags">
             <span class="product-tag">Text → Video</span>
@@ -960,7 +1000,7 @@
             <span class="product-tag">Lip sync</span>
           </div>
           <div class="product-footer">
-            <span>Pro & Creator unlock higher resolutions</span>
+            <span>4K: Creator & up · WAV for Pro & up</span>
             <a class="product-link" href="video.html">
               Open Video Lab →
             </a>
@@ -978,8 +1018,7 @@
           <h3 class="product-title">Short films · Scenes</h3>
           <p class="product-desc">
             Build multi-scene short films with scripts, storyboards, and linked
-            music from Studio. Each short film uses <strong>100 credits</strong>
-            and is reserved for Creator Ultimate users.
+            music from Studio. Each short film uses <strong>100 credits</strong>.
           </p>
           <div class="product-tags">
             <span class="product-tag">Script → Film</span>
@@ -988,7 +1027,7 @@
             <span class="product-tag">Studio export</span>
           </div>
           <div class="product-footer">
-            <span>Creator Ultimate only · plan handled in profile</span>
+            <span>Designed for Creator Ultimate</span>
             <a class="product-link" href="film.html">
               Open Short Films →
             </a>
@@ -1003,7 +1042,7 @@
     <div class="section-header">
       <div class="section-title">Plans, credits & add-ons</div>
       <div class="section-sub">
-        Users choose Basic, Pro, or Creator Ultimate when they create an account. Everything is managed in the Profile only.
+        Users choose Basic, Pro, Creator, or Creator Ultimate in their profile. Add-ons and yearly billing are handled there too.
       </div>
     </div>
 
@@ -1011,45 +1050,69 @@
       <!-- BASIC -->
       <div class="plan-card">
         <div class="plan-name">Basic</div>
-        <div class="plan-price">$0 / month</div>
+        <div class="plan-price">$0 / month · 50 credits</div>
         <div class="plan-meta">
-          No monthly fee. Light access with watermarks and lower resolutions. Great for trying things out.
+          Try everything with a watermark. Good audio and video quality so your label never sits on something low.
         </div>
         <ul class="plan-list">
-          <li>• Access to Image, Music and Video labs with restrictions</li>
-          <li>• Watermarks always on</li>
-          <li>• Lower quality outputs (e.g., SD)</li>
-          <li>• Can buy extra credits when needed</li>
+          <li>• 50 credits per month included</li>
+          <li>• Image, Music, Video and Short Film previews</li>
+          <li>• MP3 audio only, always with watermark</li>
+          <li>• Cannot buy extra credits or remove watermark</li>
+          <li>• Great for testing the full workflow before upgrading</li>
         </ul>
       </div>
 
       <!-- PRO -->
       <div class="plan-card">
         <div class="plan-name">Pro</div>
-        <div class="plan-price">$10 / month</div>
+        <div class="plan-price">$20 / month · 2500 credits</div>
         <div class="plan-meta">
-          Includes <strong>2500 credits</strong> and access to all Pro-level features across Image, Music and Video.
+          For serious creators who want WAV export, higher resolutions and the ability to add Ultimate packs.
         </div>
         <ul class="plan-list">
-          <li>• All Pro features in Image, Music and Video labs</li>
-          <li>• Higher quality outputs (HD, some UHD)</li>
-          <li>• Can add “Music Ultimate” for +$5/month (no extra credits)</li>
-          <li>• Short films and Studio advanced features stay locked</li>
+          <li>• 2500 credits per month included</li>
+          <li>• Clean outputs, no watermark</li>
+          <li>• WAV export for music and videos (audio)</li>
+          <li>• Higher resolutions (HD / UHD depending on tool)</li>
+          <li>• Can buy credit packs (100 / 200 / 300 credits)</li>
+          <li>• Optional add-ons: Music, Image and Video Ultimate (+$5 each)</li>
+        </ul>
+      </div>
+
+      <!-- CREATOR -->
+      <div class="plan-card">
+        <div class="plan-ribbon">Best value</div>
+        <div class="plan-name">Creator</div>
+        <div class="plan-price">$30 / month · 500 credits</div>
+        <div class="plan-meta">
+          For power users who want access to 4K, Studio workflows and deeper control, with focused monthly credits.
+        </div>
+        <ul class="plan-list">
+          <li>• 500 credits per month included</li>
+          <li>• 4K support for visuals where available</li>
+          <li>• WAV export and clean outputs</li>
+          <li>• Full access to Studio workflows for Music and Video</li>
+          <li>• Can buy extra credit packs</li>
+          <li>• Can add Music / Image / Video Ultimate for deep control</li>
         </ul>
       </div>
 
       <!-- CREATOR ULTIMATE -->
       <div class="plan-card">
+        <div class="plan-ribbon gold">Best overall</div>
         <div class="plan-name">Creator Ultimate</div>
-        <div class="plan-price">$45 / month</div>
+        <div class="plan-price">$45 / month · 10000 credits</div>
         <div class="plan-meta">
-          Includes <strong>10000 credits</strong> and full access, including Short Films and Studio tools.
+          Everything unlocked. Designed for full productions, short films and intense Studio use across all categories.
         </div>
         <ul class="plan-list">
-          <li>• Everything in Pro plus Short Films</li>
-          <li>• Full Studio access for Music + Video editing</li>
-          <li>• Highest resolutions (UHD, 4K where supported)</li>
-          <li>• Access to all Ultimate versions across categories</li>
+          <li>• 10000 credits per month included</li>
+          <li>• 4K support across visual tools where available</li>
+          <li>• Full Studio + Short Film workflow</li>
+          <li>• Stems & MIDI export for 50 credits per song</li>
+          <li>• All Ultimate features included (no separate add-on needed)</li>
+          <li>• Priority for future Sulandra AI Studio features</li>
         </ul>
       </div>
     </div>
@@ -1064,7 +1127,7 @@
         <span>5 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• Image-to-image with more work (advanced)</span>
+        <span>• Advanced image-to-image / heavy edit</span>
         <span>15 credits</span>
       </div>
       <div class="credits-table-row">
@@ -1072,11 +1135,11 @@
         <span>10 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• Text-to-video</span>
+        <span>• Text-to-video clip</span>
         <span>10 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• YouTube reference (learning style)</span>
+        <span>• YouTube reference (learn style)</span>
         <span>10 credits</span>
       </div>
       <div class="credits-table-row">
@@ -1084,12 +1147,16 @@
         <span>+10 credits</span>
       </div>
       <div class="credits-table-row">
+        <span>• Stems + MIDI export (Music / Creator Ultimate)</span>
+        <span>50 credits</span>
+      </div>
+      <div class="credits-table-row">
         <span>• Short film (multi-scene)</span>
         <span>100 credits</span>
       </div>
 
       <div style="margin-top:8px; margin-bottom:4px;">
-        <strong>Buy extra credits:</strong>
+        <strong>Buy extra credits (paid plans only):</strong>
       </div>
       <div class="credits-table-row">
         <span>100 credits</span>
@@ -1103,9 +1170,14 @@
         <span>300 credits</span>
         <span>$10</span>
       </div>
-      <div class="credits-table-row" style="margin-top:6px;">
-        <span>Payments supported</span>
-        <span>PayPal · Credit / Visa · Apple Pay</span>
+
+      <div class="yearly-note">
+        <strong>Yearly subscriptions:</strong><br />
+        • Pro: $228 / year (5% discount)<br />
+        • Creator: $331.20 / year (8% discount)<br />
+        • Creator Ultimate: $486 / year (10% discount)<br />
+        Users can upgrade or downgrade at any time. In the real app, upgrades keep your remaining credits and only charge the difference.
+        New users can start with a 7-day free trial on a chosen plan (valid payment method required; exports disabled during trial).
       </div>
     </div>
   </section>
@@ -1157,7 +1229,7 @@
       <div class="contact-card">
         <div class="profile-section-title">Payments & methods</div>
         <div class="profile-section-sub">
-          In your profile, users will manage subscriptions, credit packs and payment methods.
+          In your profile, users manage subscriptions, credit packs and payment methods.
         </div>
         <div class="profile-small">
           Supported methods (UI preview):
@@ -1171,9 +1243,10 @@
           In the real system:
         </div>
         <ul class="plan-list">
-          <li>• Users pick Basic, Pro or Creator Ultimate when signing up.</li>
-          <li>• They can add Music Ultimate or other add-ons later.</li>
-          <li>• All plan and payment updates live inside the Profile panel.</li>
+          <li>• Users pick a plan (Basic, Pro, Creator, Creator Ultimate).</li>
+          <li>• They can start a 7-day trial with a valid payment method.</li>
+          <li>• They can upgrade / downgrade anytime from the Profile panel.</li>
+          <li>• They can add or remove Ultimate add-ons per category.</li>
         </ul>
       </div>
     </div>
@@ -1181,8 +1254,7 @@
 </main>
 
 <footer>
-  Sulandra AI Studio · All labs share one credit system and one brain. Plans and
-  payments are managed only from the Profile. Studio editing tools are coming soon.
+  Sulandra AI Studio · One credit system, one brain. Plans, trials and payments are managed from the Profile.
 </footer>
 
 <!-- PROFILE OVERLAY -->
@@ -1270,7 +1342,7 @@
             Credits: <strong id="overview-credits">0 / 0</strong>
           </div>
           <div class="profile-small">
-            When connected to a backend, this will read from the user’s actual account.
+            When connected to a backend, this will read from the user’s actual account and apply plan limitations/gating everywhere.
           </div>
         </div>
 
@@ -1292,7 +1364,7 @@
             Save changes (local preview)
           </button>
           <div class="profile-small" id="edit-note">
-            This only updates locally for now. Later, this will call your user API.
+            This only updates locally for now. Later, this will call your user profile API.
           </div>
         </div>
 
@@ -1300,7 +1372,7 @@
         <div id="profile-section-subscription" style="display:none;">
           <div class="profile-section-title">Subscription & credits</div>
           <div class="profile-section-sub">
-            Users manage plans here. UI example of Basic, Pro and Creator Ultimate plus add-ons.
+            Users manage plans here. This is where plan-based access and add-ons are controlled.
           </div>
 
           <div class="profile-line">
@@ -1314,36 +1386,70 @@
           </div>
 
           <div class="profile-small" style="margin-top:6px;">
-            Plan options (UI only here):
+            Plan options (click to simulate):
           </div>
           <div>
             <div class="chip" onclick="simulatePlan('basic')">
-              Basic – $0 · no monthly credits
+              Basic – $0 · 50 credits · watermark
             </div>
             <div class="chip" onclick="simulatePlan('pro')">
-              Pro – $10 · 2500 credits
+              Pro – $20 · 2500 credits
             </div>
             <div class="chip" onclick="simulatePlan('creator')">
+              Creator – $30 · 500 credits
+            </div>
+            <div class="chip" onclick="simulatePlan('creatorUltimate')">
               Creator Ultimate – $45 · 10000 credits
             </div>
           </div>
 
           <div class="profile-small" style="margin-top:8px;">
-            Add-ons (for Pro, as example):
+            Add-ons (for paid plans, UI only here):
           </div>
           <div>
             <div class="chip" onclick="toggleAddon('musicUltimate')">
               Music Ultimate +$5
             </div>
+            <div class="chip" onclick="toggleAddon('imageUltimate')">
+              Image Ultimate +$5
+            </div>
+            <div class="chip" onclick="toggleAddon('videoUltimate')">
+              Video Ultimate +$5
+            </div>
           </div>
 
-          <div class="profile-small" style="margin-top:10px;">
-            Buy extra credits:
+          <div class="profile-small" style="margin-top:8px;">
+            Buy extra credits (for Pro / Creator / Creator Ultimate only):
           </div>
           <div>
-            <div class="chip">100 credits – $5</div>
-            <div class="chip">200 credits – $8</div>
-            <div class="chip">300 credits – $10</div>
+            <div class="chip" onclick="buyCredits(100, 5)">
+              100 credits – $5
+            </div>
+            <div class="chip" onclick="buyCredits(200, 8)">
+              200 credits – $8
+            </div>
+            <div class="chip" onclick="buyCredits(300, 10)">
+              300 credits – $10
+            </div>
+          </div>
+
+          <div class="profile-small" style="margin-top:8px;">
+            Yearly billing options (preview only – activate in your backend):
+          </div>
+          <div>
+            <div class="chip disabled">
+              Pro yearly – $228 (5% off)
+            </div>
+            <div class="chip disabled">
+              Creator yearly – $331.20 (8% off)
+            </div>
+            <div class="chip disabled">
+              Creator Ultimate yearly – $486 (10% off)
+            </div>
+          </div>
+
+          <div class="profile-small" style="margin-top:8px;">
+            In production, selecting a plan can start a 7-day trial (no downloads/exports until trial converts). User must add a valid payment method.
           </div>
         </div>
 
@@ -1369,8 +1475,8 @@
           <ul class="plan-list">
             <li>• Update card details or PayPal / Apple Pay links.</li>
             <li>• See invoices and billing history.</li>
-            <li>• Upgrade / downgrade between Basic, Pro, Creator Ultimate.</li>
-            <li>• Turn add-ons (like Music Ultimate) on or off.</li>
+            <li>• Upgrade / downgrade between all plans.</li>
+            <li>• Turn add-ons (Music / Image / Video Ultimate) on or off.</li>
           </ul>
         </div>
 
@@ -1392,7 +1498,7 @@
           </div>
           <ul class="plan-list">
             <li>• You and your friend both get bonus credits when they join.</li>
-            <li>• Higher bonus when they choose Creator Ultimate.</li>
+            <li>• Higher bonus when they choose Creator or Creator Ultimate.</li>
           </ul>
         </div>
 
@@ -1420,7 +1526,7 @@
 
     <div class="profile-footer">
       <span id="profile-footer-text">
-        You are viewing the app as a guest. Click “Sign in / Sign out” to simulate states.
+        You are viewing the app as a guest. Click “Sign in (simulate)” to see Pro / Creator states.
       </span>
       <button type="button" onclick="toggleSignIn()" id="profile-sign-btn">
         Sign in (simulate)
@@ -1435,11 +1541,13 @@
   let user = {
     name: "Guest",
     initial: "G",
-    plan: "basic", // basic | pro | creator
+    plan: "basic", // basic | pro | creator | creatorUltimate
     credits: 0,
     maxCredits: 0,
     addons: {
-      musicUltimate: false
+      musicUltimate: false,
+      imageUltimate: false,
+      videoUltimate: false
     }
   };
 
@@ -1480,29 +1588,41 @@
       subCredits.textContent = "0";
       subAddons.textContent = "None";
       footerText.textContent =
-        "You are viewing the app as a guest. Click “Sign in (simulate)” to see Pro / Creator states.";
+        "You are viewing the app as a guest. Click “Sign in (simulate)” to see how plans change features.";
       signBtn.textContent = "Sign in (simulate)";
       return;
     }
 
-    // Signed-in demo state
+    // Map plan to labels and max credits
     let planLabelText = "";
     let creditsLabel = "";
     if (user.plan === "pro") {
-      planLabelText = user.addons.musicUltimate
-        ? "Pro + Music Ultimate"
-        : "Pro";
+      planLabelText = "Pro";
       user.maxCredits = 2500;
-      creditsLabel = user.credits + " / 2500 credits";
     } else if (user.plan === "creator") {
+      planLabelText = "Creator";
+      user.maxCredits = 500;
+    } else if (user.plan === "creatorUltimate") {
       planLabelText = "Creator Ultimate";
       user.maxCredits = 10000;
-      creditsLabel = user.credits + " / 10000 credits";
     } else {
       planLabelText = "Basic";
-      user.maxCredits = 0;
-      creditsLabel = user.credits + " / 0 credits";
+      user.maxCredits = 50;
     }
+
+    // Ensure credits are within max
+    if (user.credits > user.maxCredits) {
+      user.credits = user.maxCredits;
+    }
+
+    creditsLabel = user.credits + " / " + user.maxCredits + " credits";
+
+    // Text for add-ons
+    const addonNames = [];
+    if (user.addons.musicUltimate) addonNames.push("Music Ultimate");
+    if (user.addons.imageUltimate) addonNames.push("Image Ultimate");
+    if (user.addons.videoUltimate) addonNames.push("Video Ultimate");
+    const addonText = addonNames.length ? addonNames.join(", ") : "None";
 
     profileLabel.textContent = user.name;
     profileCredits.textContent = creditsLabel;
@@ -1510,17 +1630,14 @@
     profilePlanLabel.textContent = planLabelText;
     overviewName.textContent = user.name;
     overviewPlan.textContent = planLabelText;
-    overviewCredits.textContent =
-      user.credits + " / " + user.maxCredits;
+    overviewCredits.textContent = creditsLabel;
 
     subPlan.textContent = planLabelText;
     subCredits.textContent = user.maxCredits;
-    subAddons.textContent = user.addons.musicUltimate
-      ? "Music Ultimate"
-      : "None";
+    subAddons.textContent = addonText;
 
     footerText.textContent =
-      "Signed in locally (demo only). In production this panel talks to your real backend.";
+      "Signed in locally (demo only). In production this panel talks to your real backend and enforces limits across all pages.";
     signBtn.textContent = "Sign out (simulate)";
   }
 
@@ -1557,11 +1674,13 @@
       user = {
         name: "Demo User",
         initial: "D",
-        plan: "creator",
+        plan: "creatorUltimate",
         credits: 10000,
         maxCredits: 10000,
         addons: {
           musicUltimate: true,
+          imageUltimate: true,
+          videoUltimate: true
         },
       };
     } else {
@@ -1573,6 +1692,8 @@
         maxCredits: 0,
         addons: {
           musicUltimate: false,
+          imageUltimate: false,
+          videoUltimate: false
         },
       };
     }
@@ -1602,23 +1723,26 @@
 
   function simulatePlan(planKey) {
     if (!isSignedIn) {
-      alert("Sign in (simulate) first, then switch between Basic / Pro / Creator Ultimate.");
+      alert("Sign in (simulate) first, then switch between Basic / Pro / Creator / Creator Ultimate.");
       return;
     }
+
     user.plan = planKey;
-    if (planKey === "pro") {
-      user.maxCredits = 2500;
-      user.credits = 2500;
-      user.addons.musicUltimate = false;
-    } else if (planKey === "creator") {
-      user.maxCredits = 10000;
-      user.credits = 10000;
-      user.addons.musicUltimate = true;
-    } else {
-      user.maxCredits = 0;
-      user.credits = 0;
-      user.addons.musicUltimate = false;
+
+    // Do not reset credits completely; if user has 0, give them default for that plan.
+    if (user.credits === 0) {
+      if (planKey === "pro") {
+        user.credits = 2500;
+      } else if (planKey === "creator") {
+        user.credits = 500;
+      } else if (planKey === "creatorUltimate") {
+        user.credits = 10000;
+      } else {
+        user.credits = 50;
+      }
     }
+
+    // If downgrading from Ultimate, keep credits but clamp to max in updateProfileUI
     updateProfileUI();
   }
 
@@ -1627,10 +1751,26 @@
       alert("Sign in (simulate) first, then toggle add-ons.");
       return;
     }
-    if (addonKey === "musicUltimate") {
-      user.addons.musicUltimate = !user.addons.musicUltimate;
-      updateProfileUI();
+    if (user.plan === "basic") {
+      alert("Ultimate add-ons are only available on paid plans (Pro / Creator / Creator Ultimate).");
+      return;
     }
+    user.addons[addonKey] = !user.addons[addonKey];
+    updateProfileUI();
+  }
+
+  function buyCredits(amount, cost) {
+    if (!isSignedIn) {
+      alert("Sign in (simulate) first, then buy credits.");
+      return;
+    }
+    if (user.plan === "basic") {
+      alert("Credit packs are available only for paid plans (Pro / Creator / Creator Ultimate).");
+      return;
+    }
+    user.credits += amount;
+    alert("Demo only: added " + amount + " credits for $" + cost + ". In production this would open a payment flow.");
+    updateProfileUI();
   }
 
   function scrollToSection(id) {
