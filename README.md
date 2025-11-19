@@ -1,2 +1,111 @@
-# sulandra-ai-studio
-The official Sulandra AI Studio website.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sulandra AI Studio</title>
+
+  <!-- Simple modern styling -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    header {
+      background: #000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    nav {
+      background: #222;
+      padding: 10px 0;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .section {
+      padding: 60px 20px;
+      text-align: center;
+      background: white;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 900px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    Sulandra AI Studio
+  </header>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <a href="#image">Image Generator</a>
+    <a href="#video">Video Generator</a>
+    <a href="#music">Music Generator</a>
+    <a href="#film">Short Films</a>
+  </nav>
+
+  <!-- SECTIONS -->
+  <div id="image" class="section">
+    <h2>AI Image Generator</h2>
+    <p>Create stunning models, artwork, album covers, portraits, and more.
+       This will later connect to your Runpod image generator.</p>
+  </div>
+
+  <div id="video" class="section">
+    <h2>AI Video Generator</h2>
+    <p>Generate motion videos like Kling AI — dance, cinematic shots, animations,
+       and more. This will later connect to your video generation backend.</p>
+  </div>
+
+  <div id="music" class="section">
+    <h2>AI Music Generator</h2>
+    <p>Produce AI vocals, Afrobeat, Amapiano, Gospel, cinematic scores, and more
+       — powered by your future music model.</p>
+  </div>
+
+  <div id="film" class="section">
+    <h2>AI Short-Film Creator</h2>
+    <p>Write scripts, generate scenes, produce soundtracks, and automatically
+       assemble short films — your advanced AI pipeline.</p>
+  </div>
+
+</body>
+</html>
