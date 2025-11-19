@@ -6,91 +6,356 @@
   <title>Sulandra AI Studio – Image Generator</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    :root {
+      --bg: #050816;
+      --card-bg: #0b1020;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.12);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148, 163, 184, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
-      color: #222;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #111827, #020617 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
-      background: #000;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #facc15, #ef4444 55%, #3b82f6);
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.4);
+    }
+
+    .logo-text-main {
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.03em;
+    }
+
+    .logo-text-sub {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
     }
 
     nav {
-      background: #222;
-      padding: 10px 0;
       display: flex;
-      justify-content: center;
-      gap: 30px;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     nav a {
-      color: white;
+      color: var(--text-muted);
       text-decoration: none;
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
     }
 
     nav a:hover {
-      text-decoration: underline;
+      color: var(--text-main);
+      border-color: var(--border-soft);
+      background: rgba(15, 23, 42, 0.8);
     }
 
-    .section {
-      padding: 60px 20px;
-      text-align: center;
-      background: white;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 900px;
+    nav a.active {
+      color: var(--text-main);
+      background: var(--accent-soft);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .layout {
+      max-width: 1100px;
+      margin: 26px auto 32px;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      padding: 18px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.85);
+    }
+
+    .panel h1 {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .panel-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--text-main);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      padding: 10px;
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
     }
 
-    h1 {
-      font-size: 32px;
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .field-group {
+      margin-bottom: 14px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    button {
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.5);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.7);
+      opacity: 0.97;
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .preview-header {
+      font-size: 13px;
+      color: var(--text-muted);
       margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    p {
-      font-size: 18px;
-      line-height: 1.6;
+    .preview-box {
+      border-radius: 14px;
+      border: 1px dashed var(--border-soft);
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(248, 113, 113, 0.2), transparent 60%);
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 14px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-soft);
+      padding: 10px 16px 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      background: rgba(2, 6, 23, 0.95);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
   </style>
 </head>
 
 <body>
-
   <header>
-    Sulandra AI Studio
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-circle"></div>
+        <div>
+          <div class="logo-text-main">Sulandra AI Studio</div>
+          <div class="logo-text-sub">AI Image Generator</div>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="image.html" class="active">Image</a>
+        <a href="video.html">Video</a>
+        <a href="music.html">Music</a>
+        <a href="film.html">Short Films</a>
+      </nav>
+    </div>
   </header>
 
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="image.html">Image Generator</a>
-    <a href="video.html">Video Generator</a>
-    <a href="music.html">Music Generator</a>
-    <a href="film.html">Short Films</a>
-  </nav>
+  <main>
+    <section class="layout">
+      <div class="panel">
+        <h1>AI Image Generator</h1>
+        <p class="panel-sub">
+          Design models, album covers, posters, and storyboards. This form
+          is the “remote control”. Later it will send jobs to your image
+          model running on Runpod.
+        </p>
 
-  <div class="section">
-    <h1>AI Image Generator</h1>
-    <p>
-      This page will become the control center for generating AI images:
-      models, album covers, posters, storyboards, and more.
-    </p>
-    <p>
-      For now, it is a simple placeholder. Later, we will connect it to your
-      Runpod / ComfyUI image backend so you can type a prompt and get results.
-    </p>
-  </div>
+        <form onsubmit="event.preventDefault(); alert('In the future this will send a request to your image backend. For now, it is just a UI placeholder.');">
+          <div class="field-group">
+            <label for="prompt">Prompt</label>
+            <textarea
+              id="prompt"
+              placeholder="Example: A beautiful African woman in a white dress, studio lighting, full body, 4K, soft shadows"
+            ></textarea>
+          </div>
 
+          <div class="field-row field-group">
+            <div>
+              <label for="ratio">Aspect ratio</label>
+              <select id="ratio">
+                <option value="9:16">9:16 – Portrait (TikTok / Reels)</option>
+                <option value="4:5">4:5 – Portrait</option>
+                <option value="1:1">1:1 – Square</option>
+                <option value="16:9">16:9 – Landscape</option>
+              </select>
+            </div>
+            <div>
+              <label for="steps">Quality / Steps</label>
+              <input id="steps" type="number" value="30" min="10" max="60" />
+            </div>
+          </div>
+
+          <div class="field-row field-group">
+            <div>
+              <label for="style">Style preset</label>
+              <select id="style">
+                <option>Realistic model</option>
+                <option>Studio fashion</option>
+                <option>Cinematic portrait</option>
+                <option>Album cover art</option>
+                <option>Concept art</option>
+              </select>
+            </div>
+            <div>
+              <label for="seed">Seed (optional)</label>
+              <input id="seed" type="number" placeholder="Random if empty" />
+            </div>
+          </div>
+
+          <button type="submit">
+            Generate Image (UI only for now)
+          </button>
+          <p class="note">
+            Later this button will call your backend API, which will send a
+            request to a Runpod GPU worker and return the final image URL.
+          </p>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="preview-header">
+          <span>Preview area</span>
+          <span style="font-size: 11px; color: var(--text-muted);">
+            Status: <strong>Disconnected</strong> (frontend only)
+          </span>
+        </div>
+        <div class="preview-box">
+          When the backend is connected, this box will show the latest
+          generated image thumbnail with a download link.
+          <br /><br />
+          For now, it is just a visual placeholder while you design
+          the UI.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Image module · Next step: create a simple backend endpoint for
+    /api/generate-image and connect it to this form.
+  </footer>
 </body>
 </html>
