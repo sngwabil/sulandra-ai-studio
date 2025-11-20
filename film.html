@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sulandra AI Studio – Short-Film Creator</title>
+  <title>Sulandra AI Studio – Short Films</title>
 
   <style>
     :root {
@@ -11,22 +11,37 @@
       --card-bg: #0b1020;
       --accent: #a855f7;
       --accent-soft: rgba(168, 85, 247, 0.18);
+      --accent2: #3b82f6;
+      --accent3: #f97316;
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
-      --border-soft: rgba(148, 163, 184, 0.2);
+      --border-soft: rgba(148, 163, 184, 0.25);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
-      background: radial-gradient(circle at top, #111827, #020617 55%);
+      background:
+        radial-gradient(circle at top, #111827, #020617 55%),
+        radial-gradient(circle at bottom, #020617, #000 80%);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* HEADER */
 
     header {
       border-bottom: 1px solid var(--border-soft);
@@ -34,17 +49,18 @@
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 30;
     }
 
     .header-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     .logo {
@@ -54,300 +70,2135 @@
     }
 
     .logo-circle {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #f97316, #a855f7 55%, #3b82f6);
-      box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+      background: conic-gradient(
+        from 140deg,
+        #a855f7,
+        #3b82f6,
+        #f97316,
+        #22c55e,
+        #a855f7
+      );
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.6);
+      animation: spinGlow 8s linear infinite;
     }
 
-    .logo-text-main { font-weight: 700; font-size: 17px; letter-spacing: 0.03em; }
+    .logo-text-main {
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
     .logo-text-sub {
       font-size: 10px;
       text-transform: uppercase;
       color: var(--text-muted);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
+      animation: glowPulse 3.5s ease-in-out infinite;
     }
 
-    nav { display: flex; gap: 14px; flex-wrap: wrap; }
+    .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     nav a {
       color: var(--text-muted);
       text-decoration: none;
       font-size: 14px;
-      padding: 6px 10px;
+      padding: 6px 9px;
       border-radius: 999px;
       border: 1px solid transparent;
       transition: all 0.18s ease;
     }
+
     nav a:hover {
       color: var(--text-main);
       border-color: var(--border-soft);
       background: rgba(15, 23, 42, 0.8);
     }
+
     nav a.active {
       color: var(--text-main);
       background: var(--accent-soft);
-      border-color: rgba(168, 85, 247, 0.6);
+      border-color: rgba(168, 85, 247, 0.7);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
     }
 
-    main { flex: 1; }
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
 
-    .layout {
-      max-width: 1100px;
-      margin: 26px auto 32px;
-      padding: 0 16px;
+    .profile-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .profile-badge:hover {
+      border-color: rgba(168, 85, 247, 0.7);
+      color: var(--text-main);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+    }
+
+    .profile-credits {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    main {
+      flex: 1;
+    }
+
+    /* HERO */
+
+    .lab-hero {
+      max-width: 1200px;
+      margin: 16px auto 0;
+      padding: 0 16px 10px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+    }
+
+    .lab-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .lab-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .lab-title span {
+      background: linear-gradient(
+        90deg,
+        #a855f7,
+        #3b82f6,
+        #f97316,
+        #22c55e,
+        #a855f7
+      );
+      -webkit-background-clip: text;
+      color: transparent;
+      background-size: 220% 220%;
+      animation: shimmer 6s linear infinite;
+      text-shadow: 0 0 14px rgba(168, 85, 247, 0.4);
+    }
+
+    .lab-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 860px;
+      line-height: 1.7;
+    }
+
+    .lab-status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+
+    .lab-pill {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 4px 9px;
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .lab-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
+    }
+
+    /* LAYOUT */
+
+    .lab-layout {
+      max-width: 1200px;
+      margin: 8px auto 0;
+      padding: 0 16px 18px;
       display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr);
-      gap: 20px;
-      align-items: flex-start;
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 14px;
     }
 
-    .panel {
-      background: var(--card-bg);
+    /* SIDEBAR */
+
+    .lab-sidebar {
       border-radius: 16px;
       border: 1px solid var(--border-soft);
-      padding: 18px;
-      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.98);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.95);
+      padding: 10px 8px;
+      font-size: 13px;
     }
 
-    .panel h1 { font-size: 22px; margin-bottom: 6px; }
-    .panel-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
 
-    label {
+    .menu-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .sidebar-title {
       font-size: 13px;
+      font-weight: 600;
+    }
+
+    .sidebar-section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 8px 0 4px;
+    }
+
+    .sidebar-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 6px 7px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s ease;
+      margin-bottom: 3px;
+    }
+
+    .sidebar-btn span {
+      pointer-events: none;
+    }
+
+    .sidebar-btn:hover {
+      background: rgba(15, 23, 42, 0.98);
+      border-color: var(--border-soft);
       color: var(--text-main);
-      display: block;
+    }
+
+    .sidebar-btn.active {
+      background: radial-gradient(circle at top left, #111827, #020617);
+      border-color: rgba(168, 85, 247, 0.7);
+      color: var(--text-main);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
+    }
+
+    .sidebar-badge {
+      font-size: 10px;
+      border-radius: 999px;
+      padding: 2px 6px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: var(--text-muted);
+    }
+
+    .sidebar-plan-dots {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.96);
+      margin-right: 4px;
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+
+    /* MAIN PANEL */
+
+    .lab-main {
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top, #111827, #020617);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+      padding: 12px 12px 14px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .lab-main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .lab-main-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .lab-main-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .lab-main-plan-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 4px 9px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.97);
+      color: var(--text-muted);
+    }
+
+    .lab-main-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    /* INPUT CARDS */
+
+    .input-card {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 8px 9px;
+      font-size: 12px;
+    }
+
+    .input-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+      gap: 10px;
+    }
+
+    .input-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .input-help {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .select-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
       margin-bottom: 6px;
+    }
+
+    select {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      font-size: 12px;
+      padding: 5px 8px;
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .upload-box {
+      border-radius: 11px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 12px 9px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-box .plus-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .upload-box strong {
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+
+    .upload-note {
+      font-size: 10px;
+      color: var(--text-muted);
     }
 
     textarea {
       width: 100%;
-      min-height: 90px;
-      border-radius: 10px;
+      border-radius: 9px;
       border: 1px solid var(--border-soft);
       background: #020617;
       color: var(--text-main);
-      padding: 10px;
-      font-size: 14px;
-      resize: vertical;
-      outline: none;
-    }
-
-    textarea::placeholder { color: #6b7280; }
-
-    select, input[type="number"] {
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid var(--border-soft);
-      background: #020617;
-      color: var(--text-main);
-      padding: 8px 10px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .field-group { margin-bottom: 14px; }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    button {
-      border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      background: var(--accent);
-      color: white;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 10px 25px rgba(168, 85, 247, 0.6);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 30px rgba(168, 85, 247, 0.8);
-      opacity: 0.97;
-    }
-
-    .note { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
-
-    .steps {
+      padding: 7px 8px;
       font-size: 12px;
-      color: var(--text-muted);
-      display: grid;
-      gap: 8px;
-      margin-top: 8px;
+      min-height: 80px;
+      resize: vertical;
     }
 
-    .steps span strong { color: var(--text-main); }
+    textarea::placeholder {
+      color: #6b7280;
+    }
 
-    .preview-header {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+    .input-footer-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .preview-box {
+    .toggle-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    label.toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      width: 12px;
+      height: 12px;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: #f9fafb;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 22px rgba(129, 140, 248, 0.7);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .btn-primary span.plus {
+      width: 17px;
+      height: 17px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 30px rgba(129, 140, 248, 0.9);
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.14s ease;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(148, 163, 184, 0.8);
+      color: var(--text-main);
+      background: rgba(15, 23, 42, 1);
+    }
+
+    .btn-icon {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.96);
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+
+    /* OUTPUT */
+
+    .output-card {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 8px 9px;
+      font-size: 12px;
+    }
+
+    .output-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .film-preview {
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .film-frame {
+      border-radius: 8px;
+      background: radial-gradient(circle at top left, #4c1d95, #020617);
+      height: 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .film-frame::after {
+      content: "";
+      position: absolute;
+      inset: 10%;
       border-radius: 14px;
-      border: 1px dashed var(--border-soft);
-      background: radial-gradient(circle at top left, rgba(168, 85, 247, 0.18), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.2), transparent 60%);
-      min-height: 230px;
+      border: 1px solid rgba(248, 250, 252, 0.08);
+      box-shadow:
+        0 0 24px rgba(168, 85, 247, 0.5),
+        0 0 40px rgba(59, 130, 246, 0.5);
+      opacity: 0.7;
+    }
+
+    .timeline-row {
+      display: flex;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--text-muted);
+      align-items: center;
+    }
+
+    .timeline-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #a855f7, #3b82f6);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+
+    .film-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .film-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 3px;
+    }
+
+    .film-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(15, 23, 42, 0.96);
+      font-size: 10px;
+      padding: 3px 7px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .film-btn.primary {
+      border-color: rgba(168, 85, 247, 0.8);
+      color: #e5e7eb;
+    }
+
+    /* SECONDARY VIEWS */
+
+    .lab-secondary {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 9px 10px;
+      font-size: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 240px;
+    }
+
+    .lab-secondary.active {
+      display: flex;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
+    }
+
+    .media-card {
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .media-thumb {
+      border-radius: 6px;
+      background: radial-gradient(circle at top left, #a855f7, #020617);
+      height: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .media-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* PROFILE OVERLAY (same style as image/home) */
+
+    .profile-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      display: none;
+      z-index: 40;
+      align-items: stretch;
+      justify-content: flex-end;
+    }
+
+    .profile-overlay.show {
+      display: flex;
+    }
+
+    .profile-panel {
+      width: min(380px, 100%);
+      background: #020617;
+      border-left: 1px solid var(--border-soft);
+      box-shadow: -20px 0 40px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .profile-header-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-avatar-lg {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .profile-header-text-main {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .profile-header-text-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .close-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 6px 9px;
+    }
+
+    .profile-body {
+      display: grid;
+      grid-template-columns: 115px minmax(0, 1fr);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .profile-menu {
+      border-right: 1px solid var(--border-soft);
+      padding: 10px 8px;
+      font-size: 12px;
+    }
+
+    .profile-menu button {
+      width: 100%;
+      text-align: left;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 6px 7px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      font-size: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .profile-menu button.active {
+      background: rgba(15, 23, 42, 0.96);
+      border-color: rgba(148, 163, 184, 0.7);
+      color: var(--text-main);
+    }
+
+    .profile-content {
+      padding: 10px 11px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    .profile-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .profile-section-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .profile-line {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .profile-small {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .profile-footer {
+      padding: 8px 12px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .profile-footer button {
+      border-radius: 999px;
+      border: 1px solid rgba(248, 113, 113, 0.7);
+      background: rgba(15, 23, 42, 0.96);
+      color: #fecaca;
+      cursor: pointer;
+      font-size: 11px;
+      padding: 5px 9px;
+    }
+
+    /* PLAN OVERLAY */
+
+    .plan-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      z-index: 35;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .plan-overlay.show {
+      display: flex;
+    }
+
+    .plan-dialog {
+      width: min(520px, 100%);
+      border-radius: 20px;
+      background: #020617;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+      padding: 16px 18px 14px;
+    }
+
+    .plan-dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .plan-dialog-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .plan-dialog-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-pill {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.98);
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    .toggle-pill button {
+      border: none;
+      background: transparent;
+      padding: 6px 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .toggle-pill button.active {
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: #f9fafb;
+    }
+
+    .plan-dialog-body {
       font-size: 13px;
       color: var(--text-muted);
-      text-align: center;
-      padding: 14px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .price-main {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .price-note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .price-strike {
+      text-decoration: line-through;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .price-save {
+      font-size: 12px;
+      color: #22c55e;
+    }
+
+    .plan-dialog-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     footer {
       border-top: 1px solid var(--border-soft);
-      padding: 10px 16px 16px;
+      padding: 10px 16px 14px;
       font-size: 11px;
       color: var(--text-muted);
       text-align: center;
-      background: rgba(2, 6, 23, 0.95);
+      background: rgba(2, 6, 23, 0.97);
+      margin-top: 14px;
     }
 
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: minmax(0, 1fr); }
+    /* ANIMATIONS & RESPONSIVE */
+
+    @keyframes spinGlow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.7; text-shadow: 0 0 6px rgba(244, 114, 182, 0.3); }
+      50% { opacity: 1; text-shadow: 0 0 16px rgba(244, 114, 182, 0.7); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    @media (max-width: 960px) {
+      .lab-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .lab-main-columns {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .profile-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .lab-title {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
-
 <body>
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <div class="logo-circle"></div>
-        <div>
-          <div class="logo-text-main">Sulandra AI Studio</div>
-          <div class="logo-text-sub">AI Short-Film Creator</div>
-        </div>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-circle"></div>
+      <div>
+        <div class="logo-text-main">Sulandra AI Studio</div>
+        <div class="logo-text-sub">Images · Music · Video · Films</div>
       </div>
-<nav>
-  <a href="index.html">Home</a>
-  <a href="image.html">Image</a>
-  <a href="video.html">Video</a>
-  <a href="music.html">Music</a>
-  <a href="film.html" class="active">Short Films</a>
-  <a href="education.html">Explore</a>
-</nav>
     </div>
-  </header>
 
-  <main>
-    <section class="layout">
-      <div class="panel">
-        <h1>AI Short-Film Creator</h1>
-        <p class="panel-sub">
-          This module will orchestrate the full pipeline: script → scenes →
-          video clips → music → final edit. For now it is a high-level
-          control panel design.
-        </p>
+    <div class="nav-group">
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="image.html">Image</a>
+        <a href="video.html">Video</a>
+        <a href="music.html">Music</a>
+        <a href="film.html" class="active">Short Films</a>
+        <a href="studio.html">Studio</a>
+        <a href="education.html">Explore</a>
+      </nav>
 
-        <form onsubmit="event.preventDefault(); alert('Later this will trigger a multi-step pipeline: script, scenes, music, and final film rendering. For now, it is just a UI mockup.');">
-          <div class="field-group">
-            <label for="idea">Film idea / story prompt</label>
-            <textarea
-              id="idea"
-              placeholder="Example: A young nurse leaving Cameroon to work in the US, facing culture shock, but finding purpose in helping patients. Emotional, hopeful, 2-minute short film."
-            ></textarea>
-          </div>
+      <button type="button" class="profile-badge" onclick="toggleProfile()">
+        <div class="profile-avatar" id="profile-avatar">G</div>
+        <div>
+          <div id="profile-label">Sign in</div>
+          <div class="profile-credits" id="profile-credits">0 credits</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</header>
 
-          <div class="field-row field-group">
-            <div>
-              <label for="length">Target length</label>
-              <select id="length">
-                <option>60 seconds</option>
-                <option>90 seconds</option>
-                <option>120 seconds</option>
-                <option>180 seconds</option>
-              </select>
-            </div>
-            <div>
-              <label for="mood">Overall mood</label>
-              <select id="mood">
-                <option>Emotional / inspiring</option>
-                <option>Dark / dramatic</option>
-                <option>Romantic</option>
-                <option>Action / energetic</option>
-              </select>
-            </div>
-          </div>
+<main>
+  <!-- HERO -->
+  <section class="lab-hero">
+    <div class="lab-kicker">Short films</div>
+    <h1 class="lab-title">
+      Turn <span>photos, clips & scripts</span> into 1-minute films.
+    </h1>
+    <p class="lab-sub">
+      Upload up to 20 photos with a script, drop in short videos or write your story from scratch. Sulandra stitches scenes, adds cinematic effects,
+      syncs lips to your audio and lets you extend the film from any point. Send finished scenes directly into Studio for deeper editing.
+    </p>
+    <div class="lab-status-row">
+      <div class="lab-pill">
+        <div class="lab-dot"></div>
+        Live demo · film generation logic is simulated here.
+      </div>
+      <div class="lab-pill" id="lab-plan-pill">
+        Plan: Basic · 0 / 0 credits
+      </div>
+    </div>
+  </section>
 
-          <div class="field-row field-group">
-            <div>
-              <label for="music-role">Music role</label>
-              <select id="music-role">
-                <option>Background score only</option>
-                <option>Score + vocal hooks</option>
-                <option>No music (dialogue focus)</option>
-              </select>
-            </div>
-            <div>
-              <label for="resolution">Resolution</label>
-              <select id="resolution">
-                <option>1080p</option>
-                <option>720p</option>
-                <option>4K (future)</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="submit">
-            Generate Short-Film Plan (UI only)
-          </button>
-          <p class="note">
-            Later this will first call a script-generation service, then schedule
-            separate jobs for image, video and music modules, and finally call
-            an editing/assembly worker.
-          </p>
-
-          <div class="steps">
-            <span><strong>Step 1:</strong> Generate script & scenes outline</span>
-            <span><strong>Step 2:</strong> Generate key visuals / shots per scene</span>
-            <span><strong>Step 3:</strong> Generate short video clips per scene</span>
-            <span><strong>Step 4:</strong> Generate music / score</span>
-            <span><strong>Step 5:</strong> Assemble into final short film file</span>
-          </div>
-        </form>
+  <!-- LAYOUT -->
+  <section class="lab-layout">
+    <!-- SIDEBAR -->
+    <aside class="lab-sidebar">
+      <div class="sidebar-header">
+        <div class="menu-icon">≡</div>
+        <div class="sidebar-title">Film tools</div>
       </div>
 
-      <div class="panel">
-        <div class="preview-header">
-          <span>Pipeline status / output</span>
-          <span style="font-size: 11px;">
-            Status: <strong>Disconnected</strong>
-          </span>
+      <div class="sidebar-section-label">Create</div>
+      <button class="sidebar-btn active" id="btn-create-images" onclick="setView('create'); setCreateMode('images');">
+        <span>Images → Film</span>
+        <span class="sidebar-badge">100 credits</span>
+      </button>
+      <button class="sidebar-btn" id="btn-create-video" onclick="setView('create'); setCreateMode('video');">
+        <span>Video → Film</span>
+        <span class="sidebar-badge">100+ credits</span>
+      </button>
+      <button class="sidebar-btn" id="btn-create-script" onclick="setView('create'); setCreateMode('script');">
+        <span>Script → Film</span>
+        <span class="sidebar-badge">100 credits</span>
+      </button>
+      <button class="sidebar-btn" id="btn-create-record" onclick="setView('create'); setCreateMode('record');">
+        <span>Record → Film</span>
+        <span class="sidebar-badge">Creator Ultimate</span>
+      </button>
+
+      <div class="sidebar-section-label">Work</div>
+      <button class="sidebar-btn" onclick="setView('films')">
+        <span>My films</span>
+        <span class="sidebar-badge">History</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('script-assistant')">
+        <span>AI script assistant</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('media')">
+        <span>Media · Community Film Feed</span>
+      </button>
+
+      <div class="sidebar-section-label">Plan quick switch</div>
+      <div style="margin-bottom:4px;">
+        <span class="chip" onclick="simulatePlan('basic')">Basic</span>
+        <span class="chip" onclick="simulatePlan('pro')">Pro</span>
+        <span class="chip" onclick="simulatePlan('creator')">Creator</span>
+        <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
+      </div>
+
+      <div class="sidebar-plan-dots">
+        • Short films are designed for <strong>Creator Ultimate</strong> usage (heavy GPU + credits).<br/>
+        • Other plans can preview the workflow here and upgrade when ready.
+      </div>
+    </aside>
+
+    <!-- MAIN PANEL -->
+    <section class="lab-main">
+      <div class="lab-main-header">
+        <div>
+          <div class="lab-main-title" id="lab-main-title">Create · Images → Film</div>
+          <div class="lab-main-sub" id="lab-main-sub">
+            Upload up to 20 photos plus a script. We’ll cut a 1-minute film with pacing, effects and music based on your settings.
+          </div>
         </div>
-        <div class="preview-box">
-          In the full version, this panel will display the current pipeline
-          status – e.g. “Script done”, “Generating scenes”, “Rendering clips”,
-          “Mixing audio”, “Exporting final MP4”.
-          <br /><br />
-          For now, it is a concept area while you design Sulandra’s film
-          experience.
+        <div class="lab-main-plan-pill" id="lab-main-plan-pill">
+          Plan: Basic · 0 / 0 credits
+        </div>
+      </div>
+
+      <!-- CREATE VIEW -->
+      <div id="view-create" class="lab-main-columns">
+        <!-- LEFT: INPUTS -->
+        <div>
+          <div class="input-card">
+            <div class="input-label-row">
+              <div class="input-label">Film settings</div>
+              <div class="input-help">Max 1:00 per generation. Extend later from any point in Studio or here.</div>
+            </div>
+
+            <div class="select-row">
+              <div>
+                <div class="input-help" style="margin-bottom:2px;">Film type</div>
+                <select id="film-type">
+                  <option value="pg">PG · Clean / Family</option>
+                  <option value="action">Action</option>
+                  <option value="drama">Drama</option>
+                  <option value="romance">Romance</option>
+                  <option value="sitcom">Sitcom</option>
+                  <option value="series">Series-style episode</option>
+                  <option value="documentary">Documentary</option>
+                  <option value="music-video">Music video</option>
+                </select>
+              </div>
+              <div>
+                <div class="input-help" style="margin-bottom:2px;">Aspect & style</div>
+                <select id="aspect">
+                  <option value="vertical">Vertical 9:16 (TikTok / Reels)</option>
+                  <option value="horizontal">Horizontal 16:9 (YouTube)</option>
+                  <option value="square">Square 1:1 (Cover / Feed)</option>
+                </select>
+              </div>
+              <div>
+                <div class="input-help" style="margin-bottom:2px;">Duration</div>
+                <select id="duration">
+                  <option value="60">1:00 (max)</option>
+                  <option value="45">0:45</option>
+                  <option value="30">0:30</option>
+                  <option value="15">0:15</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="toggle-row">
+              <label class="toggle">
+                <input type="checkbox" id="toggle-lipsync" onchange="updateCreditEstimate()" />
+                <span>Lip sync to audio (+10 credits)</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" id="toggle-voiceover" onchange="updateCreditEstimate()" />
+                <span>Use custom voiceover / dialogue (+10 credits)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-card" style="margin-top:6px;">
+            <div class="input-label-row">
+              <div class="input-label" id="inputs-label">Inputs · Up to 20 photos + script</div>
+              <div class="input-help" id="inputs-help">
+                Photos define the visual story; the script controls pacing, captions and actions.
+              </div>
+            </div>
+
+            <div class="upload-grid" id="upload-grid">
+              <div class="upload-box" onclick="handleUpload('photos')">
+                <div class="plus-circle">+</div>
+                <strong>Upload photos (up to 20)</strong>
+                <div class="upload-note">
+                  Ideal for images → film. We’ll order them and cut camera moves and transitions.
+                </div>
+              </div>
+              <div class="upload-box" onclick="handleUpload('videoClip')">
+                <div class="plus-circle">+</div>
+                <strong>Upload short video</strong>
+                <div class="upload-note">
+                  For video → film. We’ll animate, stabilize, add VFX and action beats.
+                </div>
+              </div>
+              <div class="upload-box" onclick="handleUpload('audio')">
+                <div class="plus-circle">+</div>
+                <strong>Upload or import audio</strong>
+                <div class="upload-note">
+                  Import from Music Lab or upload your own. Perfect for dance, trailers or narration.
+                </div>
+              </div>
+              <div class="upload-box" onclick="handleUpload('scriptPdf')">
+                <div class="plus-circle">+</div>
+                <strong>Upload script (PDF / text)</strong>
+                <div class="upload-note">
+                  For script → film. We’ll extract scenes and map them into a 1-minute cut.
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:6px;">
+              <textarea id="script-text"
+                placeholder="Write or paste your 1-minute script here. Example: Scene 1 – club entrance... Scene 2 – dance floor... Scene 3 – slow-motion walk, camera push-in on main character, etc."></textarea>
+            </div>
+
+            <div class="input-footer-row">
+              <div id="credit-note">
+                Base short film: 100 credits. Lip sync +10, voiceover +10. Estimated: 100 credits.
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn-ghost" type="button" onclick="openPlanDetails(user.plan)">
+                  Change plan
+                </button>
+                <button class="btn-primary" type="button" onclick="runFilmGeneration()">
+                  <span class="plus">+</span>
+                  Generate 1-minute film
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-card" style="margin-top:6px;">
+            <div class="input-label-row">
+              <div class="input-label">Connect with other labs</div>
+              <div class="input-help">Use assets from Image, Video and Music Labs without downloading.</div>
+            </div>
+            <div class="select-row">
+              <button class="btn-ghost" type="button" onclick="importFrom('image')">
+                Import images from Image Lab
+              </button>
+              <button class="btn-ghost" type="button" onclick="importFrom('video')">
+                Import clips from Video Lab
+              </button>
+            </div>
+            <div class="select-row">
+              <button class="btn-ghost" type="button" onclick="importFrom('music')">
+                Import audio / music from Music Lab
+              </button>
+              <button class="btn-ghost" type="button" onclick="goToStudio()">
+                Open in Studio
+              </button>
+            </div>
+          </div>
+
+          <div class="input-card" style="margin-top:6px;">
+            <div class="input-label-row">
+              <div class="input-label">Record in browser</div>
+              <div class="input-help">Capture live footage or voiceover directly into the Film Lab.</div>
+            </div>
+            <div class="select-row">
+              <button class="btn-ghost" type="button" onclick="recordVideo()">
+                🎥 Record video
+              </button>
+              <button class="btn-icon" type="button" onclick="recordAudio()">
+                🎙
+              </button>
+              <div class="input-help">
+                Recording and syncing is a Creator Ultimate feature in production, but this demo shows where it lives.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: OUTPUT -->
+        <div>
+          <div class="output-card">
+            <div class="output-header-row">
+              <div class="input-label">Film preview & controls</div>
+              <div class="input-help">
+                Finished films can be extended from any point, or sent directly into Studio for timeline editing.
+              </div>
+            </div>
+
+            <div class="film-preview">
+              <div class="film-frame"></div>
+              <div class="timeline-row">
+                <span>0:00</span>
+                <div class="timeline-bar"></div>
+                <span>1:00</span>
+              </div>
+              <div class="film-meta">
+                Sample preview · Images → Film · Action · Vertical 9:16 · 1:00
+              </div>
+              <div class="film-actions">
+                <button class="film-btn primary" type="button">Play preview</button>
+                <button class="film-btn" type="button" onclick="extendFilm()">
+                  Extend from 0:45
+                </button>
+                <button class="film-btn" type="button" onclick="goToStudio()">
+                  Send to Studio (timeline)
+                </button>
+                <button class="film-btn" type="button" onclick="downloadFilm()">
+                  Export / download
+                </button>
+              </div>
+            </div>
+
+            <div class="input-footer-row" style="margin-top:7px;">
+              <div>
+                Each extension (up to another 60 seconds) will use a new film run with fresh credits
+                but can reuse your existing audio, footage and style.
+              </div>
+              <button class="btn-ghost" type="button" onclick="setView('films')">
+                View all my films
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY FILMS -->
+      <div id="view-films" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">My films</div>
+            <div class="lab-main-sub">
+              All 1-minute films you created from this device (simulated). In production this syncs with your Sulandra account and Studio timeline.
+            </div>
+          </div>
+        </div>
+
+        <div class="media-grid">
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Dance challenge short film · 0:60</div>
+            <div class="media-meta-row">
+              <span>Images → Film · Vertical</span>
+              <span onclick="extendFilm()" style="cursor:pointer;">Extend →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Drama intro scene · 0:45</div>
+            <div class="media-meta-row">
+              <span>Script → Film</span>
+              <span onclick="goToStudio()" style="cursor:pointer;">Open in Studio →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Music video snippet · 0:30</div>
+            <div class="media-meta-row">
+              <span>Video → Film</span>
+              <span>Re-cut →</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-small">
+          Later, clicking any film will open clip-level controls: replace a scene, regenerate a specific moment with a new prompt,
+          or send just that section to Studio with transitions pre-applied.
+        </div>
+      </div>
+
+      <!-- SCRIPT ASSISTANT -->
+      <div id="view-script-assistant" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">AI script assistant · 1-minute films</div>
+            <div class="lab-main-sub">
+              Describe the story and we’ll help you structure a tight 1-minute script with scenes, camera notes and emotion beats.
+            </div>
+          </div>
+        </div>
+
+        <div class="input-card">
+          <div class="input-label-row">
+            <div class="input-label">Story idea</div>
+          </div>
+          <textarea id="script-assistant-input"
+            placeholder="Example: A group of friends in a club, one main dancer, we want slow-motion entrance, crowd reaction, and a final freeze frame with text at the end."></textarea>
+          <div class="input-footer-row">
+            <div>Script suggestions are free. Generating the film still uses credits.</div>
+            <button class="btn-primary" type="button" onclick="suggestScript()">
+              <span class="plus">+</span>
+              Suggest 1-minute script
+            </button>
+          </div>
+        </div>
+
+        <div class="input-card" style="margin-top:6px;">
+          <div class="input-label-row">
+            <div class="input-label">Suggested script</div>
+          </div>
+          <div class="profile-small" id="script-assistant-output">
+            Script suggestions will appear here. You’ll be able to send them directly into the Film Lab as your script text.
+          </div>
+        </div>
+      </div>
+
+      <!-- MEDIA FEED -->
+      <div id="view-media" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">Media · Community Film Feed</div>
+            <div class="lab-main-sub">
+              Imagine a vertical feed of Sulandra short films – dance challenges, intros, trailers – with likes, comments and “use style” buttons.
+            </div>
+          </div>
+        </div>
+
+        <div class="media-grid">
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Afrobeats dance challenge film</div>
+            <div class="media-meta-row">
+              <span>2.1k likes · 120 comments</span>
+              <span>Use style →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Series intro · Season 1, Episode 1</div>
+            <div class="media-meta-row">
+              <span>1.4k likes</span>
+              <span>Remix →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Emotional worship testimony clip</div>
+            <div class="media-meta-row">
+              <span>3.0k likes</span>
+              <span>Use style →</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-small">
+          Later, “Use style” will copy pacing, color and VFX patterns into your own films, while still generating original scenes
+          based on your prompts and assets.
         </div>
       </div>
     </section>
-  </main>
+  </section>
+</main>
 
-  <footer>
-    Short-film module · This will become your signature feature combining
-    image, video and music into one pipeline.
-  </footer>
+<footer>
+  Sulandra AI Studio – Short Films · 1-minute films with extensions, lip sync and Studio integration.
+</footer>
+
+<!-- PROFILE OVERLAY -->
+<div class="profile-overlay" id="profile-overlay">
+  <div class="profile-panel">
+    <div class="profile-header">
+      <div class="profile-header-main">
+        <div class="profile-avatar-lg" id="profile-avatar-lg">G</div>
+        <div>
+          <div class="profile-header-text-main" id="profile-name">Guest</div>
+          <div class="profile-header-text-sub" id="profile-plan-label">
+            Not signed in
+          </div>
+        </div>
+      </div>
+      <button class="close-btn" type="button" onclick="toggleProfile()">Close</button>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-menu">
+        <button id="menu-overview" class="active" onclick="setProfileSection('overview')">View profile</button>
+        <button onclick="setProfileSection('edit')">Edit profile</button>
+        <button onclick="setProfileSection('invite')">Invite friends</button>
+        <button onclick="setProfileSection('subscription')">Subscription</button>
+        <button onclick="setProfileSection('account')">Manage account</button>
+        <button onclick="setProfileSection('theme')">Theme</button>
+      </div>
+
+      <div class="profile-content" id="profile-content">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <div class="profile-footer">
+      <div>Signed in state is simulated. Real auth & billing will connect later.</div>
+      <button type="button" id="sign-toggle" onclick="toggleSignIn()">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAN OVERLAY -->
+<div class="plan-overlay" id="plan-overlay">
+  <div class="plan-dialog">
+    <div class="plan-dialog-header">
+      <div>
+        <div class="plan-dialog-title" id="plan-dialog-title">Pro plan</div>
+        <div class="plan-dialog-sub" id="plan-dialog-sub">
+          Full access to WAV export, HD/UHD quality and credit packs.
+        </div>
+      </div>
+      <div class="toggle-pill">
+        <button type="button" id="toggle-monthly" class="active" onclick="setPlanBilling('monthly')">
+          Monthly
+        </button>
+        <button type="button" id="toggle-yearly" onclick="setPlanBilling('yearly')">
+          Yearly
+        </button>
+      </div>
+    </div>
+
+    <div class="plan-dialog-body">
+      <div class="price-row">
+        <div class="price-main" id="plan-price-main">$20</div>
+        <div class="price-note" id="plan-price-note">per month · 2500 credits</div>
+      </div>
+      <div class="price-row" id="price-row-yearly" style="display:none;">
+        <div class="price-strike" id="plan-price-strike">$240 / year</div>
+        <div class="price-save" id="plan-price-save">You save $12 (5%)</div>
+      </div>
+      <div class="profile-small" id="plan-dialog-extra">
+        Choose monthly for flexibility, or yearly for the best price. A 7-day free trial is available for new users (no exports until trial converts).
+      </div>
+    </div>
+
+    <div class="plan-dialog-footer">
+      <button class="btn-primary" type="button" onclick="startSignup()">
+        <span class="plus">+</span>
+        Continue – signup & payment
+      </button>
+      <button class="btn-ghost" type="button" onclick="closePlanDetails()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // USER / PLAN STATE
+  let isSignedIn = false;
+  let user = {
+    name: "Guest",
+    initial: "G",
+    plan: "basic",
+    credits: 0,
+    maxCredits: 0
+  };
+
+  const planConfig = {
+    basic: {
+      name: "Basic",
+      monthly: 0,
+      yearly: 0,
+      discount: 0,
+      credits: "50 credits / month",
+      description:
+        "Free plan. UHD-quality previews with watermark, MP3-only audio and 50 monthly credits.",
+      yearlyNote: "Basic is always free. Yearly billing only applies to paid plans."
+    },
+    pro: {
+      name: "Pro",
+      monthly: 20,
+      yearly: 228,
+      discount: 5,
+      credits: "2500 credits / month",
+      description:
+        "For serious creators who need clean exports, WAV audio and higher resolutions.",
+      yearlyNote:
+        "Normal yearly cost would be $240; you pay $228 (save $12, 5%)."
+    },
+    creator: {
+      name: "Creator",
+      monthly: 30,
+      yearly: 331.2,
+      discount: 8,
+      credits: "5000 credits / month",
+      description:
+        "Power users who want 4K, Studio workflows and Ultimate add-ons, with enough credits for real monthly projects.",
+      yearlyNote:
+        "Normal yearly cost would be $360; you pay $331.20 (save $28.80, 8%)."
+    },
+    creatorUltimate: {
+      name: "Creator Ultimate",
+      monthly: 45,
+      yearly: 486,
+      discount: 10,
+      credits: "10000 credits / month",
+      description:
+        "Everything unlocked: Short Films + Studio heavy use + Stems & MIDI.",
+      yearlyNote:
+        "Normal yearly cost would be $540; you pay $486 (save $54, 10%)."
+    }
+  };
+
+  let currentPlanKey = "pro";
+  let currentBilling = "monthly";
+  let currentView = "create";
+  let currentCreateMode = "images";
+
+  function updatePlanInUI() {
+    const labPlan = document.getElementById("lab-plan-pill");
+    const mainPlanPill = document.getElementById("lab-main-plan-pill");
+    const planName = planConfig[user.plan].name;
+    labPlan.textContent = `Plan: ${planName} · ${user.credits} / ${user.maxCredits} credits`;
+    mainPlanPill.textContent = `Plan: ${planName} · ${user.credits} / ${user.maxCredits} credits`;
+  }
+
+  function setView(view) {
+    currentView = view;
+
+    // Reset main buttons
+    document.querySelectorAll(".sidebar-btn").forEach(btn => btn.classList.remove("active"));
+
+    // Activate correct sidebar button
+    if (view === "create") {
+      // We'll let createMode decide which one is visually active
+      if (currentCreateMode === "images") document.getElementById("btn-create-images").classList.add("active");
+      if (currentCreateMode === "video") document.getElementById("btn-create-video").classList.add("active");
+      if (currentCreateMode === "script") document.getElementById("btn-create-script").classList.add("active");
+      if (currentCreateMode === "record") document.getElementById("btn-create-record").classList.add("active");
+    } else if (view === "films") {
+      document.querySelectorAll(".sidebar-btn")[4].classList.add("active");
+    } else if (view === "script-assistant") {
+      document.querySelectorAll(".sidebar-btn")[5].classList.add("active");
+    } else if (view === "media") {
+      document.querySelectorAll(".sidebar-btn")[6].classList.add("active");
+    }
+
+    // Hide all views
+    document.getElementById("view-create").style.display = "none";
+    document.getElementById("view-films").classList.remove("active");
+    document.getElementById("view-script-assistant").classList.remove("active");
+    document.getElementById("view-media").classList.remove("active");
+
+    const title = document.getElementById("lab-main-title");
+    const sub = document.getElementById("lab-main-sub");
+
+    if (view === "create") {
+      document.getElementById("view-create").style.display = "grid";
+      // Title & subtitle depend on create mode
+      updateCreateModeText();
+    } else if (view === "films") {
+      document.getElementById("view-films").classList.add("active");
+      title.textContent = "My films";
+      sub.textContent =
+        "All your short films from this device (demo). Later this syncs with your Sulandra account and Studio timelines.";
+    } else if (view === "script-assistant") {
+      document.getElementById("view-script-assistant").classList.add("active");
+      title.textContent = "AI script assistant · 1-minute films";
+      sub.textContent =
+        "Describe your idea and let Sulandra help you build a structured 1-minute script.";
+    } else if (view === "media") {
+      document.getElementById("view-media").classList.add("active");
+      title.textContent = "Media · Community Film Feed";
+      sub.textContent =
+        "Preview how a Sulandra short film feed might look once you launch.";
+    }
+  }
+
+  function setCreateMode(mode) {
+    currentCreateMode = mode;
+
+    // Update active button
+    document.getElementById("btn-create-images").classList.remove("active");
+    document.getElementById("btn-create-video").classList.remove("active");
+    document.getElementById("btn-create-script").classList.remove("active");
+    document.getElementById("btn-create-record").classList.remove("active");
+
+    if (mode === "images") document.getElementById("btn-create-images").classList.add("active");
+    if (mode === "video") document.getElementById("btn-create-video").classList.add("active");
+    if (mode === "script") document.getElementById("btn-create-script").classList.add("active");
+    if (mode === "record") document.getElementById("btn-create-record").classList.add("active");
+
+    updateCreateModeText();
+
+    // Short films feature gating
+    if (!isFeatureAllowed("shortFilm")) {
+      alertUpgrade(
+        "Short films are designed for Creator Ultimate users.\n\nYou can still explore the workflow, but generation will require an upgrade."
+      );
+    }
+  }
+
+  function updateCreateModeText() {
+    const title = document.getElementById("lab-main-title");
+    const sub = document.getElementById("lab-main-sub");
+    const inputsLabel = document.getElementById("inputs-label");
+    const inputsHelp = document.getElementById("inputs-help");
+
+    if (currentCreateMode === "images") {
+      title.textContent = "Create · Images → Film";
+      sub.textContent =
+        "Upload up to 20 photos plus a script. We’ll cut a 1-minute film with transitions, camera moves and effects.";
+      inputsLabel.textContent = "Inputs · Up to 20 photos + script";
+      inputsHelp.textContent =
+        "Photos define the visual story; the script controls pacing, captions and actions.";
+    } else if (currentCreateMode === "video") {
+      title.textContent = "Create · Video → Film";
+      sub.textContent =
+        "Upload a short video and script. Sulandra will stabilize, animate, add cinematic cuts and VFX.";
+      inputsLabel.textContent = "Inputs · Short video + script";
+      inputsHelp.textContent =
+        "We’ll segment your video into scenes based on your script and add motion, camera moves and action hits.";
+    } else if (currentCreateMode === "script") {
+      title.textContent = "Create · Script → Film";
+      sub.textContent =
+        "Upload or paste a script. We’ll generate visuals and timing for a 1-minute film, then you can extend later.";
+      inputsLabel.textContent = "Inputs · Script + (optional) images / audio";
+      inputsHelp.textContent =
+        "If you don’t upload assets, we’ll generate scenes from scratch based on your film type and script.";
+    } else if (currentCreateMode === "record") {
+      title.textContent = "Create · Record → Film";
+      sub.textContent =
+        "Record footage and voiceover directly in the browser, then let Sulandra cut and dress it into a 1-minute film.";
+      inputsLabel.textContent = "Inputs · Live recorded video + voice";
+      inputsHelp.textContent =
+        "Recording is simulated here. In production, we’ll capture camera and mic streams and sync them automatically.";
+    }
+  }
+
+  function isFeatureAllowed(feature) {
+    // Short films & advanced Studio are Creator Ultimate according to your rules
+    if (feature === "shortFilm" || feature === "recording") {
+      return user.plan === "creatorUltimate";
+    }
+    return true;
+  }
+
+  function alertUpgrade(message) {
+    alert(
+      message +
+        "\n\nIn the real app this would show a friendly upgrade dialog with pricing and plan comparison."
+    );
+  }
+
+  function updateCreditEstimate() {
+    let credits = 100;
+    if (document.getElementById("toggle-lipsync").checked) credits += 10;
+    if (document.getElementById("toggle-voiceover").checked) credits += 10;
+    document.getElementById("credit-note").textContent =
+      "Base short film: 100 credits. Lip sync +10, voiceover +10. Estimated: " +
+      credits +
+      " credits.";
+  }
+
+  function handleUpload(type) {
+    if (!isFeatureAllowed("shortFilm")) {
+      alertUpgrade("Uploading assets for Film Lab will require Creator Ultimate when you go live.");
+      return;
+    }
+    let label = "";
+    if (type === "photos") label = "photos (up to 20)";
+    else if (type === "videoClip") label = "short video clip";
+    else if (type === "audio") label = "audio (music or voiceover)";
+    else if (type === "scriptPdf") label = "script file";
+
+    alert(
+      "Upload placeholder.\n\nHere you’d open a file picker for " +
+        label +
+        ". In production this sends the file to your backend / Runpod pipeline."
+    );
+  }
+
+  function runFilmGeneration() {
+    if (!isFeatureAllowed("shortFilm")) {
+      alertUpgrade("Generating short films requires Creator Ultimate.");
+      return;
+    }
+    if (user.credits <= 0) {
+      alertUpgrade("You do not have enough credits in this demo. In production this would open the credits purchase flow.");
+      return;
+    }
+    alert(
+      "Short film generation started (simulated).\n\nWe will:\n• Read your photos / video / script\n• Apply your film type and aspect\n• Add effects, transitions, and optional lip sync\n• Return a 1-minute film connected to Studio."
+    );
+  }
+
+  function extendFilm() {
+    if (!isFeatureAllowed("shortFilm")) {
+      alertUpgrade("Extending films also requires Creator Ultimate.");
+      return;
+    }
+    alert(
+      "Extend film placeholder.\n\nIn production you’d select the time (e.g. 0:45), describe how to continue, and we’d generate the next 30–60 seconds while keeping style and continuity."
+    );
+  }
+
+  function downloadFilm() {
+    if (!isFeatureAllowed("shortFilm")) {
+      alertUpgrade("Exporting films is reserved for Creator Ultimate in your model.");
+      return;
+    }
+    alert("Export placeholder. Here you’d choose format (MP4, 4K for Creator and up) and download or send to another app.");
+  }
+
+  function importFrom(lab) {
+    if (!isFeatureAllowed("shortFilm")) {
+      alertUpgrade("Importing from other labs for film generation requires Creator Ultimate.");
+      return;
+    }
+    let name = lab === "image" ? "Image Lab" : lab === "video" ? "Video Lab" : "Music Lab";
+    alert(
+      "Import from " +
+        name +
+        " placeholder.\n\nIn production this would open a picker for your existing assets from that lab and attach them to this film project."
+    );
+  }
+
+  function goToStudio() {
+    alert(
+      "Open in Studio placeholder.\n\nLater this will deep-link into Studio, drop your scenes on the editing timeline and auto-add transitions you can adjust."
+    );
+  }
+
+  function recordVideo() {
+    if (!isFeatureAllowed("recording")) {
+      alertUpgrade("Browser recording will be a Creator Ultimate feature.");
+      return;
+    }
+    alert(
+      "Record video placeholder.\n\nIn production this would request camera access, show a preview and record footage directly into the Film Lab."
+    );
+  }
+
+  function recordAudio() {
+    if (!isFeatureAllowed("recording")) {
+      alertUpgrade("Microphone recording for voiceover is part of Creator Ultimate.");
+      return;
+    }
+    alert(
+      "Record audio placeholder.\n\nIn production this would open the mic, record voiceover and sync it to your scenes for lip sync."
+    );
+  }
+
+  function suggestScript() {
+    const input = document.getElementById("script-assistant-input").value.trim();
+    const out = document.getElementById("script-assistant-output");
+    if (!input) {
+      out.textContent = "Describe your story idea first, then we’ll suggest a 1-minute script.";
+      return;
+    }
+    out.innerHTML = `
+      <div class="profile-small">Example 1-minute structure based on your idea:</div>
+      <div class="profile-small">
+        <strong>Scene 1 (0:00–0:10)</strong> – Establishing shot. Wide view, intro text on screen, main character enters frame.<br/>
+        <strong>Scene 2 (0:10–0:25)</strong> – Medium shots and quick cuts on the key action or dance, synced with beat accents.<br/>
+        <strong>Scene 3 (0:25–0:40)</strong> – Close-ups for emotion. Slow-motion moment or highlight move, camera push-in.<br/>
+        <strong>Scene 4 (0:40–0:55)</strong> – Build-up. Faster cuts, more crowd or environment, one surprising beat.<br/>
+        <strong>Scene 5 (0:55–1:00)</strong> – Final pose or punchline. Freeze frame + title / CTA text on screen.
+      </div>
+      <div class="profile-small">
+        You’ll paste this (or your edited version) into the main Film Lab script box and generate the 1-minute film.
+      </div>
+    `;
+  }
+
+  /* PROFILE PANEL */
+
+  function toggleProfile() {
+    const overlay = document.getElementById("profile-overlay");
+    overlay.classList.toggle("show");
+    if (overlay.classList.contains("show")) {
+      renderProfileSection("overview");
+    }
+  }
+
+  function setProfileSection(section) {
+    document
+      .querySelectorAll(".profile-menu button")
+      .forEach(btn => btn.classList.remove("active"));
+
+    if (section === "overview") document.getElementById("menu-overview").classList.add("active");
+    else document
+      .querySelector(`.profile-menu button[onclick*="${section}"]`)
+      .classList.add("active");
+
+    renderProfileSection(section);
+  }
+
+  function renderProfileSection(section) {
+    const content = document.getElementById("profile-content");
+
+    if (section === "overview") {
+      content.innerHTML = `
+        <div class="profile-section-title">Profile overview</div>
+        <div class="profile-section-sub">
+          Signed in state is simulated. Later this links to your real Sulandra account.
+        </div>
+        <div class="profile-line"><strong>Name:</strong> ${user.name}</div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planConfig[user.plan].name}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
+        <div class="profile-small">
+          Short films are meant for Creator Ultimate. Other plans can still use Image, Video and Music Labs.
+        </div>
+      `;
+    } else if (section === "edit") {
+      content.innerHTML = `
+        <div class="profile-section-title">Edit profile</div>
+        <div class="profile-section-sub">Change your display name (local demo only).</div>
+        <label for="edit-name">Display name</label>
+        <input id="edit-name" type="text" value="${user.name}" />
+        <button class="btn-primary" style="margin-top:8px;" type="button" onclick="saveProfileName()">
+          <span class="plus">+</span> Save name
+        </button>
+        <div class="profile-small">In production this would update your user record in your backend.</div>
+      `;
+    } else if (section === "invite") {
+      content.innerHTML = `
+        <div class="profile-section-title">Invite friends</div>
+        <div class="profile-section-sub">
+          Later this will generate real invite links with credit rewards.
+        </div>
+        <div class="profile-small">Sample invite link (demo):</div>
+        <div class="chip">https://sulandra.ai/invite/YOURCODE</div>
+      `;
+    } else if (section === "subscription") {
+      const planName = planConfig[user.plan].name;
+      content.innerHTML = `
+        <div class="profile-section-title">Subscription & credits</div>
+        <div class="profile-section-sub">
+          Choose or change your plan. This matches the UX you’ll later connect to Stripe / PayPal / Apple Pay.
+        </div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planName}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
+        <div class="profile-small">Click a chip to simulate switching plans:</div>
+        <div style="margin-bottom:6px;">
+          <span class="chip" onclick="simulatePlan('basic')">Basic</span>
+          <span class="chip" onclick="simulatePlan('pro')">Pro</span>
+          <span class="chip" onclick="simulatePlan('creator')">Creator</span>
+          <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
+        </div>
+        <div class="profile-small">
+          In production, upgrading keeps your remaining credits and only charges the difference between plans.
+        </div>
+      `;
+    } else if (section === "account") {
+      content.innerHTML = `
+        <div class="profile-section-title">Manage account</div>
+        <div class="profile-section-sub">
+          This will host billing history, invoices and payment methods (PayPal, cards, Apple Pay).
+        </div>
+        <ul class="plan-list">
+          <li>• View invoices and payment history</li>
+          <li>• Update payment methods</li>
+          <li>• Turn auto-renew on / off</li>
+          <li>• Download receipts for taxes</li>
+        </ul>
+      `;
+    } else if (section === "theme") {
+      content.innerHTML = `
+        <div class="profile-section-title">Theme</div>
+        <div class="profile-section-sub">
+          Theme switching is not wired yet, but here is where light / dark / high-contrast options will live.
+        </div>
+        <div class="chip">Dark (current)</div>
+        <div class="chip">Light (placeholder)</div>
+        <div class="chip">High contrast (placeholder)</div>
+      `;
+    }
+
+    updateProfileHeader();
+  }
+
+  function updateProfileHeader() {
+    document.getElementById("profile-avatar").textContent = user.initial;
+    document.getElementById("profile-avatar-lg").textContent = user.initial;
+    document.getElementById("profile-name").textContent = user.name;
+    document.getElementById("profile-label").textContent = isSignedIn ? "Profile" : "Sign in";
+    document.getElementById("profile-credits").textContent =
+      `${user.credits} / ${user.maxCredits} credits`;
+    const planLabel = isSignedIn
+      ? `Plan: ${planConfig[user.plan].name}`
+      : "Not signed in";
+    document.getElementById("profile-plan-label").textContent = planLabel;
+    document.getElementById("sign-toggle").textContent =
+      isSignedIn ? "Sign out" : "Sign in";
+    updatePlanInUI();
+  }
+
+  function saveProfileName() {
+    const input = document.getElementById("edit-name");
+    const name = input.value.trim() || "Guest";
+    user.name = name;
+    user.initial = name.charAt(0).toUpperCase();
+    renderProfileSection("overview");
+    alert("Name updated in local demo. In production this will save to your backend.");
+  }
+
+  function toggleSignIn() {
+    isSignedIn = !isSignedIn;
+    if (isSignedIn && user.maxCredits === 0) {
+      simulatePlan("pro", true);
+    } else {
+      updateProfileHeader();
+      renderProfileSection("overview");
+    }
+  }
+
+  function simulatePlan(key, silent) {
+    user.plan = key;
+    if (key === "basic") {
+      user.maxCredits = 50;
+    } else if (key === "pro") {
+      user.maxCredits = 2500;
+    } else if (key === "creator") {
+      user.maxCredits = 5000;
+    } else if (key === "creatorUltimate") {
+      user.maxCredits = 10000;
+    }
+    user.credits = user.maxCredits;
+    updateProfileHeader();
+    if (!silent) {
+      alert("Plan switched in local demo to: " + planConfig[key].name);
+    }
+  }
+
+  /* PLAN MODAL */
+
+  function openPlanDetails(key) {
+    currentPlanKey = key;
+    currentBilling = "monthly";
+    updatePlanDialog();
+    document.getElementById("plan-overlay").classList.add("show");
+  }
+
+  function closePlanDetails() {
+    document.getElementById("plan-overlay").classList.remove("show");
+  }
+
+  function setPlanBilling(mode) {
+    currentBilling = mode;
+    updatePlanDialog();
+  }
+
+  function updatePlanDialog() {
+    const config = planConfig[currentPlanKey];
+
+    document.getElementById("plan-dialog-title").textContent =
+      config.name + " plan";
+    document.getElementById("plan-dialog-sub").textContent =
+      config.description;
+
+    const monthlyBtn = document.getElementById("toggle-monthly");
+    const yearlyBtn = document.getElementById("toggle-yearly");
+    monthlyBtn.classList.toggle("active", currentBilling === "monthly");
+    yearlyBtn.classList.toggle("active", currentBilling === "yearly");
+
+    const priceMain = document.getElementById("plan-price-main");
+    const priceNote = document.getElementById("plan-price-note");
+    const rowYearly = document.getElementById("price-row-yearly");
+    const strike = document.getElementById("plan-price-strike");
+    const save = document.getElementById("plan-price-save");
+    const extra = document.getElementById("plan-dialog-extra");
+
+    if (currentBilling === "monthly") {
+      priceMain.textContent =
+        config.monthly === 0 ? "$0" : "$" + config.monthly;
+      priceNote.textContent = "per month · " + config.credits;
+      rowYearly.style.display = "none";
+      if (config.monthly === 0) {
+        extra.textContent =
+          "Basic stays free with 50 credits and watermark. Upgrade anytime to unlock clean exports.";
+      } else {
+        extra.textContent =
+          "Pay monthly for flexibility, or switch to yearly later to save more.";
+      }
+    } else {
+      if (config.monthly === 0) {
+        priceMain.textContent = "$0";
+        priceNote.textContent =
+          "Always free · 50 credits / month · watermark";
+        rowYearly.style.display = "none";
+        extra.textContent =
+          "Basic is always free. Yearly discounts apply only to paid plans.";
+      } else {
+        priceMain.textContent = "$" + config.yearly.toFixed(2);
+        priceNote.textContent = "per year · " + config.credits;
+        const normalYearPrice = config.monthly * 12;
+        strike.textContent = "$" + normalYearPrice.toFixed(2) + " / year";
+        const savings = normalYearPrice - config.yearly;
+        save.textContent =
+          "You save $" +
+          savings.toFixed(2) +
+          " (" +
+          config.discount +
+          "%)";
+        rowYearly.style.display = "flex";
+        extra.textContent =
+          config.yearlyNote +
+          " Billing renews yearly; you can downgrade or upgrade at any time.";
+      }
+    }
+  }
+
+  function startSignup() {
+    alert(
+      "Signup flow placeholder.\n\nIn the real app, this will open your auth + payment flow for the selected plan and billing period."
+    );
+    simulatePlan(currentPlanKey, true);
+    isSignedIn = true;
+    updateProfileHeader();
+    toggleProfile();
+    closePlanDetails();
+  }
+
+  // INITIALIZE
+  simulatePlan("basic", true);
+  updateProfileHeader();
+  setView("create");
+  setCreateMode("images");
+  updateCreditEstimate();
+</script>
 </body>
 </html>
