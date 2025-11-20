@@ -15,7 +15,7 @@
       --accent3: #f97316;
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
-      --border-soft: rgba(148, 163, 184, 0.2);
+      --border-soft: rgba(148, 163, 184, 0.25);
     }
 
     * {
@@ -36,6 +36,11 @@
       flex-direction: column;
     }
 
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
     /* HEADER */
 
     header {
@@ -44,7 +49,7 @@
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 30;
     }
 
     .header-inner {
@@ -54,7 +59,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     .logo {
@@ -94,9 +100,16 @@
       animation: glowPulse 3.5s ease-in-out infinite;
     }
 
+    .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
     nav {
       display: flex;
-      gap: 14px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
@@ -104,7 +117,7 @@
       color: var(--text-muted);
       text-decoration: none;
       font-size: 14px;
-      padding: 6px 10px;
+      padding: 6px 9px;
       border-radius: 999px;
       border: 1px solid transparent;
       transition: all 0.18s ease;
@@ -123,19 +136,58 @@
       box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
     }
 
-    /* HERO */
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .profile-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .profile-badge:hover {
+      border-color: rgba(168, 85, 247, 0.7);
+      color: var(--text-main);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+    }
+
+    .profile-credits {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
     main {
       flex: 1;
     }
 
-    .hero {
+    /* IMAGE HERO */
+
+    .lab-hero {
       max-width: 1200px;
-      margin: 26px auto 0;
+      margin: 16px auto 0;
       padding: 0 16px 10px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
     }
 
-    .hero-kicker {
+    .lab-kicker {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
@@ -143,15 +195,13 @@
       margin-bottom: 6px;
     }
 
-    .hero-title {
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 8px;
+    .lab-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
 
-    .hero-title span {
-      display: inline-block;
+    .lab-title span {
       background: linear-gradient(
         90deg,
         #a855f7,
@@ -160,321 +210,344 @@
         #22c55e,
         #a855f7
       );
-      background-size: 220% 220%;
       -webkit-background-clip: text;
       color: transparent;
-      text-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
+      background-size: 220% 220%;
       animation: shimmer 6s linear infinite;
+      text-shadow: 0 0 14px rgba(168, 85, 247, 0.4);
     }
 
-    .hero-sub {
-      font-size: 14px;
+    .lab-sub {
+      font-size: 13px;
       color: var(--text-muted);
-      max-width: 800px;
-      line-height: 1.6;
-      margin-bottom: 14px;
+      max-width: 820px;
+      line-height: 1.7;
     }
 
-    .hero-tags {
+    .lab-status-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .hero-tag-pill {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      color: var(--text-muted);
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    /* PLAN BAR */
-
-    .plan-bar {
-      max-width: 1200px;
-      margin: 4px auto 14px;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .plan-toggle {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .plan-button {
+      align-items: center;
+      margin-top: 8px;
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 5px 10px;
+    }
+
+    .lab-pill {
       border-radius: 999px;
       border: 1px solid var(--border-soft);
-      background: rgba(15, 23, 42, 0.9);
+      padding: 4px 9px;
+      background: rgba(15, 23, 42, 0.96);
       color: var(--text-muted);
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
+      gap: 5px;
     }
 
-    .plan-button span.badge {
-      font-size: 9px;
-      padding: 2px 6px;
+    .lab-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
-      background: rgba(148, 163, 184, 0.2);
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
     }
 
-    .plan-button.active-plan {
-      border-color: rgba(168, 85, 247, 0.9);
-      color: var(--text-main);
-      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
-      background: radial-gradient(circle at top, rgba(88, 28, 135, 0.9), #020617);
-    }
+    /* LAYOUT */
 
-    .plan-note {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    /* LAYOUT: SIDEBAR + CONTENT */
-
-    .shell {
+    .lab-layout {
       max-width: 1200px;
-      margin: 0 auto 32px;
-      padding: 0 16px;
+      margin: 8px auto 0;
+      padding: 0 16px 18px;
       display: grid;
-      grid-template-columns: 220px minmax(0, 1fr);
-      gap: 18px;
-      align-items: flex-start;
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 14px;
     }
 
-    .sidebar {
-      background: var(--card-bg);
+    /* SIDEBAR */
+
+    .lab-sidebar {
       border-radius: 16px;
       border: 1px solid var(--border-soft);
-      padding: 12px 10px;
-      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.98);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.95);
+      padding: 10px 8px;
+      font-size: 13px;
     }
 
     .sidebar-header {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .menu-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
       border: 1px solid var(--border-soft);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(15, 23, 42, 0.95);
-    }
-
-    .menu-icon span {
-      display: block;
-      width: 11px;
-      height: 1.6px;
-      border-radius: 999px;
-      background: #e5e7eb;
-      margin: 1.5px 0;
+      font-size: 12px;
+      color: var(--text-muted);
     }
 
     .sidebar-title {
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-main);
     }
 
-    .side-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 4px;
+    .sidebar-section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 8px 0 4px;
     }
 
-    .side-link {
-      font-size: 12px;
-      padding: 7px 9px;
-      border-radius: 10px;
+    .sidebar-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 9px;
       border: 1px solid transparent;
       background: transparent;
       color: var(--text-muted);
-      text-align: left;
+      padding: 6px 7px;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
       transition: all 0.15s ease;
+      margin-bottom: 3px;
     }
 
-    .side-link span.label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .sidebar-btn span {
+      pointer-events: none;
     }
 
-    .side-link span.dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: transparent;
-    }
-
-    .side-link.active-section {
-      background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(148, 163, 184, 0.6);
+    .sidebar-btn:hover {
+      background: rgba(15, 23, 42, 0.98);
+      border-color: var(--border-soft);
       color: var(--text-main);
     }
 
-    .side-link.active-section span.dot {
-      background: #22c55e;
+    .sidebar-btn.active {
+      background: radial-gradient(circle at top left, #111827, #020617);
+      border-color: rgba(168, 85, 247, 0.7);
+      color: var(--text-main);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
     }
 
-    .side-link small {
+    .sidebar-badge {
+      font-size: 10px;
+      border-radius: 999px;
+      padding: 2px 6px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: var(--text-muted);
+    }
+
+    .sidebar-plan-dots {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    /* MAIN PANEL */
+
+    .lab-main {
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top, #111827, #020617);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+      padding: 12px 12px 14px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .lab-main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .lab-main-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .lab-main-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .lab-main-plan-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 4px 9px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.97);
+      color: var(--text-muted);
+    }
+
+    .lab-main-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    /* MODEL VERSIONS */
+
+    .version-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .version-chip {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+    }
+
+    .version-chip.active {
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: #f9fafb;
+      border-color: transparent;
+      box-shadow: 0 0 16px rgba(129, 140, 248, 0.7);
+    }
+
+    .version-chip.locked {
+      opacity: 0.4;
+    }
+
+    .version-lock {
+      font-size: 10px;
+    }
+
+    /* INPUT / UPLOAD */
+
+    .input-card {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 8px 9px;
+      font-size: 12px;
+    }
+
+    .input-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+      gap: 10px;
+    }
+
+    .input-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .input-help {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .upload-box {
+      border-radius: 11px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 12px 9px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-box .plus-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .upload-box strong {
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+
+    .upload-note {
       font-size: 10px;
       color: var(--text-muted);
     }
 
-    .content {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .panel {
-      background: var(--card-bg);
-      border-radius: 18px;
-      border: 1px solid var(--border-soft);
-      padding: 18px;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .panel-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .panel-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-    }
-
-    .pill-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px dashed rgba(168, 85, 247, 0.7);
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    /* FORMS */
-
-    label {
-      font-size: 13px;
-      color: var(--text-main);
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    textarea,
-    select,
-    input[type="number"],
-    input[type="file"],
-    input[type="text"] {
+    textarea {
       width: 100%;
       border-radius: 9px;
       border: 1px solid var(--border-soft);
       background: #020617;
       color: var(--text-main);
-      padding: 8px 10px;
-      font-size: 13px;
-      outline: none;
-    }
-
-    textarea {
-      min-height: 90px;
+      padding: 7px 8px;
+      font-size: 12px;
+      min-height: 70px;
       resize: vertical;
     }
 
-    textarea::placeholder,
-    input::placeholder {
+    textarea::placeholder {
       color: #6b7280;
     }
 
-    input[type="file"] {
-      cursor: pointer;
-      padding: 6px 10px;
-    }
-
-    .field-group {
-      margin-bottom: 14px;
-    }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .field-row-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .note {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .small-inline {
+    .input-footer-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 6px;
+      margin-top: 6px;
       font-size: 11px;
       color: var(--text-muted);
-      margin-top: 4px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .small-inline input[type="checkbox"] {
-      width: auto;
-      height: auto;
-      padding: 0;
-      border-radius: 4px;
-    }
-
-    .btn-main {
+    .btn-primary {
       border-radius: 999px;
-      padding: 9px 16px;
-      font-size: 14px;
+      padding: 7px 14px;
+      font-size: 12px;
       font-weight: 600;
       border: none;
       cursor: pointer;
@@ -483,174 +556,502 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 12px 28px rgba(129, 140, 248, 0.6);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+      box-shadow: 0 10px 22px rgba(129, 140, 248, 0.7);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
 
-    .btn-main span.plus {
+    .btn-primary span.plus {
+      width: 17px;
+      height: 17px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
     }
 
-    .btn-main:hover {
+    .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 16px 36px rgba(129, 140, 248, 0.8);
-      opacity: 0.97;
+      box-shadow: 0 16px 30px rgba(129, 140, 248, 0.9);
     }
 
-    /* CREATE TABS */
-
-    .create-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .create-tab-btn {
-      font-size: 12px;
-      padding: 6px 10px;
+    .btn-ghost {
       border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .create-tab-btn.active-create {
-      color: var(--text-main);
-      background: rgba(30, 64, 175, 0.7);
-      border-color: rgba(129, 140, 248, 0.9);
-    }
-
-    .create-mode {
-      margin-top: 10px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    /* DISABLED PANEL */
-
-    .disabled-panel {
-      position: relative;
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    .disabled-panel::after {
-      content: "Upgrade your plan to access this feature";
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 6px 10px;
       font-size: 11px;
-      color: #f9fafb;
-      text-align: center;
-      background: linear-gradient(
-        to bottom,
-        rgba(15, 23, 42, 0.9),
-        rgba(15, 23, 42, 0.95)
-      );
-      border-radius: 12px;
-      padding: 0 16px;
-    }
-
-    /* LISTS / MEDIA */
-
-    .list-empty {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .gen-item,
-    .media-card {
-      border-radius: 12px;
       border: 1px solid var(--border-soft);
       background: rgba(15, 23, 42, 0.95);
-      padding: 10px;
-      margin-bottom: 8px;
-      font-size: 12px;
-    }
-
-    .gen-header,
-    .media-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .gen-title,
-    .media-title {
-      font-weight: 600;
-      font-size: 12px;
-    }
-
-    .gen-meta,
-    .media-meta {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .media-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .media-btn {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(15, 23, 42, 0.9);
       color: var(--text-muted);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      transition: all 0.15s ease;
+      gap: 6px;
+      transition: all 0.14s ease;
     }
 
-    .media-btn:hover {
+    .btn-ghost:hover {
+      border-color: rgba(148, 163, 184, 0.8);
       color: var(--text-main);
-      border-color: rgba(148, 163, 184, 0.9);
       background: rgba(15, 23, 42, 1);
     }
 
-    .media-badge {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: rgba(34, 197, 94, 0.12);
-      color: #bbf7d0;
-      margin-left: 4px;
+    /* OUTPUT */
+
+    .output-card {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 8px 9px;
+      font-size: 12px;
     }
 
-    /* FOOTER */
+    .output-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .output-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .gen-card {
+      border-radius: 9px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .gen-thumbnail {
+      border-radius: 6px;
+      background: radial-gradient(circle at top left, #4c1d95, #020617);
+      height: 70px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gen-thumbnail::after {
+      content: "";
+      position: absolute;
+      inset: 10%;
+      border-radius: 14px;
+      border: 1px solid rgba(248, 250, 252, 0.08);
+      box-shadow:
+        0 0 24px rgba(168, 85, 247, 0.5),
+        0 0 40px rgba(59, 130, 246, 0.5);
+      opacity: 0.7;
+    }
+
+    .gen-label {
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+
+    .gen-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .gen-actions {
+      margin-top: 3px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .gen-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(15, 23, 42, 0.96);
+      font-size: 10px;
+      padding: 3px 7px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .gen-btn.primary {
+      border-color: rgba(168, 85, 247, 0.8);
+      color: #e5e7eb;
+    }
+
+    /* OTHER VIEWS */
+
+    .lab-secondary {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 9px 10px;
+      font-size: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 240px;
+    }
+
+    .lab-secondary.active {
+      display: flex;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .media-card {
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .media-thumb {
+      border-radius: 6px;
+      background: radial-gradient(circle at top left, #a855f7, #020617);
+      height: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .media-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.98));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .lock-overlay span {
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* PROFILE OVERLAY */
+
+    .profile-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      display: none;
+      z-index: 40;
+      align-items: stretch;
+      justify-content: flex-end;
+    }
+
+    .profile-overlay.show {
+      display: flex;
+    }
+
+    .profile-panel {
+      width: min(380px, 100%);
+      background: #020617;
+      border-left: 1px solid var(--border-soft);
+      box-shadow: -20px 0 40px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .profile-header-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-avatar-lg {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .profile-header-text-main {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .profile-header-text-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .close-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 6px 9px;
+    }
+
+    .profile-body {
+      display: grid;
+      grid-template-columns: 115px minmax(0, 1fr);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .profile-menu {
+      border-right: 1px solid var(--border-soft);
+      padding: 10px 8px;
+      font-size: 12px;
+    }
+
+    .profile-menu button {
+      width: 100%;
+      text-align: left;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 6px 7px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      font-size: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .profile-menu button.active {
+      background: rgba(15, 23, 42, 0.96);
+      border-color: rgba(148, 163, 184, 0.7);
+      color: var(--text-main);
+    }
+
+    .profile-content {
+      padding: 10px 11px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    .profile-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .profile-section-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .profile-line {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .profile-small {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.96);
+      margin-right: 4px;
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+
+    .chip.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .profile-footer {
+      padding: 8px 12px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .profile-footer button {
+      border-radius: 999px;
+      border: 1px solid rgba(248, 113, 113, 0.7);
+      background: rgba(15, 23, 42, 0.96);
+      color: #fecaca;
+      cursor: pointer;
+      font-size: 11px;
+      padding: 5px 9px;
+    }
 
     footer {
       border-top: 1px solid var(--border-soft);
-      padding: 10px 16px 16px;
+      padding: 10px 16px 14px;
       font-size: 11px;
       color: var(--text-muted);
       text-align: center;
       background: rgba(2, 6, 23, 0.97);
+      margin-top: 14px;
     }
 
-    /* ANIMATIONS */
+    /* PLAN OVERLAY */
+
+    .plan-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      z-index: 35;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .plan-overlay.show {
+      display: flex;
+    }
+
+    .plan-dialog {
+      width: min(520px, 100%);
+      border-radius: 20px;
+      background: #020617;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+      padding: 16px 18px 14px;
+    }
+
+    .plan-dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .plan-dialog-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .plan-dialog-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-pill {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.98);
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    .toggle-pill button {
+      border: none;
+      background: transparent;
+      padding: 6px 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .toggle-pill button.active {
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: #f9fafb;
+    }
+
+    .plan-dialog-body {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .price-main {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .price-note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .price-strike {
+      text-decoration: line-through;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .price-save {
+      font-size: 12px;
+      color: #22c55e;
+    }
+
+    .plan-dialog-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ANIMATIONS & RESPONSIVE */
 
     @keyframes spinGlow {
       0% { transform: rotate(0deg); }
@@ -663,18 +1064,18 @@
     }
 
     @keyframes shimmer {
-      0% {
-        background-position: 0% 50%;
-        text-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
-      }
-      100% {
-        background-position: 200% 50%;
-        text-shadow: 0 0 22px rgba(59, 130, 246, 0.8);
-      }
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
     }
 
     @media (max-width: 960px) {
-      .shell {
+      .lab-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .lab-main-columns {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .profile-body {
         grid-template-columns: minmax(0, 1fr);
       }
     }
@@ -684,11 +1085,8 @@
         flex-direction: column;
         align-items: flex-start;
       }
-      nav {
-        justify-content: flex-start;
-      }
-      .hero-title {
-        font-size: 24px;
+      .lab-title {
+        font-size: 20px;
       }
     }
   </style>
@@ -701,952 +1099,994 @@
       <div class="logo-circle"></div>
       <div>
         <div class="logo-text-main">Sulandra AI Studio</div>
-        <div class="logo-text-sub">Image · Edit · Style · Outfit</div>
+        <div class="logo-text-sub">Images · Music · Video · Films</div>
       </div>
     </div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="image.html" class="active">Image</a>
-      <a href="video.html">Video</a>
-      <a href="music.html">Music</a>
-      <a href="film.html">Short Films</a>
-      <a href="education.html">Explore</a>
-    </nav>
+
+    <div class="nav-group">
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="image.html" class="active">Image</a>
+        <a href="video.html">Video</a>
+        <a href="music.html">Music</a>
+        <a href="film.html">Short Films</a>
+        <a href="studio.html">Studio</a>
+        <a href="education.html">Explore</a>
+      </nav>
+
+      <button type="button" class="profile-badge" onclick="toggleProfile()">
+        <div class="profile-avatar" id="profile-avatar">G</div>
+        <div>
+          <div id="profile-label">Sign in</div>
+          <div class="profile-credits" id="profile-credits">0 credits</div>
+        </div>
+      </button>
+    </div>
   </div>
 </header>
 
 <main>
-  <section class="hero">
-    <div class="hero-kicker">Image Lab</div>
-    <h1 class="hero-title">
-      Recreate, restyle and <span>rebuild images</span> with Sulandra
+  <!-- HERO -->
+  <section class="lab-hero">
+    <div class="lab-kicker">Image lab</div>
+    <h1 class="lab-title">
+      Generate <span>images, outfits and edits</span> from one place.
     </h1>
-    <p class="hero-sub">
-      Upload a reference, write a prompt, or drop a script page for storyboards.
-      Your plan (Basic, Creator, Pro) controls which models you can use, how
-      sharp your outputs are, and how watermarks behave.
+    <p class="lab-sub">
+      Text-to-image, image-to-image, outfit changes and pose edits – all wired to your Sulandra credit system.
+      Use the same image in Music Lab covers, Video Lab shots or Short Films without downloading anything.
     </p>
-    <div class="hero-tags">
-      <div class="hero-tag-pill">Text → Image</div>
-      <div class="hero-tag-pill">Image → Variation / Outfit</div>
-      <div class="hero-tag-pill">Image editing / inpaint</div>
-      <div class="hero-tag-pill">AI prompt & layout assistance</div>
-    </div>
-  </section>
-
-  <!-- PLAN SELECTION -->
-  <section class="plan-bar">
-    <div class="plan-toggle">
-      <button type="button" class="plan-button active-plan" data-plan="basic" onclick="setPlan('basic')">
-        BASIC
-        <span class="badge">Watermark · SD</span>
-      </button>
-      <button type="button" class="plan-button" data-plan="creator" onclick="setPlan('creator')">
-        CREATOR
-        <span class="badge">SD / HD / UHD</span>
-      </button>
-      <button type="button" class="plan-button" data-plan="pro" onclick="setPlan('pro')">
-        PRO
-        <span class="badge">All features · 4K</span>
-      </button>
-    </div>
-    <div class="plan-note" id="plan-note">
-      Basic: v1 only, SD output, watermark required. Advanced style tools are limited.
-    </div>
-  </section>
-
-  <section class="shell">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="menu-icon">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <div class="sidebar-title">Image Lab</div>
+    <div class="lab-status-row">
+      <div class="lab-pill">
+        <div class="lab-dot"></div>
+        Live demo · credits are simulated on this page.
       </div>
-      <nav class="side-nav">
-        <button class="side-link active-section" data-section="create" onclick="setActiveSection('create')">
-          <span class="label">
-            <span class="dot"></span>
-            Create
-          </span>
-          <small>Text / refs / edits</small>
-        </button>
-        <button class="side-link" data-section="generations" onclick="setActiveSection('generations')">
-          <span class="label">
-            <span class="dot"></span>
-            My Generations
-          </span>
-          <small>Per session</small>
-        </button>
-        <button class="side-link" data-section="assist" onclick="setActiveSection('assist')">
-          <span class="label">
-            <span class="dot"></span>
-            AI Image Assistance
-          </span>
-          <small>Prompts & layouts</small>
-        </button>
-        <button class="side-link" data-section="media" onclick="setActiveSection('media')">
-          <span class="label">
-            <span class="dot"></span>
-            Media · Community
-          </span>
-          <small>Feed · likes</small>
-        </button>
-      </nav>
+      <div class="lab-pill" id="lab-plan-pill">
+        Plan: Basic · 0 / 0 credits
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN LAYOUT -->
+  <section class="lab-layout">
+    <!-- SIDEBAR -->
+    <aside class="lab-sidebar">
+      <div class="sidebar-header">
+        <div class="menu-icon">≡</div>
+        <div class="sidebar-title">Image tools</div>
+      </div>
+
+      <div class="sidebar-section-label">Create</div>
+      <button class="sidebar-btn active" id="btn-create" onclick="setView('create')">
+        <span>Text → Image</span>
+        <span class="sidebar-badge">5 credits</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('create-img2img')">
+        <span>Image → Image</span>
+        <span class="sidebar-badge">5–15 credits</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('create-outfit')">
+        <span>Outfit & Pose</span>
+        <span class="sidebar-badge">Pro+</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('create-pdf')">
+        <span>PDF → Storyboard / Moodboard</span>
+        <span class="sidebar-badge">Creator+</span>
+      </button>
+
+      <div class="sidebar-section-label">Work</div>
+      <button class="sidebar-btn" onclick="setView('generations')">
+        <span>My generations</span>
+        <span class="sidebar-badge">History</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('prompt')">
+        <span>AI prompt assistant</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('media')">
+        <span>Media · Community Image Feed</span>
+      </button>
+
+      <div class="sidebar-section-label">Plan quick switch</div>
+      <div style="margin-bottom:4px;">
+        <span class="chip" onclick="simulatePlan('basic')">Basic</span>
+        <span class="chip" onclick="simulatePlan('pro')">Pro</span>
+        <span class="chip" onclick="simulatePlan('creator')">Creator</span>
+        <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
+      </div>
+
+      <div class="sidebar-plan-dots">
+        • Basic: free, 50 credits, UHD previews with watermark.<br/>
+        • Pro & up: clean exports, higher resolutions and more tools unlocked.
+      </div>
     </aside>
 
-    <!-- CONTENT -->
-    <section class="content">
-      <!-- CREATE SECTION -->
-      <section id="create-section" class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Create · Image</div>
-          <div class="pill-label">Plan-aware · UI only</div>
+    <!-- MAIN PANEL -->
+    <section class="lab-main">
+      <div class="lab-main-header">
+        <div>
+          <div class="lab-main-title" id="lab-main-title">Create · Text → Image</div>
+          <div class="lab-main-sub" id="lab-main-sub">
+            Describe what you want. We’ll generate 4 options and charge 5 credits per image.
+          </div>
         </div>
-        <p class="panel-sub">
-          Choose how you want to create images. Upload a model, ask for a new
-          pose or outfit, edit an existing picture, or use a style reference
-          image. Your subscription decides engine version, quality and
-          watermark options.
-        </p>
+        <div class="lab-main-plan-pill" id="lab-main-plan-pill">
+          Plan: Basic · 0 / 0 credits
+        </div>
+      </div>
 
-        <!-- Engine version -->
-        <div class="field-group">
-          <label for="engine-version">Engine version</label>
-          <select id="engine-version" onchange="handleVersionChange()">
-            <option value="v1">v1 – Stable (all plans)</option>
-            <option value="v2">v2 – Enhanced (Creator & Pro)</option>
-            <option value="v3">v3 – Experimental (Pro only)</option>
-          </select>
-          <p class="note">
-            In the real backend, each version can map to a different image model
-            or checkpoint.
-          </p>
+      <!-- CREATE VIEW -->
+      <div id="view-create" class="lab-main-columns">
+        <div>
+          <!-- Versions -->
+          <div class="input-card">
+            <div class="input-label-row">
+              <div class="input-label">Model versions</div>
+              <div class="input-help">Higher versions may use slightly more GPU time.</div>
+            </div>
+            <div class="version-row">
+              <button class="version-chip active" onclick="setVersion('v1')">
+                v1 · Fast
+              </button>
+              <button class="version-chip" data-feature="v2" onclick="handleVersionClick('v2')">
+                v2 · Balanced <span class="version-lock">●</span>
+              </button>
+              <button class="version-chip" data-feature="v3" onclick="handleVersionClick('v3')">
+                v3 · High detail <span class="version-lock">●</span>
+              </button>
+              <button class="version-chip" data-feature="xl" onclick="handleVersionClick('xl')">
+                Experimental XL <span class="version-lock">●</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Upload & Prompt -->
+          <div class="input-card" style="margin-top:6px;">
+            <div class="input-label-row">
+              <div class="input-label">Inputs</div>
+              <div class="input-help" id="input-help-text">
+                Optional reference image + your text prompt.
+              </div>
+            </div>
+
+            <div class="upload-grid" id="upload-grid">
+              <div class="upload-box" onclick="handleUpload('imageReference')">
+                <div class="plus-circle">+</div>
+                <strong>Reference image (optional)</strong>
+                <div class="upload-note">
+                  Upload a face, outfit or pose to guide the style. JPG / PNG / WEBP.
+                </div>
+              </div>
+              <div class="upload-box" onclick="handleUpload('mask')">
+                <div class="plus-circle">+</div>
+                <strong>Mask / area to edit (optional)</strong>
+                <div class="upload-note">
+                  For inpainting – areas you want to change only.
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:6px;">
+              <textarea id="prompt-text"
+                placeholder="Example: A cinematic portrait of a Black woman with huge hips, soft studio lighting, white outfit, clean background, fashion photography style."></textarea>
+            </div>
+
+            <div class="input-footer-row">
+              <div>
+                <span id="credit-note">This run: 4 images × 5 credits = 20 credits.</span><br/>
+                <span>Basic will export with watermark. Pro and above export clean.</span>
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn-ghost" type="button" onclick="openPlanDetails(user.plan)">
+                  Change plan
+                </button>
+                <button class="btn-primary" type="button" onclick="runGeneration()">
+                  <span class="plus">+</span>
+                  Generate images
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Create tabs -->
-        <div class="create-tabs">
-          <button
-            type="button"
-            class="create-tab-btn active-create"
-            data-mode-btn="text"
-            onclick="setCreateMode('text')"
-          >
-            Text → Image
-          </button>
-          <button
-            type="button"
-            class="create-tab-btn"
-            data-mode-btn="variation"
-            onclick="setCreateMode('variation')"
-          >
-            Image → Variation / Outfit
-          </button>
-          <button
-            type="button"
-            class="create-tab-btn"
-            data-mode-btn="edit"
-            onclick="setCreateMode('edit')"
-          >
-            Image → Edit / Inpaint
-          </button>
-          <button
-            type="button"
-            class="create-tab-btn"
-            data-mode-btn="style"
-            onclick="setCreateMode('style')"
-          >
-            Style reference (image)
-          </button>
+        <!-- OUTPUT -->
+        <div>
+          <div class="output-card">
+            <div class="output-header-row">
+              <div class="input-label">Output</div>
+              <div class="input-help" id="output-help">
+                When you generate, your best results can be sent directly to Video Lab or Short Films.
+              </div>
+            </div>
+            <div class="output-grid" id="output-grid">
+              <!-- Placeholder examples -->
+              <div class="gen-card">
+                <div class="gen-thumbnail"></div>
+                <div class="gen-label">Fashion portrait · v1</div>
+                <div class="gen-meta">From text + reference · 5 credits</div>
+                <div class="gen-actions">
+                  <button class="gen-btn primary" type="button">Use in Video Lab</button>
+                  <button class="gen-btn" type="button">Use in Short Films</button>
+                  <button class="gen-btn" type="button" onclick="downloadImage()">Download</button>
+                </div>
+              </div>
+              <div class="gen-card">
+                <div class="gen-thumbnail"></div>
+                <div class="gen-label">Outfit variation</div>
+                <div class="gen-meta">Image → image · 15 credits</div>
+                <div class="gen-actions">
+                  <button class="gen-btn primary" type="button">Send to Studio</button>
+                  <button class="gen-btn" type="button" onclick="downloadImage()">Download</button>
+                </div>
+              </div>
+            </div>
+            <div class="input-footer-row" style="margin-top:7px;">
+              <div>All generations will appear in <strong>My generations</strong> for reuse in other labs.</div>
+              <button class="btn-ghost" type="button" onclick="setView('generations')">
+                View my generations
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Text → Image -->
-        <div
-          class="create-mode"
-          data-mode="text"
-          data-min-plan="basic"
-        >
-          <form onsubmit="event.preventDefault(); handleTextToImage();">
-            <div class="field-group">
-              <label for="text-prompt">
-                Text prompt
-              </label>
-              <textarea
-                id="text-prompt"
-                placeholder="Example: Full-body portrait of a confident Black woman with huge curvy hips, white skirt, studio lighting, 4K, clean background."
-              ></textarea>
-              <p class="note">
-                This is your classic text-to-image flow. Later, you’ll send this
-                to a /api/image/text-to-image route with the chosen engine version.
-              </p>
+      <!-- OTHER VIEWS -->
+
+      <!-- Image → Image / Outfit / PDF etc use same container but different text -->
+      <div id="view-generations" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">My generations</div>
+            <div class="lab-main-sub">
+              All your image outputs from this device (simulated in this demo). In production this would show your account-wide generations.
             </div>
-
-            <div class="field-row field-group">
-              <div>
-                <label for="text-style">Visual style</label>
-                <select id="text-style">
-                  <option>Photorealistic</option>
-                  <option>Editorial fashion</option>
-                  <option>3D render / stylized</option>
-                  <option>Digital art / illustration</option>
-                </select>
-              </div>
-              <div>
-                <label for="text-ratio">Aspect ratio</label>
-                <select id="text-ratio">
-                  <option value="9:16">9:16 – Vertical</option>
-                  <option value="16:9">16:9 – Horizontal</option>
-                  <option value="1:1">1:1 – Square</option>
-                </select>
-              </div>
+          </div>
+        </div>
+        <div class="media-grid">
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>“Afrobeat cover art”</div>
+            <div class="media-meta-row">
+              <span>v2 · 4K</span>
+              <span>Used in 1 video</span>
             </div>
-
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="text-quality">Output quality</label>
-                <select id="text-quality" class="quality-select"></select>
-              </div>
-              <div>
-                <label for="text-visibility">Visibility</label>
-                <select id="text-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="text-watermark">Watermark</label>
-                <select id="text-watermark" class="watermark-select"></select>
-              </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>“Short film storyboard frame”</div>
+            <div class="media-meta-row">
+              <span>v1</span>
+              <span>3 scenes linked</span>
             </div>
-
-            <div class="small-inline">
-              <input type="checkbox" id="text-add-media" />
-              <label for="text-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>“Album concept”</div>
+            <div class="media-meta-row">
+              <span>v3</span>
+              <span>Music Lab cover</span>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
+      <div id="view-prompt" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">AI prompt assistant</div>
+            <div class="lab-main-sub">
+              Describe your idea in simple language and we’ll suggest strong image prompts you can paste into the generator.
+            </div>
+          </div>
+        </div>
+        <div class="input-card">
+          <div class="input-label-row">
+            <div class="input-label">Your idea</div>
+          </div>
+          <textarea id="prompt-assistant-input"
+            placeholder="Example: I want a dance challenge cover with a Black woman, big hips, colorful lights, and a club feel, vertical 9:16."></textarea>
+          <div class="input-footer-row">
+            <div>Prompt suggestions are free. Generation still uses credits.</div>
+            <button class="btn-primary" type="button" onclick="suggestPrompt()">
               <span class="plus">+</span>
-              Generate image from text (UI only)
+              Suggest prompts
             </button>
-          </form>
-        </div>
-
-        <!-- Image → Variation / Outfit -->
-        <div
-          class="create-mode hidden"
-          data-mode="variation"
-          data-min-plan="basic"
-        >
-          <form onsubmit="event.preventDefault(); handleImageVariation();">
-            <div class="field-group">
-              <label>Upload reference image</label>
-              <input id="variation-file" type="file" accept="image/*" />
-              <p class="note">
-                Later your backend can lock identity / pose and only change
-                outfit, environment, expression and styling.
-              </p>
-            </div>
-
-            <div class="field-group">
-              <label for="variation-prompt">
-                What should change?
-              </label>
-              <textarea
-                id="variation-prompt"
-                placeholder="Example: Same woman, same pose, huge curvy hips, white skirt instead of black, bright studio, 4K."
-              ></textarea>
-            </div>
-
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="variation-quality">Output quality</label>
-                <select id="variation-quality" class="quality-select"></select>
-              </div>
-              <div>
-                <label for="variation-visibility">Visibility</label>
-                <select id="variation-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="variation-watermark">Watermark</label>
-                <select id="variation-watermark" class="watermark-select"></select>
-              </div>
-            </div>
-
-            <div class="small-inline">
-              <input type="checkbox" id="variation-add-media" />
-              <label for="variation-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
-            </div>
-
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
-              <span class="plus">+</span>
-              Recreate / change outfit (UI only)
-            </button>
-          </form>
-        </div>
-
-        <!-- Image → Edit / Inpaint -->
-        <div
-          class="create-mode hidden"
-          data-mode="edit"
-          data-min-plan="basic"
-        >
-          <form onsubmit="event.preventDefault(); handleImageEdit();">
-            <div class="field-group">
-              <label>Upload image to edit</label>
-              <input id="edit-file" type="file" accept="image/*" />
-              <p class="note">
-                Later you can add masking UI so users paint the area to change;
-                here we only capture the prompt.
-              </p>
-            </div>
-
-            <div class="field-group">
-              <label for="edit-prompt">
-                Describe the edit clearly
-              </label>
-              <textarea
-                id="edit-prompt"
-                placeholder="Example: Keep pose and hips, change skirt to white, clean hair edges, smooth skin, keep same background."
-              ></textarea>
-            </div>
-
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="edit-quality">Output quality</label>
-                <select id="edit-quality" class="quality-select"></select>
-              </div>
-              <div>
-                <label for="edit-visibility">Visibility</label>
-                <select id="edit-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="edit-watermark">Watermark</label>
-                <select id="edit-watermark" class="watermark-select"></select>
-              </div>
-            </div>
-
-            <div class="small-inline">
-              <input type="checkbox" id="edit-add-media" />
-              <label for="edit-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
-            </div>
-
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
-              <span class="plus">+</span>
-              Apply edit / inpaint (UI only)
-            </button>
-          </form>
-        </div>
-
-        <!-- Style reference (image) – Creator & Pro -->
-        <div
-          class="create-mode hidden"
-          data-mode="style"
-          data-min-plan="creator"
-        >
-          <form onsubmit="event.preventDefault(); handleStyleReference();">
-            <div class="field-group">
-              <label>Upload style reference image</label>
-              <input id="style-file" type="file" accept="image/*" />
-              <p class="note">
-                Later this mode can analyze color, lighting, composition and vibe,
-                then re-apply it to new prompts or subjects.
-              </p>
-            </div>
-
-            <div class="field-group">
-              <label for="style-prompt">
-                What should Sulandra create in this style?
-              </label>
-              <textarea
-                id="style-prompt"
-                placeholder="Example: Use this fashion photo style and create a new full-body portrait of my model, white skirt, same lighting."
-              ></textarea>
-            </div>
-
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="style-quality">Output quality</label>
-                <select id="style-quality" class="quality-select"></select>
-              </div>
-              <div>
-                <label for="style-visibility">Visibility</label>
-                <select id="style-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="style-watermark">Watermark</label>
-                <select id="style-watermark" class="watermark-select"></select>
-              </div>
-            </div>
-
-            <div class="small-inline">
-              <input type="checkbox" id="style-add-media" />
-              <label for="style-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
-            </div>
-
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
-              <span class="plus">+</span>
-              Generate in this style (UI only)
-            </button>
-          </form>
-        </div>
-      </section>
-
-      <!-- MY GENERATIONS -->
-      <section id="generations-section" class="panel hidden">
-        <div class="panel-header">
-          <div class="panel-title">My Generations · Image</div>
-          <div class="pill-label">Session only · Demo</div>
-        </div>
-        <p class="panel-sub">
-          Every time you run a Create flow, a record appears here for this
-          browser session. In the real platform, this will connect to your user
-          account and storage.
-        </p>
-        <div id="my-generations-list">
-          <div class="list-empty">
-            No generations yet. Use any of the Create modes first.
           </div>
         </div>
-      </section>
-
-      <!-- AI IMAGE ASSISTANCE -->
-      <section id="assist-section" class="panel hidden">
-        <div class="panel-header">
-          <div class="panel-title">AI Image Assistance</div>
-          <div class="pill-label">Prompts · Layouts · Storyboards</div>
-        </div>
-        <p class="panel-sub">
-          This area is for planning: help users craft strong prompts, define
-          poses, camera framing, or turn a script into storyboard panels before
-          they generate anything.
-        </p>
-
-        <form onsubmit="event.preventDefault(); handleImageAssist();">
-          <div class="field-group">
-            <label>Upload reference / moodboard (optional)</label>
-            <input id="assist-file" type="file" accept="image/*,.pdf" />
-            <p class="note">
-              Could be a single photo, collage, PDF moodboard or frame from a video.
-            </p>
+        <div class="input-card" style="margin-top:6px;">
+          <div class="input-label-row">
+            <div class="input-label">Suggested prompts</div>
           </div>
-
-          <div class="field-group">
-            <label for="assist-prompt">
-              What should Sulandra help you design?
-            </label>
-            <textarea
-              id="assist-prompt"
-              placeholder="Example: Help me design 4 vertical images for a dance challenge: same model, huge curvy hips, different outfits and simple colorful backgrounds."
-            ></textarea>
-          </div>
-
-          <div class="field-row-3 field-group">
-            <div>
-              <label for="assist-focus">Focus</label>
-              <select id="assist-focus">
-                <option>Improve prompt</option>
-                <option>Storyboard sequence</option>
-                <option>Pose & camera guide</option>
-                <option>Outfit & styling ideas</option>
-              </select>
-            </div>
-            <div>
-              <label for="assist-tone">Style / tone</label>
-              <select id="assist-tone">
-                <option>Photorealistic studio</option>
-                <option>Afrobeats / club visual</option>
-                <option>Soft gospel / worship</option>
-                <option>High fashion editorial</option>
-              </select>
-            </div>
-            <div>
-              <label for="assist-visibility">Visibility</label>
-              <select id="assist-visibility">
-                <option value="private">Private</option>
-                <option value="unlisted">Unlisted</option>
-                <option value="public">Public in Media</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="small-inline">
-            <input type="checkbox" id="assist-add-media" />
-            <label for="assist-add-media" style="margin:0;">Share a summary to Media (no full file)</label>
-          </div>
-
-          <button type="submit" class="btn-main" style="margin-top: 8px;">
-            <span class="plus">+</span>
-            Ask AI for image guidance (UI only)
-          </button>
-        </form>
-
-        <p class="note" style="margin-top: 10px;">
-          In the real build, this section will show prompt suggestions, pose
-          descriptions, and storyboard notes returned from your backend model.
-        </p>
-      </section>
-
-      <!-- MEDIA SECTION -->
-      <section id="media-section" class="panel hidden">
-        <div class="panel-header">
-          <div class="panel-title">Media · Community Image Feed</div>
-          <div class="pill-label">Likes · Comments (UI)</div>
-        </div>
-        <p class="panel-sub">
-          Any public image generation with “Add to Media” checked will appear
-          here. For now this is local to your browser, just to preview how the
-          community feed will feel.
-        </p>
-        <div id="media-feed">
-          <div class="list-empty">
-            No public posts yet. Make a generation public and add it to Media
-            from the Create tab.
+          <div class="profile-small" id="prompt-assistant-output">
+            Suggestions will appear here. You can click one to copy it into the main generator.
           </div>
         </div>
-      </section>
+      </div>
+
+      <div id="view-media" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">Media · Community Image Feed</div>
+            <div class="lab-main-sub">
+              In production, this will show public creations (with creators’ permission), likes and comments – a discovery feed for Sulandra images.
+            </div>
+          </div>
+        </div>
+        <div class="media-grid">
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Dance challenge cover art</div>
+            <div class="media-meta-row">
+              <span>1.2k likes · 45 comments</span>
+              <span>Use style →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Short film key art</div>
+            <div class="media-meta-row">
+              <span>890 likes</span>
+              <span>Remix →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Album cover concept</div>
+            <div class="media-meta-row">
+              <span>2.4k likes</span>
+              <span>Use style →</span>
+            </div>
+          </div>
+        </div>
+        <div class="profile-small">
+          Later, clicking “Use style” will build a prompt and settings based on that image, just like a style reference.
+        </div>
+      </div>
+
+      <!-- Special create variants share same layout but change copy -->
+      <div id="view-create-img2img" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">Create · Image → Image</div>
+            <div class="lab-main-sub">
+              Upload one or more images and describe how you want them changed – outfits, background, lighting or style.
+            </div>
+          </div>
+        </div>
+        <div class="profile-small">
+          Use the same controls on the main Create view. This option favors strong reference images and higher credit tiers for complex edits.
+        </div>
+      </div>
+
+      <div id="view-create-outfit" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">Create · Outfit & Pose</div>
+            <div class="lab-main-sub">
+              Change clothes, poses and camera angles while keeping the same person look. Best with Pro and above.
+            </div>
+          </div>
+        </div>
+        <div class="profile-small">
+          Outfit & pose tools are available for Pro, Creator and Creator Ultimate. Basic users can still try simple image-to-image in the main Create view.
+        </div>
+      </div>
+
+      <div id="view-create-pdf" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">Create · PDF → Storyboard / Moodboard</div>
+            <div class="lab-main-sub">
+              Upload a script or visual reference PDF. We’ll extract scenes and design suggested frames, then you can generate images for each key moment.
+            </div>
+          </div>
+        </div>
+        <div class="input-card">
+          <div class="input-label-row">
+            <div class="input-label">Upload script / reference PDF</div>
+          </div>
+          <div class="upload-box" onclick="handleUpload('pdfStoryboard')">
+            <div class="plus-circle">+</div>
+            <strong>Upload PDF</strong>
+            <div class="upload-note">
+              Creator & Creator Ultimate only. In production, this will parse your script and list scenes for image generation.
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </section>
 </main>
 
 <footer>
-  Image Lab · Plan-based access (Basic / Creator / Pro), quality control,
-  watermark logic, My Generations and Media feed UI are ready. Next step:
-  connect to real models and storage.
+  Sulandra AI Studio – Image Lab · Use one credit system for images, music, video and short films.
 </footer>
 
+<!-- PROFILE OVERLAY -->
+<div class="profile-overlay" id="profile-overlay">
+  <div class="profile-panel">
+    <div class="profile-header">
+      <div class="profile-header-main">
+        <div class="profile-avatar-lg" id="profile-avatar-lg">G</div>
+        <div>
+          <div class="profile-header-text-main" id="profile-name">Guest</div>
+          <div class="profile-header-text-sub" id="profile-plan-label">
+            Not signed in
+          </div>
+        </div>
+      </div>
+      <button class="close-btn" type="button" onclick="toggleProfile()">Close</button>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-menu">
+        <button id="menu-overview" class="active" onclick="setProfileSection('overview')">View profile</button>
+        <button onclick="setProfileSection('edit')">Edit profile</button>
+        <button onclick="setProfileSection('invite')">Invite friends</button>
+        <button onclick="setProfileSection('subscription')">Subscription</button>
+        <button onclick="setProfileSection('account')">Manage account</button>
+        <button onclick="setProfileSection('theme')">Theme</button>
+      </div>
+
+      <div class="profile-content" id="profile-content">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <div class="profile-footer">
+      <div>Signed in state is simulated here. Real auth & billing will connect later.</div>
+      <button type="button" id="sign-toggle" onclick="toggleSignIn()">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAN DETAIL OVERLAY -->
+<div class="plan-overlay" id="plan-overlay">
+  <div class="plan-dialog">
+    <div class="plan-dialog-header">
+      <div>
+        <div class="plan-dialog-title" id="plan-dialog-title">Pro plan</div>
+        <div class="plan-dialog-sub" id="plan-dialog-sub">
+          Full access to WAV export, HD/UHD quality and credit packs.
+        </div>
+      </div>
+      <div class="toggle-pill">
+        <button type="button" id="toggle-monthly" class="active" onclick="setPlanBilling('monthly')">
+          Monthly
+        </button>
+        <button type="button" id="toggle-yearly" onclick="setPlanBilling('yearly')">
+          Yearly
+        </button>
+      </div>
+    </div>
+
+    <div class="plan-dialog-body">
+      <div class="price-row">
+        <div class="price-main" id="plan-price-main">$20</div>
+        <div class="price-note" id="plan-price-note">per month · 2500 credits</div>
+      </div>
+      <div class="price-row" id="price-row-yearly" style="display:none;">
+        <div class="price-strike" id="plan-price-strike">$240 / year</div>
+        <div class="price-save" id="plan-price-save">You save $12 (5%)</div>
+      </div>
+      <div class="profile-small" id="plan-dialog-extra">
+        Choose monthly for flexibility, or yearly for the best price. A 7-day free trial is available for new users (no exports until trial converts).
+      </div>
+    </div>
+
+    <div class="plan-dialog-footer">
+      <button class="btn-primary" type="button" onclick="startSignup()">
+        <span class="plus">+</span>
+        Continue – signup & payment
+      </button>
+      <button class="btn-ghost" type="button" onclick="closePlanDetails()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
-  let currentPlan = "basic";
-  let myGenerations = [];
-  let mediaFeed = [];
+  // USER / PLAN STATE (same logic style as homepage)
+  let isSignedIn = false;
+  let user = {
+    name: "Guest",
+    initial: "G",
+    plan: "basic",
+    credits: 0,
+    maxCredits: 0
+  };
 
-  const planRank = { basic: 1, creator: 2, pro: 3 };
+  const planConfig = {
+    basic: {
+      name: "Basic",
+      monthly: 0,
+      yearly: 0,
+      discount: 0,
+      credits: "50 credits / month",
+      description:
+        "Free plan. UHD-quality previews with watermark, MP3-only audio and 50 monthly credits.",
+      yearlyNote: "Basic is always free. Yearly billing only applies to paid plans."
+    },
+    pro: {
+      name: "Pro",
+      monthly: 20,
+      yearly: 228,
+      discount: 5,
+      credits: "2500 credits / month",
+      description:
+        "For serious creators who need clean exports, WAV audio and higher resolutions.",
+      yearlyNote:
+        "Normal yearly cost would be $240; you pay $228 (save $12, 5%)."
+    },
+    creator: {
+      name: "Creator",
+      monthly: 30,
+      yearly: 331.2,
+      discount: 8,
+      credits: "5000 credits / month",
+      description:
+        "Power users who want 4K, Studio workflows and Ultimate add-ons, with enough credits for real monthly projects.",
+      yearlyNote:
+        "Normal yearly cost would be $360; you pay $331.20 (save $28.80, 8%)."
+    },
+    creatorUltimate: {
+      name: "Creator Ultimate",
+      monthly: 45,
+      yearly: 486,
+      discount: 10,
+      credits: "10000 credits / month",
+      description:
+        "Everything unlocked: Short Films + Studio heavy use + Stems & MIDI.",
+      yearlyNote:
+        "Normal yearly cost would be $540; you pay $486 (save $54, 10%)."
+    }
+  };
 
-  function setPlan(plan) {
-    currentPlan = plan;
-    document.querySelectorAll(".plan-button").forEach(btn => {
-      btn.classList.toggle("active-plan", btn.dataset.plan === plan);
-    });
+  let currentPlanKey = "pro";
+  let currentBilling = "monthly";
+  let currentView = "create";
+  let currentVersion = "v1";
 
-    const note = document.getElementById("plan-note");
-    if (plan === "basic") {
-      note.textContent =
-        "Basic: v1 only, SD output, watermark required. Advanced style tools are limited.";
-    } else if (plan === "creator") {
-      note.textContent =
-        "Creator: v1 & v2, SD / HD / UHD, watermark optional, access to style-reference mode.";
+  function updatePlanInUI() {
+    const labPlan = document.getElementById("lab-plan-pill");
+    const mainPlanPill = document.getElementById("lab-main-plan-pill");
+    const planName = planConfig[user.plan].name;
+    labPlan.textContent = `Plan: ${planName} · ${user.credits} / ${user.maxCredits} credits`;
+    mainPlanPill.textContent = `Plan: ${planName} · ${user.credits} / ${user.maxCredits} credits`;
+  }
+
+  function setView(view) {
+    currentView = view;
+    document.querySelectorAll(".sidebar-btn").forEach(btn => btn.classList.remove("active"));
+    // Map view → sidebar button
+    if (view === "create") {
+      document.getElementById("btn-create").classList.add("active");
+    }
+
+    // hide all view containers
+    document.getElementById("view-create").style.display = "none";
+    document.getElementById("view-generations").classList.remove("active");
+    document.getElementById("view-prompt").classList.remove("active");
+    document.getElementById("view-media").classList.remove("active");
+    document.getElementById("view-create-img2img").classList.remove("active");
+    document.getElementById("view-create-outfit").classList.remove("active");
+    document.getElementById("view-create-pdf").classList.remove("active");
+
+    const title = document.getElementById("lab-main-title");
+    const sub = document.getElementById("lab-main-sub");
+
+    if (view === "create") {
+      document.getElementById("view-create").style.display = "grid";
+      title.textContent = "Create · Text → Image / Image → Image";
+      sub.textContent =
+        "Combine text and optional reference images. Each basic generation uses 5 credits per image.";
+    } else if (view === "generations") {
+      document.getElementById("view-generations").classList.add("active");
+      title.textContent = "My generations";
+      sub.textContent =
+        "All the images you generated here (simulated). Later this will sync with your real account.";
+    } else if (view === "prompt") {
+      document.getElementById("view-prompt").classList.add("active");
+      title.textContent = "AI prompt assistant";
+      sub.textContent =
+        "Turn your simple description into strong prompts for the Image Lab.";
+    } else if (view === "media") {
+      document.getElementById("view-media").classList.add("active");
+      title.textContent = "Media · Community Image Feed";
+      sub.textContent =
+        "Preview how a social feed of Sulandra-created images could look.";
+    } else if (view === "create-img2img") {
+      document.getElementById("view-create-img2img").classList.add("active");
+      title.textContent = "Create · Image → Image";
+      sub.textContent =
+        "Use strong reference images and prompts to transform your shots.";
+    } else if (view === "create-outfit") {
+      document.getElementById("view-create-outfit").classList.add("active");
+      title.textContent = "Create · Outfit & Pose";
+      sub.textContent =
+        "Advanced controls for clothes and poses. Best used on Pro and above.";
+      if (!isFeatureAllowed("outfitPose")) {
+        alertUpgrade("Outfit & Pose tools are available on Pro and above.");
+      }
+    } else if (view === "create-pdf") {
+      document.getElementById("view-create-pdf").classList.add("active");
+      title.textContent = "Create · PDF → Storyboard / Moodboard";
+      sub.textContent =
+        "Upload scripts or visual PDFs to build storyboards and moodboards.";
+      if (!isFeatureAllowed("pdfStoryboard")) {
+        alertUpgrade("PDF storyboard tools are available on Creator and Creator Ultimate.");
+      }
+    }
+  }
+
+  function setVersion(version) {
+    currentVersion = version;
+    document.querySelectorAll(".version-chip").forEach(ch => ch.classList.remove("active"));
+    const map = { v1: 0, v2: 1, v3: 2, xl: 3 };
+    const chips = document.querySelectorAll(".version-chip");
+    if (map[version] !== undefined) {
+      chips[map[version]].classList.add("active");
+    }
+  }
+
+  function handleVersionClick(version) {
+    if (version === "v2" && !isFeatureAllowed("v2")) {
+      alertUpgrade("v2 is available starting from Pro plan.");
+      return;
+    }
+    if (version === "v3" && !isFeatureAllowed("v3")) {
+      alertUpgrade("v3 is available starting from Creator plan.");
+      return;
+    }
+    if (version === "xl" && !isFeatureAllowed("xl")) {
+      alertUpgrade("Experimental XL is available only on Creator Ultimate.");
+      return;
+    }
+    setVersion(version);
+  }
+
+  function isFeatureAllowed(feature) {
+    // Basic rules for this Image Lab
+    if (feature === "outfitPose") {
+      return user.plan === "pro" || user.plan === "creator" || user.plan === "creatorUltimate";
+    }
+    if (feature === "pdfStoryboard") {
+      return user.plan === "creator" || user.plan === "creatorUltimate";
+    }
+    if (feature === "v2") {
+      return user.plan !== "basic";
+    }
+    if (feature === "v3") {
+      return user.plan === "creator" || user.plan === "creatorUltimate";
+    }
+    if (feature === "xl") {
+      return user.plan === "creatorUltimate";
+    }
+    // default allowed
+    return true;
+  }
+
+  function alertUpgrade(message) {
+    alert(
+      message +
+        "\n\nIn the real app this would open a dialog to help the user upgrade their plan while keeping their credits."
+    );
+  }
+
+  function handleUpload(type) {
+    if (type === "pdfStoryboard" && !isFeatureAllowed("pdfStoryboard")) {
+      alertUpgrade("PDF storyboard uploads require Creator or Creator Ultimate.");
+      return;
+    }
+    if ((type === "imageReference" || type === "mask") && user.plan === "basic") {
+      // still allowed, just remind about watermark
+      alert("Reference uploads are allowed on Basic, but exports will carry a Sulandra watermark.");
+      return;
+    }
+    alert(
+      "Upload placeholder.\n\nHere you'd open a file picker for: " +
+        type +
+        ". In production this would send the file to your backend."
+    );
+  }
+
+  function runGeneration() {
+    if (user.credits <= 0) {
+      alertUpgrade("You do not have enough credits to generate images.");
+      return;
+    }
+    alert(
+      "Generation started (simulated).\n\nIn the real system this will send your prompt, version, and any uploads to the backend and Runpod models."
+    );
+  }
+
+  function downloadImage() {
+    if (user.plan === "basic") {
+      alert(
+        "On Basic, downloads include a Sulandra AI Studio watermark.\n\nPaid plans export clean images without watermark."
+      );
     } else {
-      note.textContent =
-        "Pro: v1 / v2 / v3, SD / HD / UHD / 4K, full watermark control, all tools unlocked.";
+      alert("Download placeholder. In production, this triggers a download of the selected image.");
     }
-
-    applyPlanGating();
-    configureQualitySelects();
-    configureWatermarkSelects();
   }
 
-  function handleVersionChange() {
-    const select = document.getElementById("engine-version");
-    const value = select.value;
-    if (value === "v2" && planRank[currentPlan] < planRank["creator"]) {
-      alert("v2 is available for Creator and Pro plans. You are on Basic, staying on v1.");
-      select.value = "v1";
+  function suggestPrompt() {
+    const input = document.getElementById("prompt-assistant-input").value.trim();
+    const out = document.getElementById("prompt-assistant-output");
+    if (!input) {
+      out.textContent = "Describe your idea first, then we’ll suggest prompts.";
       return;
     }
-    if (value === "v3" && currentPlan !== "pro") {
-      alert("v3 is available for Pro plan only. Staying on v1 for this plan.");
-      select.value = "v1";
-      return;
+    out.innerHTML = `
+      <div class="profile-small">Here are some example prompts based on your idea:</div>
+      <div class="chip" onclick="copyPrompt(this)">Cinematic, high-resolution portrait, ${input}, studio lighting, 85mm lens, detailed skin texture, soft background bokeh.</div>
+      <div class="chip" onclick="copyPrompt(this)">Vertical 9:16 dance cover, ${input}, colorful club lighting, sharp focus on subject, blurred crowd behind.</div>
+      <div class="chip" onclick="copyPrompt(this)">Album cover style, ${input}, bold typography space at top, gradient background, vibrant color palette.</div>
+      <div class="profile-small">Click any chip to copy it into the main generator prompt.</div>
+    `;
+  }
+
+  function copyPrompt(chipEl) {
+    const text = chipEl.textContent;
+    const promptBox = document.getElementById("prompt-text");
+    promptBox.value = text;
+    alert("Prompt copied into the main generator area.");
+  }
+
+  /* PROFILE PANEL */
+
+  function toggleProfile() {
+    const overlay = document.getElementById("profile-overlay");
+    overlay.classList.toggle("show");
+    if (overlay.classList.contains("show")) {
+      renderProfileSection("overview");
     }
   }
 
-  function getEngineVersion() {
-    return document.getElementById("engine-version").value;
+  function setProfileSection(section) {
+    document
+      .querySelectorAll(".profile-menu button")
+      .forEach(btn => btn.classList.remove("active"));
+
+    if (section === "overview") document.getElementById("menu-overview").classList.add("active");
+    else document
+      .querySelector(`.profile-menu button[onclick*="${section}"]`)
+      .classList.add("active");
+
+    renderProfileSection(section);
   }
 
-  function applyPlanGating() {
-    document.querySelectorAll(".create-mode").forEach(el => {
-      const minPlan = el.dataset.minPlan || "basic";
-      if (planRank[currentPlan] < planRank[minPlan]) {
-        el.classList.add("disabled-panel");
-      } else {
-        el.classList.remove("disabled-panel");
-      }
-    });
-  }
+  function renderProfileSection(section) {
+    const content = document.getElementById("profile-content");
 
-  function configureQualitySelects() {
-    document.querySelectorAll(".quality-select").forEach(sel => {
-      let optionsHtml = "";
-      if (currentPlan === "basic") {
-        optionsHtml = `<option value="sd">SD (Basic)</option>`;
-      } else if (currentPlan === "creator") {
-        optionsHtml = `
-          <option value="sd">SD</option>
-          <option value="hd">HD</option>
-          <option value="uhd">UHD</option>
-        `;
-      } else {
-        optionsHtml = `
-          <option value="sd">SD</option>
-          <option value="hd">HD</option>
-          <option value="uhd">UHD</option>
-          <option value="4k">4K</option>
-        `;
-      }
-      sel.innerHTML = optionsHtml;
-    });
-  }
-
-  function configureWatermarkSelects() {
-    document.querySelectorAll(".watermark-select").forEach(sel => {
-      let optionsHtml = "";
-      if (currentPlan === "basic") {
-        optionsHtml = `<option value="on">Watermark ON (Basic)</option>`;
-      } else if (currentPlan === "creator") {
-        optionsHtml = `
-          <option value="on">Watermark ON</option>
-          <option value="off">Watermark OFF (may be limited)</option>
-        `;
-      } else {
-        optionsHtml = `
-          <option value="on">Watermark ON</option>
-          <option value="off">Watermark OFF</option>
-        `;
-      }
-      sel.innerHTML = optionsHtml;
-    });
-  }
-
-  function setActiveSection(sectionId) {
-    document.querySelectorAll(".side-link").forEach(btn => {
-      btn.classList.toggle("active-section", btn.dataset.section === sectionId);
-    });
-
-    document.getElementById("create-section").classList.add("hidden");
-    document.getElementById("generations-section").classList.add("hidden");
-    document.getElementById("assist-section").classList.add("hidden");
-    document.getElementById("media-section").classList.add("hidden");
-
-    document.getElementById(sectionId + "-section").classList.remove("hidden");
-  }
-
-  function setCreateMode(mode) {
-    document.querySelectorAll(".create-tab-btn").forEach(btn => {
-      btn.classList.toggle("active-create", btn.dataset.modeBtn === mode);
-    });
-    document.querySelectorAll(".create-mode").forEach(panel => {
-      panel.classList.toggle("hidden", panel.dataset.mode !== mode);
-    });
-  }
-
-  function getCommonOutputSettings(prefix) {
-    const quality = document.getElementById(prefix + "-quality")?.value || "sd";
-    const visibility = document.getElementById(prefix + "-visibility")?.value || "private";
-    const watermark = document.getElementById(prefix + "-watermark")?.value || "on";
-    const addToMedia = document.getElementById(prefix + "-add-media")?.checked || false;
-    return { quality, visibility, watermark, addToMedia };
-  }
-
-  function addGeneration(entry) {
-    myGenerations.unshift(entry);
-    renderGenerations();
-    if (entry.addToMedia && entry.visibility === "public") {
-      mediaFeed.unshift({
-        title: entry.title,
-        type: entry.type,
-        plan: entry.plan,
-        version: entry.version,
-        quality: entry.quality,
-        likes: 0,
-        comments: 0,
-        visibility: entry.visibility
-      });
-      renderMedia();
-    }
-  }
-
-  function renderGenerations() {
-    const container = document.getElementById("my-generations-list");
-    if (!myGenerations.length) {
-      container.innerHTML = `
-        <div class="list-empty">
-          No generations yet. Use any of the Create modes first.
+    if (section === "overview") {
+      content.innerHTML = `
+        <div class="profile-section-title">Profile overview</div>
+        <div class="profile-section-sub">
+          Signed in state is simulated. Later this will sync with your real Sulandra account.
+        </div>
+        <div class="profile-line"><strong>Name:</strong> ${user.name}</div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planConfig[user.plan].name}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
+        <div class="profile-small">
+          In production this panel will also show your invoices, usage and security settings.
         </div>
       `;
-      return;
-    }
-    container.innerHTML = myGenerations
-      .map((g, idx) => `
-        <div class="gen-item">
-          <div class="gen-header">
-            <div class="gen-title">${g.title}</div>
-            <div class="gen-meta">#${myGenerations.length - idx}</div>
-          </div>
-          <div class="gen-meta">
-            Type: ${g.type} · Plan: ${g.plan.toUpperCase()} · Version: ${g.version.toUpperCase()} · Quality: ${g.quality.toUpperCase()} · Visibility: ${g.visibility}
-          </div>
-          <div class="gen-meta">
-            Notes: ${g.description || "—"}
-          </div>
+    } else if (section === "edit") {
+      content.innerHTML = `
+        <div class="profile-section-title">Edit profile</div>
+        <div class="profile-section-sub">Change your display name (local demo only).</div>
+        <label for="edit-name">Display name</label>
+        <input id="edit-name" type="text" value="${user.name}" />
+        <button class="btn-primary" style="margin-top:8px;" type="button" onclick="saveProfileName()">
+          <span class="plus">+</span> Save name
+        </button>
+        <div class="profile-small">In production this would update your account in your backend.</div>
+      `;
+    } else if (section === "invite") {
+      content.innerHTML = `
+        <div class="profile-section-title">Invite friends</div>
+        <div class="profile-section-sub">
+          Later this will generate real invite links that can reward you with credits.
         </div>
-      `)
-      .join("");
-  }
-
-  function renderMedia() {
-    const container = document.getElementById("media-feed");
-    if (!mediaFeed.length) {
-      container.innerHTML = `
-        <div class="list-empty">
-          No public posts yet. Make a generation public and add it to Media from the Create tab.
+        <div class="profile-small">Sample invite link (mock):</div>
+        <div class="chip">https://sulandra.ai/invite/YOURCODE</div>
+      `;
+    } else if (section === "subscription") {
+      const planName = planConfig[user.plan].name;
+      content.innerHTML = `
+        <div class="profile-section-title">Subscription & credits</div>
+        <div class="profile-section-sub">
+          Choose or change your plan. This is only simulated here, but the UX matches what you’ll build later.
+        </div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planName}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
+        <div class="profile-small">Click a chip to simulate switching plans:</div>
+        <div style="margin-bottom:6px;">
+          <span class="chip" onclick="simulatePlan('basic')">Basic</span>
+          <span class="chip" onclick="simulatePlan('pro')">Pro</span>
+          <span class="chip" onclick="simulatePlan('creator')">Creator</span>
+          <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
+        </div>
+        <div class="profile-small">
+          In production, plan changes here will open payment and keep your remaining credits when upgrading.
         </div>
       `;
-      return;
-    }
-    container.innerHTML = mediaFeed
-      .map((m, idx) => `
-        <div class="media-card">
-          <div class="media-header">
-            <div class="media-title">${m.title}</div>
-            <div class="media-meta">#${mediaFeed.length - idx} · ${m.type}</div>
-          </div>
-          <div class="media-meta">
-            Plan: ${m.plan.toUpperCase()} · Version: ${m.version.toUpperCase()} · Quality: ${m.quality.toUpperCase()}
-            <span class="media-badge">Public</span>
-          </div>
-          <div class="media-actions">
-            <button type="button" class="media-btn" onclick="likePost(${idx})">
-              ❤️ Like (${m.likes})
-            </button>
-            <button type="button" class="media-btn" onclick="commentPost(${idx})">
-              💬 Comment (${m.comments})
-            </button>
-          </div>
+    } else if (section === "account") {
+      content.innerHTML = `
+        <div class="profile-section-title">Manage account</div>
+        <div class="profile-section-sub">
+          This is where billing history, invoices and payment methods will live.
         </div>
-      `)
-      .join("");
-  }
-
-  function likePost(index) {
-    mediaFeed[index].likes += 1;
-    renderMedia();
-  }
-
-  function commentPost(index) {
-    mediaFeed[index].comments += 1;
-    alert("In the real app this would open a comment box. For now, we just increase the comment count.");
-    renderMedia();
-  }
-
-  function modeLocked(modeName) {
-    const panel = document.querySelector(\`.create-mode[data-mode="\${modeName}"]\`);
-    return panel && panel.classList.contains("disabled-panel");
-  }
-
-  // ---- CREATE HANDLERS ----
-
-  function handleTextToImage() {
-    if (modeLocked("text")) {
-      alert("This feature is locked for your current plan.");
-      return;
+        <ul class="plan-list">
+          <li>• View invoices and payment history</li>
+          <li>• Update payment methods (PayPal, cards, Apple Pay)</li>
+          <li>• Turn auto-renew on or off</li>
+          <li>• Download receipts for taxes</li>
+        </ul>
+      `;
+    } else if (section === "theme") {
+      content.innerHTML = `
+        <div class="profile-section-title">Theme</div>
+        <div class="profile-section-sub">
+          Theme switching is not wired yet, but here is where light / dark / high-contrast options will live.
+        </div>
+        <div class="chip disabled">Dark (current)</div>
+        <div class="chip disabled">Light</div>
+        <div class="chip disabled">High contrast</div>
+      `;
     }
-    const prompt = document.getElementById("text-prompt").value.trim();
-    if (!prompt) {
-      alert("Please enter a text prompt.");
-      return;
-    }
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("text");
 
+    updateProfileHeader();
+  }
+
+  function updateProfileHeader() {
+    document.getElementById("profile-avatar").textContent = user.initial;
+    document.getElementById("profile-avatar-lg").textContent = user.initial;
+    document.getElementById("profile-name").textContent = user.name;
+    document.getElementById("profile-label").textContent = isSignedIn ? "Profile" : "Sign in";
+    document.getElementById("profile-credits").textContent =
+      `${user.credits} / ${user.maxCredits} credits`;
+    const planLabel = isSignedIn
+      ? `Plan: ${planConfig[user.plan].name}`
+      : "Not signed in";
+    document.getElementById("profile-plan-label").textContent = planLabel;
+    document.getElementById("sign-toggle").textContent =
+      isSignedIn ? "Sign out" : "Sign in";
+    updatePlanInUI();
+  }
+
+  function saveProfileName() {
+    const input = document.getElementById("edit-name");
+    const name = input.value.trim() || "Guest";
+    user.name = name;
+    user.initial = name.charAt(0).toUpperCase();
+    renderProfileSection("overview");
+    alert("Name updated in local state. In production this would save to your account.");
+  }
+
+  function toggleSignIn() {
+    isSignedIn = !isSignedIn;
+    if (isSignedIn && user.maxCredits === 0) {
+      // default plan for demo
+      simulatePlan("pro", true);
+    } else {
+      updateProfileHeader();
+      renderProfileSection("overview");
+    }
+  }
+
+  function simulatePlan(key, silent) {
+    user.plan = key;
+    if (key === "basic") {
+      user.maxCredits = 50;
+    } else if (key === "pro") {
+      user.maxCredits = 2500;
+    } else if (key === "creator") {
+      user.maxCredits = 5000;
+    } else if (key === "creatorUltimate") {
+      user.maxCredits = 10000;
+    }
+    user.credits = user.maxCredits;
+    updateProfileHeader();
+    if (!silent) {
+      alert("Plan switched in local demo to: " + planConfig[key].name);
+    }
+  }
+
+  /* PLAN MODAL */
+
+  function openPlanDetails(key) {
+    currentPlanKey = key;
+    currentBilling = "monthly";
+    updatePlanDialog();
+    document.getElementById("plan-overlay").classList.add("show");
+  }
+
+  function closePlanDetails() {
+    document.getElementById("plan-overlay").classList.remove("show");
+  }
+
+  function setPlanBilling(mode) {
+    currentBilling = mode;
+    updatePlanDialog();
+  }
+
+  function updatePlanDialog() {
+    const config = planConfig[currentPlanKey];
+
+    document.getElementById("plan-dialog-title").textContent =
+      config.name + " plan";
+    document.getElementById("plan-dialog-sub").textContent =
+      config.description;
+
+    const monthlyBtn = document.getElementById("toggle-monthly");
+    const yearlyBtn = document.getElementById("toggle-yearly");
+    monthlyBtn.classList.toggle("active", currentBilling === "monthly");
+    yearlyBtn.classList.toggle("active", currentBilling === "yearly");
+
+    const priceMain = document.getElementById("plan-price-main");
+    const priceNote = document.getElementById("plan-price-note");
+    const rowYearly = document.getElementById("price-row-yearly");
+    const strike = document.getElementById("plan-price-strike");
+    const save = document.getElementById("plan-price-save");
+    const extra = document.getElementById("plan-dialog-extra");
+
+    if (currentBilling === "monthly") {
+      priceMain.textContent =
+        config.monthly === 0 ? "$0" : "$" + config.monthly;
+      priceNote.textContent = "per month · " + config.credits;
+      rowYearly.style.display = "none";
+      if (config.monthly === 0) {
+        extra.textContent =
+          "Basic stays free with 50 credits and watermark. Upgrade anytime to unlock clean exports.";
+      } else {
+        extra.textContent =
+          "Pay monthly for flexibility, or switch to yearly later to save more.";
+      }
+    } else {
+      if (config.monthly === 0) {
+        priceMain.textContent = "$0";
+        priceNote.textContent =
+          "Always free · 50 credits / month · watermark";
+        rowYearly.style.display = "none";
+        extra.textContent =
+          "Basic is always free. Yearly discounts apply only to paid plans.";
+      } else {
+        priceMain.textContent = "$" + config.yearly.toFixed(2);
+        priceNote.textContent = "per year · " + config.credits;
+        const normalYearPrice = config.monthly * 12;
+        strike.textContent = "$" + normalYearPrice.toFixed(2) + " / year";
+        const savings = normalYearPrice - config.yearly;
+        save.textContent =
+          "You save $" +
+          savings.toFixed(2) +
+          " (" +
+          config.discount +
+          "%)";
+        rowYearly.style.display = "flex";
+        extra.textContent =
+          config.yearlyNote +
+          " Billing renews yearly; you can downgrade or upgrade at any time.";
+      }
+    }
+  }
+
+  function startSignup() {
     alert(
-      "Text → Image (preview)\\n\\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
-      "- Version: " + version.toUpperCase() + "\\n" +
-      "- Quality: " + quality.toUpperCase() + "\\n" +
-      "- Visibility: " + visibility + "\\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\\n\\n" +
-      "Later this will send your prompt to your image model."
+      "Signup flow placeholder.\n\nIn the real app, this button would open your authentication + payment flow for the selected plan and billing period."
     );
-
-    addGeneration({
-      title: "Text image",
-      type: "Text → Image",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt.slice(0, 90) + (prompt.length > 90 ? "..." : ""),
-      addToMedia
-    });
+    simulatePlan(currentPlanKey, true);
+    isSignedIn = true;
+    updateProfileHeader();
+    toggleProfile();
+    closePlanDetails();
   }
 
-  function handleImageVariation() {
-    if (modeLocked("variation")) {
-      alert("This feature is locked for your current plan.");
-      return;
-    }
-    const file = document.getElementById("variation-file").files[0];
-    if (!file) {
-      alert("Please upload a reference image.");
-      return;
-    }
-    const prompt = document.getElementById("variation-prompt").value.trim();
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("variation");
-
-    alert(
-      "Image → Variation / Outfit (preview)\\n\\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
-      "- Version: " + version.toUpperCase() + "\\n" +
-      "- File: " + file.name + "\\n" +
-      "- Quality: " + quality.toUpperCase() + "\\n" +
-      "- Visibility: " + visibility + "\\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\\n\\n" +
-      "Later this will call your variation / outfit backend."
-    );
-
-    addGeneration({
-      title: "Variation (" + file.name + ")",
-      type: "Image → Variation / Outfit",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Variation / outfit change.",
-      addToMedia
-    });
-  }
-
-  function handleImageEdit() {
-    if (modeLocked("edit")) {
-      alert("This feature is locked for your current plan.");
-      return;
-    }
-    const file = document.getElementById("edit-file").files[0];
-    if (!file) {
-      alert("Please upload an image to edit.");
-      return;
-    }
-    const prompt = document.getElementById("edit-prompt").value.trim();
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("edit");
-
-    alert(
-      "Image → Edit / Inpaint (preview)\\n\\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
-      "- Version: " + version.toUpperCase() + "\\n" +
-      "- File: " + file.name + "\\n" +
-      "- Quality: " + quality.toUpperCase() + "\\n" +
-      "- Visibility: " + visibility + "\\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\\n\\n" +
-      "Later this will send your edit request to your inpaint backend."
-    );
-
-    addGeneration({
-      title: "Edit (" + file.name + ")",
-      type: "Image → Edit / Inpaint",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Image edit / inpaint.",
-      addToMedia
-    });
-  }
-
-  function handleStyleReference() {
-    if (modeLocked("style")) {
-      alert("Style reference is available for Creator and Pro plans.");
-      return;
-    }
-    const file = document.getElementById("style-file").files[0];
-    if (!file) {
-      alert("Please upload a style reference image.");
-      return;
-    }
-    const prompt = document.getElementById("style-prompt").value.trim();
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("style");
-
-    alert(
-      "Style reference (preview)\\n\\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
-      "- Version: " + version.toUpperCase() + "\\n" +
-      "- File: " + file.name + "\\n" +
-      "- Quality: " + quality.toUpperCase() + "\\n" +
-      "- Visibility: " + visibility + "\\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\\n\\n" +
-      "Later this will analyze style and generate new images in this look."
-    );
-
-    addGeneration({
-      title: "Style reference (" + file.name + ")",
-      type: "Style reference (image)",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "New image in style of reference.",
-      addToMedia
-    });
-  }
-
-  // AI Image Assistance handler
-  function handleImageAssist() {
-    const file = document.getElementById("assist-file").files[0];
-    const prompt = document.getElementById("assist-prompt").value.trim();
-    if (!file && !prompt) {
-      alert("Upload a reference or describe what you need help with.");
-      return;
-    }
-    const focus = document.getElementById("assist-focus").value;
-    const tone = document.getElementById("assist-tone").value;
-    const visibility = document.getElementById("assist-visibility").value;
-    const addToMedia = document.getElementById("assist-add-media").checked;
-
-    alert(
-      "AI Image Assistance (preview)\\n\\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\\n" +
-      "- File: " + (file ? file.name : "none") + "\\n" +
-      "- Focus: " + focus + "\\n" +
-      "- Tone: " + tone + "\\n" +
-      "- Visibility: " + visibility + "\\n\\n" +
-      "Later this will send your request to an AI assistant that returns prompts, poses and layouts."
-    );
-
-    addGeneration({
-      title: "Image assist (" + focus + ")",
-      type: "Image assistance",
-      plan: currentPlan,
-      version: "n/a",
-      quality: "n/a",
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Guidance request.",
-      addToMedia
-    });
-  }
-
-  // INIT
-  setPlan("basic");
-  setCreateMode("text");
-  renderGenerations();
-  renderMedia();
+  // INITIALIZE
+  simulatePlan("basic", true);
+  updateProfileHeader();
+  setView("create");
 </script>
 </body>
 </html>
