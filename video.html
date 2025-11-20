@@ -15,7 +15,7 @@
       --accent3: #f97316;
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
-      --border-soft: rgba(148, 163, 184, 0.2);
+      --border-soft: rgba(148, 163, 184, 0.25);
     }
 
     * {
@@ -36,6 +36,11 @@
       flex-direction: column;
     }
 
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
     /* HEADER */
 
     header {
@@ -44,7 +49,7 @@
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 30;
     }
 
     .header-inner {
@@ -54,7 +59,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     .logo {
@@ -94,9 +100,16 @@
       animation: glowPulse 3.5s ease-in-out infinite;
     }
 
+    .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
     nav {
       display: flex;
-      gap: 14px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
@@ -104,7 +117,7 @@
       color: var(--text-muted);
       text-decoration: none;
       font-size: 14px;
-      padding: 6px 10px;
+      padding: 6px 9px;
       border-radius: 999px;
       border: 1px solid transparent;
       transition: all 0.18s ease;
@@ -123,19 +136,58 @@
       box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
     }
 
-    /* HERO */
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .profile-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .profile-badge:hover {
+      border-color: rgba(168, 85, 247, 0.7);
+      color: var(--text-main);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+    }
+
+    .profile-credits {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
     main {
       flex: 1;
     }
 
-    .hero {
+    /* HERO */
+
+    .lab-hero {
       max-width: 1200px;
-      margin: 26px auto 0;
+      margin: 16px auto 0;
       padding: 0 16px 10px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
     }
 
-    .hero-kicker {
+    .lab-kicker {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
@@ -143,15 +195,13 @@
       margin-bottom: 6px;
     }
 
-    .hero-title {
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 8px;
+    .lab-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
 
-    .hero-title span {
-      display: inline-block;
+    .lab-title span {
       background: linear-gradient(
         90deg,
         #a855f7,
@@ -160,321 +210,379 @@
         #22c55e,
         #a855f7
       );
-      background-size: 220% 220%;
       -webkit-background-clip: text;
       color: transparent;
-      text-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
+      background-size: 220% 220%;
       animation: shimmer 6s linear infinite;
+      text-shadow: 0 0 14px rgba(168, 85, 247, 0.4);
     }
 
-    .hero-sub {
-      font-size: 14px;
+    .lab-sub {
+      font-size: 13px;
       color: var(--text-muted);
-      max-width: 800px;
-      line-height: 1.6;
-      margin-bottom: 14px;
+      max-width: 860px;
+      line-height: 1.7;
     }
 
-    .hero-tags {
+    .lab-status-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .hero-tag-pill {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      color: var(--text-muted);
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    /* PLAN BAR */
-
-    .plan-bar {
-      max-width: 1200px;
-      margin: 4px auto 14px;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .plan-toggle {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .plan-button {
+      align-items: center;
+      margin-top: 8px;
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 5px 10px;
+    }
+
+    .lab-pill {
       border-radius: 999px;
       border: 1px solid var(--border-soft);
-      background: rgba(15, 23, 42, 0.9);
+      padding: 4px 9px;
+      background: rgba(15, 23, 42, 0.96);
       color: var(--text-muted);
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
+      gap: 5px;
     }
 
-    .plan-button span.badge {
-      font-size: 9px;
-      padding: 2px 6px;
+    .lab-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
-      background: rgba(148, 163, 184, 0.2);
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
     }
 
-    .plan-button.active-plan {
-      border-color: rgba(168, 85, 247, 0.9);
-      color: var(--text-main);
-      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
-      background: radial-gradient(circle at top, rgba(88, 28, 135, 0.9), #020617);
-    }
+    /* LAYOUT */
 
-    .plan-note {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    /* LAYOUT: SIDEBAR + CONTENT */
-
-    .shell {
+    .lab-layout {
       max-width: 1200px;
-      margin: 0 auto 32px;
-      padding: 0 16px;
+      margin: 8px auto 0;
+      padding: 0 16px 18px;
       display: grid;
-      grid-template-columns: 220px minmax(0, 1fr);
-      gap: 18px;
-      align-items: flex-start;
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 14px;
     }
 
-    .sidebar {
-      background: var(--card-bg);
+    /* SIDEBAR */
+
+    .lab-sidebar {
       border-radius: 16px;
       border: 1px solid var(--border-soft);
-      padding: 12px 10px;
-      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.98);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.95);
+      padding: 10px 8px;
+      font-size: 13px;
     }
 
     .sidebar-header {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .menu-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
       border: 1px solid var(--border-soft);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(15, 23, 42, 0.95);
-    }
-
-    .menu-icon span {
-      display: block;
-      width: 11px;
-      height: 1.6px;
-      border-radius: 999px;
-      background: #e5e7eb;
-      margin: 1.5px 0;
+      font-size: 12px;
+      color: var(--text-muted);
     }
 
     .sidebar-title {
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-main);
     }
 
-    .side-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 4px;
+    .sidebar-section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 8px 0 4px;
     }
 
-    .side-link {
-      font-size: 12px;
-      padding: 7px 9px;
-      border-radius: 10px;
+    .sidebar-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 9px;
       border: 1px solid transparent;
       background: transparent;
       color: var(--text-muted);
-      text-align: left;
+      padding: 6px 7px;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
       transition: all 0.15s ease;
+      margin-bottom: 3px;
     }
 
-    .side-link span.label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .sidebar-btn span {
+      pointer-events: none;
     }
 
-    .side-link span.dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: transparent;
-    }
-
-    .side-link.active-section {
-      background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(148, 163, 184, 0.6);
+    .sidebar-btn:hover {
+      background: rgba(15, 23, 42, 0.98);
+      border-color: var(--border-soft);
       color: var(--text-main);
     }
 
-    .side-link.active-section span.dot {
-      background: #22c55e;
+    .sidebar-btn.active {
+      background: radial-gradient(circle at top left, #111827, #020617);
+      border-color: rgba(168, 85, 247, 0.7);
+      color: var(--text-main);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
     }
 
-    .side-link small {
+    .sidebar-badge {
+      font-size: 10px;
+      border-radius: 999px;
+      padding: 2px 6px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: var(--text-muted);
+    }
+
+    .sidebar-plan-dots {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.96);
+      margin-right: 4px;
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+
+    /* MAIN PANEL */
+
+    .lab-main {
+      border-radius: 18px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top, #111827, #020617);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+      padding: 12px 12px 14px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .lab-main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .lab-main-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .lab-main-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .lab-main-plan-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 4px 9px;
+      font-size: 11px;
+      background: rgba(15, 23, 42, 0.97);
+      color: var(--text-muted);
+    }
+
+    .lab-main-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    /* INPUT CARDS */
+
+    .input-card {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 8px 9px;
+      font-size: 12px;
+    }
+
+    .input-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+      gap: 10px;
+    }
+
+    .input-label {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .input-help {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .select-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    select {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      font-size: 12px;
+      padding: 5px 8px;
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .upload-box {
+      border-radius: 11px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 12px 9px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-box .plus-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .upload-box strong {
+      font-size: 11px;
+      color: #e5e7eb;
+    }
+
+    .upload-note {
       font-size: 10px;
       color: var(--text-muted);
     }
 
-    .content {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .panel {
-      background: var(--card-bg);
-      border-radius: 18px;
-      border: 1px solid var(--border-soft);
-      padding: 18px;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .panel-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .panel-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-    }
-
-    .pill-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px dashed rgba(168, 85, 247, 0.7);
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    /* FORMS */
-
-    label {
-      font-size: 13px;
-      color: var(--text-main);
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    textarea,
-    select,
-    input[type="number"],
-    input[type="file"],
-    input[type="text"] {
+    textarea {
       width: 100%;
       border-radius: 9px;
       border: 1px solid var(--border-soft);
       background: #020617;
       color: var(--text-main);
-      padding: 8px 10px;
-      font-size: 13px;
-      outline: none;
-    }
-
-    textarea {
-      min-height: 90px;
+      padding: 7px 8px;
+      font-size: 12px;
+      min-height: 80px;
       resize: vertical;
     }
 
-    textarea::placeholder,
-    input::placeholder {
+    textarea::placeholder {
       color: #6b7280;
     }
 
-    input[type="file"] {
-      cursor: pointer;
-      padding: 6px 10px;
-    }
-
-    .field-group {
-      margin-bottom: 14px;
-    }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .field-row-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .note {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .small-inline {
+    .input-footer-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 6px;
+      margin-top: 6px;
       font-size: 11px;
       color: var(--text-muted);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .toggle-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    label.toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      width: 12px;
+      height: 12px;
+    }
+
+    .radio-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
-    .small-inline input[type="checkbox"] {
-      width: auto;
-      height: auto;
-      padding: 0;
-      border-radius: 4px;
+    .radio-row label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
     }
 
-    .btn-main {
+    input[type="radio"] {
+      width: 11px;
+      height: 11px;
+    }
+
+    .btn-primary {
       border-radius: 999px;
-      padding: 9px 16px;
-      font-size: 14px;
+      padding: 7px 14px;
+      font-size: 12px;
       font-weight: 600;
       border: none;
       cursor: pointer;
@@ -483,174 +591,495 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 12px 28px rgba(129, 140, 248, 0.6);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+      box-shadow: 0 10px 22px rgba(129, 140, 248, 0.7);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
 
-    .btn-main span.plus {
+    .btn-primary span.plus {
+      width: 17px;
+      height: 17px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
     }
 
-    .btn-main:hover {
+    .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 16px 36px rgba(129, 140, 248, 0.8);
-      opacity: 0.97;
+      box-shadow: 0 16px 30px rgba(129, 140, 248, 0.9);
     }
 
-    /* CREATE TABS */
-
-    .create-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .create-tab-btn {
-      font-size: 12px;
-      padding: 6px 10px;
+    .btn-ghost {
       border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .create-tab-btn.active-create {
-      color: var(--text-main);
-      background: rgba(30, 64, 175, 0.7);
-      border-color: rgba(129, 140, 248, 0.9);
-    }
-
-    .create-mode {
-      margin-top: 10px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    /* DISABLED PANEL (PLAN GATING) */
-
-    .disabled-panel {
-      position: relative;
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    .disabled-panel::after {
-      content: "Upgrade your plan to access this feature";
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 6px 10px;
       font-size: 11px;
-      color: #f9fafb;
-      text-align: center;
-      background: linear-gradient(
-        to bottom,
-        rgba(15, 23, 42, 0.9),
-        rgba(15, 23, 42, 0.95)
-      );
-      border-radius: 12px;
-      padding: 0 16px;
-    }
-
-    /* PREVIEW / GENERATIONS / MEDIA */
-
-    .list-empty {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .gen-item,
-    .media-card {
-      border-radius: 12px;
       border: 1px solid var(--border-soft);
       background: rgba(15, 23, 42, 0.95);
-      padding: 10px;
-      margin-bottom: 8px;
-      font-size: 12px;
-    }
-
-    .gen-header,
-    .media-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .gen-title,
-    .media-title {
-      font-weight: 600;
-      font-size: 12px;
-    }
-
-    .gen-meta,
-    .media-meta {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .media-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .media-btn {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(15, 23, 42, 0.9);
       color: var(--text-muted);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      transition: all 0.15s ease;
+      gap: 6px;
+      transition: all 0.14s ease;
     }
 
-    .media-btn:hover {
+    .btn-ghost:hover {
+      border-color: rgba(148, 163, 184, 0.8);
       color: var(--text-main);
-      border-color: rgba(148, 163, 184, 0.9);
       background: rgba(15, 23, 42, 1);
     }
 
-    .media-badge {
-      font-size: 10px;
-      padding: 2px 6px;
+    .btn-icon {
       border-radius: 999px;
-      background: rgba(34, 197, 94, 0.12);
-      color: #bbf7d0;
-      margin-left: 4px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.96);
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--text-muted);
     }
 
-    /* FOOTER */
+    input[type="text"] {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #020617;
+      color: var(--text-main);
+      padding: 6px 9px;
+      font-size: 12px;
+    }
+
+    input[type="text"]::placeholder {
+      color: #6b7280;
+    }
+
+    /* OUTPUT */
+
+    .output-card {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 8px 9px;
+      font-size: 12px;
+    }
+
+    .output-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .video-preview {
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .video-frame {
+      border-radius: 8px;
+      background: radial-gradient(circle at top left, #4c1d95, #020617);
+      height: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-frame::after {
+      content: "";
+      position: absolute;
+      inset: 10%;
+      border-radius: 12px;
+      border: 1px solid rgba(248, 250, 252, 0.08);
+      box-shadow:
+        0 0 24px rgba(168, 85, 247, 0.5),
+        0 0 40px rgba(59, 130, 246, 0.5);
+      opacity: 0.7;
+    }
+
+    .timeline-row {
+      display: flex;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--text-muted);
+      align-items: center;
+    }
+
+    .timeline-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #a855f7, #3b82f6);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+
+    .video-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .video-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 3px;
+    }
+
+    .video-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(15, 23, 42, 0.96);
+      font-size: 10px;
+      padding: 3px 7px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .video-btn.primary {
+      border-color: rgba(168, 85, 247, 0.8);
+      color: #e5e7eb;
+    }
+
+    /* SECONDARY VIEWS */
+
+    .lab-secondary {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.98);
+      padding: 9px 10px;
+      font-size: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 240px;
+    }
+
+    .lab-secondary.active {
+      display: flex;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
+    }
+
+    .media-card {
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .media-thumb {
+      border-radius: 6px;
+      background: radial-gradient(circle at top left, #a855f7, #020617);
+      height: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .media-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* PROFILE OVERLAY (same as film) */
+
+    .profile-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      display: none;
+      z-index: 40;
+      align-items: stretch;
+      justify-content: flex-end;
+    }
+
+    .profile-overlay.show {
+      display: flex;
+    }
+
+    .profile-panel {
+      width: min(380px, 100%);
+      background: #020617;
+      border-left: 1px solid var(--border-soft);
+      box-shadow: -20px 0 40px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .profile-header-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-avatar-lg {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .profile-header-text-main {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .profile-header-text-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .close-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 6px 9px;
+    }
+
+    .profile-body {
+      display: grid;
+      grid-template-columns: 115px minmax(0, 1fr);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .profile-menu {
+      border-right: 1px solid var(--border-soft);
+      padding: 10px 8px;
+      font-size: 12px;
+    }
+
+    .profile-menu button {
+      width: 100%;
+      text-align: left;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 6px 7px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      font-size: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .profile-menu button.active {
+      background: rgba(15, 23, 42, 0.96);
+      border-color: rgba(148, 163, 184, 0.7);
+      color: var(--text-main);
+    }
+
+    .profile-content {
+      padding: 10px 11px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    .profile-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .profile-section-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .profile-line {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .profile-small {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .profile-footer {
+      padding: 8px 12px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .profile-footer button {
+      border-radius: 999px;
+      border: 1px solid rgba(248, 113, 113, 0.7);
+      background: rgba(15, 23, 42, 0.96);
+      color: #fecaca;
+      cursor: pointer;
+      font-size: 11px;
+      padding: 5px 9px;
+    }
+
+    /* PLAN OVERLAY */
+
+    .plan-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      z-index: 35;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .plan-overlay.show {
+      display: flex;
+    }
+
+    .plan-dialog {
+      width: min(520px, 100%);
+      border-radius: 20px;
+      background: #020617;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+      padding: 16px 18px 14px;
+    }
+
+    .plan-dialog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .plan-dialog-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .plan-dialog-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-pill {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.98);
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    .toggle-pill button {
+      border: none;
+      background: transparent;
+      padding: 6px 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .toggle-pill button.active {
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: #f9fafb;
+    }
+
+    .plan-dialog-body {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .price-main {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .price-note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .price-strike {
+      text-decoration: line-through;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .price-save {
+      font-size: 12px;
+      color: #22c55e;
+    }
+
+    .plan-dialog-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
     footer {
       border-top: 1px solid var(--border-soft);
-      padding: 10px 16px 16px;
+      padding: 10px 16px 14px;
       font-size: 11px;
       color: var(--text-muted);
       text-align: center;
       background: rgba(2, 6, 23, 0.97);
+      margin-top: 14px;
     }
 
-    /* ANIMATIONS */
+    /* ANIMATIONS & RESPONSIVE */
 
     @keyframes spinGlow {
       0% { transform: rotate(0deg); }
@@ -663,18 +1092,18 @@
     }
 
     @keyframes shimmer {
-      0% {
-        background-position: 0% 50%;
-        text-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
-      }
-      100% {
-        background-position: 200% 50%;
-        text-shadow: 0 0 22px rgba(59, 130, 246, 0.8);
-      }
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
     }
 
     @media (max-width: 960px) {
-      .shell {
+      .lab-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .lab-main-columns {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .profile-body {
         grid-template-columns: minmax(0, 1fr);
       }
     }
@@ -684,16 +1113,12 @@
         flex-direction: column;
         align-items: flex-start;
       }
-      nav {
-        justify-content: flex-start;
-      }
-      .hero-title {
-        font-size: 24px;
+      .lab-title {
+        font-size: 20px;
       }
     }
   </style>
 </head>
-
 <body>
 <header>
   <div class="header-inner">
@@ -701,1099 +1126,1185 @@
       <div class="logo-circle"></div>
       <div>
         <div class="logo-text-main">Sulandra AI Studio</div>
-        <div class="logo-text-sub">Video · Edit · Characters · Effects</div>
+        <div class="logo-text-sub">Images · Music · Video · Films</div>
       </div>
     </div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="image.html">Image</a>
-      <a href="video.html" class="active">Video</a>
-      <a href="music.html">Music</a>
-      <a href="film.html">Short Films</a>
-      <a href="education.html">Explore</a>
-    </nav>
+
+    <div class="nav-group">
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="image.html">Image</a>
+        <a href="video.html" class="active">Video</a>
+        <a href="music.html">Music</a>
+        <a href="film.html">Short Films</a>
+        <a href="studio.html">Studio</a>
+        <a href="education.html">Explore</a>
+      </nav>
+
+      <button type="button" class="profile-badge" onclick="toggleProfile()">
+        <div class="profile-avatar" id="profile-avatar">G</div>
+        <div>
+          <div id="profile-label">Sign in</div>
+          <div class="profile-credits" id="profile-credits">0 credits</div>
+        </div>
+      </button>
+    </div>
   </div>
 </header>
 
 <main>
-  <section class="hero">
-    <div class="hero-kicker">Video Lab</div>
-    <h1 class="hero-title">
-      Turn prompts, references and clips into <span>smart AI videos</span>
+  <!-- HERO -->
+  <section class="lab-hero">
+    <div class="lab-kicker">Video lab</div>
+    <h1 class="lab-title">
+      Turn <span>prompts, images & clips</span> into styled AI videos.
     </h1>
-    <p class="hero-sub">
-      Sulandra Video Lab connects your subscription plan to what you can do:
-      Basic, Creator and Pro control engine versions, output quality, watermark
-      control, and access to advanced tools like YouTube style reference and lip sync.
+    <p class="lab-sub">
+      Generate dance videos, music visuals, trailers and loops from text, images, scripts or source clips. Choose a style
+      (Afrobeats, Pop, Reggae, R&amp;B, Amapiano and more) or paste a YouTube link under 4 minutes so Sulandra learns the rhythm,
+      lighting and camera movement and matches that vibe.
     </p>
-    <div class="hero-tags">
-      <div class="hero-tag-pill">Text → Video</div>
-      <div class="hero-tag-pill">Image / Script → Video</div>
-      <div class="hero-tag-pill">YouTube style reference</div>
-      <div class="hero-tag-pill">Lip sync & script tools</div>
-    </div>
-  </section>
-
-  <!-- PLAN SELECTION -->
-  <section class="plan-bar">
-    <div class="plan-toggle">
-      <button type="button" class="plan-button active-plan" data-plan="basic" onclick="setPlan('basic')">
-        BASIC
-        <span class="badge">Watermark · SD</span>
-      </button>
-      <button type="button" class="plan-button" data-plan="creator" onclick="setPlan('creator')">
-        CREATOR
-        <span class="badge">SD / HD / UHD</span>
-      </button>
-      <button type="button" class="plan-button" data-plan="pro" onclick="setPlan('pro')">
-        PRO
-        <span class="badge">All features · 4K</span>
-      </button>
-    </div>
-    <div class="plan-note" id="plan-note">
-      Basic: v1 only, SD output, watermark required. Some advanced tools are locked.
-    </div>
-  </section>
-
-  <section class="shell">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="menu-icon">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <div class="sidebar-title">Video Lab</div>
+    <div class="lab-status-row">
+      <div class="lab-pill">
+        <div class="lab-dot"></div>
+        Live demo · video generation & style learning are simulated here.
       </div>
-      <nav class="side-nav">
-        <button class="side-link active-section" data-section="create" onclick="setActiveSection('create')">
-          <span class="label">
-            <span class="dot"></span>
-            Create
-          </span>
-          <small>Text / images / ref</small>
-        </button>
-        <button class="side-link" data-section="generations" onclick="setActiveSection('generations')">
-          <span class="label">
-            <span class="dot"></span>
-            My Generations
-          </span>
-          <small>Per session</small>
-        </button>
-        <button class="side-link" data-section="script" onclick="setActiveSection('script')">
-          <span class="label">
-            <span class="dot"></span>
-            AI Script Assistance
-          </span>
-          <small>Structure & shots</small>
-        </button>
-        <button class="side-link" data-section="media" onclick="setActiveSection('media')">
-          <span class="label">
-            <span class="dot"></span>
-            Media · Community
-          </span>
-          <small>Feed · likes</small>
-        </button>
-      </nav>
+      <div class="lab-pill" id="lab-plan-pill">
+        Plan: Basic · 0 / 0 credits
+      </div>
+    </div>
+  </section>
+
+  <!-- LAYOUT -->
+  <section class="lab-layout">
+    <!-- SIDEBAR -->
+    <aside class="lab-sidebar">
+      <div class="sidebar-header">
+        <div class="menu-icon">≡</div>
+        <div class="sidebar-title">Video tools</div>
+      </div>
+
+      <div class="sidebar-section-label">Create</div>
+      <button class="sidebar-btn active" id="btn-create-text" onclick="setView('create'); setCreateMode('text');">
+        <span>Text → Video</span>
+        <span class="sidebar-badge">10 credits</span>
+      </button>
+      <button class="sidebar-btn" id="btn-create-images" onclick="setView('create'); setCreateMode('images');">
+        <span>Images → Video</span>
+        <span class="sidebar-badge">15 credits</span>
+      </button>
+      <button class="sidebar-btn" id="btn-create-script" onclick="setView('create'); setCreateMode('script');">
+        <span>Script → Video</span>
+        <span class="sidebar-badge">10 credits</span>
+      </button>
+      <button class="sidebar-btn" id="btn-create-video" onclick="setView('create'); setCreateMode('video');">
+        <span>Video → Video</span>
+        <span class="sidebar-badge">10 credits</span>
+      </button>
+
+      <div class="sidebar-section-label">Work</div>
+      <button class="sidebar-btn" onclick="setView('videos')">
+        <span>My videos</span>
+        <span class="sidebar-badge">History</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('script-assistant')">
+        <span>AI script / storyboard</span>
+      </button>
+      <button class="sidebar-btn" onclick="setView('media')">
+        <span>Media · Community Video Feed</span>
+      </button>
+
+      <div class="sidebar-section-label">Plan quick switch</div>
+      <div style="margin-bottom:4px;">
+        <span class="chip" onclick="simulatePlan('basic')">Basic</span>
+        <span class="chip" onclick="simulatePlan('pro')">Pro</span>
+        <span class="chip" onclick="simulatePlan('creator')">Creator</span>
+        <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
+      </div>
+
+      <div class="sidebar-plan-dots">
+        • 4K exports are for <strong>Creator</strong> and above.<br/>
+        • Clean exports (no watermark) & WAV audio are for <strong>Pro</strong> and above.<br/>
+        • Basic generates UHD previews with watermark to help users fall in love with the quality.
+      </div>
     </aside>
 
-    <!-- CONTENT -->
-    <section class="content">
-      <!-- CREATE SECTION -->
-      <section id="create-section" class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Create · Video</div>
-          <div class="pill-label">Plan-aware · UI only</div>
+    <!-- MAIN PANEL -->
+    <section class="lab-main">
+      <div class="lab-main-header">
+        <div>
+          <div class="lab-main-title" id="lab-main-title">Create · Text → Video</div>
+          <div class="lab-main-sub" id="lab-main-sub">
+            Describe the scene, pick your style or paste a YouTube reference (under 4 minutes) and Sulandra will create a short video.
+          </div>
         </div>
-        <p class="panel-sub">
-          Choose how you want to create video. Your subscription plan will
-          automatically unlock engine versions, output quality, watermark control,
-          and advanced modes like script-to-video, YouTube style reference and lip sync.
-        </p>
-
-        <!-- Engine version selection -->
-        <div class="field-group">
-          <label for="engine-version">Engine version</label>
-          <select id="engine-version" onchange="handleVersionChange()">
-            <option value="v1">v1 – Stable (all plans)</option>
-            <option value="v2">v2 – Enhanced (Creator & Pro)</option>
-            <option value="v3">v3 – Experimental (Pro only)</option>
-          </select>
-          <p class="note">
-            In your backend, each version can point to a different model or pipeline.
-          </p>
+        <div class="lab-main-plan-pill" id="lab-main-plan-pill">
+          Plan: Basic · 0 / 0 credits
         </div>
+      </div>
 
-        <!-- Create mode tabs -->
-        <div class="create-tabs">
-          <button
-            type="button"
-            class="create-tab-btn active-create"
-            data-mode-btn="text"
-            onclick="setCreateMode('text')"
-          >
-            Text → Video
-          </button>
-          <button
-            type="button"
-            class="create-tab-btn"
-            data-mode-btn="images"
-            onclick="setCreateMode('images')"
-          >
-            Images → Video
-          </button>
-          <button
-            type="button"
-            class="create-tab-btn"
-            data-mode-btn="scriptvideo"
-            onclick="setCreateMode('scriptvideo')"
-          >
-            Script → Video
-          </button>
-          <button
-            type="button"
-            class="create-tab-btn"
-            data-mode-btn="videoref"
-            onclick="setCreateMode('videoref')"
-          >
-            YouTube style reference
-          </button>
-          <button
-            type="button"
-            class="create-tab-btn"
-            data-mode-btn="lipsync"
-            onclick="setCreateMode('lipsync')"
-          >
-            Lip sync
-          </button>
-        </div>
+      <!-- CREATE VIEW -->
+      <div id="view-create" class="lab-main-columns">
+        <!-- LEFT: INPUTS -->
+        <div>
+          <!-- VIDEO SETTINGS -->
+          <div class="input-card">
+            <div class="input-label-row">
+              <div class="input-label">Video settings</div>
+              <div class="input-help">
+                Keep it between 5 and 60 seconds. You can chain multiple clips in Studio later.
+              </div>
+            </div>
 
-        <!-- Text → Video -->
-        <div
-          class="create-mode"
-          data-mode="text"
-          data-min-plan="basic"
-        >
-          <form onsubmit="event.preventDefault(); handleTextToVideo();">
-            <div class="field-group">
-              <label for="text-prompt">
-                Text prompt
+            <div class="select-row">
+              <div>
+                <div class="input-help" style="margin-bottom:2px;">Aspect</div>
+                <select id="aspect">
+                  <option value="vertical">Vertical 9:16 (TikTok / Reels)</option>
+                  <option value="horizontal">Horizontal 16:9 (YouTube)</option>
+                  <option value="square">Square 1:1 (Feeds / Covers)</option>
+                </select>
+              </div>
+              <div>
+                <div class="input-help" style="margin-bottom:2px;">Length</div>
+                <select id="duration">
+                  <option value="7">0:07</option>
+                  <option value="15">0:15</option>
+                  <option value="30">0:30</option>
+                  <option value="60">0:60</option>
+                </select>
+              </div>
+              <div>
+                <div class="input-help" style="margin-bottom:2px;">Resolution target</div>
+                <select id="resolution">
+                  <option value="auto">Auto (by plan)</option>
+                  <option value="hd">HD</option>
+                  <option value="uhd">UHD</option>
+                  <option value="4k">4K (Creator+)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="select-row">
+              <div>
+                <div class="input-help" style="margin-bottom:2px;">Audio source</div>
+                <select id="audio-source">
+                  <option value="none">No audio</option>
+                  <option value="upload">Upload audio</option>
+                  <option value="music-lab">Use track from Music Lab</option>
+                  <option value="auto">Auto-generate backing track</option>
+                </select>
+              </div>
+              <button class="btn-ghost" type="button" onclick="importMusic()">
+                Import from Music Lab
+              </button>
+            </div>
+
+            <div class="toggle-row">
+              <label class="toggle">
+                <input type="checkbox" id="toggle-lipsync" onchange="updateCreditEstimate()" />
+                <span>Lip sync to audio (+10 credits)</span>
               </label>
-              <textarea
-                id="text-prompt"
-                placeholder="Example: 12-second vertical Afrobeat dance video in a neon-lit club, slow zoom, two dancers in white outfits, smooth camera motion."
-              ></textarea>
-              <p class="note">
-                This is a pure text-to-video flow. Later you’ll post this to a
-                /api/video/text-to-video endpoint with the selected engine version.
-              </p>
+            </div>
+          </div>
+
+          <!-- STYLE & REFERENCE -->
+          <div class="input-card" style="margin-top:6px;">
+            <div class="input-label-row">
+              <div class="input-label">Style & reference</div>
+              <div class="input-help">
+                Choose a preset style or let Sulandra learn from a short reference clip (≤ 4 minutes).
+              </div>
             </div>
 
-            <div class="field-row field-group">
+            <div class="select-row">
               <div>
-                <label for="text-length">Target length (seconds)</label>
-                <input id="text-length" type="number" min="3" max="60" value="12" />
-              </div>
-              <div>
-                <label for="text-ratio">Aspect ratio</label>
-                <select id="text-ratio">
-                  <option value="9:16">9:16 – Vertical</option>
-                  <option value="16:9">16:9 – Horizontal</option>
-                  <option value="1:1">1:1 – Square</option>
+                <div class="input-help" style="margin-bottom:2px;">Preset style</div>
+                <select id="style-preset">
+                  <option value="afrobeats-dance">Afrobeats dance</option>
+                  <option value="amapiano-club">Amapiano club</option>
+                  <option value="pop-performance">Pop performance</option>
+                  <option value="rnb-slow">R&B slow</option>
+                  <option value="reggae">Reggae</option>
+                  <option value="gospel-live">Gospel live recording</option>
+                  <option value="cinematic">Cinematic trailer</option>
+                  <option value="documentary">Documentary</option>
+                  <option value="sitcom">Sitcom / studio audience</option>
+                  <option value="custom">Custom mix</option>
                 </select>
               </div>
             </div>
 
-            <div class="field-row field-group">
-              <div>
-                <label for="text-style">Visual style</label>
-                <select id="text-style">
-                  <option>Cinematic, realistic</option>
-                  <option>Music video, glossy</option>
-                  <option>Cartoon / stylized</option>
-                  <option>Documentary feel</option>
-                </select>
-              </div>
-              <div>
-                <label for="text-audio">Audio</label>
-                <select id="text-audio">
-                  <option>No audio</option>
-                  <option>Use temp beat (later)</option>
-                  <option>Sync with uploaded song (later)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="text-quality">Output quality</label>
-                <select id="text-quality" class="quality-select">
-                  <!-- Options will be set by plan -->
-                </select>
-              </div>
-              <div>
-                <label for="text-visibility">Visibility</label>
-                <select id="text-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="text-watermark">Watermark</label>
-                <select id="text-watermark" class="watermark-select">
-                  <!-- Options set by plan -->
-                </select>
-              </div>
-            </div>
-
-            <div class="small-inline">
-              <input type="checkbox" id="text-add-media" />
-              <label for="text-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
-            </div>
-
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
-              <span class="plus">+</span>
-              Generate video from text (UI only)
-            </button>
-          </form>
-        </div>
-
-        <!-- Images → Video -->
-        <div
-          class="create-mode hidden"
-          data-mode="images"
-          data-min-plan="basic"
-        >
-          <form onsubmit="event.preventDefault(); handleImagesToVideo();">
-            <div class="field-group">
-              <label>Upload images (sequence frames)</label>
-              <input id="images-files" type="file" accept="image/*" multiple />
-              <p class="note">
-                Later your backend will animate between frames, respecting the
-                prompt and timing to create a smooth clip.
-              </p>
-            </div>
-
-            <div class="field-group">
-              <label for="images-prompt">Describe the motion and style</label>
-              <textarea
-                id="images-prompt"
-                placeholder="Example: 10-second vertical video where the model slowly turns, lights flicker, camera moves from feet to face."
-              ></textarea>
-            </div>
-
-            <div class="field-row field-group">
-              <div>
-                <label for="images-length">Target length (seconds)</label>
-                <input id="images-length" type="number" min="3" max="60" value="10" />
-              </div>
-              <div>
-                <label for="images-ratio">Aspect ratio</label>
-                <select id="images-ratio">
-                  <option value="9:16">9:16 – Vertical</option>
-                  <option value="16:9">16:9 – Horizontal</option>
-                  <option value="1:1">1:1 – Square</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="images-quality">Output quality</label>
-                <select id="images-quality" class="quality-select"></select>
-              </div>
-              <div>
-                <label for="images-visibility">Visibility</label>
-                <select id="images-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="images-watermark">Watermark</label>
-                <select id="images-watermark" class="watermark-select"></select>
-              </div>
-            </div>
-
-            <div class="small-inline">
-              <input type="checkbox" id="images-add-media" />
-              <label for="images-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
-            </div>
-
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
-              <span class="plus">+</span>
-              Upload images & build video (UI only)
-            </button>
-          </form>
-        </div>
-
-        <!-- Script → Video (Creator & Pro) -->
-        <div
-          class="create-mode hidden"
-          data-mode="scriptvideo"
-          data-min-plan="creator"
-        >
-          <form onsubmit="event.preventDefault(); handleScriptToVideo();">
-            <div class="field-group">
-              <label>Upload script (PDF / text / doc)</label>
-              <input
-                id="scriptvideo-file"
-                type="file"
-                accept=".pdf,.txt,.doc,.docx"
-              />
-              <p class="note">
-                Later your backend will read the script, break it into scenes,
-                and generate visual sequences based on your prompt and plan limits.
-              </p>
-            </div>
-
-            <div class="field-group">
-              <label for="scriptvideo-prompt">Describe the visual style</label>
-              <textarea
-                id="scriptvideo-prompt"
-                placeholder="Example: Turn this into a cinematic 20-second trailer with fast cuts, dramatic lighting and bold text overlays."
-              ></textarea>
-            </div>
-
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="scriptvideo-quality">Output quality</label>
-                <select id="scriptvideo-quality" class="quality-select"></select>
-              </div>
-              <div>
-                <label for="scriptvideo-visibility">Visibility</label>
-                <select id="scriptvideo-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="scriptvideo-watermark">Watermark</label>
-                <select id="scriptvideo-watermark" class="watermark-select"></select>
-              </div>
-            </div>
-
-            <div class="small-inline">
-              <input type="checkbox" id="scriptvideo-add-media" />
-              <label for="scriptvideo-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
-            </div>
-
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
-              <span class="plus">+</span>
-              Script → Video (UI only)
-            </button>
-          </form>
-        </div>
-
-        <!-- YouTube style reference (Creator & Pro) -->
-        <div
-          class="create-mode hidden"
-          data-mode="videoref"
-          data-min-plan="creator"
-        >
-          <form onsubmit="event.preventDefault(); handleVideoReference();">
-            <div class="field-group">
-              <label for="videoref-url">YouTube URL</label>
-              <input
-                id="videoref-url"
-                type="text"
-                placeholder="https://www.youtube.com/watch?v=..."
-              />
-              <p class="note">
-                This simulates a “learn the style” flow. Later, your backend
-                can analyze rhythm, camera movement, color and pacing from the
-                reference link.
-              </p>
-            </div>
-
-            <div class="field-group">
-              <label for="videoref-prompt">
-                What should Sulandra learn and recreate?
+            <div class="radio-row">
+              <label>
+                <input type="radio" name="style-mode" value="preset" checked onchange="updateStyleMode()" />
+                <span>Use preset only</span>
               </label>
-              <textarea
-                id="videoref-prompt"
-                placeholder="Example: Learn the dance style and camera movement, then create a 15-second vertical clip with my model dancing in a similar style."
-              ></textarea>
-            </div>
-
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="videoref-quality">Output quality</label>
-                <select id="videoref-quality" class="quality-select"></select>
-              </div>
-              <div>
-                <label for="videoref-visibility">Visibility</label>
-                <select id="videoref-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="videoref-watermark">Watermark</label>
-                <select id="videoref-watermark" class="watermark-select"></select>
-              </div>
-            </div>
-
-            <div class="small-inline">
-              <input type="checkbox" id="videoref-add-media" />
-              <label for="videoref-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
-            </div>
-
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
-              <span class="plus">+</span>
-              Create from YouTube style (UI only)
-            </button>
-          </form>
-        </div>
-
-        <!-- Lip Sync (Creator & Pro) -->
-        <div
-          class="create-mode hidden"
-          data-mode="lipsync"
-          data-min-plan="creator"
-        >
-          <form onsubmit="event.preventDefault(); handleLipSync();">
-            <div class="field-group">
-              <label>Upload face video (close-up)</label>
-              <input id="lipsync-video" type="file" accept="video/*" />
-            </div>
-
-            <div class="field-group">
-              <label>Upload audio / song</label>
-              <input id="lipsync-audio" type="file" accept="audio/*" />
-              <p class="note">
-                Later, your model can align mouth shapes to the audio (lip sync)
-                and output a new synced video.
-              </p>
-            </div>
-
-            <div class="field-group">
-              <label for="lipsync-prompt">
-                Notes about emotion and camera framing
+              <label>
+                <input type="radio" name="style-mode" value="upload" onchange="updateStyleMode()" />
+                <span>Upload reference video (≤ 4 min)</span>
               </label>
-              <textarea
-                id="lipsync-prompt"
-                placeholder="Example: Keep the original framing, make the lips match perfectly, and add light camera sway for a music video feel."
-              ></textarea>
+              <label>
+                <input type="radio" name="style-mode" value="youtube" onchange="updateStyleMode()" />
+                <span>Provide YouTube URL (≤ 4 min)</span>
+              </label>
             </div>
 
-            <div class="field-row-3 field-group">
-              <div>
-                <label for="lipsync-quality">Output quality</label>
-                <select id="lipsync-quality" class="quality-select"></select>
-              </div>
-              <div>
-                <label for="lipsync-visibility">Visibility</label>
-                <select id="lipsync-visibility" class="visibility-select">
-                  <option value="private">Private</option>
-                  <option value="unlisted">Unlisted</option>
-                  <option value="public">Public in Media</option>
-                </select>
-              </div>
-              <div>
-                <label for="lipsync-watermark">Watermark</label>
-                <select id="lipsync-watermark" class="watermark-select"></select>
+            <div id="style-upload-row" style="margin-top:6px; display:none;">
+              <div class="upload-box" onclick="handleStyleUpload()">
+                <div class="plus-circle">+</div>
+                <strong>Upload style reference video</strong>
+                <div class="upload-note">
+                  Short clip only. In production we’ll read frame pacing, lighting, camera motion and color grade.
+                </div>
               </div>
             </div>
 
-            <div class="small-inline">
-              <input type="checkbox" id="lipsync-add-media" />
-              <label for="lipsync-add-media" style="margin:0;">Add this to public Media if visibility allows</label>
+            <div id="style-youtube-row" style="margin-top:6px; display:none;">
+              <input type="text" id="style-youtube-url"
+                placeholder="Paste a YouTube URL (video must be 4 minutes or less)" />
+              <div class="input-help" style="margin-top:4px;">
+                In the real app, Sulandra will call the YouTube API to check duration and reject links longer than 4 minutes.
+              </div>
+            </div>
+          </div>
+
+          <!-- INPUTS (PROMPTS / IMAGES / CLIPS) -->
+          <div class="input-card" style="margin-top:6px;">
+            <div class="input-label-row">
+              <div class="input-label" id="inputs-label">Prompt</div>
+              <div class="input-help" id="inputs-help">
+                Describe what should happen in the video: who, where, movement, camera, mood.
+              </div>
             </div>
 
-            <button type="submit" class="btn-main" style="margin-top: 8px;">
+            <div class="upload-grid" id="upload-grid">
+              <!-- Content varies by mode but we always show these generic entry points -->
+              <div class="upload-box" onclick="handleUpload('images')">
+                <div class="plus-circle">+</div>
+                <strong>Upload images</strong>
+                <div class="upload-note">
+                  For images → video. We’ll pan, zoom and animate between them on beat.
+                </div>
+              </div>
+              <div class="upload-box" onclick="handleUpload('video')">
+                <div class="plus-circle">+</div>
+                <strong>Upload source video</strong>
+                <div class="upload-note">
+                  For video → video. We’ll enhance, stylize or re-cut based on your prompt and style.
+                </div>
+              </div>
+              <div class="upload-box" onclick="handleUpload('audio')">
+                <div class="plus-circle">+</div>
+                <strong>Upload audio</strong>
+                <div class="upload-note">
+                  Custom song or beat. Great for Afrobeats dance, music videos and choreography.
+                </div>
+              </div>
+              <div class="upload-box" onclick="handleUpload('script')">
+                <div class="plus-circle">+</div>
+                <strong>Upload script (PDF / text)</strong>
+                <div class="upload-note">
+                  For script → video. We’ll extract scenes and convert them into a short visual.
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:6px;">
+              <textarea id="prompt-text"
+                placeholder="Example: Vertical Afrobeats dance video on a neon rooftop in Lagos at night, 2 dancers trading moves, camera moving smoothly, slow-mo on key beats, matching the YouTube reference style."></textarea>
+            </div>
+
+            <div class="input-footer-row">
+              <div id="credit-note">
+                Base: 10–15 credits (depends on mode). Style reference +10, lip sync +10. Estimated: 10 credits.
+              </div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn-ghost" type="button" onclick="openPlanDetails(user.plan)">
+                  Change plan
+                </button>
+                <button class="btn-primary" type="button" onclick="runVideoGeneration()">
+                  <span class="plus">+</span>
+                  Generate video
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONNECT WITH OTHER LABS -->
+          <div class="input-card" style="margin-top:6px;">
+            <div class="input-label-row">
+              <div class="input-label">Connect with other labs</div>
+              <div class="input-help">
+                Use generated images, music and films without downloading or re-uploading.
+              </div>
+            </div>
+            <div class="select-row">
+              <button class="btn-ghost" type="button" onclick="importFrom('image')">
+                Import images from Image Lab
+              </button>
+              <button class="btn-ghost" type="button" onclick="importFrom('film')">
+                Import scenes from Short Films
+              </button>
+            </div>
+            <div class="select-row">
+              <button class="btn-ghost" type="button" onclick="importFrom('music')">
+                Import audio from Music Lab
+              </button>
+              <button class="btn-ghost" type="button" onclick="goToStudio()">
+                Send to Studio
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: OUTPUT -->
+        <div>
+          <div class="output-card">
+            <div class="output-header-row">
+              <div class="input-label">Video preview & controls</div>
+              <div class="input-help">
+                Preview your clip, then extend, remix, or send directly into Studio for full timeline editing.
+              </div>
+            </div>
+
+            <div class="video-preview">
+              <div class="video-frame"></div>
+              <div class="timeline-row">
+                <span>0:00</span>
+                <div class="timeline-bar"></div>
+                <span id="preview-duration-label">0:15</span>
+              </div>
+              <div class="video-meta" id="video-meta">
+                Sample preview · Text → Video · Afrobeats dance · Vertical 9:16 · 0:15
+              </div>
+              <div class="video-actions">
+                <button class="video-btn primary" type="button">Play preview</button>
+                <button class="video-btn" type="button" onclick="remixVideo()">
+                  Remix with new prompt
+                </button>
+                <button class="video-btn" type="button" onclick="goToStudio()">
+                  Send to Studio (timeline)
+                </button>
+                <button class="video-btn" type="button" onclick="downloadVideo()">
+                  Export / download
+                </button>
+              </div>
+            </div>
+
+            <div class="input-footer-row" style="margin-top:7px;">
+              <div>
+                In production, 4K export appears for Creator and above. Basic exports remain watermarked to protect your brand.
+              </div>
+              <button class="btn-ghost" type="button" onclick="setView('videos')">
+                View all my videos
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY VIDEOS -->
+      <div id="view-videos" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">My videos</div>
+            <div class="lab-main-sub">
+              All videos generated on this device (demo). In production this syncs with your Sulandra account and Studio projects.
+            </div>
+          </div>
+        </div>
+
+        <div class="media-grid">
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Afrobeats rooftop dance · 0:15</div>
+            <div class="media-meta-row">
+              <span>Text → Video</span>
+              <span onclick="goToStudio()" style="cursor:pointer;">Open in Studio →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Gospel live-style loop · 0:30</div>
+            <div class="media-meta-row">
+              <span>Images → Video</span>
+              <span>Remix →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Cinematic trailer snippet · 0:07</div>
+            <div class="media-meta-row">
+              <span>Script → Video</span>
+              <span>Extend →</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-small">
+          Later, clicking any video will open controls to change style, swap the beat, or regenerate specific moments directly from the timeline.
+        </div>
+      </div>
+
+      <!-- SCRIPT / STORYBOARD ASSISTANT -->
+      <div id="view-script-assistant" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">AI script / storyboard assistant</div>
+            <div class="lab-main-sub">
+              Describe your concept and we’ll suggest a short structure for 7–60 second videos: beats, camera moves and transitions.
+            </div>
+          </div>
+        </div>
+
+        <div class="input-card">
+          <div class="input-label-row">
+            <div class="input-label">Idea</div>
+          </div>
+          <textarea id="script-assistant-input"
+            placeholder="Example: Afrobeats rooftop dance challenge, 2 dancers, camera orbits them, slow-motion on the last spin, neon skyline in the background."></textarea>
+          <div class="input-footer-row">
+            <div>Storyboard suggestions are free. Only generation uses credits.</div>
+            <button class="btn-primary" type="button" onclick="suggestStoryboard()">
               <span class="plus">+</span>
-              Generate lip-synced video (UI only)
+              Suggest structure
             </button>
-          </form>
-        </div>
-      </section>
-
-      <!-- MY GENERATIONS SECTION -->
-      <section id="generations-section" class="panel hidden">
-        <div class="panel-header">
-          <div class="panel-title">My Generations · Video</div>
-          <div class="pill-label">Session only · Demo</div>
-        </div>
-        <p class="panel-sub">
-          Every time you use a Create flow, a record is stored here in this
-          browser. In the real app, this would be tied to user accounts and
-          cloud storage with real download links.
-        </p>
-        <div id="my-generations-list">
-          <div class="list-empty">
-            No generations yet. Use any of the Create modes first.
           </div>
         </div>
-      </section>
 
-      <!-- AI SCRIPT ASSISTANCE SECTION -->
-      <section id="script-section" class="panel hidden">
-        <div class="panel-header">
-          <div class="panel-title">AI Script Assistance</div>
-          <div class="pill-label">Structure · Dialogue · Shots</div>
+        <div class="input-card" style="margin-top:6px;">
+          <div class="input-label-row">
+            <div class="input-label">Suggested structure</div>
+          </div>
+          <div class="profile-small" id="script-assistant-output">
+            We’ll outline a simple timeline here. You can then paste it back into the main prompt or script box.
+          </div>
         </div>
-        <p class="panel-sub">
-          This section focuses on script improvement and shot planning, separate
-          from script-to-video rendering. Think of it like a Sulandra writing
-          room and director assistant combined.
-        </p>
+      </div>
 
-        <form onsubmit="event.preventDefault(); handleScriptAssist();">
-          <div class="field-group">
-            <label>Upload script / treatment</label>
-            <input id="assist-file" type="file" accept=".pdf,.txt,.doc,.docx" />
-          </div>
-
-          <div class="field-group">
-            <label for="assist-prompt">What do you want help with?</label>
-            <textarea
-              id="assist-prompt"
-              placeholder="Example: Tighten this into a 60-second short film, improve dialogue and suggest 8 shots with camera angles."
-            ></textarea>
-          </div>
-
-          <div class="field-row-3 field-group">
-            <div>
-              <label for="assist-focus">Focus</label>
-              <select id="assist-focus">
-                <option>Rewrite for clarity</option>
-                <option>Improve dialogue</option>
-                <option>Convert to shot list</option>
-                <option>Shorten to trailer script</option>
-              </select>
-            </div>
-            <div>
-              <label for="assist-tone">Tone / genre</label>
-              <select id="assist-tone">
-                <option>Cinematic drama</option>
-                <option>Afrobeat party video</option>
-                <option>Emotional gospel story</option>
-                <option>Comedy (school / family)</option>
-                <option>Documentary style</option>
-              </select>
-            </div>
-            <div>
-              <label for="assist-visibility">Visibility</label>
-              <select id="assist-visibility">
-                <option value="private">Private</option>
-                <option value="unlisted">Unlisted</option>
-                <option value="public">Public in Media</option>
-              </select>
+      <!-- MEDIA FEED -->
+      <div id="view-media" class="lab-secondary">
+        <div class="lab-main-header">
+          <div>
+            <div class="lab-main-title">Media · Community Video Feed</div>
+            <div class="lab-main-sub">
+              Imagine a vertical feed of Sulandra AI videos – challenges, covers, loops – with likes, comments and “use style” buttons.
             </div>
           </div>
-
-          <div class="small-inline">
-            <input type="checkbox" id="assist-add-media" />
-            <label for="assist-add-media" style="margin:0;">Share a summary to Media (no full script)</label>
-          </div>
-
-          <button type="submit" class="btn-main" style="margin-top: 8px;">
-            <span class="plus">+</span>
-            Ask AI for script help (UI only)
-          </button>
-        </form>
-
-        <p class="note" style="margin-top: 10px;">
-          In the real system, responses from your AI script model would appear here,
-          including suggested rewrites, dialogue changes and shot lists.
-        </p>
-      </section>
-
-      <!-- MEDIA SECTION -->
-      <section id="media-section" class="panel hidden">
-        <div class="panel-header">
-          <div class="panel-title">Media · Community Video Feed</div>
-          <div class="pill-label">Likes · Comments (UI)</div>
         </div>
-        <p class="panel-sub">
-          Public generations appear here when “Add to Media” is checked and
-          visibility is set to Public. For now this is stored only in this
-          browser as a preview of your future community hub.
-        </p>
-        <div id="media-feed">
-          <div class="list-empty">
-            No public posts yet. Make a generation public and add it to Media to
-            simulate a community post.
+
+        <div class="media-grid">
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Afrobeats challenge – Lagos rooftop</div>
+            <div class="media-meta-row">
+              <span>3.4k likes · 210 comments</span>
+              <span>Use style →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Gospel live hall cut</div>
+            <div class="media-meta-row">
+              <span>1.9k likes</span>
+              <span>Use style →</span>
+            </div>
+          </div>
+          <div class="media-card">
+            <div class="media-thumb"></div>
+            <div>Cinematic intro for web series</div>
+            <div class="media-meta-row">
+              <span>2.2k likes</span>
+              <span>Remix →</span>
+            </div>
           </div>
         </div>
-      </section>
+
+        <div class="profile-small">
+          Later, “Use style” will clone the visual rhythm, lighting and color from a community video and apply it to your own prompts and assets.
+        </div>
+      </div>
     </section>
   </section>
 </main>
 
 <footer>
-  Video Lab · Plan-based access (Basic / Creator / Pro), feature gating, output
-  quality control, YouTube style reference, lip sync, My Generations and Media
-  feed UI are ready. Next step: connect to authentication and real APIs.
+  Sulandra AI Studio – Video Lab · Text, image, script and clip-based video generation with style references and Studio integration.
 </footer>
 
+<!-- PROFILE OVERLAY -->
+<div class="profile-overlay" id="profile-overlay">
+  <div class="profile-panel">
+    <div class="profile-header">
+      <div class="profile-header-main">
+        <div class="profile-avatar-lg" id="profile-avatar-lg">G</div>
+        <div>
+          <div class="profile-header-text-main" id="profile-name">Guest</div>
+          <div class="profile-header-text-sub" id="profile-plan-label">
+            Not signed in
+          </div>
+        </div>
+      </div>
+      <button class="close-btn" type="button" onclick="toggleProfile()">Close</button>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-menu">
+        <button id="menu-overview" class="active" onclick="setProfileSection('overview')">View profile</button>
+        <button onclick="setProfileSection('edit')">Edit profile</button>
+        <button onclick="setProfileSection('invite')">Invite friends</button>
+        <button onclick="setProfileSection('subscription')">Subscription</button>
+        <button onclick="setProfileSection('account')">Manage account</button>
+        <button onclick="setProfileSection('theme')">Theme</button>
+      </div>
+
+      <div class="profile-content" id="profile-content">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <div class="profile-footer">
+      <div>Signed in state is simulated. Real auth & billing will connect later.</div>
+      <button type="button" id="sign-toggle" onclick="toggleSignIn()">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAN OVERLAY -->
+<div class="plan-overlay" id="plan-overlay">
+  <div class="plan-dialog">
+    <div class="plan-dialog-header">
+      <div>
+        <div class="plan-dialog-title" id="plan-dialog-title">Pro plan</div>
+        <div class="plan-dialog-sub" id="plan-dialog-sub">
+          Full access to WAV export, HD/UHD quality and credit packs.
+        </div>
+      </div>
+      <div class="toggle-pill">
+        <button type="button" id="toggle-monthly" class="active" onclick="setPlanBilling('monthly')">
+          Monthly
+        </button>
+        <button type="button" id="toggle-yearly" onclick="setPlanBilling('yearly')">
+          Yearly
+        </button>
+      </div>
+    </div>
+
+    <div class="plan-dialog-body">
+      <div class="price-row">
+        <div class="price-main" id="plan-price-main">$20</div>
+        <div class="price-note" id="plan-price-note">per month · 2500 credits</div>
+      </div>
+      <div class="price-row" id="price-row-yearly" style="display:none;">
+        <div class="price-strike" id="plan-price-strike">$240 / year</div>
+        <div class="price-save" id="plan-price-save">You save $12 (5%)</div>
+      </div>
+      <div class="profile-small" id="plan-dialog-extra">
+        Choose monthly for flexibility, or yearly for the best price. A 7-day free trial is available for new users (no exports until trial converts).
+      </div>
+    </div>
+
+    <div class="plan-dialog-footer">
+      <button class="btn-primary" type="button" onclick="startSignup()">
+        <span class="plus">+</span>
+        Continue – signup & payment
+      </button>
+      <button class="btn-ghost" type="button" onclick="closePlanDetails()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
-  let currentPlan = "basic";
-  let myGenerations = [];
-  let mediaFeed = [];
+  // USER / PLAN STATE
+  let isSignedIn = false;
+  let user = {
+    name: "Guest",
+    initial: "G",
+    plan: "basic",
+    credits: 0,
+    maxCredits: 0
+  };
 
-  const planRank = { basic: 1, creator: 2, pro: 3 };
+  const planConfig = {
+    basic: {
+      name: "Basic",
+      monthly: 0,
+      yearly: 0,
+      discount: 0,
+      credits: "50 credits / month",
+      description:
+        "Free plan. UHD-quality previews with watermark, MP3-only audio and 50 monthly credits.",
+      yearlyNote: "Basic is always free. Yearly billing applies only to paid plans."
+    },
+    pro: {
+      name: "Pro",
+      monthly: 20,
+      yearly: 228,
+      discount: 5,
+      credits: "2500 credits / month",
+      description:
+        "For serious creators who need clean exports, WAV audio and higher resolutions.",
+      yearlyNote:
+        "Normal yearly cost would be $240; you pay $228 (save $12, 5%)."
+    },
+    creator: {
+      name: "Creator",
+      monthly: 30,
+      yearly: 331.2,
+      discount: 8,
+      credits: "5000 credits / month",
+      description:
+        "Power users who want 4K, Studio workflows and Ultimate add-ons, with enough credits for real monthly projects.",
+      yearlyNote:
+        "Normal yearly cost would be $360; you pay $331.20 (save $28.80, 8%)."
+    },
+    creatorUltimate: {
+      name: "Creator Ultimate",
+      monthly: 45,
+      yearly: 486,
+      discount: 10,
+      credits: "10000 credits / month",
+      description:
+        "Everything unlocked: Short Films + Studio heavy use + Stems & MIDI.",
+      yearlyNote:
+        "Normal yearly cost would be $540; you pay $486 (save $54, 10%)."
+    }
+  };
 
-  function setPlan(plan) {
-    currentPlan = plan;
-    document.querySelectorAll(".plan-button").forEach(btn => {
-      btn.classList.toggle("active-plan", btn.dataset.plan === plan);
-    });
+  let currentPlanKey = "pro";
+  let currentBilling = "monthly";
+  let currentView = "create";
+  let currentCreateMode = "text";
 
-    const note = document.getElementById("plan-note");
-    if (plan === "basic") {
-      note.textContent =
-        "Basic: v1 only, SD output, watermark required. Advanced modes (script-to-video, YouTube reference, lip sync) are locked.";
-    } else if (plan === "creator") {
-      note.textContent =
-        "Creator: v1 & v2, SD / HD / UHD, watermark optional, access to script-to-video, YouTube style reference and lip sync.";
-    } else {
-      note.textContent =
-        "Pro: v1 / v2 / v3, SD / HD / UHD / 4K, full watermark control, all tools unlocked.";
+  function updatePlanInUI() {
+    const labPlan = document.getElementById("lab-plan-pill");
+    const mainPlanPill = document.getElementById("lab-main-plan-pill");
+    const planName = planConfig[user.plan].name;
+    labPlan.textContent = `Plan: ${planName} · ${user.credits} / ${user.maxCredits} credits`;
+    mainPlanPill.textContent = `Plan: ${planName} · ${user.credits} / ${user.maxCredits} credits`;
+  }
+
+  function setView(view) {
+    currentView = view;
+
+    document.querySelectorAll(".sidebar-btn").forEach(btn => btn.classList.remove("active"));
+
+    if (view === "create") {
+      if (currentCreateMode === "text") document.getElementById("btn-create-text").classList.add("active");
+      if (currentCreateMode === "images") document.getElementById("btn-create-images").classList.add("active");
+      if (currentCreateMode === "script") document.getElementById("btn-create-script").classList.add("active");
+      if (currentCreateMode === "video") document.getElementById("btn-create-video").classList.add("active");
+    } else if (view === "videos") {
+      document.querySelectorAll(".sidebar-btn")[4].classList.add("active");
+    } else if (view === "script-assistant") {
+      document.querySelectorAll(".sidebar-btn")[5].classList.add("active");
+    } else if (view === "media") {
+      document.querySelectorAll(".sidebar-btn")[6].classList.add("active");
     }
 
-    applyPlanGating();
-    configureQualitySelects();
-    configureWatermarkSelects();
-  }
+    document.getElementById("view-create").style.display = "none";
+    document.getElementById("view-videos").classList.remove("active");
+    document.getElementById("view-script-assistant").classList.remove("active");
+    document.getElementById("view-media").classList.remove("active");
 
-  function handleVersionChange() {
-    const select = document.getElementById("engine-version");
-    const value = select.value;
-    if (value === "v2" && planRank[currentPlan] < planRank["creator"]) {
-      alert("v2 is available for Creator and Pro plans. You are on Basic, staying on v1.");
-      select.value = "v1";
-      return;
+    const title = document.getElementById("lab-main-title");
+    const sub = document.getElementById("lab-main-sub");
+
+    if (view === "create") {
+      document.getElementById("view-create").style.display = "grid";
+      updateCreateModeText();
+    } else if (view === "videos") {
+      document.getElementById("view-videos").classList.add("active");
+      title.textContent = "My videos";
+      sub.textContent =
+        "All your generated videos from this device (demo). Later this syncs with your Sulandra account and Studio.";
+    } else if (view === "script-assistant") {
+      document.getElementById("view-script-assistant").classList.add("active");
+      title.textContent = "AI script / storyboard assistant";
+      sub.textContent =
+        "Describe your idea and we’ll suggest a 7–60 second structure you can paste back into the main prompt.";
+    } else if (view === "media") {
+      document.getElementById("view-media").classList.add("active");
+      title.textContent = "Media · Community Video Feed";
+      sub.textContent =
+        "Preview how a Sulandra AI video feed could look once your platform is live.";
     }
-    if (value === "v3" && currentPlan !== "pro") {
-      alert("v3 is available for Pro plan only. Staying on v1 for this plan.");
-      select.value = "v1";
-      return;
-    }
-  }
-
-  function getEngineVersion() {
-    return document.getElementById("engine-version").value;
-  }
-
-  function applyPlanGating() {
-    document.querySelectorAll(".create-mode").forEach(el => {
-      const minPlan = el.dataset.minPlan || "basic";
-      if (planRank[currentPlan] < planRank[minPlan]) {
-        el.classList.add("disabled-panel");
-      } else {
-        el.classList.remove("disabled-panel");
-      }
-    });
-  }
-
-  function configureQualitySelects() {
-    document.querySelectorAll(".quality-select").forEach(sel => {
-      let optionsHtml = "";
-      if (currentPlan === "basic") {
-        optionsHtml = `<option value="sd">SD (Basic)</option>`;
-      } else if (currentPlan === "creator") {
-        optionsHtml = `
-          <option value="sd">SD</option>
-          <option value="hd">HD</option>
-          <option value="uhd">UHD</option>
-        `;
-      } else {
-        optionsHtml = `
-          <option value="sd">SD</option>
-          <option value="hd">HD</option>
-          <option value="uhd">UHD</option>
-          <option value="4k">4K</option>
-        `;
-      }
-      sel.innerHTML = optionsHtml;
-    });
-  }
-
-  function configureWatermarkSelects() {
-    document.querySelectorAll(".watermark-select").forEach(sel => {
-      let optionsHtml = "";
-      if (currentPlan === "basic") {
-        optionsHtml = `<option value="on">Watermark ON (Basic)</option>`;
-      } else if (currentPlan === "creator") {
-        optionsHtml = `
-          <option value="on">Watermark ON</option>
-          <option value="off">Watermark OFF (may be limited)</option>
-        `;
-      } else {
-        optionsHtml = `
-          <option value="on">Watermark ON</option>
-          <option value="off">Watermark OFF</option>
-        `;
-      }
-      sel.innerHTML = optionsHtml;
-    });
-  }
-
-  function setActiveSection(sectionId) {
-    document.querySelectorAll(".side-link").forEach(btn => {
-      btn.classList.toggle("active-section", btn.dataset.section === sectionId);
-    });
-
-    document.getElementById("create-section").classList.add("hidden");
-    document.getElementById("generations-section").classList.add("hidden");
-    document.getElementById("script-section").classList.add("hidden");
-    document.getElementById("media-section").classList.add("hidden");
-
-    document.getElementById(sectionId + "-section").classList.remove("hidden");
   }
 
   function setCreateMode(mode) {
-    document.querySelectorAll(".create-tab-btn").forEach(btn => {
-      btn.classList.toggle("active-create", btn.dataset.modeBtn === mode);
-    });
-    document.querySelectorAll(".create-mode").forEach(panel => {
-      panel.classList.toggle("hidden", panel.dataset.mode !== mode);
-    });
+    currentCreateMode = mode;
+
+    document.getElementById("btn-create-text").classList.remove("active");
+    document.getElementById("btn-create-images").classList.remove("active");
+    document.getElementById("btn-create-script").classList.remove("active");
+    document.getElementById("btn-create-video").classList.remove("active");
+
+    if (mode === "text") document.getElementById("btn-create-text").classList.add("active");
+    if (mode === "images") document.getElementById("btn-create-images").classList.add("active");
+    if (mode === "script") document.getElementById("btn-create-script").classList.add("active");
+    if (mode === "video") document.getElementById("btn-create-video").classList.add("active");
+
+    updateCreateModeText();
+    updateCreditEstimate();
   }
 
-  function getCommonOutputSettings(prefix) {
-    const quality = document.getElementById(prefix + "-quality")?.value || "sd";
-    const visibility = document.getElementById(prefix + "-visibility")?.value || "private";
-    const watermark = document.getElementById(prefix + "-watermark")?.value || "on";
-    const addToMedia = document.getElementById(prefix + "-add-media")?.checked || false;
-    return { quality, visibility, watermark, addToMedia };
+  function updateCreateModeText() {
+    const title = document.getElementById("lab-main-title");
+    const sub = document.getElementById("lab-main-sub");
+    const inputsLabel = document.getElementById("inputs-label");
+    const inputsHelp = document.getElementById("inputs-help");
+
+    if (currentCreateMode === "text") {
+      title.textContent = "Create · Text → Video";
+      sub.textContent =
+        "Describe the scene, choose a style or paste a short YouTube reference, and Sulandra will generate a fresh video.";
+      inputsLabel.textContent = "Prompt";
+      inputsHelp.textContent =
+        "Explain what should happen: subject, location, movement, camera, mood and any text on screen.";
+    } else if (currentCreateMode === "images") {
+      title.textContent = "Create · Images → Video";
+      sub.textContent =
+        "Upload images, choose a style and pacing, and we’ll animate pans, zooms and transitions on beat.";
+      inputsLabel.textContent = "Images + prompt (optional)";
+      inputsHelp.textContent =
+        "Use your photos or generated images and describe how we should move between them.";
+    } else if (currentCreateMode === "script") {
+      title.textContent = "Create · Script → Video";
+      sub.textContent =
+        "Upload or paste a short script and turn it into a 7–60 second visual teaser or loop.";
+      inputsLabel.textContent = "Script text / beats";
+      inputsHelp.textContent =
+        "Use scene numbers or bullet points. We’ll convert them into shots and micro-scenes.";
+    } else if (currentCreateMode === "video") {
+      title.textContent = "Create · Video → Video";
+      sub.textContent =
+        "Upload a base video and let Sulandra restyle, re-cut or enhance it based on your prompt and style reference.";
+      inputsLabel.textContent = "Source video + instructions";
+      inputsHelp.textContent =
+        "Tell Sulandra what to change: color, background, camera feeling, intensity, text layering, etc.";
+    }
+
+    // Update preview meta a bit
+    const meta = document.getElementById("video-meta");
+    const durationLabel = document.getElementById("preview-duration-label");
+    const dur = document.getElementById("duration").value;
+    durationLabel.textContent = `0:${dur.padStart(2, "0")}`;
+
+    let modeLabel = "Text → Video";
+    if (currentCreateMode === "images") modeLabel = "Images → Video";
+    if (currentCreateMode === "script") modeLabel = "Script → Video";
+    if (currentCreateMode === "video") modeLabel = "Video → Video";
+
+    meta.textContent = `Sample preview · ${modeLabel} · Afrobeats dance · Vertical 9:16 · 0:${dur.padStart(2, "0")}`;
   }
 
-  function addGeneration(entry) {
-    myGenerations.unshift(entry);
-    renderGenerations();
-    if (entry.addToMedia && entry.visibility === "public") {
-      mediaFeed.unshift({
-        title: entry.title,
-        type: entry.type,
-        plan: entry.plan,
-        version: entry.version,
-        quality: entry.quality,
-        likes: 0,
-        comments: 0,
-        visibility: entry.visibility
-      });
-      renderMedia();
+  function updateStyleMode() {
+    const value = document.querySelector('input[name="style-mode"]:checked').value;
+    document.getElementById("style-upload-row").style.display = value === "upload" ? "block" : "none";
+    document.getElementById("style-youtube-row").style.display = value === "youtube" ? "block" : "none";
+    updateCreditEstimate();
+  }
+
+  function handleStyleUpload() {
+    alert(
+      "Style reference upload placeholder.\n\nIn production this will open a file picker and enforce a maximum duration of 4 minutes using your backend."
+    );
+  }
+
+  function handleUpload(type) {
+    let label = "";
+    if (type === "images") label = "images (for images → video)";
+    else if (type === "video") label = "source video";
+    else if (type === "audio") label = "audio file";
+    else if (type === "script") label = "script file (PDF or text)";
+
+    alert(
+      "Upload placeholder.\n\nHere you’ll open a file picker for " +
+        label +
+        ". On submit, the file is sent to your backend / Runpod pipeline."
+    );
+  }
+
+  function importMusic() {
+    alert(
+      "Music Lab import placeholder.\n\nIn the future this will open your music generations and let you attach a specific track as the audio source."
+    );
+  }
+
+  function importFrom(lab) {
+    let name = lab === "image" ? "Image Lab" : lab === "film" ? "Short Films" : "Music Lab";
+    alert(
+      "Import from " +
+        name +
+        " placeholder.\n\nThis will let users pick existing assets without re-uploading, and attach them to this video project."
+    );
+  }
+
+  function updateCreditEstimate() {
+    let base = 10;
+    if (currentCreateMode === "images") base = 15; // similar to image-to-image cost you defined
+    if (currentCreateMode === "script") base = 10;
+    if (currentCreateMode === "video") base = 10;
+
+    const styleMode = document.querySelector('input[name="style-mode"]:checked').value;
+    let extraStyle = 0;
+    if (styleMode === "upload" || styleMode === "youtube") {
+      extraStyle = 10; // YouTube or uploaded reference costs +10 credits
+    }
+
+    let extraLip = document.getElementById("toggle-lipsync").checked ? 10 : 0;
+
+    const total = base + extraStyle + extraLip;
+
+    document.getElementById("credit-note").textContent =
+      `Base: ${base} credits (depends on mode). Style reference +${extraStyle}, lip sync +${extraLip}. Estimated: ${total} credits.`;
+  }
+
+  function validateYoutubeUrl(url) {
+    if (!url) return true; // nothing to check
+    const isYoutube =
+      url.includes("youtube.com") || url.includes("youtu.be");
+    if (!isYoutube) {
+      alert("Please paste a valid YouTube link.");
+      return false;
+    }
+    // In the real app, you’ll call YouTube API and reject if duration > 4 minutes.
+    alert(
+      "YouTube style reference detected.\n\nIn production, Sulandra will check the video duration via the YouTube API and reject links longer than 4 minutes."
+    );
+    return true;
+  }
+
+  function runVideoGeneration() {
+    const styleMode = document.querySelector('input[name="style-mode"]:checked').value;
+    const youtubeUrl = document.getElementById("style-youtube-url").value.trim();
+
+    if (styleMode === "youtube") {
+      if (!validateYoutubeUrl(youtubeUrl)) {
+        return;
+      }
+    }
+
+    if (user.credits <= 0) {
+      alert(
+        "You have no credits left in this demo.\n\nIn the real app this button will open the credit purchase flow or suggest upgrading your plan."
+      );
+      return;
+    }
+
+    alert(
+      "Video generation started (simulated).\n\nWe will:\n" +
+        "• Read your prompt and selected mode (Text / Images / Script / Video)\n" +
+        "• Apply style (preset or reference from upload / YouTube ≤4 min)\n" +
+        "• Sync to your audio source and lip sync if selected\n" +
+        "• Return a short video connected to Studio for further editing."
+    );
+  }
+
+  function remixVideo() {
+    alert(
+      "Remix placeholder.\n\nIn production you’ll be able to keep the same style and audio but change the prompt or camera feeling and regenerate variations."
+    );
+  }
+
+  function downloadVideo() {
+    const plan = user.plan;
+    let message =
+      "Export placeholder.\n\nIn production users will choose export format (MP4), resolution and audio type based on their plan:";
+    message +=
+      "\n\n• Basic: MP4 with watermark, MP3 audio only.\n" +
+      "• Pro: MP4 clean, HD/UHD, WAV audio.\n" +
+      "• Creator: up to 4K, advanced controls.\n" +
+      "• Creator Ultimate: 4K heavy usage, Studio integration for full projects.";
+    alert(message);
+  }
+
+  /* STORYBOARD ASSISTANT */
+
+  function suggestStoryboard() {
+    const input = document.getElementById("script-assistant-input").value.trim();
+    const out = document.getElementById("script-assistant-output");
+    if (!input) {
+      out.textContent = "Describe your idea first, then we’ll outline a simple 7–60 second structure.";
+      return;
+    }
+    out.innerHTML = `
+      <div class="profile-small"><strong>Suggested structure:</strong></div>
+      <div class="profile-small">
+        <strong>0:00–0:03</strong> – Establishing shot. Quick glimpse of the setting, main subject comes into frame.<br/>
+        <strong>0:03–0:07</strong> – First strong move or key action, synced to the beat or main word.<br/>
+        <strong>0:07–0:12</strong> – Variation shot: different angle, closer framing, or crowd / background reaction.<br/>
+        <strong>0:12–0:15</strong> – Signature moment: slow motion on the best move or emotional expression.<br/>
+        <strong>0:15–0:20+</strong> – Optional extra beats, looping outro or text on screen with your CTA.
+      </div>
+      <div class="profile-small">
+        You can paste or adapt this back into the main Video Lab prompt or script field before generating.
+      </div>
+    `;
+  }
+
+  /* PROFILE PANEL */
+
+  function toggleProfile() {
+    const overlay = document.getElementById("profile-overlay");
+    overlay.classList.toggle("show");
+    if (overlay.classList.contains("show")) {
+      renderProfileSection("overview");
     }
   }
 
-  function renderGenerations() {
-    const container = document.getElementById("my-generations-list");
-    if (!myGenerations.length) {
-      container.innerHTML = `
-        <div class="list-empty">
-          No generations yet. Use any of the Create modes first.
+  function setProfileSection(section) {
+    document
+      .querySelectorAll(".profile-menu button")
+      .forEach(btn => btn.classList.remove("active"));
+
+    if (section === "overview") {
+      document.getElementById("menu-overview").classList.add("active");
+    } else {
+      document
+        .querySelector(`.profile-menu button[onclick*="${section}"]`)
+        .classList.add("active");
+    }
+
+    renderProfileSection(section);
+  }
+
+  function renderProfileSection(section) {
+    const content = document.getElementById("profile-content");
+
+    if (section === "overview") {
+      content.innerHTML = `
+        <div class="profile-section-title">Profile overview</div>
+        <div class="profile-section-sub">
+          Signed in state is simulated. Later this links to your real Sulandra account.
+        </div>
+        <div class="profile-line"><strong>Name:</strong> ${user.name}</div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planConfig[user.plan].name}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
+        <div class="profile-small">
+          For video generation: Basic has watermark, Pro adds clean WAV/HD, Creator+ unlocks 4K and heavier Studio workflows.
         </div>
       `;
-      return;
-    }
-    container.innerHTML = myGenerations
-      .map((g, idx) => `
-        <div class="gen-item">
-          <div class="gen-header">
-            <div class="gen-title">${g.title}</div>
-            <div class="gen-meta">#${myGenerations.length - idx}</div>
-          </div>
-          <div class="gen-meta">
-            Type: ${g.type} · Plan: ${g.plan.toUpperCase()} · Version: ${g.version.toUpperCase()} · Quality: ${g.quality.toUpperCase()} · Visibility: ${g.visibility}
-          </div>
-          <div class="gen-meta">
-            Notes: ${g.description || "—"}
-          </div>
+    } else if (section === "edit") {
+      content.innerHTML = `
+        <div class="profile-section-title">Edit profile</div>
+        <div class="profile-section-sub">Change your display name (local demo only).</div>
+        <label for="edit-name">Display name</label>
+        <input id="edit-name" type="text" value="${user.name}" />
+        <button class="btn-primary" style="margin-top:8px;" type="button" onclick="saveProfileName()">
+          <span class="plus">+</span> Save name
+        </button>
+        <div class="profile-small">In production this would update your user record in your backend.</div>
+      `;
+    } else if (section === "invite") {
+      content.innerHTML = `
+        <div class="profile-section-title">Invite friends</div>
+        <div class="profile-section-sub">
+          Later this will generate invite links with credit rewards for both sides.
         </div>
-      `)
-      .join("");
-  }
-
-  function renderMedia() {
-    const container = document.getElementById("media-feed");
-    if (!mediaFeed.length) {
-      container.innerHTML = `
-        <div class="list-empty">
-          No public posts yet. Make a generation public and add it to Media to simulate a community post.
+        <div class="profile-small">Sample invite link (demo):</div>
+        <div class="chip">https://sulandra.ai/invite/YOURCODE</div>
+      `;
+    } else if (section === "subscription") {
+      const planName = planConfig[user.plan].name;
+      content.innerHTML = `
+        <div class="profile-section-title">Subscription & credits</div>
+        <div class="profile-section-sub">
+          Choose or change your plan. This matches the UX you’ll connect to Stripe / PayPal / Apple Pay.
+        </div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planName}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
+        <div class="profile-small">Click a chip to simulate switching plans:</div>
+        <div style="margin-bottom:6px;">
+          <span class="chip" onclick="simulatePlan('basic')">Basic</span>
+          <span class="chip" onclick="simulatePlan('pro')">Pro</span>
+          <span class="chip" onclick="simulatePlan('creator')">Creator</span>
+          <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
+        </div>
+        <div class="profile-small">
+          In production, upgrading keeps your remaining credits and only charges the difference. Basic users cannot buy credit packs.
         </div>
       `;
-      return;
-    }
-    container.innerHTML = mediaFeed
-      .map((m, idx) => `
-        <div class="media-card">
-          <div class="media-header">
-            <div class="media-title">${m.title}</div>
-            <div class="media-meta">#${mediaFeed.length - idx} · ${m.type}</div>
-          </div>
-          <div class="media-meta">
-            Plan: ${m.plan.toUpperCase()} · Version: ${m.version.toUpperCase()} · Quality: ${m.quality.toUpperCase()}
-            <span class="media-badge">Public</span>
-          </div>
-          <div class="media-actions">
-            <button type="button" class="media-btn" onclick="likePost(${idx})">
-              ❤️ Like (${m.likes})
-            </button>
-            <button type="button" class="media-btn" onclick="commentPost(${idx})">
-              💬 Comment (${m.comments})
-            </button>
-          </div>
+    } else if (section === "account") {
+      content.innerHTML = `
+        <div class="profile-section-title">Manage account</div>
+        <div class="profile-section-sub">
+          This will host billing history, invoices and payment methods (PayPal, cards, Apple Pay).
         </div>
-      `)
-      .join("");
-  }
-
-  function likePost(index) {
-    mediaFeed[index].likes += 1;
-    renderMedia();
-  }
-
-  function commentPost(index) {
-    mediaFeed[index].comments += 1;
-    alert("In the real app this would open a comment box. For now, we just increase the comment count.");
-    renderMedia();
-  }
-
-  // ---- CREATE HANDLERS ----
-
-  function modeLocked(modeName) {
-    // Helper to avoid submitting disabled panels
-    const panel = document.querySelector(`.create-mode[data-mode="${modeName}"]`);
-    return panel && panel.classList.contains("disabled-panel");
-  }
-
-  function handleTextToVideo() {
-    if (modeLocked("text")) {
-      alert("This feature is locked for your current plan.");
-      return;
+        <ul class="plan-list">
+          <li>• View invoices and payment history</li>
+          <li>• Update payment methods</li>
+          <li>• Turn auto-renew on / off</li>
+          <li>• Download receipts for taxes</li>
+        </ul>
+      `;
+    } else if (section === "theme") {
+      content.innerHTML = `
+        <div class="profile-section-title">Theme</div>
+        <div class="profile-section-sub">
+          Theme switching is not wired yet, but here is where light / dark / high-contrast options will live.
+        </div>
+        <div class="chip">Dark (current)</div>
+        <div class="chip">Light (placeholder)</div>
+        <div class="chip">High contrast (placeholder)</div>
+      `;
     }
-    const prompt = document.getElementById("text-prompt").value.trim();
-    if (!prompt) {
-      alert("Please enter a text prompt.");
-      return;
-    }
-    const length = document.getElementById("text-length").value || "12";
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("text");
 
+    updateProfileHeader();
+  }
+
+  function updateProfileHeader() {
+    document.getElementById("profile-avatar").textContent = user.initial;
+    document.getElementById("profile-avatar-lg").textContent = user.initial;
+    document.getElementById("profile-name").textContent = user.name;
+    document.getElementById("profile-label").textContent = isSignedIn ? "Profile" : "Sign in";
+    document.getElementById("profile-credits").textContent =
+      `${user.credits} / ${user.maxCredits} credits`;
+    const planLabel = isSignedIn
+      ? `Plan: ${planConfig[user.plan].name}`
+      : "Not signed in";
+    document.getElementById("profile-plan-label").textContent = planLabel;
+    document.getElementById("sign-toggle").textContent =
+      isSignedIn ? "Sign out" : "Sign in";
+    updatePlanInUI();
+  }
+
+  function saveProfileName() {
+    const input = document.getElementById("edit-name");
+    const name = input.value.trim() || "Guest";
+    user.name = name;
+    user.initial = name.charAt(0).toUpperCase();
+    renderProfileSection("overview");
+    alert("Name updated in local demo. In production this will save to your backend.");
+  }
+
+  function toggleSignIn() {
+    isSignedIn = !isSignedIn;
+    if (isSignedIn && user.maxCredits === 0) {
+      simulatePlan("pro", true);
+    } else {
+      updateProfileHeader();
+      renderProfileSection("overview");
+    }
+  }
+
+  function simulatePlan(key, silent) {
+    user.plan = key;
+    if (key === "basic") {
+      user.maxCredits = 50;
+    } else if (key === "pro") {
+      user.maxCredits = 2500;
+    } else if (key === "creator") {
+      user.maxCredits = 5000;
+    } else if (key === "creatorUltimate") {
+      user.maxCredits = 10000;
+    }
+    user.credits = user.maxCredits;
+    updateProfileHeader();
+    if (!silent) {
+      alert("Plan switched in local demo to: " + planConfig[key].name);
+    }
+  }
+
+  /* PLAN MODAL */
+
+  function openPlanDetails(key) {
+    currentPlanKey = key;
+    currentBilling = "monthly";
+    updatePlanDialog();
+    document.getElementById("plan-overlay").classList.add("show");
+  }
+
+  function closePlanDetails() {
+    document.getElementById("plan-overlay").classList.remove("show");
+  }
+
+  function setPlanBilling(mode) {
+    currentBilling = mode;
+    updatePlanDialog();
+  }
+
+  function updatePlanDialog() {
+    const config = planConfig[currentPlanKey];
+
+    document.getElementById("plan-dialog-title").textContent =
+      config.name + " plan";
+    document.getElementById("plan-dialog-sub").textContent =
+      config.description;
+
+    const monthlyBtn = document.getElementById("toggle-monthly");
+    const yearlyBtn = document.getElementById("toggle-yearly");
+    monthlyBtn.classList.toggle("active", currentBilling === "monthly");
+    yearlyBtn.classList.toggle("active", currentBilling === "yearly");
+
+    const priceMain = document.getElementById("plan-price-main");
+    const priceNote = document.getElementById("plan-price-note");
+    const rowYearly = document.getElementById("price-row-yearly");
+    const strike = document.getElementById("plan-price-strike");
+    const save = document.getElementById("plan-price-save");
+    const extra = document.getElementById("plan-dialog-extra");
+
+    if (currentBilling === "monthly") {
+      priceMain.textContent =
+        config.monthly === 0 ? "$0" : "$" + config.monthly;
+      priceNote.textContent = "per month · " + config.credits;
+      rowYearly.style.display = "none";
+      if (config.monthly === 0) {
+        extra.textContent =
+          "Basic stays free with 50 credits and watermark. Upgrade anytime to unlock clean exports.";
+      } else {
+        extra.textContent =
+          "Pay monthly for flexibility, or switch to yearly later to save more.";
+      }
+    } else {
+      if (config.monthly === 0) {
+        priceMain.textContent = "$0";
+        priceNote.textContent =
+          "Always free · 50 credits / month · watermark";
+        rowYearly.style.display = "none";
+        extra.textContent =
+          "Basic is always free. Yearly discounts apply only to paid plans.";
+      } else {
+        priceMain.textContent = "$" + config.yearly.toFixed(2);
+        priceNote.textContent = "per year · " + config.credits;
+        const normalYearPrice = config.monthly * 12;
+        strike.textContent = "$" + normalYearPrice.toFixed(2) + " / year";
+        const savings = normalYearPrice - config.yearly;
+        save.textContent =
+          "You save $" +
+          savings.toFixed(2) +
+          " (" +
+          config.discount +
+          "%)";
+        rowYearly.style.display = "flex";
+        extra.textContent =
+          config.yearlyNote +
+          " Billing renews yearly; you can downgrade or upgrade at any time.";
+      }
+    }
+  }
+
+  function startSignup() {
     alert(
-      "Text → Video (preview)\n\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\n" +
-      "- Version: " + version.toUpperCase() + "\n" +
-      "- Length: " + length + "s\n" +
-      "- Quality: " + quality.toUpperCase() + "\n" +
-      "- Visibility: " + visibility + "\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
-      "Later this will send your request to the text-to-video backend."
+      "Signup flow placeholder.\n\nIn the real app, this will open your auth + payment flow for the selected plan and billing period."
     );
-
-    addGeneration({
-      title: "Text video (" + length + "s)",
-      type: "Text → Video",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt.slice(0, 90) + (prompt.length > 90 ? "..." : ""),
-      addToMedia
-    });
+    simulatePlan(currentPlanKey, true);
+    isSignedIn = true;
+    updateProfileHeader();
+    toggleProfile();
+    closePlanDetails();
   }
 
-  function handleImagesToVideo() {
-    if (modeLocked("images")) {
-      alert("This feature is locked for your current plan.");
-      return;
-    }
-    const files = document.getElementById("images-files").files;
-    if (!files.length) {
-      alert("Please upload at least one image.");
-      return;
-    }
-    const prompt = document.getElementById("images-prompt").value.trim();
-    const length = document.getElementById("images-length").value || "10";
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("images");
-
-    alert(
-      "Images → Video (preview)\n\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\n" +
-      "- Version: " + version.toUpperCase() + "\n" +
-      "- Frames: " + files.length + "\n" +
-      "- Length: " + length + "s\n" +
-      "- Quality: " + quality.toUpperCase() + "\n" +
-      "- Visibility: " + visibility + "\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
-      "Later this will upload your frames to the images-to-video backend."
-    );
-
-    addGeneration({
-      title: "Images video (" + files.length + " frames)",
-      type: "Images → Video",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Images animated into a clip.",
-      addToMedia
-    });
-  }
-
-  function handleScriptToVideo() {
-    if (modeLocked("scriptvideo")) {
-      alert("Script → Video is available for Creator and Pro plans.");
-      return;
-    }
-    const file = document.getElementById("scriptvideo-file").files[0];
-    if (!file) {
-      alert("Please upload a script file.");
-      return;
-    }
-    const prompt = document.getElementById("scriptvideo-prompt").value.trim();
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("scriptvideo");
-
-    alert(
-      "Script → Video (preview)\n\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\n" +
-      "- Version: " + version.toUpperCase() + "\n" +
-      "- File: " + file.name + "\n" +
-      "- Quality: " + quality.toUpperCase() + "\n" +
-      "- Visibility: " + visibility + "\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
-      "Later this will send your script and instructions to a script-to-video engine."
-    );
-
-    addGeneration({
-      title: "Script video (" + file.name + ")",
-      type: "Script → Video",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Script converted into visual scenes.",
-      addToMedia
-    });
-  }
-
-  function handleVideoReference() {
-    if (modeLocked("videoref")) {
-      alert("YouTube style reference is available for Creator and Pro plans.");
-      return;
-    }
-    const url = document.getElementById("videoref-url").value.trim();
-    if (!url) {
-      alert("Please paste a YouTube URL.");
-      return;
-    }
-    const prompt = document.getElementById("videoref-prompt").value.trim();
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("videoref");
-
-    alert(
-      "YouTube style reference (preview)\n\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\n" +
-      "- Version: " + version.toUpperCase() + "\n" +
-      "- URL: " + url + "\n" +
-      "- Quality: " + quality.toUpperCase() + "\n" +
-      "- Visibility: " + visibility + "\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
-      "Later this will analyze the reference and generate a similar-style clip."
-    );
-
-    addGeneration({
-      title: "Style ref video",
-      type: "YouTube style reference",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Video generated from a YouTube style reference.",
-      addToMedia
-    });
-  }
-
-  function handleLipSync() {
-    if (modeLocked("lipsync")) {
-      alert("Lip sync is available for Creator and Pro plans.");
-      return;
-    }
-    const videoFile = document.getElementById("lipsync-video").files[0];
-    const audioFile = document.getElementById("lipsync-audio").files[0];
-    if (!videoFile || !audioFile) {
-      alert("Please upload both a face video and an audio file.");
-      return;
-    }
-    const prompt = document.getElementById("lipsync-prompt").value.trim();
-    const version = getEngineVersion();
-    const { quality, visibility, watermark, addToMedia } = getCommonOutputSettings("lipsync");
-
-    alert(
-      "Lip sync (preview)\n\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\n" +
-      "- Version: " + version.toUpperCase() + "\n" +
-      "- Video: " + videoFile.name + "\n" +
-      "- Audio: " + audioFile.name + "\n" +
-      "- Quality: " + quality.toUpperCase() + "\n" +
-      "- Visibility: " + visibility + "\n" +
-      "- Watermark: " + watermark.toUpperCase() + "\n\n" +
-      "Later this will send your files to a lip-sync engine."
-    );
-
-    addGeneration({
-      title: "Lip-synced video",
-      type: "Lip sync",
-      plan: currentPlan,
-      version,
-      quality,
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Face video synced to audio.",
-      addToMedia
-    });
-  }
-
-  // AI Script Assistance (separate section)
-  function handleScriptAssist() {
-    const file = document.getElementById("assist-file").files[0];
-    if (!file) {
-      alert("Please upload a script file.");
-      return;
-    }
-    const prompt = document.getElementById("assist-prompt").value.trim();
-    const focus = document.getElementById("assist-focus").value;
-    const tone = document.getElementById("assist-tone").value;
-    const visibility = document.getElementById("assist-visibility").value;
-    const addToMedia = document.getElementById("assist-add-media").checked;
-
-    alert(
-      "AI Script Assistance (preview)\n\n" +
-      "- Plan: " + currentPlan.toUpperCase() + "\n" +
-      "- File: " + file.name + "\n" +
-      "- Focus: " + focus + "\n" +
-      "- Tone: " + tone + "\n" +
-      "- Visibility: " + visibility + "\n\n" +
-      "Later this will send your script to a script analysis / rewrite model."
-    );
-
-    addGeneration({
-      title: "Script assist (" + focus + ")",
-      type: "Script assistance",
-      plan: currentPlan,
-      version: "n/a",
-      quality: "n/a",
-      visibility,
-      description: prompt ? prompt.slice(0, 90) + (prompt.length > 90 ? "..." : "") : "Script assistance request.",
-      addToMedia
-    });
-  }
-
-  // INIT
-  setPlan("basic");
+  // INITIALIZE
+  simulatePlan("basic", true);
+  updateProfileHeader();
+  setView("create");
   setCreateMode("text");
-  renderGenerations();
-  renderMedia();
+  updateStyleMode();
+  updateCreditEstimate();
 </script>
 </body>
 </html>
