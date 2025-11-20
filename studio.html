@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sulandra AI Studio – Sound & Cinema</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050712;
+      --bg-soft: #0b0f1e;
+      --card: #101526;
+      --card-soft: #151a2c;
+      --accent: #ff5af1;
+      --accent-2: #45f1ff;
+      --accent-3: #ffd15a;
+      --border-soft: rgba(255,255,255,0.08);
+      --text-main: #f5f7ff;
+      --text-muted: #9ca4c7;
+      --danger: #ff4b6a;
+      --success: #3ed8a9;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 0 40px rgba(0,0,0,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Inter", sans-serif;
+      background: radial-gradient(circle at top left, #161b35 0, #050712 45%, #020308 100%);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Top nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(to right, rgba(5,7,18,0.96), rgba(5,7,18,0.86));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand { display:flex;align-items:center;gap:8px; }
+
+    .brand-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: conic-gradient(from 200deg,#ff5af1,#45f1ff,#ffd15a,#ff5af1);
+      box-shadow: 0 0 18px rgba(255,90,241,0.6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      font-size:17px;
+      color:#050712;
+    }
+
+    .brand-text-main {
+      font-weight:650;
+      letter-spacing:0.04em;
+      text-transform:uppercase;
+      font-size:13px;
+    }
+    .brand-text-sub {
+      font-size:11px;
+      text-transform:uppercase;
+      color:var(--text-muted);
+      letter-spacing:0.16em;
+    }
+
+    .nav-links {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      font-size:13px;
+      flex-wrap:wrap;
+    }
+    .nav-links a {
+      padding:7px 11px;
+      border-radius:999px;
+      color:var(--text-muted);
+      transition:all .18s ease-out;
+      border:1px solid transparent;
+    }
+    .nav-links a:hover {
+      color:var(--text-main);
+      border-color:rgba(255,255,255,0.08);
+      background:radial-gradient(circle at top left,rgba(255,90,241,0.12),transparent 55%);
+    }
+    .nav-links a.active {
+      color:#050712;
+      font-weight:600;
+      background:linear-gradient(120deg,#ff5af1,#45f1ff);
+      box-shadow:0 0 18px rgba(69,241,255,0.65);
+      border-color:transparent;
+    }
+
+    .nav-right{display:flex;align-items:center;gap:10px;}
+    .credits-pill{
+      padding:6px 12px;
+      border-radius:var(--radius-pill);
+      font-size:11px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:radial-gradient(circle at top left,rgba(69,241,255,0.25),rgba(5,7,18,0.9));
+      display:flex;align-items:center;gap:6px;
+    }
+    .profile-chip{
+      display:flex;align-items:center;gap:8px;
+      padding:6px 11px;
+      border-radius:999px;
+      background:rgba(10,14,30,0.96);
+      border:1px solid rgba(255,255,255,0.1);
+      cursor:pointer;
+      font-size:11px;
+    }
+    .profile-avatar{
+      width:22px;height:22px;border-radius:999px;
+      background:linear-gradient(135deg,#45f1ff,#ff5af1);
+      display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:700;color:#050712;
+    }
+    .badge-plan{
+      padding:2px 7px;border-radius:999px;
+      background:rgba(255,90,241,0.16);
+      border:1px solid rgba(255,90,241,0.6);
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+    }
+
+    /* Main layout */
+    main {
+      flex:1;
+      max-width:1220px;
+      width:100%;
+      margin:16px auto 26px;
+      padding:0 18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    /* Studio overview band (like screenshot) */
+    .overview-shell{
+      position:relative;
+      border-radius:26px;
+      padding:14px;
+      background:radial-gradient(circle at 0% 0%,rgba(255,90,241,0.2),transparent 55%),
+                 radial-gradient(circle at 100% 0%,rgba(69,241,255,0.18),transparent 55%),
+                 radial-gradient(circle at 50% 140%,rgba(255,209,90,0.12),transparent 55%);
+      background-color:rgba(5,7,18,0.96);
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:var(--shadow-soft);
+    }
+    .overview-inner{
+      border-radius:20px;
+      padding:14px;
+      background:radial-gradient(circle at top left,rgba(15,22,50,0.9),rgba(4,6,16,0.98));
+      border:1px solid rgba(255,255,255,0.08);
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1.2fr);
+      gap:20px;
+    }
+
+    @media(max-width:900px){
+      .overview-inner{grid-template-columns:minmax(0,1fr);}
+    }
+
+    .overview-stack{
+      border-radius:18px;
+      padding:18px;
+      background:radial-gradient(circle at 0 0,rgba(255,90,241,0.2),transparent 55%),
+                 radial-gradient(circle at 100% 100%,rgba(69,241,255,0.18),transparent 55%);
+      border:1px solid rgba(255,255,255,0.12);
+      box-shadow:0 0 20px rgba(69,241,255,0.35);
+    }
+    .overview-title{font-size:14px;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px;}
+    .overview-stack-list{
+      margin-top:6px;
+      font-size:13px;
+      line-height:1.6;
+    }
+    .overview-roadmap-title{
+      font-size:16px;
+      font-weight:650;
+      margin-bottom:6px;
+    }
+    .overview-roadmap-list{
+      font-size:13px;
+      color:var(--text-muted);
+      line-height:1.7;
+    }
+
+    /* Mode toggles */
+    .mode-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .mode-buttons{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .mode-btn{
+      position:relative;
+      border-radius:var(--radius-pill);
+      padding:8px 14px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(10,14,30,0.98);
+      color:var(--text-muted);
+      font-size:12px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      overflow:hidden;
+    }
+    .mode-btn span.icon{font-size:16px;}
+    .mode-btn.active{
+      color:#050712;
+      font-weight:600;
+      background:linear-gradient(120deg,#ff5af1,#45f1ff);
+      box-shadow:0 0 18px rgba(69,241,255,0.7);
+      border-color:transparent;
+    }
+    .mode-helper{
+      font-size:11px;
+      color:var(--text-muted);
+    }
+
+    /* Transport bar */
+    .transport{
+      margin-top:10px;
+      border-radius:var(--radius-xl);
+      background:linear-gradient(135deg,rgba(15,21,46,0.98),rgba(4,6,16,0.98));
+      border:1px solid rgba(255,255,255,0.08);
+      padding:8px 12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      box-shadow:var(--shadow-soft);
+    }
+    .transport-left,.transport-center,.transport-right{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .t-btn{
+      width:28px;height:28px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(9,12,28,0.98);
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .t-btn.primary{
+      background:linear-gradient(120deg,#ff5af1,#45f1ff);
+      border-color:transparent;
+      color:#050712;
+      box-shadow:0 0 14px rgba(69,241,255,0.6);
+    }
+    .transport-label{
+      font-size:11px;color:var(--text-muted);
+    }
+    .small-input{
+      border-radius:9px;
+      border:1px solid rgba(255,255,255,0.16);
+      background:rgba(3,5,14,0.98);
+      color:var(--text-main);
+      padding:5px 7px;
+      font-size:11px;
+      min-width:60px;
+    }
+    .badge-small{
+      padding:3px 7px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      color:var(--text-muted);
+    }
+    .badge-ai{
+      border-color:rgba(69,241,255,0.8);
+      color:var(--accent-2);
+    }
+    .badge-routing{
+      border-color:rgba(255,209,90,0.9);
+      color:var(--accent-3);
+    }
+
+    /* Workspace layout */
+    .workspace{
+      margin-top:12px;
+      border-radius:var(--radius-xl);
+      padding:10px;
+      background:radial-gradient(circle at 0% 0%,rgba(255,90,241,0.12),transparent 65%),
+                 radial-gradient(circle at 100% 100%,rgba(69,241,255,0.12),transparent 60%),
+                 rgba(6,8,18,0.98);
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:var(--shadow-soft);
+      display:grid;
+      grid-template-columns:minmax(0,3fr) minmax(260px,1.5fr);
+      gap:10px;
+    }
+    @media(max-width:1000px){
+      .workspace{grid-template-columns:minmax(0,1fr);}
+    }
+
+    /* Timeline (sound & cinema share base style) */
+    .timeline-shell{
+      border-radius:var(--radius-lg);
+      background:linear-gradient(135deg,rgba(11,16,34,0.98),rgba(5,7,18,0.98));
+      border:1px solid rgba(255,255,255,0.08);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .ruler{
+      display:grid;
+      grid-template-columns:180px minmax(0,1fr);
+      background:rgba(7,10,24,0.96);
+      border-bottom:1px solid rgba(255,255,255,0.04);
+      font-size:10px;
+      color:var(--text-muted);
+    }
+    .ruler-left{
+      padding:4px 8px;
+      border-right:1px solid rgba(255,255,255,0.06);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .ruler-right{
+      position:relative;
+      padding:4px 8px;
+      background-image:linear-gradient(to right,rgba(255,255,255,0.05) 1px,transparent 1px);
+      background-size:80px 1px;
+    }
+    .ruler-bars{
+      display:flex;
+      gap:80px;
+    }
+
+    .tracks{
+      display:flex;
+      flex-direction:column;
+    }
+    .track-row{
+      display:grid;
+      grid-template-columns:180px minmax(0,1fr);
+      min-height:42px;
+      border-bottom:1px solid rgba(255,255,255,0.05);
+      background:linear-gradient(to bottom,rgba(10,14,30,0.96),rgba(7,9,20,0.98));
+    }
+    .track-header{
+      padding:6px 8px;
+      border-right:1px solid rgba(255,255,255,0.05);
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:11px;
+    }
+    .track-title-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:6px;
+    }
+    .track-name{font-weight:500;}
+    .track-actions{
+      display:flex;
+      align-items:center;
+      gap:4px;
+      flex-wrap:wrap;
+    }
+    .track-btn{
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(14,18,36,0.98);
+      font-size:10px;
+      padding:2px 6px;
+      cursor:pointer;
+    }
+    .track-btn.danger{border-color:rgba(255,75,106,0.8);color:var(--danger);}
+    .track-btn.ai{
+      border-color:rgba(69,241,255,0.85);
+      color:var(--accent-2);
+    }
+
+    .track-lane{
+      position:relative;
+      padding:4px 6px;
+      overflow:hidden;
+      background-image:linear-gradient(to right,rgba(255,255,255,0.04) 1px,transparent 1px);
+      background-size:80px 1px;
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+    .clip{
+      min-width:120px;
+      max-width:260px;
+      border-radius:8px;
+      padding:3px 6px;
+      font-size:10px;
+      background:linear-gradient(135deg,rgba(255,90,241,0.4),rgba(69,241,255,0.4));
+      box-shadow:0 0 14px rgba(69,241,255,0.5);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      cursor:pointer;
+    }
+    .clip.stem{
+      background:linear-gradient(135deg,rgba(255,209,90,0.4),rgba(255,122,89,0.4));
+      box-shadow:0 0 14px rgba(255,209,90,0.55);
+    }
+    .clip.midi{
+      background:linear-gradient(135deg,rgba(62,216,169,0.4),rgba(69,241,255,0.45));
+      box-shadow:0 0 14px rgba(62,216,169,0.6);
+    }
+    .empty-cell{
+      border-radius:7px;
+      border:1px dashed rgba(255,255,255,0.18);
+      padding:4px 6px;
+      font-size:10px;
+      color:var(--text-muted);
+      cursor:pointer;
+      min-width:110px;
+    }
+
+    /* Inspector / AI sidebar */
+    .inspector{
+      border-radius:var(--radius-lg);
+      background:linear-gradient(145deg,rgba(13,18,40,0.98),rgba(4,6,16,0.98));
+      border:1px solid rgba(255,255,255,0.08);
+      padding:10px 10px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .inspector-title{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:0.16em;
+    }
+    .inspector-sub{font-size:11px;color:var(--text-muted);}
+    .inspector-block-title{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.16em;
+      color:var(--text-muted);
+      margin-bottom:4px;
+    }
+    textarea{
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.16);
+      background:rgba(3,5,14,0.98);
+      color:var(--text-main);
+      padding:7px 9px;
+      font-size:12px;
+      resize:vertical;
+      min-height:96px;
+      font-family:inherit;
+    }
+    textarea::placeholder{color:rgba(156,164,199,0.75);}
+    .btn{
+      border-radius:var(--radius-pill);
+      padding:7px 12px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(8,11,24,0.98);
+      color:var(--text-main);
+      font-size:12px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+    .btn-primary{
+      background:linear-gradient(120deg,#ff5af1,#45f1ff);
+      border-color:transparent;
+      color:#050712;
+      font-weight:600;
+      box-shadow:0 0 16px rgba(69,241,255,0.65);
+    }
+    .btn-ghost{background:rgba(6,8,18,0.98);}
+    .helper-text{font-size:11px;color:var(--text-muted);}
+    .chips-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .chip{
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      font-size:10px;
+      cursor:pointer;
+      background:rgba(8,11,24,0.98);
+      color:var(--text-muted);
+    }
+    .chip.active{
+      background:linear-gradient(120deg,#ff5af1,#45f1ff);
+      color:#050712;
+      border-color:transparent;
+    }
+
+    /* Cinema extras */
+    .video-track-tag{
+      font-size:10px;
+      padding:2px 6px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.2);
+    }
+    .badge-vfx{
+      border-color:rgba(255,90,241,0.85);
+      color:var(--accent);
+    }
+    .badge-light{
+      border-color:rgba(69,241,255,0.85);
+      color:var(--accent-2);
+    }
+
+    /* AI modal mock */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(4,6,16,0.8);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:70;
+    }
+    .modal{
+      width:100%;
+      max-width:460px;
+      border-radius:18px;
+      background:linear-gradient(145deg,rgba(11,16,34,0.98),rgba(5,7,18,0.98));
+      border:1px solid rgba(255,255,255,0.12);
+      padding:14px 16px 12px;
+      box-shadow:0 22px 50px rgba(0,0,0,0.8);
+    }
+    .modal-title{
+      font-size:14px;
+      font-weight:600;
+      margin-bottom:4px;
+    }
+    .modal-sub{font-size:11px;color:var(--text-muted);}
+    .modal-actions{
+      margin-top:10px;
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-icon">S</div>
+      <div>
+        <div class="brand-text-main">Sulandra AI Studio</div>
+        <div class="brand-text-sub">Music · Video · Images · Film</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="image.html">Image Lab</a>
+      <a href="video.html">Video Lab</a>
+      <a href="music.html">Music Lab</a>
+      <a href="film.html">Film Lab</a>
+      <a href="explore.html">Explore</a>
+      <a href="studio.html" class="active">Studio</a>
+    </nav>
+    <div class="nav-right">
+      <div class="credits-pill">
+        <span id="creditsLabel">3420</span> credits
+      </div>
+      <div class="profile-chip" onclick="alert('Profile & billing open in the main account panel. This page shows the Studio interface.')">
+        <div class="profile-avatar">U</div>
+        <div>
+          <div style="font-size:11px;">Signed in</div>
+          <div class="badge-plan" id="planLabel">Creator Ultimate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Overview band -->
+  <section class="overview-shell">
+    <div class="overview-inner">
+      <div class="overview-stack">
+        <div class="overview-title">Studio Overview</div>
+        <div class="overview-stack-list">
+          Sulandra Studio is where every Lab comes together:<br/>
+          ↓ Music, Image, Video & Film Labs send projects here<br/>
+          ↓ SOUND for songs, stems, FX, and MIDI<br/>
+          ↓ CINEMA for clips, scenes, VFX, and grading
+        </div>
+      </div>
+      <div class="overview-stack">
+        <div class="overview-roadmap-title">Routing Logic</div>
+        <div class="overview-roadmap-list">
+          1. <strong>Audio in → SOUND</strong><br/>
+          &nbsp;&nbsp;&nbsp;Songs, stems, masters, vocal tracks from Music Lab land on the timeline here.<br/><br/>
+          2. <strong>Video / Film in → CINEMA</strong><br/>
+          &nbsp;&nbsp;&nbsp;Clips, short films, and storyboards from Video & Film Labs open straight in Cinema.<br/><br/>
+          3. <strong>Cross-flow</strong><br/>
+          &nbsp;&nbsp;&nbsp;Use any generated song as a music track in Cinema, and send finished scenes back to Film Lab or Media Feed.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mode switch + transport -->
+  <section>
+    <div class="mode-row">
+      <div class="mode-buttons">
+        <button class="mode-btn active" id="modeSoundBtn" onclick="switchMode('sound')">
+          <span class="icon">🎚️</span>
+          <span>SOUND · Mixer & Timeline</span>
+        </button>
+        <button class="mode-btn" id="modeCinemaBtn" onclick="switchMode('cinema')">
+          <span class="icon">🎬</span>
+          <span>CINEMA · Editor & VFX</span>
+        </button>
+      </div>
+      <div class="mode-helper">
+        Audio projects from Music Lab auto-open in <strong>SOUND</strong>.  
+        Video & Film projects auto-open in <strong>CINEMA</strong>.
+      </div>
+    </div>
+
+    <!-- Transport -->
+    <div class="transport">
+      <div class="transport-left">
+        <button class="t-btn">⏮</button>
+        <button class="t-btn primary">▶</button>
+        <button class="t-btn">⏹</button>
+        <button class="t-btn">⏭</button>
+        <span class="transport-label">Loop</span>
+        <button class="t-btn">🔁</button>
+        <span class="transport-label">Metronome</span>
+        <button class="t-btn">🔔</button>
+      </div>
+      <div class="transport-center">
+        <span class="transport-label">Tempo</span>
+        <input class="small-input" value="98" /> BPM
+        <span class="transport-label">Grid</span>
+        <select class="small-input">
+          <option>1/4</option>
+          <option selected>1/8</option>
+          <option>1/16</option>
+          <option>1/32</option>
+        </select>
+        <span class="transport-label">Time</span>
+        <span class="badge-small">01:24 / 08:00</span>
+        <span class="badge-small badge-routing">Project: SOUND · Audio</span>
+      </div>
+      <div class="transport-right">
+        <span class="badge-small badge-ai">AI Assist ready</span>
+        <button class="t-btn" title="Undo">↺</button>
+        <button class="t-btn" title="Redo">↻</button>
+        <button class="t-btn" title="Zoom out">➖</button>
+        <button class="t-btn" title="Zoom in">➕</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOUND WORKSPACE -->
+  <section class="workspace" id="soundWorkspace">
+    <!-- Timeline -->
+    <div class="timeline-shell">
+      <div class="ruler">
+        <div class="ruler-left">
+          <span>Tracks</span>
+          <span style="font-size:10px;color:var(--text-muted);">Click empty cells to prompt AI</span>
+        </div>
+        <div class="ruler-right">
+          <div class="ruler-bars">
+            <span>Bar 1</span><span>5</span><span>9</span><span>13</span><span>17</span><span>21</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tracks">
+        <!-- Main song track -->
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">Song Mix (Muted when stems present)</span>
+              <button class="track-btn danger" onclick="alert('In production this would toggle the mix on/off while stems are active.')">M</button>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Split to stems', 'Studio will analyze this full song, create stems, import them into new tracks below, and automatically mute this main mix.')">Split to stems</button>
+              <button class="track-btn" onclick="openModal('Convert to MIDI', 'Melodic content will be converted to MIDI clips you can edit, while the original audio remains on a safety lane.')">Audio → MIDI</button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="clip">Full mix – “We Need a Miracle v3”</div>
+            <div class="empty-cell" onclick="openModal('Generate variation on mix', 'Ask the AI to create an alternate intro, breakdown, or ending based on this full song mix.')">
+              + Extend / Remix with AI
+            </div>
+          </div>
+        </div>
+
+        <!-- Stems (after split) -->
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">Drums</span>
+              <span class="track-actions">
+                <button class="track-btn">S</button>
+                <button class="track-btn">M</button>
+              </span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Drum variation', 'Describe a new drum groove or feel. Studio will generate additional drum clips that match the project tempo.')">
+                AI Drums
+              </button>
+              <button class="track-btn" onclick="openModal('Drums → MIDI', 'Studio exports MIDI for this drum stem so you can swap sounds in your own kit.')">
+                Stems → MIDI
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="clip stem">Drum stem · 0:00–1:24</div>
+            <div class="empty-cell" onclick="openModal('Add drum fill', 'Ask Studio for drum fills, build-ups, or drops at this point in the song.')">
+              + Add AI fill
+            </div>
+          </div>
+        </div>
+
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">Bass</span>
+              <span class="track-actions">
+                <button class="track-btn">S</button>
+                <button class="track-btn">M</button>
+              </span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Bass line ideas', 'Describe how you want the bass to move (simpler, more syncopated, octave jumps). Studio generates matching clips.')">
+                AI Bass
+              </button>
+              <button class="track-btn" onclick="openModal('Bass → MIDI', 'Turn this bass stem into editable MIDI so you can change notes and sound.')">
+                Stems → MIDI
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="clip stem">Bass stem · 0:00–1:24</div>
+            <div class="clip midi">MIDI bass pattern · bar 9–17</div>
+            <div class="empty-cell" onclick="openModal('Generate bass extension', 'Ask Studio to extend the bass line or create a new bridge pattern from this point.')">
+              + Extend with AI
+            </div>
+          </div>
+        </div>
+
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">Lead Vocals</span>
+              <span class="track-actions">
+                <button class="track-btn">S</button>
+                <button class="track-btn">M</button>
+              </span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Generate harmonies', 'Studio will listen to this vocal stem and generate stacked harmonies that follow your chord progression.')">
+                AI Harmonies
+              </button>
+              <button class="track-btn" onclick="openModal('Change vocal voice', 'Switch the lead to any cloned voice or preset, while keeping timing and expression.')">
+                Voice swap
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="clip stem">Lead vox · verse & chorus</div>
+            <div class="empty-cell" onclick="openModal('Add ad-libs', 'Describe ad-libs or call-and-response phrases you want in this section. Studio generates and places them here.')">
+              + Ad-libs with AI
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty creative track -->
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">+ New Track</span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Create new track', 'Name this track (e.g., Strings, Pads, FX), then describe what you want. Studio will generate audio or MIDI that fits the song.')">
+                Prompt this track
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="empty-cell" onclick="openModal('Generate part for empty track', 'Studio will listen to the whole project and create a part for this lane that matches tempo and key.')">
+              + Click to ask AI for a new instrument / FX layer
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inspector / AI tools -->
+    <aside class="inspector">
+      <div>
+        <div class="inspector-title">Sound Inspector</div>
+        <div class="inspector-sub">
+          See context for the selected track or clip, send quick AI instructions,
+          and route audio to Cinema or other Labs.
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">Selected element</div>
+        <div class="helper-text" id="selectedElementLabel">
+          Nothing selected yet – click a clip or empty cell on the timeline to start.
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">AI prompt for this spot</div>
+        <textarea id="soundAiPrompt" placeholder="Describe what you want here. Example: “Add a soft pad that follows the chords, opening filter slowly from bar 17 to 25.”"></textarea>
+        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-primary" type="button" onclick="alert('In production this sends the prompt plus project context to the SOUND generation worker.')">
+            Generate on this track
+          </button>
+          <button class="btn btn-ghost" type="button" onclick="alert('This would preview the AI suggestion before committing it to the timeline.')">
+            Preview idea
+          </button>
+        </div>
+        <div class="helper-text" style="margin-top:6px;">
+          Studio listens to all tracks, respects tempo and key, and prints audio or MIDI back into the lane you selected.
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">Quick shaping</div>
+        <div class="chips-row">
+          <button class="chip">Tighten timing (quantize)</button>
+          <button class="chip">Humanize timing</button>
+          <button class="chip">Brighten mix</button>
+          <button class="chip">More low-end</button>
+          <button class="chip">Vocal up 1.5 dB</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">Send to</div>
+        <div class="chips-row">
+          <button class="chip active" onclick="alert('Already in SOUND.')">Studio · SOUND</button>
+          <button class="chip" onclick="alert('In production this would send a stereo bounce or stems directly into Cinema as a music track.')">
+            Studio · CINEMA
+          </button>
+          <button class="chip" onclick="alert('This would publish a version to Media Feed for feedback and collaboration.')">
+            Media Feed
+          </button>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- CINEMA WORKSPACE -->
+  <section class="workspace" id="cinemaWorkspace" style="display:none;">
+    <!-- CINEMA timeline -->
+    <div class="timeline-shell">
+      <div class="ruler">
+        <div class="ruler-left">
+          <span>Video Tracks</span>
+          <span style="font-size:10px;color:var(--text-muted);">Select a cell & prompt new visuals</span>
+        </div>
+        <div class="ruler-right">
+          <div class="ruler-bars">
+            <span>0s</span><span>10s</span><span>20s</span><span>30s</span><span>40s</span><span>50s</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tracks">
+        <!-- Master video track -->
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">V1 · Base Scene</span>
+              <span class="track-actions">
+                <span class="video-track-tag badge-light">Camera & framing</span>
+              </span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Replace background', 'Describe how you want the background to change. Studio will keep the main subject, lighting, and motion consistent.')">
+                AI Background replace
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="clip">Shot 1 · 0–20s</div>
+            <div class="clip">Shot 2 · 20–40s</div>
+            <div class="empty-cell" onclick="openModal('Extend scene', 'Ask for the next beat of the story (e.g., character walks outside, camera cranes up). Studio continues from the last frame.')">
+              + Extend scene with AI
+            </div>
+          </div>
+        </div>
+
+        <!-- Character / action track -->
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">V2 · Characters / Action</span>
+              <span class="track-actions">
+                <span class="video-track-tag badge-vfx">Motion & VFX</span>
+              </span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Add action moment', 'Describe a new action or performance in this section – Studio will animate or insert it over the base scene.')">
+                AI Action
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="empty-cell" onclick="openModal('Add character moment', 'Example: “At 12s, have the dancer spin once and leap into a freeze frame with particles around them.”')">
+              + Prompt new character / motion
+            </div>
+          </div>
+        </div>
+
+        <!-- Effects / lighting -->
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">FX · Lights & Atmosphere</span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Lighting pass', 'Ask Studio to relight the whole scene: golden hour, neon city, moody blue, etc., without changing performance.')">
+                AI Relight
+              </button>
+              <button class="track-btn" onclick="openModal('Cinematic grade', 'Apply a film look: soft highlight roll-off, teal-orange, black-and-white, or a custom reference LUT.')">
+                Color grade
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="clip stem">Atmospheric FX · particles & glow</div>
+            <div class="empty-cell" onclick="openModal('Add FX hit', 'Describe hits, flashes, speed-ramps, or camera shakes that should land on certain beats.')">
+              + Add AI FX on beat
+            </div>
+          </div>
+        </div>
+
+        <!-- Text / overlays -->
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">Text & Overlays</span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Auto captions', 'Studio will transcribe your audio, style the captions, and sync them to the dialogue or vocals.')">
+                Auto captions
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="clip midi">Title card · 0–4s</div>
+            <div class="empty-cell" onclick="openModal('Add on-screen text', 'Describe lower-thirds, lyric captions, or call-to-action text you want here.')">
+              + Text / lower-third with AI
+            </div>
+          </div>
+        </div>
+
+        <!-- Audio tracks (music + SFX) -->
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">A1 · Music from Music Lab</span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn" onclick="alert('This would open the song back in SOUND while keeping it synced to this video.')">
+                Open in SOUND
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="clip stem">We Need a Miracle – master</div>
+          </div>
+        </div>
+
+        <div class="track-row">
+          <div class="track-header">
+            <div class="track-title-row">
+              <span class="track-name">A2 · Sound Effects</span>
+            </div>
+            <div class="track-actions">
+              <button class="track-btn ai" onclick="openModal('Auto SFX', 'Studio listens to the video and auto-layers footsteps, whooshes, hits, and ambience where they belong.')">
+                Auto-generate SFX
+              </button>
+            </div>
+          </div>
+          <div class="track-lane">
+            <div class="empty-cell" onclick="openModal('Add specific SFX', 'Describe sound effects you want synced to specific actions or frames.')">
+              + Prompt sound effects for this moment
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CINEMA inspector -->
+    <aside class="inspector">
+      <div>
+        <div class="inspector-title">Cinema Inspector</div>
+        <div class="inspector-sub">
+          Work on shots, layers, and grades. Use AI prompts to change scenes, add motion, or
+          push the lighting while keeping the story and timing locked.
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">Selected cell</div>
+        <div class="helper-text" id="cinemaSelectedLabel">
+          Choose a clip or blank cell on the Cinema timeline to control it here.
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">AI prompt for this region</div>
+        <textarea id="cinemaAiPrompt" placeholder="Example: “Turn this corridor into a neon city tunnel, add slow camera dolly forward, keep dancer and choreography identical.”"></textarea>
+        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-primary" type="button" onclick="alert('In production this would send the current shot, masks, and prompt to the CINEMA worker.')">
+            Generate new pass
+          </button>
+          <button class="btn btn-ghost" type="button" onclick="alert('This would show side-by-side before/after before committing.')">
+            Preview pass
+          </button>
+        </div>
+        <div class="helper-text" style="margin-top:6px;">
+          Studio preserves subject identity, camera motion, and audio sync while changing environment, style, and visual effects.
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">Look & camera</div>
+        <div class="chips-row">
+          <button class="chip">Handheld</button>
+          <button class="chip">Steadicam</button>
+          <button class="chip">Dolly / crane</button>
+          <button class="chip">24fps film</button>
+          <button class="chip">Slow-motion punch</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">Light / grade presets</div>
+        <div class="chips-row">
+          <button class="chip">Golden hour</button>
+          <button class="chip">Neon night</button>
+          <button class="chip">Soft studio</button>
+          <button class="chip">High-key TV</button>
+          <button class="chip">Moody blue</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="inspector-block-title">Routing</div>
+        <div class="chips-row">
+          <button class="chip" onclick="alert('This would send a snapshot back to Film Lab as a new short film version.')">
+            Send to Film Lab
+          </button>
+          <button class="chip" onclick="alert('This would render a reference and send it back to Video Lab for templates.')">
+            Send to Video Lab
+          </button>
+          <button class="chip" onclick="alert('This would bounce a flattened video for Media Feed.')">
+            Publish to Media Feed
+          </button>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<!-- AI prompt modal -->
+<div class="modal-backdrop" id="aiModal">
+  <div class="modal">
+    <div class="modal-title" id="aiModalTitle">AI action</div>
+    <div class="modal-sub" id="aiModalSub">
+      This will be filled with context based on what you clicked.
+    </div>
+    <textarea id="aiModalPrompt" style="margin-top:8px;" placeholder="You can refine the default prompt here before sending it to the engine."></textarea>
+    <div class="modal-actions">
+      <button class="btn" type="button" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" type="button" onclick="confirmModal()">Send to AI</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Very light mock state
+  const user = {
+    plan: 'creatorUltimate',
+    credits: 3420
+  };
+
+  document.getElementById('creditsLabel').textContent = user.credits;
+  document.getElementById('planLabel').textContent =
+    user.plan === 'basic' ? 'Basic' :
+    user.plan === 'pro' ? 'Pro' :
+    user.plan === 'creator' ? 'Creator' : 'Creator Ultimate';
+
+  // Mode switching between SOUND and CINEMA
+  function switchMode(mode) {
+    const soundWs = document.getElementById('soundWorkspace');
+    const cinemaWs = document.getElementById('cinemaWorkspace');
+    const soundBtn = document.getElementById('modeSoundBtn');
+    const cinemaBtn = document.getElementById('modeCinemaBtn');
+    const routingBadge = document.querySelector('.badge-routing');
+
+    if (mode === 'sound') {
+      soundWs.style.display = 'grid';
+      cinemaWs.style.display = 'none';
+      soundBtn.classList.add('active');
+      cinemaBtn.classList.remove('active');
+      routingBadge.textContent = 'Project: SOUND · Audio';
+    } else {
+      soundWs.style.display = 'none';
+      cinemaWs.style.display = 'grid';
+      soundBtn.classList.remove('active');
+      cinemaBtn.classList.add('active');
+      routingBadge.textContent = 'Project: CINEMA · Video';
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // AI modal helpers
+  const aiModal = document.getElementById('aiModal');
+  const aiModalTitle = document.getElementById('aiModalTitle');
+  const aiModalSub = document.getElementById('aiModalSub');
+  const aiModalPrompt = document.getElementById('aiModalPrompt');
+
+  function openModal(title, description) {
+    aiModalTitle.textContent = title || 'AI action';
+    aiModalSub.textContent = description || '';
+    aiModalPrompt.value = '';
+    aiModal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    aiModal.style.display = 'none';
+  }
+
+  function confirmModal() {
+    alert('In the real Studio, this would send:\n\n• Mode (SOUND or CINEMA)\n• Selected track / clip\n• Full project tempo, key, and routing\n• Your prompt:\n\n' + aiModalPrompt.value + '\n\n…to the correct AI worker, then print the new result into the selected lane.');
+    closeModal();
+  }
+
+  // Close modal when clicking outside
+  aiModal.addEventListener('click', (e) => {
+    if (e.target === aiModal) closeModal();
+  });
+
+  // Small helpers to show selection text (mock)
+  document.querySelectorAll('.clip, .empty-cell').forEach(el => {
+    el.addEventListener('click', () => {
+      const parentWorkspace = el.closest('#soundWorkspace') ? 'sound' : 'cinema';
+      if (parentWorkspace === 'sound') {
+        document.getElementById('selectedElementLabel').textContent =
+          'Working on: ' + el.textContent.trim();
+      } else {
+        document.getElementById('cinemaSelectedLabel').textContent =
+          'Working on: ' + el.textContent.trim();
+      }
+    }, { capture: true });
+  });
+</script>
+</body>
+</html>
