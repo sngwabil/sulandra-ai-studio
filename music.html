@@ -1,326 +1,1809 @@
 <!DOCTYPE html>
 <html lang="en">
-head>
+<head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sulandra AI Studio – Music Generator</title>
-
+  <title>Sulandra AI Studio – Music Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      --bg: #050816;
-      --card-bg: #0b1020;
-      --accent: #22c55e;
-      --accent-soft: rgba(34, 197, 94, 0.12);
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --border-soft: rgba(148, 163, 184, 0.2);
+      --bg: #050712;
+      --bg-soft: #0c101f;
+      --card: #101526;
+      --card-soft: #151a2c;
+      --accent: #ff5af1;
+      --accent-2: #45f1ff;
+      --accent-soft: rgba(255, 90, 241, 0.24);
+      --border-soft: rgba(255, 255, 255, 0.05);
+      --text-main: #f5f7ff;
+      --text-muted: #9ca4c7;
+      --danger: #ff4b6a;
+      --success: #3ed8a9;
+      --warning: #ffd15a;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 0 40px rgba(0, 0, 0, 0.7);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: radial-gradient(circle at top, #111827, #020617 55%);
-      color: var(--text-main);
+      margin: 0;
       min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Inter", sans-serif;
+      background: radial-gradient(circle at top left, #151b30 0, #050712 45%, #020308 100%);
+      color: var(--text-main);
       display: flex;
       flex-direction: column;
     }
 
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Top nav */
     header {
-      border-bottom: 1px solid var(--border-soft);
-      background: rgba(2, 6, 23, 0.95);
-      backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(to right, rgba(5, 7, 18, 0.92), rgba(5, 7, 18, 0.82));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
 
-    .header-inner {
-      max-width: 1100px;
+    .nav-inner {
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 14px 16px;
+      padding: 12px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
     }
 
-    .logo {
+    .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .logo-circle {
+    .brand-icon {
       width: 30px;
       height: 30px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #a3e635, #22c55e 55%, #16a34a);
-      box-shadow: 0 0 16px rgba(34, 197, 94, 0.5);
+      border-radius: 10px;
+      background: conic-gradient(from 200deg, #ff5af1, #45f1ff, #ffd15a, #ff5af1);
+      box-shadow: 0 0 18px rgba(255, 90, 241, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 17px;
+      color: #050712;
     }
 
-    .logo-text-main { font-weight: 700; font-size: 17px; letter-spacing: 0.03em; }
-    .logo-text-sub {
-      font-size: 10px;
+    .brand-text-main {
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .brand-text-sub {
+      font-size: 11px;
       text-transform: uppercase;
       color: var(--text-muted);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.16em;
     }
 
-    nav { display: flex; gap: 14px; flex-wrap: wrap; }
-    nav a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 14px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      transition: all 0.18s ease;
-    }
-    nav a:hover {
-      color: var(--text-main);
-      border-color: var(--border-soft);
-      background: rgba(15, 23, 42, 0.8);
-    }
-    nav a.active {
-      color: var(--text-main);
-      background: var(--accent-soft);
-      border-color: rgba(34, 197, 94, 0.6);
-    }
-
-    main { flex: 1; }
-
-    .layout {
-      max-width: 1100px;
-      margin: 26px auto 32px;
-      padding: 0 16px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
-      gap: 20px;
-      align-items: flex-start;
-    }
-
-    .panel {
-      background: var(--card-bg);
-      border-radius: 16px;
-      border: 1px solid var(--border-soft);
-      padding: 18px;
-      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.85);
-    }
-
-    .panel h1 { font-size: 22px; margin-bottom: 6px; }
-    .panel-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
-
-    label {
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
       font-size: 13px;
-      color: var(--text-main);
-      display: block;
-      margin-bottom: 6px;
     }
 
-    textarea {
-      width: 100%;
-      min-height: 80px;
-      border-radius: 10px;
-      border: 1px solid var(--border-soft);
-      background: #020617;
-      color: var(--text-main);
-      padding: 10px;
-      font-size: 14px;
-      resize: vertical;
-      outline: none;
+    .nav-links a {
+      padding: 7px 11px;
+      border-radius: 999px;
+      color: var(--text-muted);
+      transition: all 0.18s ease-out;
+      border: 1px solid transparent;
     }
 
-    textarea::placeholder { color: #6b7280; }
-
-    select, input[type="number"] {
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid var(--border-soft);
-      background: #020617;
+    .nav-links a:hover {
       color: var(--text-main);
-      padding: 8px 10px;
-      font-size: 14px;
-      outline: none;
+      border-color: rgba(255, 255, 255, 0.08);
+      background: radial-gradient(circle at top left, rgba(255, 90, 241, 0.12), transparent 55%);
     }
 
-    .field-group { margin-bottom: 14px; }
+    .nav-links a.active {
+      color: #050712;
+      font-weight: 600;
+      background: linear-gradient(120deg, #ff5af1, #45f1ff);
+      box-shadow: 0 0 18px rgba(69, 241, 255, 0.55);
+    }
 
-    .field-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .nav-right {
+      display: flex;
+      align-items: center;
       gap: 10px;
     }
 
-    button {
-      border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      background: var(--accent);
-      color: white;
-      display: inline-flex;
+    .credits-pill {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: radial-gradient(circle at top left, rgba(69, 241, 255, 0.25), rgba(5, 7, 18, 0.9));
+      display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 10px 25px rgba(22, 163, 74, 0.6);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 30px rgba(22, 163, 74, 0.8);
-      opacity: 0.97;
+    .credits-pill span {
+      font-weight: 600;
     }
 
-    .note { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
-
-    .preview-header {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+    .profile-chip {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 8px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(10, 14, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      font-size: 11px;
     }
 
-    .preview-box {
-      border-radius: 14px;
-      border: 1px dashed var(--border-soft);
-      background: radial-gradient(circle at top left, rgba(52, 211, 153, 0.18), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.24), transparent 60%);
-      min-height: 220px;
+    .profile-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #45f1ff, #ff5af1);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 13px;
-      color: var(--text-muted);
-      text-align: center;
-      padding: 14px;
+      font-weight: 700;
+      color: #050712;
     }
 
-    footer {
-      border-top: 1px solid var(--border-soft);
-      padding: 10px 16px 16px;
-      font-size: 11px;
-      color: var(--text-muted);
-      text-align: center;
-      background: rgba(2, 6, 23, 0.95);
+    .badge-plan {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(255, 90, 241, 0.12);
+      border: 1px solid rgba(255, 90, 241, 0.5);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    /* Layout main */
+    .page {
+      flex: 1;
+      max-width: 1220px;
+      width: 100%;
+      margin: 16px auto 26px;
+      padding: 0 18px;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 18px;
     }
 
     @media (max-width: 900px) {
-      .layout { grid-template-columns: minmax(0, 1fr); }
+      .page {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: radial-gradient(circle at top left, rgba(255, 90, 241, 0.16), rgba(9, 12, 28, 0.98));
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px 14px 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .sidebar-group-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin: 14px 0 6px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .menu-item {
+      border-radius: 999px;
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      transition: all 0.17s ease-out;
+    }
+
+    .menu-item span.icon {
+      font-size: 14px;
+      width: 16px;
+      text-align: center;
+    }
+
+    .menu-item.active,
+    .menu-item:hover {
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.12);
+      background: radial-gradient(circle at top left, rgba(69, 241, 255, 0.22), rgba(10, 14, 30, 0.96));
+    }
+
+    .menu-item-badge {
+      margin-left: auto;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .menu-item-badge.creator {
+      border-color: rgba(255, 209, 90, 0.8);
+      color: var(--warning);
+    }
+
+    .menu-item-badge.ultimate {
+      border-color: rgba(62, 216, 169, 0.85);
+      color: var(--success);
+    }
+
+    /* Main content */
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Hero / overview */
+    .hero-card {
+      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 16px 18px;
+      background: radial-gradient(circle at top left, rgba(255, 90, 241, 0.25), rgba(5, 7, 18, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .hero-glow-ring {
+      position: absolute;
+      inset: -120%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(255, 90, 241, 0.18), transparent 55%),
+        radial-gradient(circle at 130% 20%, rgba(69, 241, 255, 0.16), transparent 55%),
+        radial-gradient(circle at 50% 130%, rgba(255, 209, 90, 0.1), transparent 55%);
+      opacity: 0.5;
+      animation: glowSweep 18s linear infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes glowSweep {
+      0% {
+        transform: translate3d(-6%, -3%, 0) rotate(0deg);
+      }
+      50% {
+        transform: translate3d(4%, 5%, 0) rotate(12deg);
+      }
+      100% {
+        transform: translate3d(-3%, 4%, 0) rotate(-10deg);
+      }
+    }
+
+    .hero-inner {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+      z-index: 1;
+    }
+
+    .hero-copy {
+      flex: 1 1 260px;
+      max-width: 420px;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent-2);
+      margin-bottom: 6px;
+    }
+
+    .hero-title {
+      font-size: 26px;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 380px;
+      line-height: 1.6;
+    }
+
+    .hero-cta-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      border-radius: var(--radius-pill);
+      padding: 8px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(5, 7, 18, 0.85);
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-main);
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      transition: all 0.18s ease-out;
+    }
+
+    .btn-primary {
+      background: linear-gradient(120deg, #ff5af1, #45f1ff);
+      border-color: transparent;
+      color: #050712;
+      font-weight: 600;
+      box-shadow: 0 0 18px rgba(69, 241, 255, 0.65);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: rgba(8, 11, 24, 0.9);
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(255, 255, 255, 0.24);
+      background: rgba(15, 20, 40, 0.96);
+    }
+
+    .hero-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-grid {
+      flex: 1 1 260px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      min-width: 240px;
+    }
+
+    .hero-cell {
+      position: relative;
+      border-radius: 16px;
+      padding: 12px 11px;
+      background: radial-gradient(circle at top left, rgba(69, 241, 255, 0.25), rgba(7, 9, 21, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 22px rgba(69, 241, 255, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: default;
+      overflow: hidden;
+    }
+
+    .hero-cell::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(255, 90, 241, 0.32), transparent 60%),
+        radial-gradient(circle at 120% 120%, rgba(69, 241, 255, 0.28), transparent 60%);
+      opacity: 0.0;
+      animation: cellGlow 12s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes cellGlow {
+      0% {
+        opacity: 0.1;
+        transform: translate3d(-4%, -6%, 0);
+      }
+      50% {
+        opacity: 0.5;
+        transform: translate3d(3%, 5%, 0);
+      }
+      100% {
+        opacity: 0.2;
+        transform: translate3d(-2%, 4%, 0);
+      }
+    }
+
+    .hero-cell-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(5, 7, 18, 0.8);
+      opacity: 0.9;
+    }
+
+    .hero-cell-main {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .hero-cell-sub {
+      font-size: 11px;
+      color: rgba(5, 7, 18, 0.8);
+    }
+
+    .hero-cell-chip {
+      margin-top: 3px;
+      align-self: flex-start;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(5, 7, 18, 0.7);
+      color: #ffffff;
+    }
+
+    /* Panels */
+    .panel {
+      background: linear-gradient(135deg, rgba(15, 19, 40, 0.98), rgba(5, 7, 18, 0.98));
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 14px 16px 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .panel-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .panel-section-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .panel-section-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .field-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="url"],
+    select,
+    textarea {
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(3, 5, 14, 0.96);
+      color: var(--text-main);
+      padding: 7px 9px;
+      font-size: 12px;
+      outline: none;
+      width: 100%;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(156, 164, 199, 0.75);
+    }
+
+    .switch-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .switch {
+      position: relative;
+      width: 46px;
+      height: 22px;
+    }
+
+    .switch input {
+      display: none;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: rgba(24, 32, 64, 0.95);
+      border-radius: 999px;
+      transition: 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      top: 2px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff5af1, #45f1ff);
+      transition: 0.2s;
+      box-shadow: 0 0 10px rgba(69, 241, 255, 0.6);
+    }
+
+    .switch input:checked + .slider {
+      background: rgba(69, 241, 255, 0.15);
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+    }
+
+    .pill.hot {
+      border-color: rgba(255, 90, 241, 0.8);
+      color: var(--accent);
+    }
+
+    .pill.credits {
+      border-color: rgba(62, 216, 169, 0.8);
+      color: var(--success);
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .divider {
+      margin: 10px 0;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    }
+
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      font-size: 11px;
+      cursor: pointer;
+      background: rgba(8, 11, 25, 0.95);
+      color: var(--text-muted);
+    }
+
+    .chip.active {
+      background: linear-gradient(120deg, #ff5af1, #45f1ff);
+      color: #050712;
+      border-color: transparent;
+    }
+
+    .inline-link {
+      color: var(--accent-2);
+      cursor: pointer;
+    }
+
+    .inline-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Saved styles */
+    .saved-styles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .saved-style-card {
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(8, 11, 24, 0.96);
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .saved-style-name {
+      font-weight: 500;
+    }
+
+    /* My Songs */
+    .songs-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      cursor: pointer;
+      font-size: 11px;
+      background: rgba(8, 11, 24, 0.96);
+      color: var(--text-muted);
+    }
+
+    .filter-pill.active {
+      background: linear-gradient(120deg, #ff5af1, #45f1ff);
+      color: #050712;
+      border-color: transparent;
+    }
+
+    .songs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .song-row {
+      padding: 8px 9px;
+      border-radius: 12px;
+      background: rgba(10, 14, 30, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) 180px 140px 90px 30px;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .song-row {
+        grid-template-columns: minmax(0, 1.6fr) 120px 110px 70px 28px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .song-row {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: flex-start;
+      }
+    }
+
+    .song-main {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .song-art {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: radial-gradient(circle at top left, #ff5af1, #45f1ff, #ffd15a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: #050712;
+    }
+
+    .song-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .song-title {
+      font-weight: 500;
+    }
+
+    .song-submeta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .song-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      justify-content: flex-end;
+    }
+
+    .song-like {
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .badge-small {
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--text-muted);
+    }
+
+    .badge-small.pro {
+      border-color: rgba(255, 90, 241, 0.85);
+      color: var(--accent);
+    }
+
+    .badge-small.creator {
+      border-color: rgba(255, 209, 90, 0.9);
+      color: var(--warning);
+    }
+
+    .badge-small.ultimate {
+      border-color: rgba(62, 216, 169, 0.9);
+      color: var(--success);
+    }
+
+    .song-menu-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: rgba(8, 11, 25, 0.96);
+    }
+
+    /* Song context menu (simple mock) */
+    .song-menu {
+      position: fixed;
+      right: 18px;
+      bottom: 24px;
+      max-width: 280px;
+      width: 100%;
+      background: rgba(7, 9, 20, 0.98);
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 10px 0;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      display: none;
+      z-index: 60;
+    }
+
+    .song-menu-section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      padding: 4px 14px;
+    }
+
+    .song-menu-item {
+      padding: 7px 14px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .song-menu-item:hover {
+      background: rgba(18, 24, 54, 0.95);
+    }
+
+    .song-menu-item span.icon {
+      width: 16px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .song-menu-kicker {
+      margin-left: auto;
+      padding: 0 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 90, 241, 0.7);
+      font-size: 10px;
+    }
+
+    .song-menu-close {
+      text-align: center;
+      padding: 6px 0 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Voice slots */
+    .voice-slots {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .voice-card {
+      padding: 8px 9px;
+      border-radius: 11px;
+      border: 1px dashed rgba(255, 255, 255, 0.18);
+      background: rgba(7, 9, 20, 0.96);
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .voice-card.filled {
+      border-style: solid;
+      border-color: rgba(69, 241, 255, 0.8);
+      background: linear-gradient(135deg, rgba(69, 241, 255, 0.18), rgba(7, 9, 20, 0.98));
+    }
+
+    .voice-card-title {
+      font-weight: 500;
+    }
+
+    .voice-card-sub {
+      color: var(--text-muted);
+    }
+
+    .voice-tag-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .voice-tag {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      font-size: 10px;
+    }
+
+    /* Small utilities */
+    .text-right {
+      text-align: right;
+    }
+
+    .mt-4 {
+      margin-top: 4px;
+    }
+
+    .mt-6 {
+      margin-top: 6px;
+    }
+
+    .mt-10 {
+      margin-top: 10px;
+    }
+
+    .mb-4 {
+      margin-bottom: 4px;
+    }
+
+    .text-danger {
+      color: var(--danger);
+    }
+
+    .text-success {
+      color: var(--success);
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    .pill-inline {
+      margin-left: 6px;
     }
   </style>
 </head>
-
 <body>
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <div class="logo-circle"></div>
-        <div>
-          <div class="logo-text-main">Sulandra AI Studio</div>
-          <div class="logo-text-sub">AI Music Generator</div>
-        </div>
+<header>
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-icon">S</div>
+      <div>
+        <div class="brand-text-main">Sulandra AI Studio</div>
+        <div class="brand-text-sub">Music · Video · Images · Film</div>
       </div>
-<nav>
-  <a href="index.html">Home</a>
-  <a href="image.html">Image</a>
-  <a href="video.html">Video</a>
-  <a href="music.html" class="active">Music</a>
-  <a href="film.html">Short Films</a>
-  <a href="education.html">Explore</a>
-</nav>
     </div>
-  </header>
-
-  <main>
-    <section class="layout">
-      <div class="panel">
-        <h1>AI Music Generator</h1>
-        <p class="panel-sub">
-          Suno-style tracks: Afrobeat, Amapiano, Gospel, film scores and more.
-          This UI will later send prompts and settings to your music model and
-          receive finished audio files.
-        </p>
-
-        <form onsubmit="event.preventDefault(); alert('In the future this will create a music generation job. For now it is a design prototype.');">
-          <div class="field-group">
-            <label for="prompt">Song description / lyrics idea</label>
-            <textarea
-              id="prompt"
-              placeholder="Example: Emotional Afrobeat worship song about breakthrough, mid-tempo, female lead, gentle choir in the background"
-            ></textarea>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="genre">Genre / style</label>
-              <select id="genre">
-                <option>Afrobeat</option>
-                <option>Amapiano</option>
-                <option>Gospel / Worship</option>
-                <option>Lo-fi / Chill</option>
-                <option>Film score / Cinematic</option>
-              </select>
-            </div>
-            <div>
-              <label for="length">Length (seconds)</label>
-              <input id="length" type="number" min="15" max="240" value="60" />
-            </div>
-          </div>
-
-          <div class="field-row field-group">
-            <div>
-              <label for="bpm">Tempo (BPM)</label>
-              <input id="bpm" type="number" min="60" max="180" value="120" />
-            </div>
-            <div>
-              <label for="vocals">Vocals</label>
-              <select id="vocals">
-                <option>Lead vocal + backing</option>
-                <option>Lead vocal only</option>
-                <option>Instrumental only</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="submit">
-            Generate Music (UI only for now)
-          </button>
-          <p class="note">
-            Later this will call something like <code>/api/generate-music</code>,
-            and the backend will respond with an audio URL (MP3/WAV) that you
-            can play here.
-          </p>
-        </form>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="image.html">Image Lab</a>
+      <a href="video.html">Video Lab</a>
+      <a href="music.html" class="active">Music Lab</a>
+      <a href="film.html">Film Lab</a>
+      <a href="explore.html">Explore</a>
+      <a href="studio.html">Studio</a>
+    </nav>
+    <div class="nav-right">
+      <div class="credits-pill">
+        <span id="creditsLabel">2450</span> credits
       </div>
-
-      <div class="panel">
-        <div class="preview-header">
-          <span>Preview / Player</span>
-          <span style="font-size: 11px;">
-            Status: <strong>Disconnected</strong>
-          </span>
+      <div class="profile-chip" onclick="alert('Profile panel is part of the main account system. In this static demo it is only a placeholder.')">
+        <div class="profile-avatar">U</div>
+        <div>
+          <div style="font-size:11px;">Signed in</div>
+          <div class="badge-plan" id="planLabel">Creator</div>
         </div>
-        <div class="preview-box">
-          This panel will eventually display a small audio player, waveform, or
-          recent tracks generated by the studio.
-          <br /><br />
-          For now, it is a visual placeholder so you can design your user
-          experience first.
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Music Lab</div>
+
+    <div class="sidebar-group-label">Create</div>
+    <div class="sidebar-menu">
+      <button class="menu-item active" data-section="create">
+        <span class="icon">🎵</span>
+        <span>Generate Song</span>
+        <span class="menu-item-badge">10 credits</span>
+      </button>
+    </div>
+
+    <div class="sidebar-group-label">Tools</div>
+    <div class="sidebar-menu">
+      <button class="menu-item" data-section="removeVocals">
+        <span class="icon">🧼</span>
+        <span>Remove Vocals / Split</span>
+      </button>
+      <button class="menu-item" data-section="mastering">
+        <span class="icon">🎚️</span>
+        <span>Mastering</span>
+      </button>
+      <button class="menu-item" data-section="voiceChanger">
+        <span class="icon">🗣️</span>
+        <span>Voice Changer</span>
+      </button>
+      <button class="menu-item" data-section="voiceCloner">
+        <span class="icon">🧬</span>
+        <span>Voice Cloner (4 slots)</span>
+        <span class="menu-item-badge creator">Creator+</span>
+      </button>
+    </div>
+
+    <div class="sidebar-group-label">Workspace</div>
+    <div class="sidebar-menu">
+      <button class="menu-item" data-section="mySongs">
+        <span class="icon">📁</span>
+        <span>My Songs</span>
+      </button>
+      <button class="menu-item" data-section="mediaFeed">
+        <span class="icon">🌐</span>
+        <span>Media · Community Feed</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <section class="main">
+    <!-- Overview / hero -->
+    <section class="hero-card">
+      <div class="hero-glow-ring"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <div class="hero-eyebrow">Music Lab · Text · Reference · Upload</div>
+          <div class="hero-title">Compose, transform, and master your sound</div>
+          <p class="hero-sub">
+            Generate full songs or pure instrumentals, separate stems, master existing tracks,
+            and swap voices with your own AI clones. Everything you create can flow directly
+            into Studio or be synced with Image, Video, and Film Labs.
+          </p>
+          <div class="hero-cta-row">
+            <button class="btn btn-primary" onclick="switchSection('create')">
+              <span>New song · 10 credits</span>
+            </button>
+            <button class="btn btn-ghost" onclick="switchSection('mySongs')">
+              <span>View my songs</span>
+            </button>
+            <span class="hero-hint">
+              Songs generate <strong>2 variations</strong> by default ·
+              <span class="inline-link" onclick="alert('In the real app this will open your subscription panel with plan and credit details.')">plan & credits</span>
+            </span>
+          </div>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-cell">
+            <div class="hero-cell-label">Generation</div>
+            <div class="hero-cell-main">Full songs & instrumentals</div>
+            <div class="hero-cell-sub">Lyrics-aware or lyric-free · genre, tempo, key, vibe</div>
+            <div class="hero-cell-chip">Text + reference audio</div>
+          </div>
+          <div class="hero-cell">
+            <div class="hero-cell-label">Separation</div>
+            <div class="hero-cell-main">Vocals · Instrumentals · Stems</div>
+            <div class="hero-cell-sub">Upload any mix and split into components</div>
+            <div class="hero-cell-chip">For Studio re-mix & covers</div>
+          </div>
+          <div class="hero-cell">
+            <div class="hero-cell-label">Voices</div>
+            <div class="hero-cell-main">Voice changer & clones</div>
+            <div class="hero-cell-sub">Clone up to four voices and sing in any style</div>
+            <div class="hero-cell-chip">Creator+ feature</div>
+          </div>
+          <div class="hero-cell">
+            <div class="hero-cell-label">Control</div>
+            <div class="hero-cell-main">Master · extend · cover</div>
+            <div class="hero-cell-sub">Precise control over mix, loudness, exports & stems</div>
+            <div class="hero-cell-chip">Flows into Studio</div>
+          </div>
         </div>
       </div>
     </section>
-  </main>
 
-  <footer>
-    Music module · Next step: connect this to a music generation backend
-    that returns ready-to-stream audio.
-  </footer>
+    <!-- CREATE SONG -->
+    <section class="panel" id="section-create">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Generate Song</div>
+          <div class="panel-sub">
+            Describe the track, choose style & vibe, optionally paste lyrics, and Sulandra
+            will generate <strong>2 high-quality variations</strong> for <span class="text-success">10 credits</span>.
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="pill credits">10 credits · 2 variations</div>
+          <div class="helper-text mt-4">Creator+ can unlock stems & MIDI (50 credits per export).</div>
+        </div>
+      </div>
+
+      <div class="panel-section-row">
+        <!-- Left: Prompt + options -->
+        <div>
+          <div class="switch-row">
+            <span style="font-size:12px;">Instrumental only</span>
+            <label class="switch">
+              <input type="checkbox" id="fullSongSwitch" checked />
+              <span class="slider"></span>
+            </label>
+            <span style="font-size:12px;">Full song</span>
+          </div>
+
+          <div class="field">
+            <label for="songTitle">Song title</label>
+            <input id="songTitle" type="text" placeholder="e.g., We Need a Miracle Again" />
+          </div>
+
+          <div class="field">
+            <label for="songPrompt">Describe the song</label>
+            <textarea id="songPrompt" placeholder="Afrobeat worship song with soulful female vocals, upbeat tempo, danceable groove, big choir hook in the chorus..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>Style & reference</label>
+            <div class="field-row">
+              <select id="styleSelect">
+                <option value="">Choose style...</option>
+                <option>Afrobeat</option>
+                <option>Amapiano</option>
+                <option>Reggae</option>
+                <option>Gospel</option>
+                <option>R&amp;B / Soul</option>
+                <option>Pop</option>
+                <option>Hip Hop / Trap</option>
+                <option>Cinematic / Score</option>
+                <option>Acoustic / Ballad</option>
+                <option>Rock</option>
+              </select>
+              <button class="btn" type="button" onclick="toggleRefMode()">
+                <span id="refModeLabel">Use style reference…</span>
+              </button>
+            </div>
+            <div id="styleReferenceRow" class="mt-4" style="display:none;">
+              <div class="field">
+                <label for="styleUrl">Reference upload or URL
+                  <span class="pill pill-inline">≤ 4 min</span>
+                </label>
+                <input id="styleUrl" type="url" placeholder="Paste YouTube / audio link (max 4 minutes)" />
+                <div class="helper-text mt-4">
+                  Sulandra will learn the groove, energy, and mix and attempt to match the vibe.
+                  For longer references, only the first 4 minutes will be analyzed.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field" style="flex:1;">
+              <label for="tempo">Tempo (BPM)</label>
+              <input id="tempo" type="number" min="40" max="220" placeholder="e.g., 98" />
+            </div>
+            <div class="field" style="flex:1;">
+              <label for="key">Key</label>
+              <select id="key">
+                <option value="">Auto detect</option>
+                <option>A</option><option>A# / Bb</option><option>B</option>
+                <option>C</option><option>C# / Db</option><option>D</option>
+                <option>D# / Eb</option><option>E</option>
+                <option>F</option><option>F# / Gb</option><option>G</option>
+                <option>G# / Ab</option>
+              </select>
+            </div>
+            <div class="field" style="flex:1;">
+              <label for="vibe">Vibe / energy</label>
+              <select id="vibe">
+                <option value="">Choose vibe...</option>
+                <option>Soft & intimate</option>
+                <option>Warm & groovy</option>
+                <option>High energy / dance</option>
+                <option>Epic & cinematic</option>
+                <option>Dark & moody</option>
+                <option>Joyful & bright</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Output type</label>
+            <div class="chips-row">
+              <button type="button" class="chip active" data-output="song">Full song</button>
+              <button type="button" class="chip" data-output="instrumental">Instrumental only</button>
+              <button type="button" class="chip" data-output="hook">Hook / chorus only</button>
+            </div>
+            <div class="helper-text mt-4">
+              For hooks or instrumentals only, Sulandra focuses the generation on the selected section.
+            </div>
+          </div>
+
+          <div class="field mt-6">
+            <label>Artwork & thumbnail</label>
+            <div class="helper-text">
+              Each song will automatically generate a high-quality cover image based on your
+              prompt and title. You can later regenerate or edit artwork in Image Lab or Studio.
+            </div>
+          </div>
+
+          <div class="mt-10" style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+            <button class="btn btn-primary" type="button" onclick="generateSong()">
+              <span>Generate 2 variations · 10 credits</span>
+            </button>
+            <div class="helper-text">
+              Generations are always <strong>high quality</strong>. Export options and stems depend on your plan.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Lyrics + saved styles -->
+        <div>
+          <div id="lyricsBlock">
+            <div class="field">
+              <label for="lyrics">
+                Lyrics (optional)
+              </label>
+              <textarea id="lyrics" placeholder="Paste or write your lyrics here. Sulandra can follow them exactly or suggest changes."></textarea>
+              <div class="field-row mt-4">
+                <button class="btn" type="button" onclick="aiLyricSuggestions()">
+                  ✨ Ask AI to improve lyrics
+                </button>
+                <button class="btn" type="button" onclick="aiRewriteLyrics()">
+                  📝 Let AI rewrite from prompt
+                </button>
+              </div>
+              <div class="helper-text mt-4">
+                When enabled, Sulandra will keep lyric structure and rhyme scheme consistent with your input.
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="field">
+            <label>Save style preset</label>
+            <div class="helper-text">
+              Save this combination of style, tempo, key, vibe, and reference so you can reuse it later.
+            </div>
+            <div class="field-row mt-4">
+              <input id="stylePresetName" type="text" placeholder="e.g., Afrobeat Worship 98 BPM" />
+              <button class="btn" type="button" onclick="saveStylePreset()">Save</button>
+            </div>
+            <div class="saved-styles" id="savedStylesContainer">
+              <!-- populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REMOVE VOCALS -->
+    <section class="panel" id="section-removeVocals" style="display:none;">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Remove Vocals / Split Stems</div>
+          <div class="panel-sub">
+            Upload a mixed track and separate it into vocals, instrumentals, or full stem packs for remixing and covers.
+          </div>
+        </div>
+        <div class="pill">Tool</div>
+      </div>
+      <div class="field">
+        <label>Upload track</label>
+        <input type="file" accept="audio/*" />
+        <div class="helper-text mt-4">
+          High-resolution audio recommended (WAV/FLAC). Maximum length and pricing will be
+          defined in the full backend; this demo only wires the workflow.
+        </div>
+      </div>
+      <div class="field">
+        <label>What do you want to extract?</label>
+        <div class="chips-row">
+          <button class="chip active">Vocals only</button>
+          <button class="chip">Instrumental only</button>
+          <button class="chip">4-stem pack (vocals, drums, bass, other)</button>
+          <button class="chip">Advanced stems (8+)</button>
+        </div>
+      </div>
+      <div class="mt-10">
+        <button class="btn btn-primary" type="button" onclick="alert('In the real app this will send the audio to the stem separation worker.')">
+          Split track
+        </button>
+      </div>
+    </section>
+
+    <!-- MASTERING -->
+    <section class="panel" id="section-mastering" style="display:none;">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Mastering</div>
+          <div class="panel-sub">
+            Upload a mix or select a generated song. Sulandra will match loudness, tone, and stereo image to your chosen style.
+          </div>
+        </div>
+        <div class="pill">Tool</div>
+      </div>
+      <div class="panel-section-row">
+        <div>
+          <div class="field">
+            <label>Choose source</label>
+            <div class="chips-row">
+              <button class="chip active">Pick from My Songs</button>
+              <button class="chip">Upload mix</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Target platform / profile</label>
+            <select>
+              <option>Streaming (-14 LUFS)</option>
+              <option>Streaming loud (-9 to -10 LUFS)</option>
+              <option>Club / DJ</option>
+              <option>Film / TV mix</option>
+              <option>Podcast / Spoken word</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Reference track (optional)</label>
+            <input type="url" placeholder="Paste link to reference track for tonal balance and loudness" />
+          </div>
+          <button class="btn btn-primary mt-6" type="button" onclick="alert('Mastering job queued – in the real system this would send to the mastering worker.')">
+            Start mastering
+          </button>
+        </div>
+        <div>
+          <div class="helper-text">
+            Mastering is non-destructive – all original mixes stay in your library.  
+            Creator and Creator Ultimate can store multiple mastered versions and
+            export full-resolution WAV plus stems for 50 credits per stems/MIDI export.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VOICE CHANGER -->
+    <section class="panel" id="section-voiceChanger" style="display:none;">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Voice Changer</div>
+          <div class="panel-sub">
+            Apply any of your cloned voices or Sulandra presets to an existing vocal track.
+          </div>
+        </div>
+        <div class="pill hot">AI Voice</div>
+      </div>
+      <div class="panel-section-row">
+        <div>
+          <div class="field">
+            <label>Source vocal</label>
+            <div class="chips-row">
+              <button class="chip active">Choose from My Songs</button>
+              <button class="chip">Upload vocal track</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Target voice</label>
+            <select>
+              <option>Your voice clone #1</option>
+              <option>Your voice clone #2</option>
+              <option>Your voice clone #3</option>
+              <option>Your voice clone #4</option>
+              <option>Preset – Soulful Female</option>
+              <option>Preset – Smooth Male</option>
+              <option>Preset – Choir Stack</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Intensity / character</label>
+            <select>
+              <option>Natural – light color</option>
+              <option>Balanced – medium color</option>
+              <option>Strong – full character</option>
+            </select>
+          </div>
+          <button class="btn btn-primary mt-6" type="button" onclick="alert('In production this would call the voice conversion worker and create a new song version.')">
+            Apply voice change
+          </button>
+        </div>
+        <div>
+          <div class="helper-text">
+            Changes are rendered as a new version of the song. You can always roll back to the
+            original voice. Some voices and conversion modes may be limited to Creator Ultimate.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VOICE CLONER -->
+    <section class="panel" id="section-voiceCloner" style="display:none;">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Voice Cloner · 4 slots</div>
+          <div class="panel-sub">
+            Record or upload clean phrases and let Sulandra build reusable singing and speaking
+            voices for your songs, covers, and films.
+          </div>
+        </div>
+        <div class="pill credits">Creator+ feature</div>
+      </div>
+      <div class="voice-slots" id="voiceSlots">
+        <div class="voice-card filled">
+          <div class="voice-card-title">Voice 1 – Lead Worship</div>
+          <div class="voice-card-sub">Created 2 days ago · high-quality recordings</div>
+          <div class="voice-tag-row">
+            <span class="voice-tag">Warm</span>
+            <span class="voice-tag">Alto</span>
+          </div>
+        </div>
+        <div class="voice-card filled">
+          <div class="voice-card-title">Voice 2 – Afrobeat Male</div>
+          <div class="voice-card-sub">Created 1 week ago</div>
+          <div class="voice-tag-row">
+            <span class="voice-tag">Afrobeats</span>
+            <span class="voice-tag">Tenor</span>
+          </div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-card-title">Add voice clone</div>
+          <div class="voice-card-sub">Record phrases or upload dry vocals</div>
+        </div>
+        <div class="voice-card">
+          <div class="voice-card-title">Add voice clone</div>
+          <div class="voice-card-sub">Up to four personal voices</div>
+        </div>
+      </div>
+      <div class="helper-text mt-6">
+        In the full app, each clone will walk you through a script to capture clean vowels,
+        consonants, and dynamics. Once trained, the voice will appear in the Voice Changer and
+        text-to-song generation panels.
+      </div>
+    </section>
+
+    <!-- MY SONGS / MEDIA -->
+    <section class="panel" id="section-mySongs" style="display:none;">
+      <div class="songs-header-row">
+        <div>
+          <div class="panel-title">My Songs</div>
+          <div class="panel-sub">
+            All tracks you generated, uploaded, or edited in Music Lab. Likes are automatically
+            added to favorites and can be sent to Studio or Media Feed.
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="filter-pill active">All</button>
+          <button class="filter-pill">Liked</button>
+          <button class="filter-pill">Uploads</button>
+          <button class="filter-pill">Full Songs</button>
+          <button class="filter-pill">Extensions</button>
+          <button class="filter-pill">Covers</button>
+          <button class="filter-pill">Hide disliked</button>
+          <button class="filter-pill">Hide stems</button>
+        </div>
+      </div>
+
+      <div class="songs-list" id="songsList">
+        <!-- sample rows -->
+        <div class="song-row">
+          <div class="song-main">
+            <div class="song-art">WM</div>
+            <div class="song-meta">
+              <div class="song-title">We Need a Miracle – v3</div>
+              <div class="song-submeta">Afrobeat worship · 98 BPM · A major · 2 variations</div>
+            </div>
+          </div>
+          <div class="song-submeta">Created · 10 credits</div>
+          <div class="song-actions">
+            <span class="badge-small pro">WAV</span>
+            <span class="badge-small creator">Stems</span>
+            <span class="badge-small">Cover enabled</span>
+          </div>
+          <div class="song-actions">
+            <span class="song-like" title="Like">👍</span>
+            <span class="song-like" title="Dislike">👎</span>
+          </div>
+          <div class="text-right">
+            <button class="song-menu-btn" onclick="openSongMenu('We Need a Miracle – v3')">⋯</button>
+          </div>
+        </div>
+
+        <div class="song-row">
+          <div class="song-main">
+            <div class="song-art">AB</div>
+            <div class="song-meta">
+              <div class="song-title">Afrobeat Groove – Instrumental v1</div>
+              <div class="song-submeta">Instrumental only · 104 BPM · F# minor</div>
+            </div>
+          </div>
+          <div class="song-submeta">Created · 10 credits</div>
+          <div class="song-actions">
+            <span class="badge-small">MP3</span>
+            <span class="badge-small">Instrumental</span>
+          </div>
+          <div class="song-actions">
+            <span class="song-like" title="Like">👍</span>
+            <span class="song-like" title="Dislike">👎</span>
+          </div>
+          <div class="text-right">
+            <button class="song-menu-btn" onclick="openSongMenu('Afrobeat Groove – Instrumental v1')">⋯</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEDIA FEED PLACEHOLDER -->
+    <section class="panel" id="section-mediaFeed" style="display:none;">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Media · Community Song Feed</div>
+          <div class="panel-sub">
+            In the full version, this will show songs shared by you and other creators –
+            with likes, comments, and remix / cover permissions.
+          </div>
+        </div>
+      </div>
+      <div class="helper-text">
+        We’ll wire this once the shared backend and moderation tools are ready. For now, use
+        “Send to Media Feed” in the song menu mock to see the intended flow.
+      </div>
+    </section>
+  </section>
+</main>
+
+<!-- SONG CONTEXT MENU MOCK -->
+<div class="song-menu" id="songMenu">
+  <div class="song-menu-section-title" id="songMenuTitle">Song actions</div>
+  <div class="song-menu-item">
+    <span class="icon">🎛️</span>
+    Remix / Edit in Studio
+  </div>
+  <div class="song-menu-item">
+    <span class="icon">➕</span>
+    Extend song / Add new section
+  </div>
+  <div class="song-menu-item">
+    <span class="icon">🎼</span>
+    Get Stems / MIDI
+    <span class="song-menu-kicker">Creator+</span>
+  </div>
+  <div class="song-menu-item">
+    <span class="icon">🧬</span>
+    Change vocal to another voice
+  </div>
+  <div class="song-menu-item">
+    <span class="icon">🖼️</span>
+    Generate / Edit Cover Art
+  </div>
+  <div class="song-menu-item">
+    <span class="icon">📤</span>
+    Publish to Media Feed
+  </div>
+  <div class="song-menu-item">
+    <span class="icon">⬇️</span>
+    Download
+  </div>
+  <div class="song-menu-item">
+    <span class="icon">⚙️</span>
+    Visibility & Permissions
+  </div>
+  <div class="song-menu-item">
+    <span class="icon">🗑️</span>
+    Move to Trash
+  </div>
+  <div class="song-menu-close" onclick="closeSongMenu()">Close</div>
+</div>
+
+<script>
+  // --------- simple fake user / plan state ----------
+  const user = {
+    plan: 'creator', // basic | pro | creator | creatorUltimate
+    credits: 2450
+  };
+
+  const creditsLabel = document.getElementById('creditsLabel');
+  const planLabel = document.getElementById('planLabel');
+  creditsLabel.textContent = user.credits;
+  planLabel.textContent = user.plan === 'basic'
+    ? 'Basic'
+    : user.plan === 'pro'
+    ? 'Pro'
+    : user.plan === 'creator'
+    ? 'Creator'
+    : 'Creator Ultimate';
+
+  // --------- section switching ----------
+  const sections = ['create', 'removeVocals', 'mastering', 'voiceChanger', 'voiceCloner', 'mySongs', 'mediaFeed'];
+  function switchSection(id) {
+    sections.forEach(sec => {
+      const panel = document.getElementById('section-' + sec);
+      if (panel) panel.style.display = sec === id ? 'block' : 'none';
+    });
+    document.querySelectorAll('.menu-item').forEach(btn => {
+      const target = btn.getAttribute('data-section');
+      btn.classList.toggle('active', target === id);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.menu-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-section');
+      if (target) switchSection(target);
+    });
+  });
+
+  // --------- full song switch (lyrics show/hide) ----------
+  const fullSongSwitch = document.getElementById('fullSongSwitch');
+  const lyricsBlock = document.getElementById('lyricsBlock');
+  fullSongSwitch.addEventListener('change', () => {
+    lyricsBlock.style.display = fullSongSwitch.checked ? 'block' : 'none';
+  });
+
+  // --------- style reference toggle ----------
+  let refModeEnabled = false;
+  function toggleRefMode() {
+    refModeEnabled = !refModeEnabled;
+    document.getElementById('styleReferenceRow').style.display = refModeEnabled ? 'block' : 'none';
+    document.getElementById('refModeLabel').textContent = refModeEnabled ? 'Hide style reference' : 'Use style reference…';
+  }
+
+  // --------- output chips ----------
+  document.querySelectorAll('.chip[data-output]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip[data-output]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // --------- saved style presets (simple local demo) ----------
+  const savedStylesContainer = document.getElementById('savedStylesContainer');
+  const presets = [];
+
+  function renderPresets() {
+    savedStylesContainer.innerHTML = '';
+    presets.forEach((p, idx) => {
+      const card = document.createElement('div');
+      card.className = 'saved-style-card';
+      card.innerHTML = `
+        <div class="saved-style-name">${p.name}</div>
+        <div style="font-size:10px;color:${'var(--text-muted)'};">
+          ${p.style || 'Custom'} · ${p.tempo || 'Auto'} BPM · ${p.key || 'Auto'}
+        </div>
+      `;
+      card.onclick = () => applyPreset(idx);
+      savedStylesContainer.appendChild(card);
+    });
+  }
+
+  function saveStylePreset() {
+    const name = document.getElementById('stylePresetName').value.trim();
+    if (!name) {
+      alert('Give your style preset a name first.');
+      return;
+    }
+    const style = document.getElementById('styleSelect').value;
+    const tempo = document.getElementById('tempo').value;
+    const key = document.getElementById('key').value;
+    const vibe = document.getElementById('vibe').value;
+    presets.push({ name, style, tempo, key, vibe });
+    document.getElementById('stylePresetName').value = '';
+    renderPresets();
+  }
+
+  function applyPreset(idx) {
+    const p = presets[idx];
+    if (!p) return;
+    document.getElementById('styleSelect').value = p.style || '';
+    document.getElementById('tempo').value = p.tempo || '';
+    document.getElementById('key').value = p.key || '';
+    document.getElementById('vibe').value = p.vibe || '';
+    alert('Style preset applied. You can now tweak it and generate a new song.');
+  }
+
+  // --------- song generation (mock) ----------
+  function generateSong() {
+    const cost = 10;
+    if (user.plan === 'basic' && user.credits < cost) {
+      alert('You have run out of trial credits. Upgrade your plan to continue generating songs.');
+      return;
+    }
+    if (user.credits < cost) {
+      alert('Not enough credits. Please top up or upgrade your plan.');
+      return;
+    }
+    user.credits -= cost;
+    creditsLabel.textContent = user.credits;
+
+    // In a real app we would call the backend here.
+    alert('Song generation queued. In production this would return two variations and artwork.');
+
+    // Optionally append a mock new song row.
+    const titleInput = document.getElementById('songTitle');
+    const promptInput = document.getElementById('songPrompt');
+    const title = titleInput.value.trim() || 'Untitled Song';
+    const row = document.createElement('div');
+    row.className = 'song-row';
+    row.innerHTML = `
+      <div class="song-main">
+        <div class="song-art">${title.substring(0,2).toUpperCase()}</div>
+        <div class="song-meta">
+          <div class="song-title">${title} – v1</div>
+          <div class="song-submeta">Generated · 2 variations · text-to-music</div>
+        </div>
+      </div>
+      <div class="song-submeta">Created · ${cost} credits</div>
+      <div class="song-actions">
+        <span class="badge-small ${user.plan !== 'basic' ? 'pro' : ''}">${user.plan === 'basic' ? 'MP3' : 'WAV'}</span>
+      </div>
+      <div class="song-actions">
+        <span class="song-like" title="Like">👍</span>
+        <span class="song-like" title="Dislike">👎</span>
+      </div>
+      <div class="text-right">
+        <button class="song-menu-btn" onclick="openSongMenu('${title.replace(/'/g, "\\'")} – v1')">⋯</button>
+      </div>
+    `;
+    document.getElementById('songsList').prepend(row);
+
+    // Reset prompt lightly
+    promptInput.value = '';
+  }
+
+  // --------- lyric helpers (mock) ----------
+  function aiLyricSuggestions() {
+    alert('In the full product this would analyze your lyrics and suggest edits, alternate lines, and structure changes.');
+  }
+
+  function aiRewriteLyrics() {
+    alert('In the full product this would rewrite a new lyric draft from your prompt and style choices.');
+  }
+
+  // --------- song context menu mock ----------
+  const songMenu = document.getElementById('songMenu');
+  const songMenuTitle = document.getElementById('songMenuTitle');
+
+  function openSongMenu(title) {
+    songMenuTitle.textContent = title || 'Song actions';
+    songMenu.style.display = 'block';
+  }
+  function closeSongMenu() {
+    songMenu.style.display = 'none';
+  }
+
+  // Close menu when clicking outside (simple)
+  document.addEventListener('click', (e) => {
+    if (!songMenu.contains(e.target) &&
+        !e.target.classList.contains('song-menu-btn')) {
+      closeSongMenu();
+    }
+  });
+
+  // Init presets
+  renderPresets();
+</script>
 </body>
 </html>
