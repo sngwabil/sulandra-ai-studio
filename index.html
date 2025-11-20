@@ -178,7 +178,7 @@
       flex: 1;
     }
 
-    /* ==== NEW STUDIO OVERVIEW SECTION ==== */
+    /* ==== STUDIO OVERVIEW SECTION ==== */
 
     .studio-overview {
       max-width: 1200px;
@@ -421,7 +421,7 @@
       gap: 10px;
     }
 
-    /* PRODUCT CARDS (LABS) */
+    /* PRODUCT CARDS */
 
     .product-card {
       border-radius: 18px;
@@ -506,13 +506,13 @@
       border-radius: inherit;
       background: conic-gradient(
         from 120deg,
-        rgba(168, 85, 247, 0.6),
-        rgba(59, 130, 246, 0.6),
-        rgba(236, 72, 153, 0.6),
-        rgba(234, 179, 8, 0.6),
-        rgba(168, 85, 247, 0.6)
+        rgba(168, 85, 247, 0.7),
+        rgba(59, 130, 246, 0.7),
+        rgba(236, 72, 153, 0.7),
+        rgba(234, 179, 8, 0.7),
+        rgba(168, 85, 247, 0.7)
       );
-      opacity: 0.0;
+      opacity: 0;
       mix-blend-mode: screen;
       pointer-events: none;
       animation: cardShimmer 10s linear infinite;
@@ -527,7 +527,7 @@
       z-index: 1;
     }
 
-    /* SECTIONS BELOW HERO */
+    /* SECTIONS */
 
     .section {
       max-width: 1200px;
@@ -579,7 +579,8 @@
       border-color: rgba(168, 85, 247, 0.7);
     }
 
-    .plan-ribbon {
+    .plan-ribbon,
+    .plan-ribbon.gold {
       position: absolute;
       top: 8px;
       right: -28px;
@@ -634,7 +635,7 @@
       padding: 10px;
       font-size: 11px;
       color: var(--text-muted);
-      margin-top: 6px;
+      margin-top: 10px;
     }
 
     .credits-table-row {
@@ -650,7 +651,7 @@
       line-height: 1.5;
     }
 
-    /* CONTACT SECTION */
+    /* CONTACT */
 
     .contact-grid {
       display: grid;
@@ -1120,7 +1121,6 @@
         <a href="education.html">Explore</a>
       </nav>
 
-      <!-- Profile / Sign in -->
       <button type="button" class="profile-badge" onclick="toggleProfile()">
         <div class="profile-avatar" id="profile-avatar">G</div>
         <div>
@@ -1133,7 +1133,7 @@
 </header>
 
 <main>
-  <!-- ===== STUDIO OVERVIEW (NEW TOP SECTION) ===== -->
+  <!-- STUDIO OVERVIEW -->
   <section class="studio-overview">
     <div class="studio-overview-title">Studio overview</div>
     <div class="studio-overview-box">
@@ -1148,14 +1148,14 @@
         <div class="studio-layer">
           <strong>Backend API layer</strong><br />
           <span style="font-size:11px; color:var(--text-muted);">
-            Authentication · credits · plans · routing to each model pipeline
+            Authentication · plans · credits · routing to each model pipeline
           </span>
         </div>
         <div class="studio-arrow">↓</div>
         <div class="studio-layer">
           <strong>Runpod GPU workers</strong><br />
           <span style="font-size:11px; color:var(--text-muted);">
-            Your image, music, video and film models running on GPUs
+            Your image, music, video & film models running on GPUs
           </span>
         </div>
       </div>
@@ -1164,13 +1164,12 @@
         <div class="studio-roadmap-title">Roadmap</div>
         <ul class="studio-roadmap-list">
           <li>1. Finish static UI (this step).</li>
-          <li>2. Add a simple backend API for auth, plans and credits.</li>
+          <li>2. Add a backend API for auth, plans and credits.</li>
           <li>3. Connect API → Runpod workers for image generation.</li>
           <li>4. Expand to music, video and short film pipelines.</li>
         </ul>
         <div class="profile-small" style="margin-top:8px;">
-          This homepage already reflects the final user flow. Later you’ll plug the real API behind
-          plan selection, payments and each lab.
+          This page already matches the final flow. Later you’ll plug in real auth, billing and model calls behind it.
         </div>
       </div>
     </div>
@@ -1193,7 +1192,7 @@
       <div class="hero-actions">
         <button class="btn-primary" onclick="toggleProfile()">
           <span class="plus">+</span>
-          Get started – Choose a plan
+          Get started – choose a plan
         </button>
         <button class="btn-ghost" onclick="scrollToSection('plans')">
           View plans & credits
@@ -1202,24 +1201,22 @@
 
       <div class="hero-tags">
         <div class="hero-tag-pill">Basic – Free · 50 credits · watermark</div>
-        <div class="hero-tag-pill">Pro – $20 · WAV export</div>
-        <div class="hero-tag-pill">Creator – $30 · 4K access</div>
+        <div class="hero-tag-pill">Pro – $20 · 2500 credits</div>
+        <div class="hero-tag-pill">Creator – $30 · 5000 credits</div>
         <div class="hero-tag-pill">Creator Ultimate – $45 · 10000 credits</div>
       </div>
     </div>
 
     <div class="hero-right">
-      <!-- IMAGE -->
+      <!-- IMAGE LAB -->
       <article class="product-card" onclick="goToLab('image.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
-          <div class="product-pill">
-            IMAGE LAB
-          </div>
+          <div class="product-pill">IMAGE LAB</div>
           <h3 class="product-title">Image · Outfit · Edit</h3>
           <p class="product-desc">
-            Text-to-image, image-to-image, outfit swap, pose changes, inpainting,
-            and style reference. Each image uses <strong>5 credits</strong>.
+            Text-to-image, image-to-image, outfit swap, pose changes,
+            inpainting and style reference. Each image uses <strong>5 credits</strong>.
           </p>
           <div class="product-tags">
             <span class="product-tag">Text → Image</span>
@@ -1228,19 +1225,17 @@
             <span class="product-tag">Storyboards</span>
           </div>
           <div class="product-footer">
-            <span>Basic: watermark · higher tiers: clean</span>
+            <span>Basic: UHD preview + watermark</span>
             <span class="product-link">Open Image Lab →</span>
           </div>
         </div>
       </article>
 
-      <!-- MUSIC -->
+      <!-- MUSIC LAB -->
       <article class="product-card" onclick="goToLab('music.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
-          <div class="product-pill">
-            MUSIC LAB
-          </div>
+          <div class="product-pill">MUSIC LAB</div>
           <h3 class="product-title">Music · Lyrics · Vocals</h3>
           <p class="product-desc">
             Generate full songs, stems and lyric drafts. Train vocal styles and
@@ -1254,23 +1249,21 @@
             <span class="product-tag">Stems & MIDI (Ultimate)</span>
           </div>
           <div class="product-footer">
-            <span>Stems & MIDI: 50 credits (Music/Creator Ultimate)</span>
+            <span>Stems & MIDI: 50 credits (Ultimate)</span>
             <span class="product-link">Open Music Lab →</span>
           </div>
         </div>
       </article>
 
-      <!-- VIDEO -->
+      <!-- VIDEO LAB -->
       <article class="product-card" onclick="goToLab('video.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
-          <div class="product-pill">
-            VIDEO LAB
-          </div>
+          <div class="product-pill">VIDEO LAB</div>
           <h3 class="product-title">Video · Edits · Lip sync</h3>
           <p class="product-desc">
-            Text-to-video, image-to-video and reference-based clips. Add lip sync
-            using generated or uploaded audio. Base video uses
+            Text-to-video, image-to-video and reference-based clips. Add lip
+            sync using generated or uploaded audio. Base video uses
             <strong>10 credits</strong>, lip sync adds <strong>+10 credits</strong>.
           </p>
           <div class="product-tags">
@@ -1290,9 +1283,7 @@
       <article class="product-card" onclick="goToLab('film.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
-          <div class="product-pill">
-            SHORT FILMS
-          </div>
+          <div class="product-pill">SHORT FILMS</div>
           <h3 class="product-title">Short films · Scenes</h3>
           <p class="product-desc">
             Build multi-scene short films with scripts, storyboards, and linked
@@ -1328,14 +1319,16 @@
         <div class="plan-name">Basic</div>
         <div class="plan-price">$0 / month · 50 credits</div>
         <div class="plan-meta">
-          Try everything with a watermark. Good audio and video quality so your label never sits on something low.
+          Free plan with UHD-quality previews and a Sulandra watermark on every export.
+          Perfect for testing the real quality before subscribing.
         </div>
         <ul class="plan-list">
           <li>• 50 credits per month included</li>
-          <li>• Image, Music, Video and Short Film previews</li>
-          <li>• MP3 audio only, always with watermark</li>
-          <li>• Cannot buy extra credits or remove watermark</li>
-          <li>• Great for testing the full workflow before upgrading</li>
+          <li>• Image, Music, Video & Short Film previews</li>
+          <li>• UHD and higher previews allowed</li>
+          <li>• MP3-only audio, always with watermark</li>
+          <li>• Watermark on all visuals</li>
+          <li>• Cannot buy extra credits or add-ons</li>
         </ul>
       </div>
 
@@ -1344,15 +1337,16 @@
         <div class="plan-name">Pro</div>
         <div class="plan-price">$20 / month · 2500 credits</div>
         <div class="plan-meta">
-          For serious creators who want WAV export, higher resolutions and the ability to add Ultimate packs.
+          For serious creators who need clean exports, WAV audio and higher resolutions,
+          with optional Ultimate packs.
         </div>
         <ul class="plan-list">
           <li>• 2500 credits per month included</li>
           <li>• Clean outputs, no watermark</li>
-          <li>• WAV export for music and videos (audio)</li>
-          <li>• Higher resolutions (HD / UHD depending on tool)</li>
-          <li>• Can buy credit packs (100 / 200 / 300 credits)</li>
-          <li>• Optional add-ons: Music, Image and Video Ultimate (+$5 each)</li>
+          <li>• WAV + MP3 audio export</li>
+          <li>• HD / UHD visuals (4K where supported)</li>
+          <li>• Can buy credit packs</li>
+          <li>• Optional Music / Image / Video Ultimate add-ons (+$5 each)</li>
         </ul>
       </div>
 
@@ -1360,15 +1354,16 @@
       <div class="plan-card" onclick="openPlanDetails('creator')">
         <div class="plan-ribbon">Best value</div>
         <div class="plan-name">Creator</div>
-        <div class="plan-price">$30 / month · 500 credits</div>
+        <div class="plan-price">$30 / month · 5000 credits</div>
         <div class="plan-meta">
-          For power users who want access to 4K, Studio workflows and deeper control, with focused monthly credits.
+          For power users who want 4K, Studio workflows and Ultimate add-ons,
+          with enough credits for real monthly projects.
         </div>
         <ul class="plan-list">
-          <li>• 500 credits per month included</li>
+          <li>• 5000 credits per month included</li>
           <li>• 4K support for visuals where available</li>
           <li>• WAV export and clean outputs</li>
-          <li>• Full access to Studio workflows for Music and Video</li>
+          <li>• Full Studio access for Music & Video</li>
           <li>• Can buy extra credit packs</li>
           <li>• Can add Music / Image / Video Ultimate for deep control</li>
         </ul>
@@ -1380,90 +1375,80 @@
         <div class="plan-name">Creator Ultimate</div>
         <div class="plan-price">$45 / month · 10000 credits</div>
         <div class="plan-meta">
-          Everything unlocked. Designed for full productions, short films and intense Studio use across all categories.
+          Everything unlocked. Designed for full productions, short films and
+          heavy Studio use across all categories.
         </div>
         <ul class="plan-list">
           <li>• 10000 credits per month included</li>
           <li>• 4K support across visual tools where available</li>
           <li>• Full Studio + Short Film workflow</li>
           <li>• Stems & MIDI export for 50 credits per song</li>
-          <li>• All Ultimate features included (no separate add-on needed)</li>
+          <li>• All Ultimate features included</li>
           <li>• Priority for future Sulandra AI Studio features</li>
         </ul>
       </div>
     </div>
 
-    <div class="credits-table" style="margin-top:10px;">
+    <div class="credits-table">
       <div class="credits-table-row">
-        <strong>Credit usage per feature:</strong>
-        <span></span>
+        <strong>Credit usage per feature:</strong><span></span>
       </div>
       <div class="credits-table-row">
-        <span>• 1 Image (text or simple image-to-image)</span>
-        <span>5 credits</span>
+        <span>• 1 image (text or simple image-to-image)</span><span>5 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• Advanced image-to-image / heavy edit</span>
-        <span>15 credits</span>
+        <span>• Advanced image-to-image / heavy edit</span><span>15 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• 1 Song / music generation</span>
-        <span>10 credits</span>
+        <span>• 1 song / music generation</span><span>10 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• Text-to-video clip</span>
-        <span>10 credits</span>
+        <span>• Text-to-video clip</span><span>10 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• YouTube reference (learn style)</span>
-        <span>10 credits</span>
+        <span>• YouTube reference (learn style)</span><span>10 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• Lip sync add-on for a video</span>
-        <span>+10 credits</span>
+        <span>• Lip sync add-on for a video</span><span>+10 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• Stems + MIDI export (Music / Creator Ultimate)</span>
-        <span>50 credits</span>
+        <span>• Stems + MIDI export (Ultimate)</span><span>50 credits</span>
       </div>
       <div class="credits-table-row">
-        <span>• Short film (multi-scene)</span>
-        <span>100 credits</span>
+        <span>• Short film (multi-scene)</span><span>100 credits</span>
       </div>
 
       <div style="margin-top:8px; margin-bottom:4px;">
-        <strong>Buy extra credits (paid plans only):</strong>
+        <strong>Buy extra credits (Pro / Creator / Creator Ultimate only):</strong>
       </div>
       <div class="credits-table-row">
-        <span>100 credits</span>
-        <span>$5</span>
+        <span>100 credits</span><span>$5</span>
       </div>
       <div class="credits-table-row">
-        <span>200 credits</span>
-        <span>$8</span>
+        <span>200 credits</span><span>$8</span>
       </div>
       <div class="credits-table-row">
-        <span>300 credits</span>
-        <span>$10</span>
+        <span>300 credits</span><span>$10</span>
       </div>
 
       <div class="yearly-note">
         <strong>Yearly subscriptions:</strong><br />
-        • Pro: $228 / year (5% discount)<br />
-        • Creator: $331.20 / year (8% discount)<br />
-        • Creator Ultimate: $486 / year (10% discount)<br />
-        Users can upgrade or downgrade at any time. In the real app, upgrades keep your remaining credits and only charge the difference.
-        New users can start with a 7-day free trial on a chosen plan (valid payment method required; exports disabled during trial).
+        • Pro: $228 / year (5% discount) – normal $240<br />
+        • Creator: $331.20 / year (8% discount) – normal $360<br />
+        • Creator Ultimate: $486 / year (10% discount) – normal $540<br />
+        Users can upgrade or downgrade at any time. New users can start with a
+        7-day free trial on a chosen paid plan (valid payment required;
+        exports disabled during the trial).
       </div>
     </div>
   </section>
 
-  <!-- CONTACT / MESSAGE -->
+  <!-- CONTACT -->
   <section class="section">
     <div class="section-header">
       <div class="section-title">Contact us · Leave a message</div>
       <div class="section-sub">
-        Questions about plans, credits, Studio, or custom models? Send us a message.
+        Questions about plans, credits, Studio or custom models? Send us a message.
       </div>
     </div>
 
@@ -1521,7 +1506,7 @@
         <ul class="plan-list">
           <li>• Users pick a plan (Basic, Pro, Creator, Creator Ultimate).</li>
           <li>• They can start a 7-day trial with a valid payment method.</li>
-          <li>• They can upgrade / downgrade anytime from the Profile panel.</li>
+          <li>• They can upgrade/downgrade anytime from Profile → Subscription.</li>
           <li>• They can add or remove Ultimate add-ons per category.</li>
         </ul>
       </div>
@@ -1533,10 +1518,42 @@
   Sulandra AI Studio · One credit system, one brain. Plans, trials and payments are managed from the Profile.
 </footer>
 
-<!-- PROFILE OVERLAY (unchanged logic, only UI) -->
+<!-- PROFILE OVERLAY -->
 <div class="profile-overlay" id="profile-overlay">
-  <!-- ... same profile panel content as before ... -->
-  <!-- (keeping for brevity; use the version from previous response if you need to re-paste) -->
+  <div class="profile-panel">
+    <div class="profile-header">
+      <div class="profile-header-main">
+        <div class="profile-avatar-lg" id="profile-avatar-lg">G</div>
+        <div>
+          <div class="profile-header-text-main" id="profile-name">Guest</div>
+          <div class="profile-header-text-sub" id="profile-plan-label">
+            Not signed in
+          </div>
+        </div>
+      </div>
+      <button class="close-btn" type="button" onclick="toggleProfile()">Close</button>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-menu">
+        <button id="menu-overview" class="active" onclick="setProfileSection('overview')">View profile</button>
+        <button onclick="setProfileSection('edit')">Edit profile</button>
+        <button onclick="setProfileSection('invite')">Invite friends</button>
+        <button onclick="setProfileSection('subscription')">Subscription</button>
+        <button onclick="setProfileSection('account')">Manage account</button>
+        <button onclick="setProfileSection('theme')">Theme</button>
+      </div>
+
+      <div class="profile-content" id="profile-content">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <div class="profile-footer">
+      <div>Signed in state is simulated here. Real auth & billing will connect later.</div>
+      <button type="button" id="sign-toggle" onclick="toggleSignIn()">Sign in</button>
+    </div>
+  </div>
 </div>
 
 <!-- PLAN DETAIL OVERLAY -->
@@ -1586,12 +1603,7 @@
 </div>
 
 <script>
-  /* NOTE: For brevity I’m only adding the NEW logic here.
-     Keep the full profile JS from the previous version under this script
-     (user state, toggleProfile, simulatePlan, etc.) so everything still works.
-  */
-
-  // Simple stub so this file runs by itself:
+  // Simple user state simulation
   let isSignedIn = false;
   let user = {
     name: "Guest",
@@ -1602,19 +1614,6 @@
     addons: { musicUltimate:false, imageUltimate:false, videoUltimate:false }
   };
 
-  function toggleProfile() {
-    const overlay = document.getElementById("profile-overlay");
-    if (!overlay) return;
-    overlay.classList.toggle("show");
-  }
-
-  // ==== NEW: hero lab navigation ====
-  function goToLab(path) {
-    window.location.href = path;
-  }
-
-  // ==== PLAN DETAILS OVERLAY ====
-
   const planConfig = {
     basic: {
       name: "Basic",
@@ -1623,8 +1622,8 @@
       discount: 0,
       credits: "50 credits / month",
       description:
-        "Start for free. Great for testing full workflows with a watermark. MP3 audio only; no credit packs.",
-      yearlyNote: "Always free · no yearly billing needed."
+        "Start for free. UHD-quality previews with watermark, MP3-only audio and 50 monthly credits.",
+      yearlyNote: "Basic is always free. Yearly billing only applies to paid plans."
     },
     pro: {
       name: "Pro",
@@ -1634,16 +1633,17 @@
       credits: "2500 credits / month",
       description:
         "For serious creators who need WAV export, higher resolutions and credit packs.",
-      yearlyNote: "Normal yearly cost would be $240; you pay $228 (save $12, 5%)."
+      yearlyNote:
+        "Normal yearly cost would be $240; you pay $228 (save $12, 5%)."
     },
     creator: {
       name: "Creator",
       monthly: 30,
       yearly: 331.2,
       discount: 8,
-      credits: "500 credits / month",
+      credits: "5000 credits / month",
       description:
-        "Power users who want 4K, Studio workflows and Ultimate add-ons.",
+        "Power users who want 4K, Studio workflows and Ultimate add-ons, with enough credits for real monthly projects.",
       yearlyNote:
         "Normal yearly cost would be $360; you pay $331.20 (save $28.80, 8%)."
     },
@@ -1654,8 +1654,7 @@
       discount: 10,
       credits: "10000 credits / month",
       description:
-        "Everything unlocked: Short Films + Studio heavy use + Stems & MIDI."
-      ,
+        "Everything unlocked: Short Films + Studio heavy use + Stems & MIDI.",
       yearlyNote:
         "Normal yearly cost would be $540; you pay $486 (save $54, 10%)."
     }
@@ -1663,6 +1662,180 @@
 
   let currentPlanKey = "pro";
   let currentBilling = "monthly";
+
+  function goToLab(path) {
+    window.location.href = path;
+  }
+
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  /* PROFILE */
+
+  function toggleProfile() {
+    const overlay = document.getElementById("profile-overlay");
+    overlay.classList.toggle("show");
+    if (overlay.classList.contains("show")) {
+      renderProfileSection("overview");
+    }
+  }
+
+  function setProfileSection(section) {
+    document
+      .querySelectorAll(".profile-menu button")
+      .forEach(btn => btn.classList.remove("active"));
+
+    if (section === "overview") document.getElementById("menu-overview").classList.add("active");
+    else document
+      .querySelector(`.profile-menu button[onclick*="${section}"]`)
+      .classList.add("active");
+
+    renderProfileSection(section);
+  }
+
+  function renderProfileSection(section) {
+    const content = document.getElementById("profile-content");
+
+    if (section === "overview") {
+      content.innerHTML = `
+        <div class="profile-section-title">Profile overview</div>
+        <div class="profile-section-sub">
+          Signed in state is simulated. Later this will show real account data.
+        </div>
+        <div class="profile-line"><strong>Name:</strong> ${user.name}</div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planConfig[user.plan].name}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
+        <div class="profile-small">
+          In the real app you’ll also see: last payments, invoices, usage charts and security settings.
+        </div>
+      `;
+    } else if (section === "edit") {
+      content.innerHTML = `
+        <div class="profile-section-title">Edit profile</div>
+        <div class="profile-section-sub">Change your display name. (Simulated only.)</div>
+        <label for="edit-name">Display name</label>
+        <input id="edit-name" type="text" value="${user.name}" />
+        <button class="btn-primary" style="margin-top:8px;" type="button" onclick="saveProfileName()">
+          <span class="plus">+</span> Save name
+        </button>
+        <div class="profile-small">In production this would update your user record.</div>
+      `;
+    } else if (section === "invite") {
+      content.innerHTML = `
+        <div class="profile-section-title">Invite friends</div>
+        <div class="profile-section-sub">
+          Share Sulandra AI Studio. Later you can give invite links that reward you with credits.
+        </div>
+        <div class="profile-small">Sample invite link (mock):</div>
+        <div class="chip">https://sulandra.ai/invite/YOURCODE</div>
+        <div class="profile-small">Copy this into your clip-notes for now. Real tracking comes later.</div>
+      `;
+    } else if (section === "subscription") {
+      const planName = planConfig[user.plan].name;
+      content.innerHTML = `
+        <div class="profile-section-title">Subscription & credits</div>
+        <div class="profile-section-sub">
+          Choose or change your plan. This is only simulated here, but it shows the final UX.
+        </div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planName}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
+        <div class="profile-small">Click a chip to simulate switching plans:</div>
+        <div style="margin-bottom:6px;">
+          <span class="chip" onclick="simulatePlan('basic')">Basic</span>
+          <span class="chip" onclick="simulatePlan('pro')">Pro</span>
+          <span class="chip" onclick="simulatePlan('creator')">Creator</span>
+          <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
+        </div>
+        <div class="profile-small">
+          In the real app, plan changes would open a payment screen and keep your remaining credits when upgrading.
+        </div>
+      `;
+    } else if (section === "account") {
+      content.innerHTML = `
+        <div class="profile-section-title">Manage account</div>
+        <div class="profile-section-sub">
+          This is where you’ll manage passwords, devices, billing history and security in the real app.
+        </div>
+        <ul class="plan-list">
+          <li>• View invoices and payment history</li>
+          <li>• Update payment methods (PayPal, cards, Apple Pay)</li>
+          <li>• Turn auto-renew on or off</li>
+          <li>• Download receipts for taxes</li>
+        </ul>
+      `;
+    } else if (section === "theme") {
+      content.innerHTML = `
+        <div class="profile-section-title">Theme</div>
+        <div class="profile-section-sub">
+          Theme switching is not wired yet, but here is where light / dark / high-contrast options will live.
+        </div>
+        <div class="chip disabled">Dark (current)</div>
+        <div class="chip disabled">Light</div>
+        <div class="chip disabled">High contrast</div>
+      `;
+    }
+
+    updateProfileHeader();
+  }
+
+  function updateProfileHeader() {
+    document.getElementById("profile-avatar").textContent = user.initial;
+    document.getElementById("profile-avatar-lg").textContent = user.initial;
+    document.getElementById("profile-name").textContent = user.name;
+    document.getElementById("profile-label").textContent = isSignedIn ? "Profile" : "Sign in";
+    document.getElementById("profile-credits").textContent =
+      `${user.credits} / ${user.maxCredits} credits`;
+    const planLabel = isSignedIn
+      ? `Plan: ${planConfig[user.plan].name}`
+      : "Not signed in";
+    document.getElementById("profile-plan-label").textContent = planLabel;
+    document.getElementById("sign-toggle").textContent =
+      isSignedIn ? "Sign out" : "Sign in";
+  }
+
+  function saveProfileName() {
+    const input = document.getElementById("edit-name");
+    const name = input.value.trim() || "Guest";
+    user.name = name;
+    user.initial = name.charAt(0).toUpperCase();
+    renderProfileSection("overview");
+    alert("Name updated in local state. In production this would save to your account.");
+  }
+
+  function toggleSignIn() {
+    isSignedIn = !isSignedIn;
+    if (isSignedIn && user.maxCredits === 0) {
+      // default: Pro demo
+      simulatePlan("pro", true);
+    } else {
+      updateProfileHeader();
+      renderProfileSection("overview");
+    }
+  }
+
+  function simulatePlan(key, silent) {
+    user.plan = key;
+    if (key === "basic") {
+      user.maxCredits = 50;
+    } else if (key === "pro") {
+      user.maxCredits = 2500;
+    } else if (key === "creator") {
+      user.maxCredits = 5000;
+    } else if (key === "creatorUltimate") {
+      user.maxCredits = 10000;
+    }
+    user.credits = user.maxCredits;
+    updateProfileHeader();
+    renderProfileSection("subscription");
+    if (!silent) {
+      alert("Plan switched in local demo to: " + planConfig[key].name);
+    }
+  }
+
+  /* PLAN MODAL */
 
   function openPlanDetails(key) {
     currentPlanKey = key;
@@ -1703,31 +1876,27 @@
     if (currentBilling === "monthly") {
       priceMain.textContent =
         config.monthly === 0 ? "$0" : "$" + config.monthly;
-      priceNote.textContent =
-        "per month · " + config.credits;
+      priceNote.textContent = "per month · " + config.credits;
+      rowYearly.style.display = "none";
       if (config.monthly === 0) {
-        rowYearly.style.display = "none";
         extra.textContent =
-          "Basic is always free with 50 credits and watermark. Upgrade anytime to unlock clean exports and WAV.";
+          "Basic stays free with 50 credits and watermark. Upgrade anytime to unlock clean exports and WAV.";
       } else {
-        rowYearly.style.display = "none";
         extra.textContent =
           "Pay monthly for flexibility, or switch to yearly later to save more.";
       }
     } else {
       // yearly
       if (config.monthly === 0) {
-        // basic – no yearly billing
         priceMain.textContent = "$0";
         priceNote.textContent =
           "Always free · 50 credits / month · watermark";
         rowYearly.style.display = "none";
         extra.textContent =
-          "Basic stays free. Yearly discounts apply only to paid plans.";
+          "Basic is always free. Yearly discounts apply only to paid plans.";
       } else {
         priceMain.textContent = "$" + config.yearly.toFixed(2);
-        priceNote.textContent =
-          "per year · " + config.credits;
+        priceNote.textContent = "per year · " + config.credits;
         const normalYearPrice = config.monthly * 12;
         strike.textContent = "$" + normalYearPrice.toFixed(2) + " / year";
         const savings = normalYearPrice - config.yearly;
@@ -1738,7 +1907,8 @@
           config.discount +
           "%)";
         rowYearly.style.display = "flex";
-        extra.textContent = config.yearlyNote +
+        extra.textContent =
+          config.yearlyNote +
           " Billing renews yearly; you can downgrade or upgrade at any time.";
       }
     }
@@ -1748,15 +1918,15 @@
     alert(
       "Signup flow placeholder.\n\nIn the real app, this button would open your authentication + payment flow for the selected plan and billing period."
     );
+    // For demo, also set user plan
+    simulatePlan(currentPlanKey, true);
+    isSignedIn = true;
+    updateProfileHeader();
+    toggleProfile();
+    closePlanDetails();
   }
 
-  // ==== Simple helpers (contact + scroll) ====
-
-  function scrollToSection(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+  /* CONTACT */
 
   function handleContact() {
     const name = document.getElementById("contact-name").value.trim();
@@ -1773,6 +1943,9 @@
       "Message captured locally. Later, this will send to your support backend or email.";
     alert("Message captured locally. In production, this would be sent to support.");
   }
+
+  // Initialize header state
+  updateProfileHeader();
 </script>
 </body>
 </html>
