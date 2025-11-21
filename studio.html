@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Sulandra AI Studio – Sound · Cinema · Photolab</title>
+  <title>Sulandra Creative Studio – Hub (Sound · Cinema · Photolab)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -17,10 +17,8 @@
       --border-soft: rgba(255,255,255,0.08);
       --text-main: #f5f7ff;
       --text-muted: #9ca4c7;
-      --danger: #ff4b6a;
-      --success: #3ed8a9;
-      --radius-xl: 18px;
-      --radius-lg: 14px;
+      --radius-xl: 22px;
+      --radius-lg: 16px;
       --radius-pill: 999px;
       --shadow-soft: 0 0 40px rgba(0,0,0,0.8);
     }
@@ -32,6 +30,7 @@
       --panel-alt: #23263a;
     }
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -45,11 +44,11 @@
     }
     a { color: inherit; text-decoration: none; }
 
-    /* NAV */
+    /* HEADER / NAV */
     header {
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 40;
       backdrop-filter: blur(18px);
       background: linear-gradient(to right, rgba(5,7,18,0.96), rgba(5,7,18,0.86));
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -145,20 +144,93 @@
       letter-spacing:0.12em;
     }
 
+    /* MAIN LAYOUT */
     main {
       flex:1;
       max-width: 1280px;
-      margin: 14px auto 24px;
+      margin: 14px auto 28px;
       padding: 0 18px;
       display:flex;
-      flex-direction:column;
-      gap:12px;
+      gap:14px;
+    }
+    @media (max-width: 960px) {
+      main {
+        flex-direction:column;
+      }
     }
 
-    /* Menubar */
+    /* SIDE MENU */
+    .side-menu {
+      width: 210px;
+      flex-shrink:0;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(150deg, rgba(10,13,28,0.98), rgba(4,6,18,0.98));
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 10px 12px;
+      box-shadow: var(--shadow-soft);
+      position: sticky;
+      top: 72px;
+      height: fit-content;
+    }
+    @media (max-width: 960px) {
+      .side-menu {
+        width: 100%;
+        position: static;
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px;
+      }
+    }
+    .menu-section-title {
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      color:var(--text-muted);
+      margin-bottom:8px;
+    }
+    .side-link {
+      font-size:12px;
+      padding:7px 9px;
+      border-radius:9px;
+      color:var(--text-muted);
+      cursor:pointer;
+      border:1px solid transparent;
+      display:flex;
+      align-items:center;
+      gap:7px;
+      margin-bottom:4px;
+    }
+    .side-link span.icon { font-size:15px; }
+    .side-link:hover {
+      border-color:rgba(255,255,255,0.14);
+      background:rgba(9,12,26,0.98);
+      color:var(--text-main);
+    }
+    .side-link.active {
+      background:linear-gradient(135deg,#ff5af1,#45f1ff);
+      color:#050712;
+      border-color:transparent;
+      font-weight:600;
+      box-shadow:0 0 16px rgba(69,241,255,0.8);
+    }
+    .side-footer {
+      margin-top:10px;
+      font-size:11px;
+      color:var(--text-muted);
+    }
+
+    /* CONTENT AREA */
+    .content {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    /* TOP BAR / THEME */
     .studio-menubar {
       border-radius: 14px;
-      padding: 6px 10px;
+      padding: 7px 10px;
       background: linear-gradient(135deg,rgba(10,13,28,0.97),rgba(4,6,18,0.98));
       border: 1px solid rgba(255,255,255,0.1);
       display: flex;
@@ -168,27 +240,26 @@
       flex-wrap:wrap;
       gap:6px;
     }
-    .menu-left, .menu-right {
+    .menu-left {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      font-size:11px;
+      color:var(--text-muted);
+    }
+    .menu-left strong {
+      color:var(--text-main);
+    }
+    .menu-right {
       display:flex;
       align-items:center;
       gap:8px;
       flex-wrap:wrap;
     }
-    .menu-item {
-      font-size:11px;
-      padding:4px 8px;
-      border-radius:7px;
-      color:var(--text-muted);
-      cursor:pointer;
-    }
-    .menu-item:hover {
-      background:rgba(255,255,255,0.06);
-      color:var(--text-main);
-    }
-    .menu-item.bold {font-weight:600;}
     .theme-chip{
-      padding:4px 9px;
-      border-radius:999px;
+      padding:5px 10px;
+      border-radius:var(--radius-pill);
       border:1px solid rgba(255,255,255,0.18);
       font-size:10px;
       cursor:pointer;
@@ -203,976 +274,330 @@
       box-shadow:0 0 12px rgba(69,241,255,0.7);
     }
 
-    /* Overview cards */
-    .overview-grid {
-      margin-top: 6px;
+    /* HERO / SLIDER */
+    .hero {
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(circle at 0% 0%,rgba(255,90,241,0.25),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(69,241,255,0.25),transparent 60%),
+        rgba(6,9,24,0.98);
+      border:1px solid rgba(255,255,255,0.16);
+      padding: 16px 16px 14px;
+      box-shadow: var(--shadow-soft);
+      display:grid;
+      grid-template-columns: minmax(0,1.6fr) minmax(0,1.2fr);
+      gap:14px;
+    }
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+    .hero-main-title {
+      font-size:21px;
+      font-weight:700;
+      letter-spacing:0.03em;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .hero-sub {
+      font-size:13px;
+      color:var(--text-muted);
+      max-width:520px;
+      line-height:1.7;
+    }
+    .hero-cta-row {
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .btn {
+      border-radius: var(--radius-pill);
+      padding:7px 14px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(7,9,20,0.98);
+      color:var(--text-main);
+      font-size:12px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+    .btn-primary {
+      background:linear-gradient(120deg,#ff5af1,#45f1ff);
+      color:#050712;
+      border-color:transparent;
+      font-weight:600;
+      box-shadow:0 0 14px rgba(69,241,255,0.7);
+    }
+    .badge-inline {
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.2);
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      color:var(--text-muted);
+    }
+
+    /* Slider */
+    .hero-slider {
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg,var(--panel),var(--panel-alt));
+      border:1px solid rgba(255,255,255,0.16);
+      padding:10px 11px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .slider-label {
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      color:var(--text-muted);
+    }
+    .slider-pill-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      font-size:10px;
+    }
+    .slider-pill {
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(7,9,20,0.98);
+      color:var(--text-muted);
+    }
+    .slider-card {
+      margin-top:4px;
+      border-radius:14px;
+      padding:10px 11px;
+      background:
+        radial-gradient(circle at 0% 0%,rgba(255,255,255,0.05),transparent 70%),
+        #050712;
+      border:1px solid rgba(255,255,255,0.14);
+      min-height:120px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .slider-title {
+      font-size:14px;
+      font-weight:600;
+      margin-bottom:4px;
+    }
+    .slider-body {
+      font-size:12px;
+      color:var(--text-muted);
+      line-height:1.7;
+    }
+    .slider-footer {
+      margin-top:8px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:11px;
+      color:var(--text-muted);
+    }
+    .slider-dots {
+      display:flex;
+      gap:4px;
+    }
+    .slider-dot {
+      width:6px;height:6px;border-radius:999px;
+      background:rgba(255,255,255,0.18);
+    }
+    .slider-dot.active {
+      width:16px;
+      background:linear-gradient(135deg,#ff5af1,#45f1ff);
+      box-shadow:0 0 10px rgba(69,241,255,0.9);
+    }
+    .slider-nav {
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+    .slider-nav button {
+      width:24px;height:24px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(7,9,20,0.98);
+      color:var(--text-main);
+      cursor:pointer;
+      font-size:13px;
+    }
+
+    /* APP CARDS */
+    .app-section {
+      border-radius: var(--radius-xl);
+      background: rgba(7,10,24,0.98);
+      border:1px solid rgba(255,255,255,0.14);
+      padding:12px 13px;
+      box-shadow:var(--shadow-soft);
+    }
+    .section-heading {
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:0.16em;
+      color:var(--text-muted);
+      margin-bottom:4px;
+    }
+    .section-title-main {
+      font-size:16px;
+      font-weight:600;
+      margin-bottom:8px;
+    }
+    .app-grid {
       display:grid;
       grid-template-columns:repeat(3,minmax(0,1fr));
       gap:10px;
     }
-    @media(max-width:1000px){
-      .overview-grid{grid-template-columns:repeat(1,minmax(0,1fr));}
+    @media (max-width: 960px) {
+      .app-grid { grid-template-columns: minmax(0,1fr); }
     }
-    .overview-card {
-      position:relative;
-      overflow:hidden;
-      border-radius:var(--radius-xl);
-      padding:14px 14px 12px;
+    .app-card {
+      border-radius: 16px;
       background:
-        radial-gradient(circle at 0% 0%,rgba(255,90,241,0.35),transparent 60%),
-        radial-gradient(circle at 100% 100%,rgba(69,241,255,0.28),transparent 60%),
-        rgba(9,11,26,0.98);
-      border:1px solid rgba(255,255,255,0.12);
-      box-shadow:0 0 28px rgba(0,0,0,0.85);
+        radial-gradient(circle at 0% 0%,rgba(255,90,241,0.18),transparent 65%),
+        radial-gradient(circle at 100% 100%,rgba(69,241,255,0.18),transparent 60%),
+        #060819;
+      border:1px solid rgba(255,255,255,0.14);
+      padding:11px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
       cursor:pointer;
-      transition:transform .16s ease-out, box-shadow .16s ease-out, border-color .16s;
+      transition: transform .16s ease-out, box-shadow .16s, border-color .16s;
     }
-    .overview-card::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background:conic-gradient(from 220deg,rgba(255,90,241,0.12),rgba(69,241,255,0.12),rgba(255,209,90,0.16),rgba(255,90,241,0.12));
-      opacity:0;
-      animation:pulseGlow 6s linear infinite;
-      mix-blend-mode:screen;
-      pointer-events:none;
-    }
-    .overview-card:hover {
+    .app-card:hover {
       transform:translateY(-2px);
       border-color:rgba(255,255,255,0.26);
-      box-shadow:0 0 36px rgba(69,241,255,0.7);
+      box-shadow:0 0 24px rgba(69,241,255,0.7);
     }
-    .overview-tagline{
+    .app-tagline {
       font-size:10px;
       text-transform:uppercase;
-      letter-spacing:0.18em;
+      letter-spacing:0.14em;
       color:rgba(245,247,255,0.7);
-      margin-bottom:4px;
     }
-    .overview-card h2{
-      margin:0 0 4px;
-      font-size:15px;
-    }
-    .overview-card p{
-      margin:0;
-      font-size:12px;
-      color:var(--text-muted);
-      line-height:1.6;
-    }
-    .overview-chip-row{
-      margin-top:8px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      font-size:10px;
-    }
-    .overview-chip{
-      padding:3px 7px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(7,10,24,0.96);
-      color:var(--text-muted);
-    }
-    @keyframes pulseGlow {
-      0%{opacity:0;}
-      30%{opacity:0.6;}
-      60%{opacity:0;}
-      100%{opacity:0;}
-    }
-
-    /* Mode tabs */
-    .mode-tabs {
-      margin-top:8px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .tab-buttons{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-    }
-    .mode-tab{
-      border-radius:var(--radius-pill);
-      padding:7px 14px;
-      border:1px solid rgba(255,255,255,0.16);
-      background:rgba(8,10,22,0.98);
-      font-size:12px;
-      color:var(--text-muted);
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-    .mode-tab span.icon{font-size:16px;}
-    .mode-tab.active{
-      background:linear-gradient(120deg,#ff5af1,#45f1ff);
-      border-color:transparent;
-      color:#050712;
-      font-weight:600;
-      box-shadow:0 0 16px rgba(69,241,255,0.7);
-    }
-    .mode-helper{
-      font-size:11px;
-      color:var(--text-muted);
-    }
-
-    /* TRANSPORT */
-    .transport{
-      margin-top:6px;
-      border-radius:var(--radius-xl);
-      padding:8px 12px;
-      background:linear-gradient(135deg,rgba(13,18,40,0.97),rgba(4,6,18,0.98));
-      border:1px solid rgba(255,255,255,0.1);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      gap:10px;
-      box-shadow:var(--shadow-soft);
-    }
-    .transport-group{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .t-btn{
-      width:28px;height:28px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(9,11,26,0.98);
-      display:flex;align-items:center;justify-content:center;
+    .app-title {
       font-size:14px;
-      cursor:pointer;
-      color:var(--text-main);
+      font-weight:600;
     }
-    .t-btn.primary{
-      background:linear-gradient(120deg,#ff5af1,#45f1ff);
-      color:#050712;
-      border-color:transparent;
-      box-shadow:0 0 14px rgba(69,241,255,0.65);
-    }
-    .t-btn.playing{
-      box-shadow:0 0 16px rgba(69,241,255,0.9);
-    }
-    .t-btn.recording{
-      background:#ff4b6a;
-      border-color:#ff4b6a;
-      color:#050712;
-      box-shadow:0 0 14px rgba(255,75,106,0.9);
-    }
-    .t-btn.metronome-on{
-      background:linear-gradient(120deg,#ffd15a,#ff9f5a);
-      color:#050712;
-      box-shadow:0 0 14px rgba(255,209,90,0.9);
-    }
-    .transport-label{font-size:11px;color:var(--text-muted);}
-    .tiny-input{
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(3,5,14,0.98);
-      color:var(--text-main);
-      padding:4px 6px;
-      font-size:11px;
-      min-width:58px;
-    }
-    .badge-small{
-      padding:3px 7px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.18);
-      font-size:10px;
-      text-transform:uppercase;
-      letter-spacing:0.13em;
-      color:var(--text-muted);
-    }
-    .badge-route{
-      border-color:rgba(69,241,255,0.8);
-      color:var(--accent-2);
-    }
-    .toggle{
-      display:inline-flex;
-      align-items:center;
-      gap:4px;
-      font-size:11px;
-      color:var(--text-muted);
-      cursor:pointer;
-    }
-    .toggle input{margin:0;}
-
-    /* MODE containers */
-    .mode-container{
-      margin-top:10px;
-      border-radius:22px;
-      background:
-        radial-gradient(circle at 0% 0%,rgba(255,90,241,0.2),transparent 65%),
-        radial-gradient(circle at 100% 100%,rgba(69,241,255,0.25),transparent 60%),
-        rgba(4,6,16,0.98);
-      border:1px solid rgba(255,255,255,0.1);
-      box-shadow:var(--shadow-soft);
-      padding:10px;
-      display:none;
-    }
-    .mode-container.active{display:block;}
-
-    .panel{
-      border-radius:var(--radius-lg);
-      background:linear-gradient(135deg,var(--panel-soft),var(--panel));
-      border:1px solid rgba(255,255,255,0.12);
-      padding:8px 9px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .panel-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:0.12em;
-      color:var(--text-muted);
-    }
-    .panel-title-main{font-weight:600;color:var(--text-main);}
-    .panel-body{flex:1;overflow:auto;font-size:12px;}
-
-    /* SOUND LAYOUT */
-    .sound-layout{
-      display:grid;
-      grid-template-columns:260px minmax(0,1.8fr) 260px;
-      gap:10px;
-      min-height:480px;
-    }
-    @media(max-width:1100px){
-      .sound-layout{grid-template-columns:minmax(0,1fr);}
-    }
-
-    .browser-section-title{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:0.12em;
-      color:var(--text-muted);
-      margin-bottom:4px;
-    }
-    .browser-list{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .browser-item{
-      border-radius:9px;
-      padding:5px 7px;
-      background:rgba(6,8,18,0.95);
-      border:1px solid rgba(255,255,255,0.08);
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:6px;
-    }
-    .browser-item span.label{
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .browser-item:hover{
-      border-color:rgba(69,241,255,0.8);
-      box-shadow:0 0 10px rgba(69,241,255,0.6);
-    }
-
-    .sample-pads{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-top:4px;
-    }
-    .sample-pad{
-      flex:0 0 calc(33% - 4px);
-      min-width:60px;
-      border-radius:9px;
-      padding:6px 4px;
-      background:radial-gradient(circle at 30% 0%,rgba(255,255,255,0.08),transparent 60%);
-      border:1px solid rgba(255,255,255,0.16);
-      text-align:center;
-      font-size:10px;
-      cursor:pointer;
-      color:var(--text-muted);
-    }
-    .sample-pad:hover{
-      border-color:rgba(69,241,255,0.9);
-      color:var(--text-main);
-      box-shadow:0 0 12px rgba(69,241,255,0.7);
-    }
-
-    .sound-top-controls{
-      margin-top:4px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:6px;
-      font-size:11px;
-      color:var(--text-muted);
-      flex-wrap:wrap;
-    }
-    .loop-controls{
-      display:flex;
-      align-items:center;
-      gap:4px;
-      flex-wrap:wrap;
-    }
-
-    .timeline-sound{
-      border-radius:var(--radius-lg);
-      background:linear-gradient(145deg,var(--panel),var(--panel-alt));
-      border:1px solid rgba(255,255,255,0.12);
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-      min-height:440px;
-    }
-    .bar-ruler{
-      display:grid;
-      grid-template-columns:220px minmax(0,1fr);
-      font-size:10px;
-      color:var(--text-muted);
-      background:rgba(5,7,18,0.98);
-      border-bottom:1px solid rgba(255,255,255,0.08);
-    }
-    .bar-ruler-left{
-      padding:4px 8px;
-      border-right:1px solid rgba(255,255,255,0.08);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .bar-ruler-right{
-      padding:4px 8px;
-      background-image:linear-gradient(to right,rgba(255,255,255,0.07) 1px,transparent 1px);
-      background-size:70px 1px;
-      display:flex;
-      gap:70px;
-      overflow-x:auto;
-      scrollbar-width:thin;
-    }
-    .track-list{
-      flex:1;
-      overflow:auto;
-    }
-    .track-row{
-      display:grid;
-      grid-template-columns:220px minmax(0,1fr);
-      min-height:56px;
-      background:linear-gradient(to bottom,rgba(12,16,35,0.98),rgba(7,9,20,0.98));
-      border-bottom:1px solid rgba(255,255,255,0.08);
-    }
-    .track-header{
-      padding:6px 7px;
-      border-right:1px solid rgba(255,255,255,0.08);
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      font-size:11px;
-    }
-    .track-name-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:4px;
-    }
-    .track-name-main{font-weight:600;}
-    .track-controls{
-      display:flex;
-      align-items:center;
-      gap:4px;
-      flex-wrap:wrap;
-    }
-    .pill-small{
-      border-radius:999px;
-      padding:2px 5px;
-      border:1px solid rgba(255,255,255,0.22);
-      font-size:10px;
-      cursor:pointer;
-      background:rgba(5,7,18,0.96);
-      color:var(--text-muted);
-    }
-    .pill-small.red{border-color:rgba(255,75,106,0.9);color:var(--danger);}
-    .pill-small.green{border-color:rgba(62,216,169,0.9);color:var(--success);}
-    .pill-small.yellow{border-color:rgba(255,209,90,0.9);color:var(--accent-3);}
-    .pill-small.mute-on{
-      background:rgba(255,75,106,0.1);
-      color:var(--danger);
-    }
-    .pill-small.solo-on{
-      background:rgba(62,216,169,0.1);
-      color:var(--success);
-    }
-    .vol-row{
-      display:flex;
-      align-items:center;
-      gap:4px;
-      font-size:10px;
-      color:var(--text-muted);
-    }
-    .vol-row input[type="range"]{
-      flex:1;
-      accent-color:var(--accent-2);
-    }
-
-    .track-action-select{
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(3,5,14,0.98);
-      color:var(--text-muted);
-      padding:3px 6px;
-      font-size:10px;
-      min-width:120px;
-    }
-
-    .track-lane{
-      padding:6px 8px;
-      background-image:linear-gradient(to right,rgba(255,255,255,0.05) 1px,transparent 1px);
-      background-size:70px 1px;
-      display:flex;
-      gap:6px;
-      align-items:center;
-      overflow-x:auto;
-      scrollbar-width:thin;
-    }
-    .clip{
-      min-width:120px;
-      max-width:260px;
-      border-radius:9px;
-      padding:4px 7px;
-      font-size:10px;
-      background:linear-gradient(135deg,rgba(255,90,241,0.5),rgba(69,241,255,0.45));
-      box-shadow:0 0 16px rgba(69,241,255,0.7);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      cursor:pointer;
-    }
-    .clip.stem{
-      background:linear-gradient(135deg,rgba(255,209,90,0.5),rgba(255,140,92,0.5));
-      box-shadow:0 0 16px rgba(255,209,90,0.7);
-    }
-    .clip.midi{
-      background:linear-gradient(135deg,rgba(62,216,169,0.5),rgba(69,241,255,0.45));
-      box-shadow:0 0 16px rgba(62,216,169,0.7);
-    }
-    .cell-empty{
-      min-width:130px;
-      border-radius:9px;
-      border:1px dashed rgba(255,255,255,0.22);
-      padding:4px 7px;
-      font-size:10px;
-      color:var(--text-muted);
-      cursor:pointer;
-      background:rgba(5,7,18,0.9);
-    }
-
-    .mixer-channels{
-      display:flex;
-      align-items:flex-end;
-      gap:8px;
-      overflow-x:auto;
-      padding-bottom:4px;
-    }
-    .mixer-strip{
-      width:60px;
-      border-radius:12px;
-      background:linear-gradient(145deg,var(--panel),var(--panel-soft));
-      border:1px solid rgba(255,255,255,0.16);
-      padding:6px 4px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:4px;
-      font-size:10px;
-    }
-    .mixer-title{font-size:10px;}
-    .mixer-meter{
-      width:18px;
-      height:110px;
-      border-radius:999px;
-      background:linear-gradient(to top,#1e222f,#25293a);
-      border:1px solid rgba(255,255,255,0.18);
-      position:relative;
-      overflow:hidden;
-    }
-    .mixer-meter-fill{
-      position:absolute;
-      left:2px;
-      right:2px;
-      bottom:2px;
-      height:60%;
-      border-radius:999px;
-      background:linear-gradient(to top,#41e38f,#ffd15a,#ff5a7a);
-      box-shadow:0 0 10px rgba(65,227,143,0.9);
-    }
-    .mixer-fader{
-      width:100%;
-      margin-top:4px;
-    }
-    .mixer-fader input[type="range"]{
-      width:100%;
-      accent-color:var(--accent);
-    }
-    .mixer-btn-row{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:3px;
-    }
-    .mixer-btn{
-      font-size:9px;
-      padding:2px 4px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(6,8,18,0.98);
-      cursor:pointer;
-    }
-
-    /* CINEMA LAYOUT */
-    .cinema-layout{
-      display:grid;
-      grid-template-rows:minmax(260px,320px) minmax(260px,1fr);
-      gap:8px;
-      min-height:540px;
-    }
-    @media(max-width:900px){
-      .cinema-layout{
-        grid-template-rows:minmax(220px,260px) minmax(220px,1fr);
-      }
-    }
-    .cinema-top{
-      display:grid;
-      grid-template-columns:minmax(0,2fr) 260px;
-      gap:8px;
-    }
-    @media(max-width:1000px){
-      .cinema-top{grid-template-columns:minmax(0,1fr);}
-    }
-    .preview-panel{
-      border-radius:var(--radius-lg);
-      background:linear-gradient(135deg,var(--panel-soft),var(--panel-alt));
-      border:1px solid rgba(255,255,255,0.14);
-      padding:8px 9px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    .preview-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-size:11px;
-      color:var(--text-muted);
-    }
-    .preview-screen{
-      flex:1;
-      border-radius:12px;
-      background:
-        radial-gradient(circle at 10% 0%,rgba(255,90,241,0.35),transparent 65%),
-        radial-gradient(circle at 100% 100%,rgba(69,241,255,0.3),transparent 60%),
-        #050712;
-      border:1px solid rgba(255,255,255,0.16);
-      box-shadow:0 0 34px rgba(0,0,0,0.9);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:13px;
-      color:var(--text-muted);
-      position:relative;
-      margin-top:4px;
-    }
-    .preview-screen::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:12px;
-      background:radial-gradient(circle at top,rgba(255,255,255,0.05),transparent 60%);
-      pointer-events:none;
-    }
-    .preview-controls-bottom{
-      margin-top:6px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-size:11px;
-      color:var(--text-muted);
-      flex-wrap:wrap;
-      gap:6px;
-    }
-    .preview-controls-left{
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-    .preview-controls-left .t-btn{
-      width:26px;
-      height:26px;
-    }
-
-    .cinema-inspector{
-      border-radius:var(--radius-lg);
-      background:linear-gradient(135deg,var(--panel),var(--panel-soft));
-      border:1px solid rgba(255,255,255,0.14);
-      padding:8px 9px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
+    .app-body {
       font-size:12px;
-    }
-    .cinema-label-title{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:0.12em;
       color:var(--text-muted);
+      line-height:1.7;
     }
-    textarea{
-      width:100%;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(3,5,14,0.98);
-      color:var(--text-main);
-      padding:7px 9px;
-      font-size:12px;
-      resize:vertical;
-      min-height:80px;
-      font-family:inherit;
-    }
-    textarea::placeholder{color:rgba(156,164,199,0.75);}
-    .chip-row{
+    .app-chip-row {
       display:flex;
       flex-wrap:wrap;
       gap:6px;
       margin-top:4px;
+      font-size:10px;
     }
-    .chip{
+    .app-chip {
       padding:3px 8px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.18);
-      font-size:10px;
       background:rgba(7,9,20,0.98);
       color:var(--text-muted);
-      cursor:pointer;
     }
 
-    .cinema-timeline{
-      border-radius:var(--radius-lg);
-      background:linear-gradient(135deg,var(--panel),var(--panel-alt));
-      border:1px solid rgba(255,255,255,0.14);
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-      min-height:280px;
-    }
-    .cinema-ruler{
+    /* PIPELINE / ROUTING */
+    .pipeline-grid {
       display:grid;
-      grid-template-columns:160px minmax(0,1fr);
-      font-size:10px;
-      color:var(--text-muted);
-      background:rgba(5,7,18,0.98);
-      border-bottom:1px solid rgba(255,255,255,0.08);
-    }
-    .cinema-ruler-left{
-      padding:4px 6px;
-      border-right:1px solid rgba(255,255,255,0.08);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .cinema-ruler-right{
-      padding:4px 8px;
-      background-image:linear-gradient(to right,rgba(255,255,255,0.07) 1px,transparent 1px);
-      background-size:80px 1px;
-      display:flex;
-      gap:80px;
-      overflow-x:auto;
-      scrollbar-width:thin;
-    }
-    .cinema-track-row{
-      display:grid;
-      grid-template-columns:160px minmax(0,1fr);
-      min-height:46px;
-      border-bottom:1px solid rgba(255,255,255,0.08);
-      background:linear-gradient(to bottom,rgba(13,17,36,0.98),rgba(9,11,24,0.98));
-    }
-    .cinema-track-label{
-      padding:5px 6px;
-      border-right:1px solid rgba(255,255,255,0.08);
-      font-size:11px;
-      display:flex;
-      flex-direction:column;
-      gap:3px;
-    }
-    .cinema-track-name{font-weight:600;}
-    .cinema-track-actions{
-      display:flex;
-      gap:4px;
-      flex-wrap:wrap;
-    }
-    .cinema-lane{
-      padding:5px 8px;
-      background-image:linear-gradient(to right,rgba(255,255,255,0.05) 1px,transparent 1px);
-      background-size:80px 1px;
-      display:flex;
-      align-items:center;
-      gap:6px;
-      overflow-x:auto;
-      scrollbar-width:thin;
-    }
-
-    /* PHOTOLAB */
-    .photo-layout{
-      display:grid;
-      grid-template-columns:80px minmax(0,1.9fr) 260px;
+      grid-template-columns:minmax(0,1.4fr) minmax(0,1.2fr);
       gap:10px;
-      min-height:460px;
     }
-    @media(max-width:1100px){
-      .photo-layout{
-        grid-template-columns:60px minmax(0,1fr);
-        grid-template-rows:minmax(260px,1fr) 220px;
-        grid-template-areas:
-          "tools canvas"
-          "tools side";
-      }
-      .photo-tools{grid-area:tools;}
-      .photo-canvas{grid-area:canvas;}
-      .photo-side{grid-area:side;}
+    @media (max-width: 900px) {
+      .pipeline-grid { grid-template-columns:minmax(0,1fr); }
     }
-    .photo-tools{
-      border-radius:var(--radius-lg);
-      background:linear-gradient(135deg,var(--panel-soft),var(--panel));
-      border:1px solid rgba(255,255,255,0.14);
-      padding:8px 4px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      align-items:center;
-    }
-    .tool-icon{
-      width:34px;height:34px;
-      border-radius:10px;
-      background:rgba(7,9,20,0.96);
+    .pipeline-box {
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg,var(--panel-soft),var(--panel));
       border:1px solid rgba(255,255,255,0.16);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:16px;
-      cursor:pointer;
-      color:var(--text-muted);
-    }
-    .tool-icon.active{
-      background:linear-gradient(135deg,#ff5af1,#45f1ff);
-      color:#050712;
-      border-color:transparent;
-      box-shadow:0 0 14px rgba(69,241,255,0.7);
-    }
-    .photo-canvas{
-      border-radius:var(--radius-lg);
-      background:linear-gradient(135deg,var(--panel),var(--panel-alt));
-      border:1px solid rgba(255,255,255,0.16);
-      padding:8px 10px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    .photo-canvas-inner{
-      flex:1;
-      border-radius:14px;
-      background-image:
-        linear-gradient(45deg,rgba(255,255,255,0.06) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.06) 75%, transparent 75%, transparent);
-      background-size:18px 18px;
-      border:1px solid rgba(255,255,255,0.18);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:var(--text-muted);
-      font-size:12px;
-      position:relative;
-      overflow:hidden;
-    }
-    .photo-topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-size:11px;
-      color:var(--text-muted);
-    }
-    .photo-bottom-bar{
-      margin-top:4px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-size:11px;
-      color:var(--text-muted);
-    }
-    .photo-side{
-      border-radius:var(--radius-lg);
-      background:linear-gradient(135deg,var(--panel-soft),var(--panel));
-      border:1px solid rgba(255,255,255,0.16);
-      padding:8px 9px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
+      padding:10px 11px;
       font-size:12px;
     }
-    .layers-list{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .layer-item{
-      border-radius:9px;
-      padding:4px 7px;
-      background:rgba(5,7,18,0.96);
-      border:1px solid rgba(255,255,255,0.1);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:6px;
-      cursor:pointer;
-    }
-    .layer-item span.name{
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .photo-export-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-top:4px;
-    }
-
-    .btn{
-      border-radius:var(--radius-pill);
-      padding:6px 11px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(7,9,20,0.98);
-      color:var(--text-main);
-      font-size:12px;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-    }
-    .btn-primary{
-      background:linear-gradient(120deg,#ff5af1,#45f1ff);
-      color:#050712;
-      border-color:transparent;
-      font-weight:600;
-      box-shadow:0 0 14px rgba(69,241,255,0.7);
-    }
-
-    .helper-text{
-      font-size:11px;
-      color:var(--text-muted);
-    }
-
-    /* Modals */
-    .modal-backdrop{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.75);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:70;
-    }
-    .modal{
-      width:100%;
-      max-width:540px;
-      border-radius:18px;
-      background:linear-gradient(135deg,#111529,#050712);
-      border:1px solid rgba(255,255,255,0.24);
-      padding:14px 16px;
-      box-shadow:0 0 40px rgba(0,0,0,0.95);
-      font-size:13px;
-    }
-    .modal-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:8px;
-    }
-    .modal-title{
-      font-size:14px;
-      font-weight:600;
-    }
-    .modal-close{
-      cursor:pointer;
-      font-size:16px;
-      padding:2px 6px;
-      border-radius:999px;
-      background:rgba(255,255,255,0.06);
-    }
-    .modal-body{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .field-label{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:0.13em;
-      color:var(--text-muted);
-    }
-    .field-row{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-    }
-    select, input[type="text"]{
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(3,5,14,0.98);
-      color:var(--text-main);
-      padding:6px 8px;
-      font-size:12px;
-      min-width:120px;
-    }
-
-    .mastering-grid{
-      display:grid;
-      grid-template-columns:1.1fr 1.1fr;
-      gap:10px;
+    .pipeline-steps {
       margin-top:6px;
-    }
-    @media(max-width:700px){
-      .mastering-grid{grid-template-columns:1fr;}
-    }
-    .master-box{
-      border-radius:12px;
-      background:linear-gradient(145deg,var(--panel),var(--panel-soft));
-      border:1px solid rgba(255,255,255,0.16);
-      padding:8px;
-      font-size:12px;
-    }
-    .master-knobs{
       display:flex;
-      gap:8px;
       flex-wrap:wrap;
-      margin-top:4px;
+      gap:6px;
     }
-    .knob{
-      width:60px;
-      height:60px;
+    .pipeline-step {
+      padding:5px 8px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,0.18);
+      background:rgba(7,9,20,0.98);
+      font-size:11px;
       display:flex;
-      flex-direction:column;
       align-items:center;
-      justify-content:center;
-      font-size:10px;
-      background:radial-gradient(circle at 30% 0%,rgba(255,255,255,0.12),transparent 60%);
+      gap:6px;
     }
-    .knob span{font-size:9px;color:var(--text-muted);margin-top:3px;}
+    .pipeline-step span.badge {
+      padding:2px 7px;
+      border-radius:999px;
+      font-size:9px;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      background:rgba(255,255,255,0.1);
+    }
+
+    .routing-matrix {
+      margin-top:6px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:6px;
+      font-size:11px;
+    }
+    @media (max-width: 600px) {
+      .routing-matrix { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    .route-chip {
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.2);
+      background:rgba(5,7,18,0.98);
+      padding:5px 8px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      cursor:pointer;
+    }
+    .route-chip span.from {
+      font-weight:600;
+    }
+    .route-chip span.arrow {
+      font-size:14px;
+    }
+    .route-chip:hover {
+      border-color:rgba(69,241,255,0.9);
+      box-shadow:0 0 16px rgba(69,241,255,0.7);
+    }
+
+    .helper-text {
+      font-size:11px;
+      color:var(--text-muted);
+      margin-top:4px;
+      line-height:1.7;
+    }
+
+    footer {
+      max-width:1280px;
+      margin:0 auto 16px;
+      padding:0 18px;
+      font-size:10px;
+      color:var(--text-muted);
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      flex-wrap:wrap;
+    }
   </style>
 </head>
 <body data-theme="neon">
@@ -1181,7 +606,7 @@
     <div class="brand">
       <div class="brand-icon">S</div>
       <div>
-        <div class="brand-text-main">Sulandra AI Studio</div>
+        <div class="brand-text-main">Sulandra Creative Studio</div>
         <div class="brand-text-sub">Sound · Cinema · Photolab</div>
       </div>
     </div>
@@ -1196,7 +621,7 @@
     </nav>
     <div class="nav-right">
       <div class="credits-pill"><span id="creditsLabel">3420</span> credits</div>
-      <div class="profile-chip" onclick="alert('Profile & billing live in the main account panel – this page focuses on the Studio workspace.')">
+      <div class="profile-chip" onclick="alert('Account & billing live in the main account panel. This page is the Studio hub.')">
         <div class="profile-avatar">U</div>
         <div>
           <div style="font-size:11px;">Signed in</div>
@@ -1208,981 +633,308 @@
 </header>
 
 <main>
-  <!-- Menubar -->
-  <section class="studio-menubar">
-    <div class="menu-left">
-      <div class="menu-item bold">File</div>
-      <div class="menu-item">Edit</div>
-      <div class="menu-item">View</div>
-      <div class="menu-item">Insert</div>
-      <div class="menu-item">Tools</div>
-      <div class="menu-item">Window</div>
-      <div class="menu-item">Help</div>
+  <!-- SIDE MENU -->
+  <aside class="side-menu">
+    <div class="menu-section-title">Studio Sections</div>
+    <div class="side-link active" data-target="section-overview">
+      <span class="icon">🏠</span><span>Overview</span>
     </div>
-    <div class="menu-right">
-      <span class="menu-item" style="font-size:10px;">Studio Workspace</span>
-      <button class="theme-chip active" id="themeNeon" onclick="setTheme('neon')">Neon</button>
-      <button class="theme-chip" id="themeGray" onclick="setTheme('gray')">Studio Gray</button>
+    <div class="side-link" data-target="section-apps">
+      <span class="icon">🧩</span><span>Apps – Sound / Cinema / Photolab</span>
     </div>
-  </section>
+    <div class="side-link" data-target="section-pipelines">
+      <span class="icon">🧬</span><span>Creative Pipelines</span>
+    </div>
+    <div class="side-link" data-target="section-routing">
+      <span class="icon">🔁</span><span>Routing Matrix</span>
+    </div>
+    <div class="side-link" data-target="section-notes">
+      <span class="icon">📝</span><span>Notes & Future Wiring</span>
+    </div>
+    <div class="side-footer">
+      Studio is the building. Inside it are three full apps:
+      Sound (DAW), Cinema (editor), and Photolab (image editor),
+      all wired together.
+    </div>
+  </aside>
 
-  <!-- Overview cards -->
-  <section class="overview-grid">
-    <article class="overview-card" onclick="switchMode('sound')">
-      <div class="overview-tagline">Sound</div>
-      <h2>Sound · FL-style Mixer & Timeline 🎚️</h2>
-      <p>
-        Build full songs with tracks, stems, and MIDI. Record vocals and instruments,
-        upload audio, import from Music Lab, or create new parts with AI – all synced
-        to tempo and key.
-      </p>
-      <div class="overview-chip-row">
-        <span class="overview-chip">Record & upload</span>
-        <span class="overview-chip">Per-track AI “Create”</span>
-        <span class="overview-chip">Mastering Suite</span>
+  <!-- MAIN CONTENT -->
+  <div class="content">
+    <!-- TOP MENU / THEME -->
+    <section class="studio-menubar">
+      <div class="menu-left">
+        <span><strong>Studio Hub</strong> · Launch & route your projects across Sound, Cinema, and Photolab.</span>
       </div>
-    </article>
-    <article class="overview-card" onclick="switchMode('cinema')">
-      <div class="overview-tagline">Cinema</div>
-      <h2>Cinema · Premiere-style Editing 🎬</h2>
-      <p>
-        Preview screen on top, big stacked A/V tracks below. Record VO, upload clips,
-        import from Video & Film Labs, and use Create to add shots, transitions, or VFX
-        directly into the timeline.
-      </p>
-      <div class="overview-chip-row">
-        <span class="overview-chip">Video & audio tracks</span>
-        <span class="overview-chip">Record VO / camera</span>
-        <span class="overview-chip">AI shot & VFX generator</span>
+      <div class="menu-right">
+        <span style="font-size:10px;">Theme</span>
+        <button class="theme-chip active" id="themeNeon">Neon</button>
+        <button class="theme-chip" id="themeGray">Studio Gray</button>
       </div>
-    </article>
-    <article class="overview-card" onclick="switchMode('photo')">
-      <div class="overview-tagline">Photolab</div>
-      <h2>Photolab · Photoshop-style Editing 🖼️</h2>
-      <p>
-        Layer-based image editing: shapes, cutouts, text, and AI restyle. Import from
-        Image Lab, edit, then export to Image, Video, or Film Labs or download to device.
-      </p>
-      <div class="overview-chip-row">
-        <span class="overview-chip">Layers & masks</span>
-        <span class="overview-chip">Cutout & greenscreen</span>
-        <span class="overview-chip">Export to any Lab</span>
-      </div>
-    </article>
-  </section>
+    </section>
 
-  <!-- Mode tabs -->
-  <section class="mode-tabs">
-    <div class="tab-buttons">
-      <button class="mode-tab active" id="tabSound" onclick="switchMode('sound')">
-        <span class="icon">🎚️</span><span>SOUND · Mixer & Timeline</span>
-      </button>
-      <button class="mode-tab" id="tabCinema" onclick="switchMode('cinema')">
-        <span class="icon">🎬</span><span>CINEMA · Editor & VFX</span>
-      </button>
-      <button class="mode-tab" id="tabPhoto" onclick="switchMode('photo')">
-        <span class="icon">🖼️</span><span>PHOTOLAB · Image Editor</span>
-      </button>
-    </div>
-    <div class="mode-helper" id="modeHelperText">
-      Audio from Music Lab opens in <strong>SOUND</strong> · Video & Short Films open in
-      <strong>CINEMA</strong> · Generated images open in <strong>PHOTOLAB</strong>.
-    </div>
-  </section>
-
-  <!-- Transport -->
-  <section class="transport">
-    <div class="transport-group">
-      <button class="t-btn" id="btnStart">⏮</button>
-      <button class="t-btn primary" id="globalPlayBtn">▶</button>
-      <button class="t-btn" id="btnStop">⏹</button>
-      <button class="t-btn" id="globalRecordBtn">●</button>
-      <button class="t-btn" id="metronomeBtn" title="Metronome">⏰</button>
-    </div>
-    <div class="transport-group">
-      <span class="transport-label">Tempo</span>
-      <input class="tiny-input" value="98" /> BPM
-      <span class="transport-label">Time</span>
-      <span class="badge-small" id="timeBadge">01:24 / 08:00</span>
-      <span class="badge-small badge-route" id="routeBadge">Mode: SOUND · Audio Project</span>
-      <label class="toggle">
-        <input type="checkbox" id="followPlayhead" checked />
-        Follow playhead
-      </label>
-      <label class="toggle">
-        <input type="checkbox" id="loopToggle" />
-        Loop region (L)
-      </label>
-    </div>
-    <div class="transport-group">
-      <button class="t-btn" title="Zoom out">➖</button>
-      <button class="t-btn" title="Zoom in">➕</button>
-      <span class="transport-label">Space = Play/Pause · R = Record</span>
-    </div>
-  </section>
-
-  <!-- SOUND MODE -->
-  <section class="mode-container active" id="modeSound">
-    <div class="sound-layout">
-      <!-- Browser -->
-      <aside class="panel">
-        <div class="panel-header">
-          <span class="panel-title-main">Browser · Stems, Samples & Presets</span>
-          <span style="font-size:10px;color:var(--text-muted);">Drag into tracks</span>
+    <!-- OVERVIEW / HERO -->
+    <section id="section-overview" class="hero">
+      <div>
+        <div class="hero-main-title">
+          From idea to upload – in one Studio.
         </div>
-        <div class="panel-body">
-          <div class="browser-section-title">Project Stems</div>
-          <div class="browser-list">
-            <div class="browser-item">
-              <span class="label">Drums – Stem</span><span style="font-size:10px;color:var(--text-muted);">1:24</span>
-            </div>
-            <div class="browser-item">
-              <span class="label">Bass – Stem</span><span style="font-size:10px;color:var(--text-muted);">1:24</span>
-            </div>
-            <div class="browser-item">
-              <span class="label">Guitar / Keys – Stem</span><span style="font-size:10px;color:var(--text-muted);">1:24</span>
-            </div>
-            <div class="browser-item">
-              <span class="label">Lead Vocal – Stem</span><span style="font-size:10px;color:var(--text-muted);">1:24</span>
-            </div>
-          </div>
+        <div class="hero-sub">
+          Sulandra Creative Studio is your central workspace. Start a song in <strong>Sound</strong>,
+          design covers in <strong>Photolab</strong>, cut full videos in <strong>Cinema</strong>,
+          and route everything between them without leaving the building.
+        </div>
+        <div class="hero-cta-row">
+          <button class="btn-primary" type="button" onclick="goToApp('sound')">
+            Start in Sound (DAW)
+          </button>
+          <button class="btn" type="button" onclick="goToApp('cinema')">
+            Start in Cinema (Video Editor)
+          </button>
+          <button class="btn" type="button" onclick="goToApp('photo')">
+            Edit Images in Photolab
+          </button>
+          <span class="badge-inline">No external plugins · No presets required</span>
+        </div>
+      </div>
 
-          <div class="browser-section-title" style="margin-top:10px;">Sample Pads (MIDI-ready)</div>
-          <div class="sample-pads">
-            <div class="sample-pad" onclick="alert('Would trigger a kick sample via MIDI.')">Kick</div>
-            <div class="sample-pad" onclick="alert('Would trigger a snare sample via MIDI.')">Snare</div>
-            <div class="sample-pad" onclick="alert('Would trigger a clap sample via MIDI.')">Clap</div>
-            <div class="sample-pad" onclick="alert('Would trigger a log drum sample via MIDI.')">Log drum</div>
-            <div class="sample-pad" onclick="alert('Would trigger a FX hit sample via MIDI.')">FX hit</div>
-            <div class="sample-pad" onclick="alert('Would trigger a vocal chop sample via MIDI.')">Vocal chop</div>
+      <div class="hero-slider">
+        <div class="slider-label">What you can do inside Studio</div>
+        <div class="slider-pill-row">
+          <div class="slider-pill">Create · Mix · Master songs</div>
+          <div class="slider-pill">Edit videos & short films</div>
+          <div class="slider-pill">Design posters & covers</div>
+        </div>
+        <div class="slider-card">
+          <div>
+            <div class="slider-title" id="slideTitle"></div>
+            <div class="slider-body" id="slideBody"></div>
           </div>
-
-          <div class="browser-section-title" style="margin-top:10px;">Instrument Presets</div>
-          <div class="browser-list">
-            <div class="browser-item">
-              <span class="label">Afro Piano – Bright Keys</span><span style="font-size:10px;">MIDI</span>
-            </div>
-            <div class="browser-item">
-              <span class="label">Amapiano Log Drum – Heavy</span><span style="font-size:10px;">MIDI</span>
-            </div>
-            <div class="browser-item">
-              <span class="label">Gospel Pad – Warm</span><span style="font-size:10px;">MIDI</span>
-            </div>
-          </div>
-
-          <div class="browser-section-title" style="margin-top:10px;">Utilities</div>
-          <div class="browser-list">
-            <div class="browser-item" onclick="alert('Would analyze the full mix and split into named stems on separate tracks.')">
-              <span class="label">Split full mix into stems</span><span style="font-size:10px;">⇣</span>
-            </div>
-            <div class="browser-item" onclick="alert('Would remove vocals or instruments to create karaoke/accapella versions.')">
-              <span class="label">Remove vocals / keep instrumental</span><span style="font-size:10px;">⇣</span>
-            </div>
-            <div class="browser-item" onclick="alert('Would convert audio to MIDI for note editing.')">
-              <span class="label">Convert stem to MIDI</span><span style="font-size:10px;">⇣</span>
-            </div>
-          </div>
-
-          <div class="browser-section-title" style="margin-top:10px;">Recordings</div>
-          <div class="browser-list">
-            <div class="browser-item">
-              <span class="label">Mic Take 01 – Verse idea</span><span style="font-size:10px;color:var(--text-muted);">0:32</span>
-            </div>
-            <div class="browser-item">
-              <span class="label">Guitar Loop – F# groove</span><span style="font-size:10px;color:var(--text-muted);">0:08</span>
+          <div class="slider-footer">
+            <div class="slider-dots" id="sliderDots"></div>
+            <div class="slider-nav">
+              <button type="button" id="slidePrev">‹</button>
+              <button type="button" id="slideNext">›</button>
             </div>
           </div>
         </div>
-      </aside>
+      </div>
+    </section>
 
-      <!-- Timeline -->
-      <section class="timeline-sound">
-        <div class="bar-ruler">
-          <div class="bar-ruler-left">
-            <span>Tracks</span>
-            <span style="font-size:10px;">Click & drag region to loop · Scroll horizontally</span>
+    <!-- APPS: SOUND / CINEMA / PHOTOLAB -->
+    <section id="section-apps" class="app-section">
+      <div class="section-heading">Apps in the Studio</div>
+      <div class="section-title-main">
+        Three full creative environments – routed through one hub.
+      </div>
+      <div class="app-grid">
+        <!-- SOUND -->
+        <article class="app-card" onclick="goToApp('sound')">
+          <div class="app-tagline">Sound</div>
+          <div class="app-title">Sound · DAW for creation, mixing & mastering 🎚️</div>
+          <div class="app-body">
+            Build full songs with multitrack mixing, mastering, recording,
+            and AI creation. Start with a Suno track or generate from scratch,
+            then finish everything in Sound without external plugins.
           </div>
-          <div class="bar-ruler-right">
-            <span>Bar 1</span><span>5</span><span>9</span><span>13</span><span>17</span><span>21</span><span>25</span><span>29</span>
+          <div class="app-chip-row">
+            <div class="app-chip">Multitrack timeline</div>
+            <div class="app-chip">Record vocals & instruments</div>
+            <div class="app-chip">AI stems & patterns</div>
+            <div class="app-chip">Mastering suite</div>
           </div>
-        </div>
+          <div class="hero-cta-row" style="margin-top:8px;">
+            <button class="btn-primary" type="button">Open Sound</button>
+          </div>
+        </article>
 
-        <div class="sound-top-controls">
-          <div class="loop-controls">
-            <span>Loop region:</span>
-            <span>Start</span><input class="tiny-input" value="1" style="width:40px;" />
-            <span>End</span><input class="tiny-input" value="9" style="width:40px;" />
+        <!-- CINEMA -->
+        <article class="app-card" onclick="goToApp('cinema')">
+          <div class="app-tagline">Cinema</div>
+          <div class="app-title">Cinema · Video & music-video editor 🎬</div>
+          <div class="app-body">
+            Import clips, short films, or AI videos, then edit with stacked
+            video and audio tracks. Sync music from Sound, add transitions,
+            texts, and VFX, and export ready-to-publish cuts.
           </div>
+          <div class="app-chip-row">
+            <div class="app-chip">Multi-track video timeline</div>
+            <div class="app-chip">Lip-sync & beat-sync (future)</div>
+            <div class="app-chip">Titles & overlays</div>
+            <div class="app-chip">Export for socials</div>
+          </div>
+          <div class="hero-cta-row" style="margin-top:8px;">
+            <button class="btn-primary" type="button">Open Cinema</button>
+          </div>
+        </article>
+
+        <!-- PHOTOLAB -->
+        <article class="app-card" onclick="goToApp('photo')">
+          <div class="app-tagline">Photolab</div>
+          <div class="app-title">Photolab · Parametric image editor 🖼️</div>
+          <div class="app-body">
+            Edit generated images and photos with layers, masks,
+            non-destructive recipes, and AI retouch. Send covers and frames
+            to Sound or Cinema for use in songs and videos.
+          </div>
+          <div class="app-chip-row">
+            <div class="app-chip">Layers & masks</div>
+            <div class="app-chip">Cutout & restyle</div>
+            <div class="app-chip">Recipe-based editing</div>
+            <div class="app-chip">Direct send to Video & Film</div>
+          </div>
+          <div class="hero-cta-row" style="margin-top:8px;">
+            <button class="btn-primary" type="button">Open Photolab</button>
+          </div>
+        </article>
+      </div>
+      <div class="helper-text">
+        This Studio hub only routes you. The heavy UIs live inside
+        <code>sound.html</code>, <code>cinema.html</code>, and
+        <code>photolab.html</code> so you can update each app independently.
+      </div>
+    </section>
+
+    <!-- PIPELINES / CREATIVE FLOWS -->
+    <section id="section-pipelines" class="app-section">
+      <div class="section-heading">Creative Pipelines</div>
+      <div class="section-title-main">
+        Typical flows: from idea → audio → visuals → finished video.
+      </div>
+      <div class="pipeline-grid">
+        <!-- MUSIC VIDEO PIPELINE -->
+        <div class="pipeline-box">
+          <div class="menu-section-title" style="margin-bottom:2px;">Music Video Flow</div>
           <div class="helper-text">
-            When loop is enabled, playback will cycle between the selected bars.
+            Use Studio like one continuous session. Each app is a different room
+            in the same building, but the project stays with you.
+          </div>
+          <div class="pipeline-steps">
+            <div class="pipeline-step">
+              <span class="badge">1</span> Idea · Write & plan
+            </div>
+            <div class="pipeline-step">
+              <span class="badge">2</span> Sound · Create, mix, master
+            </div>
+            <div class="pipeline-step">
+              <span class="badge">3</span> Photolab · Covers, promo art, thumbnails
+            </div>
+            <div class="pipeline-step">
+              <span class="badge">4</span> Cinema · Edit, sync, add titles
+            </div>
+            <div class="pipeline-step">
+              <span class="badge">5</span> Export · Upload to socials
+            </div>
           </div>
         </div>
 
-        <div class="track-list">
-          <!-- Full Mix -->
-          <div class="track-row" id="track-fullmix">
-            <div class="track-header">
-              <div class="track-name-row">
-                <span class="track-name-main">Full Mix</span>
-                <div class="track-controls">
-                  <button class="pill-small" onclick="toggleSolo(this)">S</button>
-                  <button class="pill-small" onclick="toggleMute(this)">M</button>
-                  <button class="pill-small red" onclick="toggleArm(this)">●</button>
-                </div>
-              </div>
-              <div class="track-controls">
-                <select class="track-action-select" onchange="handleTrackAction('sound','track-fullmix',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Music Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="track-lane">
-              <div class="clip">Song Mix – “We Need A Miracle v3”</div>
-              <div class="cell-empty" onclick="openGenerateModal('sound','Full Mix')">
-                + Extend / Remix with Create
-              </div>
-            </div>
-          </div>
-
-          <!-- Drums -->
-          <div class="track-row" id="track-drums">
-            <div class="track-header">
-              <div class="track-name-row">
-                <span class="track-name-main">Drums</span>
-                <div class="track-controls">
-                  <button class="pill-small" onclick="toggleSolo(this)">S</button>
-                  <button class="pill-small" onclick="toggleMute(this)">M</button>
-                  <button class="pill-small red" onclick="toggleArm(this)">●</button>
-                </div>
-              </div>
-              <div class="vol-row">
-                Vol <input type="range" min="0" max="100" value="70" />
-              </div>
-              <div class="track-controls">
-                <select class="track-action-select" onchange="handleTrackAction('sound','track-drums',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Music Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="track-lane">
-              <div class="clip stem">Drum stem – 0:00–1:24</div>
-              <div class="cell-empty" onclick="openGenerateModal('sound','Drums')">
-                + New kick / fill pattern
-              </div>
-            </div>
-          </div>
-
-          <!-- Bass -->
-          <div class="track-row" id="track-bass">
-            <div class="track-header">
-              <div class="track-name-row">
-                <span class="track-name-main">Bass</span>
-                <div class="track-controls">
-                  <button class="pill-small" onclick="toggleSolo(this)">S</button>
-                  <button class="pill-small" onclick="toggleMute(this)">M</button>
-                  <button class="pill-small red" onclick="toggleArm(this)">●</button>
-                </div>
-              </div>
-              <div class="vol-row">
-                Vol <input type="range" min="0" max="100" value="75" />
-              </div>
-              <div class="track-controls">
-                <select class="track-action-select" onchange="handleTrackAction('sound','track-bass',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Music Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="track-lane">
-              <div class="clip stem">Bass stem – 0:00–1:24</div>
-              <div class="clip midi">MIDI bass pattern – bar 9–17</div>
-              <div class="cell-empty" onclick="openGenerateModal('sound','Bass')">
-                + Extend pattern
-              </div>
-            </div>
-          </div>
-
-          <!-- Guitar / Keys -->
-          <div class="track-row" id="track-guitarkeys">
-            <div class="track-header">
-              <div class="track-name-row">
-                <span class="track-name-main">Guitar / Keys</span>
-                <div class="track-controls">
-                  <button class="pill-small" onclick="toggleSolo(this)">S</button>
-                  <button class="pill-small" onclick="toggleMute(this)">M</button>
-                  <button class="pill-small red" onclick="toggleArm(this)">●</button>
-                </div>
-              </div>
-              <div class="vol-row">
-                Vol <input type="range" min="0" max="100" value="68" />
-              </div>
-              <div class="track-controls">
-                <select class="track-action-select" onchange="handleTrackAction('sound','track-guitarkeys',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Music Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="track-lane">
-              <div class="clip stem">Guitar stem – 0:00–1:24</div>
-              <div class="cell-empty" onclick="openGenerateModal('sound','Guitar / Keys')">
-                + Chords / hook
-              </div>
-            </div>
-          </div>
-
-          <!-- Lead Vocal -->
-          <div class="track-row" id="track-leadvocal">
-            <div class="track-header">
-              <div class="track-name-row">
-                <span class="track-name-main">Lead Vocal</span>
-                <div class="track-controls">
-                  <button class="pill-small" onclick="toggleSolo(this)">S</button>
-                  <button class="pill-small" onclick="toggleMute(this)">M</button>
-                  <button class="pill-small red" onclick="toggleArm(this)">●</button>
-                </div>
-              </div>
-              <div class="vol-row">
-                Vol <input type="range" min="0" max="100" value="80" />
-              </div>
-              <div class="track-controls">
-                <select class="track-action-select" onchange="handleTrackAction('sound','track-leadvocal',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Music Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="track-lane">
-              <div class="clip stem">Lead vocal – Verse & Chorus</div>
-              <div class="cell-empty" onclick="openGenerateModal('sound','Lead Vocal')">
-                + Harmonies / ad-libs
-              </div>
-            </div>
-          </div>
-
-          <!-- New Track -->
-          <div class="track-row" id="track-new">
-            <div class="track-header">
-              <div class="track-name-row">
-                <span class="track-name-main">New Track</span>
-                <div class="track-controls">
-                  <button class="pill-small" onclick="toggleSolo(this)">S</button>
-                  <button class="pill-small" onclick="toggleMute(this)">M</button>
-                  <button class="pill-small red" onclick="toggleArm(this)">●</button>
-                </div>
-              </div>
-              <div class="track-controls">
-                <select class="track-action-select" onchange="handleTrackAction('sound','track-new',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Music Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="track-lane">
-              <div class="cell-empty" onclick="openGenerateModal('sound','New Track')">
-                + Click to generate instrument / FX / vocals here
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Mixer -->
-      <aside class="panel">
-        <div class="panel-header">
-          <span class="panel-title-main">Mixer</span>
-          <span style="font-size:10px;color:var(--text-muted);">Master · Buses · Channels</span>
-        </div>
-        <div class="panel-body">
-          <div class="mixer-channels">
-            <div class="mixer-strip">
-              <div class="mixer-title">Master</div>
-              <div class="mixer-meter"><div class="mixer-meter-fill"></div></div>
-              <div class="mixer-fader"><input type="range" min="0" max="100" value="80"/></div>
-              <div class="mixer-btn-row">
-                <button class="mixer-btn" onclick="openMasterModal()">Mastering Suite</button>
-              </div>
-            </div>
-            <div class="mixer-strip">
-              <div class="mixer-title">Drums</div>
-              <div class="mixer-meter"><div class="mixer-meter-fill" style="height:70%;"></div></div>
-              <div class="mixer-fader"><input type="range" min="0" max="100" value="72"/></div>
-              <div class="mixer-btn-row">
-                <button class="mixer-btn">Bus D</button>
-                <button class="mixer-btn">FX</button>
-              </div>
-            </div>
-            <div class="mixer-strip">
-              <div class="mixer-title">Bass</div>
-              <div class="mixer-meter"><div class="mixer-meter-fill" style="height:65%;"></div></div>
-              <div class="mixer-fader"><input type="range" min="0" max="100" value="68"/></div>
-              <div class="mixer-btn-row">
-                <button class="mixer-btn">Bus B</button>
-                <button class="mixer-btn">EQ</button>
-              </div>
-            </div>
-            <div class="mixer-strip">
-              <div class="mixer-title">Guitar</div>
-              <div class="mixer-meter"><div class="mixer-meter-fill" style="height:55%;"></div></div>
-              <div class="mixer-fader"><input type="range" min="0" max="100" value="60"/></div>
-              <div class="mixer-btn-row">
-                <button class="mixer-btn">Bus M</button>
-                <button class="mixer-btn">FX</button>
-              </div>
-            </div>
-            <div class="mixer-strip">
-              <div class="mixer-title">Lead Vox</div>
-              <div class="mixer-meter"><div class="mixer-meter-fill" style="height:75%;"></div></div>
-              <div class="mixer-fader"><input type="range" min="0" max="100" value="82"/></div>
-              <div class="mixer-btn-row">
-                <button class="mixer-btn">Bus V</button>
-                <button class="mixer-btn">FX</button>
-              </div>
-            </div>
-          </div>
-          <div class="helper-text" style="margin-top:6px;">
-            “Mastering Suite” will eventually act like Ozone: tonal balance, width, loudness,
-            and target presets by genre once wired to your backend.
-          </div>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <!-- CINEMA MODE -->
-  <section class="mode-container" id="modeCinema">
-    <div class="cinema-layout">
-      <div class="cinema-top">
-        <!-- Preview -->
-        <section class="preview-panel">
-          <div class="preview-header">
-            <span>Preview · 16:9 · up to 4K</span>
-            <span>Active sequence: Short Film – Scene 01</span>
-          </div>
-          <div class="preview-screen">
-            Preview Screen · Cinema
-          </div>
-          <div class="preview-controls-bottom">
-            <div class="preview-controls-left">
-              <button class="t-btn" id="cinemaRew">⏪</button>
-              <button class="t-btn primary" id="cinemaPlayBtn">▶</button>
-              <button class="t-btn" id="cinemaStop">⏹</button>
-              <button class="t-btn" id="cinemaFwd">⏩</button>
-              <label class="toggle" style="margin-left:6px;">
-                <input type="checkbox" id="cinemaLoop" />
-                Loop playback
-              </label>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span>Zoom</span>
-              <input type="range" min="0" max="100" value="60"/>
-            </div>
-          </div>
-        </section>
-
-        <!-- Inspector -->
-        <aside class="cinema-inspector">
-          <div>
-            <div class="cinema-label-title">Clip & Sequence Info</div>
-            <div class="helper-text">
-              Select a clip or region in the timeline to see settings. Use the track
-              actions menu to Record, Upload, Import from Labs, or Create new shots,
-              transitions, and visual passes.
-            </div>
-          </div>
-          <div>
-            <div class="cinema-label-title">Current selection notes</div>
-            <textarea placeholder="Describe this part of the sequence – e.g. 'Dance break intro, 8 bars, needs more crowd shots and light beams.'"></textarea>
-          </div>
-          <div>
-            <div class="cinema-label-title">Look presets</div>
-            <div class="chip-row">
-              <button class="chip">Music video</button>
-              <button class="chip">Cinematic drama</button>
-              <button class="chip">Sitcom light</button>
-              <button class="chip">Neon club</button>
-              <button class="chip">Documentary</button>
-            </div>
-          </div>
-          <div>
-            <div class="cinema-label-title">Routing</div>
-            <div class="chip-row">
-              <button class="chip" onclick="alert('Would send rendered cut back to Film Lab.')">
-                Send to Film Lab
-              </button>
-              <button class="chip" onclick="alert('Would export this sequence to Video Lab as a template.')">
-                Send to Video Lab
-              </button>
-              <button class="chip" onclick="alert('Would publish this sequence to the Media feed.')">
-                Publish to Media
-              </button>
-            </div>
-          </div>
-        </aside>
-      </div>
-
-      <!-- Timeline -->
-      <section class="cinema-timeline">
-        <div class="cinema-ruler">
-          <div class="cinema-ruler-left">
-            <span>Timeline</span>
-            <span style="font-size:10px;">Drag to select loop · Follows playhead if enabled</span>
-          </div>
-          <div class="cinema-ruler-right">
-            <span>0s</span><span>10s</span><span>20s</span><span>30s</span><span>40s</span><span>50s</span><span>60s</span>
-          </div>
-        </div>
-        <div style="flex:1;overflow:auto;">
-          <!-- V2 -->
-          <div class="cinema-track-row" id="cinema-v2">
-            <div class="cinema-track-label">
-              <span class="cinema-track-name">V2 · Overlays / Titles</span>
-              <div class="cinema-track-actions">
-                <select class="track-action-select" onchange="handleTrackAction('cinema','cinema-v2',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload video…</option>
-                  <option value="import">Import from Labs…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="cinema-lane">
-              <div class="clip midi">Title Card · 0–4s</div>
-              <div class="cell-empty" onclick="openGenerateModal('cinema','V2 · Overlays / Titles')">
-                + Lower thirds / text
-              </div>
-            </div>
-          </div>
-          <!-- V1 -->
-          <div class="cinema-track-row" id="cinema-v1">
-            <div class="cinema-track-label">
-              <span class="cinema-track-name">V1 · Main Video</span>
-              <div class="cinema-track-actions">
-                <select class="track-action-select" onchange="handleTrackAction('cinema','cinema-v1',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload video…</option>
-                  <option value="import">Import from Labs…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="cinema-lane">
-              <div class="clip">Shot 1 – 0–20s</div>
-              <div class="clip">Shot 2 – 20–40s</div>
-              <div class="cell-empty" onclick="openGenerateModal('cinema','V1 · Main Video')">
-                + Extend scene / new shot
-              </div>
-            </div>
-          </div>
-          <!-- FX -->
-          <div class="cinema-track-row" id="cinema-fx">
-            <div class="cinema-track-label">
-              <span class="cinema-track-name">FX · Lights / Atmosphere</span>
-              <div class="cinema-track-actions">
-                <select class="track-action-select" onchange="handleTrackAction('cinema','cinema-fx',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload video…</option>
-                  <option value="import">Import from Labs…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="cinema-lane">
-              <div class="clip stem">Atmosphere – fog & glow</div>
-              <div class="cell-empty" onclick="openGenerateModal('cinema','FX · Lights / Atmosphere')">
-                + Hits on beat / motion
-              </div>
-            </div>
-          </div>
-          <!-- Audio tracks -->
-          <div class="cinema-track-row" id="cinema-a1">
-            <div class="cinema-track-label">
-              <span class="cinema-track-name">A1 · Music</span>
-              <div class="cinema-track-actions">
-                <select class="track-action-select" onchange="handleTrackAction('cinema','cinema-a1',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Music Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="cinema-lane">
-              <div class="clip stem">Song – “We Need A Miracle”</div>
-            </div>
-          </div>
-          <div class="cinema-track-row" id="cinema-a2">
-            <div class="cinema-track-label">
-              <span class="cinema-track-name">A2 · Dialog / VO</span>
-              <div class="cinema-track-actions">
-                <select class="track-action-select" onchange="handleTrackAction('cinema','cinema-a2',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Film Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="cinema-lane">
-              <div class="clip stem">Voiceover – main narration</div>
-              <div class="cell-empty" onclick="openGenerateModal('cinema','A2 · Dialog / VO')">
-                + New VO / lip-sync
-              </div>
-            </div>
-          </div>
-          <div class="cinema-track-row" id="cinema-a3">
-            <div class="cinema-track-label">
-              <span class="cinema-track-name">A3 · SFX / Ambience</span>
-              <div class="cinema-track-actions">
-                <select class="track-action-select" onchange="handleTrackAction('cinema','cinema-a3',this.value)">
-                  <option value="">Track actions…</option>
-                  <option value="record">Record…</option>
-                  <option value="upload">Upload audio…</option>
-                  <option value="import">Import from Film Lab…</option>
-                  <option value="create">Create with AI…</option>
-                </select>
-              </div>
-            </div>
-            <div class="cinema-lane">
-              <div class="cell-empty" onclick="openGenerateModal('cinema','A3 · SFX / Ambience')">
-                + Auto SFX & ambience bed
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <!-- PHOTOLAB MODE -->
-  <section class="mode-container" id="modePhoto">
-    <div class="photo-layout">
-      <!-- Tools -->
-      <aside class="photo-tools">
-        <div class="tool-icon active" title="Move">⬚</div>
-        <div class="tool-icon" title="Crop">✂️</div>
-        <div class="tool-icon" title="Brush / Retouch">🖌️</div>
-        <div class="tool-icon" title="Eraser">🧽</div>
-        <div class="tool-icon" title="Magic Cut">✨</div>
-        <div class="tool-icon" title="Text">T</div>
-        <div class="tool-icon" title="Shapes">◯</div>
-        <div class="tool-icon" title="Mask / Selection">🕳️</div>
-      </aside>
-
-      <!-- Canvas -->
-      <section class="photo-canvas">
-        <div class="photo-topbar">
-          <span>Canvas · 3000 × 3000 px · RGB</span>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button class="btn" type="button" onclick="alert('Would open a local file picker to upload an image into Photolab.')">
-              Upload image
-            </button>
-            <button class="btn" type="button" onclick="alert('Would pull generated images from Image Lab into this canvas.')">
-              Import from Image Lab
-            </button>
-          </div>
-        </div>
-        <div class="photo-canvas-inner">
-          Photolab Canvas · Edit, mask, and paint here
-        </div>
-        <div class="photo-bottom-bar">
-          <div>
-            <span>Zoom</span>
-            <input type="range" min="0" max="100" value="65" />
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button class="btn" type="button" onclick="openGenerateModal('photo','Photolab')">
-              AI Edit / Restyle
-            </button>
-            <span class="helper-text">Send final image to Image / Video / Film Labs as needed.</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Layers & export -->
-      <aside class="photo-side">
-        <div>
-          <div class="cinema-label-title">Layers</div>
-          <div class="layers-list">
-            <div class="layer-item">
-              <span class="name">Layer 3 – Text / Logo</span><span style="font-size:10px;">👁️</span>
-            </div>
-            <div class="layer-item">
-              <span class="name">Layer 2 – Subject (cut out)</span><span style="font-size:10px;">👁️</span>
-            </div>
-            <div class="layer-item">
-              <span class="name">Layer 1 – Background</span><span style="font-size:10px;">👁️</span>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="cinema-label-title">Quick actions</div>
-          <div class="chip-row">
-            <button class="chip" onclick="alert('Would auto-remove the background and create a subject layer.')">
-              Auto remove background
-            </button>
-            <button class="chip" onclick="alert('Would open a green-screen keyed editing flow.')">
-              Green screen tools
-            </button>
-            <button class="chip" onclick="alert('Would crop the image to chosen aspect ratios (1:1, 9:16, 16:9, etc.)')">
-              Smart crop
-            </button>
-          </div>
-        </div>
-        <div>
-          <div class="cinema-label-title">Export / Send to Labs</div>
-          <div class="photo-export-row">
-            <button class="btn" type="button" onclick="alert('Would export PNG to user device.')">
-              Download PNG
-            </button>
-            <button class="btn" type="button" onclick="alert('Would export JPEG to user device.')">
-              Download JPG
-            </button>
-          </div>
-          <div class="photo-export-row">
-            <button class="btn" type="button" onclick="alert('Would send this edited image to Image Lab for new generations.')">
-              Send to Image Lab
-            </button>
-            <button class="btn" type="button" onclick="alert('Would send this image into Film Lab as a scene frame.')">
-              Send to Film Lab
-            </button>
-            <button class="btn" type="button" onclick="alert('Would send this image to Video Lab as a storyboard frame.')">
-              Send to Video Lab
-            </button>
-          </div>
-        </div>
-        <div>
-          <div class="cinema-label-title">History / Versions</div>
+        <!-- SOCIAL CONTENT PIPELINE -->
+        <div class="pipeline-box">
+          <div class="menu-section-title" style="margin-bottom:2px;">Short-form & Social Flow</div>
           <div class="helper-text">
-            Photolab can store non-destructive history once wired to backend so you can roll
-            back edits, compare versions, and send any version into other Labs.
+            Studio also supports quick concepts: TikTok dances, Reels,
+            YouTube Shorts, lyric videos, and visualizers.
+          </div>
+          <div class="pipeline-steps">
+            <div class="pipeline-step">
+              <span class="badge">A</span> Sound · Loop, hook, or beat
+            </div>
+            <div class="pipeline-step">
+              <span class="badge">B</span> Photolab · One key visual or model
+            </div>
+            <div class="pipeline-step">
+              <span class="badge">C</span> Cinema · Image → video sequence
+            </div>
+            <div class="pipeline-step">
+              <span class="badge">D</span> Add text & auto cuts
+            </div>
+            <div class="pipeline-step">
+              <span class="badge">E</span> Export 9:16 & upload
+            </div>
           </div>
         </div>
-      </aside>
-    </div>
-  </section>
+      </div>
+    </section>
+
+    <!-- ROUTING MATRIX -->
+    <section id="section-routing" class="app-section">
+      <div class="section-heading">Routing Matrix</div>
+      <div class="section-title-main">
+        How projects will move between Sound, Cinema, and Photolab.
+      </div>
+      <div class="pipeline-box" style="margin-top:4px;">
+        <div class="helper-text">
+          These routes describe the internal wiring you’ll implement later.
+          For now, they act as a design spec so you always remember the intended
+          flows. Each chip represents a single click, not a manual export.
+        </div>
+        <div class="routing-matrix" style="margin-top:10px;">
+          <div class="route-chip" onclick="routingHint('Sound','Cinema','Send mastered song into Cinema timeline, auto beat-sync.')">
+            <span class="from">Sound</span>
+            <span class="arrow">→</span>
+            <span>Cinema</span>
+          </div>
+          <div class="route-chip" onclick="routingHint('Cinema','Sound','Send rough cut back to Sound for sound design and mix.')">
+            <span class="from">Cinema</span>
+            <span class="arrow">→</span>
+            <span>Sound</span>
+          </div>
+          <div class="route-chip" onclick="routingHint('Photolab','Cinema','Send cover frames or key art into Cinema as shots or overlays.')">
+            <span class="from">Photolab</span>
+            <span class="arrow">→</span>
+            <span>Cinema</span>
+          </div>
+          <div class="route-chip" onclick="routingHint('Image Lab','Photolab','Take AI images into Photolab for real editing and retouch.')">
+            <span class="from">Image Lab</span>
+            <span class="arrow">→</span>
+            <span>Photolab</span>
+          </div>
+          <div class="route-chip" onclick="routingHint('Sound','Music Lab','Render stems or references back into Music Lab if needed.')">
+            <span class="from">Sound</span>
+            <span class="arrow">→</span>
+            <span>Music Lab</span>
+          </div>
+          <div class="route-chip" onclick="routingHint('Cinema','Film Lab','Publish sequences back to Film Lab as canon projects.')">
+            <span class="from">Cinema</span>
+            <span class="arrow">→</span>
+            <span>Film Lab</span>
+          </div>
+        </div>
+        <div class="helper-text">
+          When you later wire the backend, each route becomes a real action:
+          no manual download/re-upload. Studio will remember where you came from
+          and keep the last page of each app so you can jump in and out without
+          losing your place.
+        </div>
+      </div>
+    </section>
+
+    <!-- NOTES / FUTURE WIRING -->
+    <section id="section-notes" class="app-section">
+      <div class="section-heading">Internal Notes</div>
+      <div class="section-title-main">
+        How this file is structured so you can extend it.
+      </div>
+      <div class="helper-text">
+        • <strong>studio.html</strong> is only the hub.  
+        • Actual DAW/editor UIs live in <code>sound.html</code>,
+        <code>cinema.html</code>, and <code>photolab.html</code>.  
+        • All buttons with “Open Sound/Cinema/Photolab” call
+        <code>goToApp()</code> and simply route via <code>window.location</code>.  
+        • The “Routing Matrix” chips call <code>routingHint()</code> now, but
+        later you can replace that with real internal APIs (for example,
+        sending project IDs between apps or using shared storage).
+      </div>
+    </section>
+  </div>
 </main>
 
-<!-- Hidden upload input -->
-<input type="file" id="audioUploadInput" accept="audio/*,video/*" style="display:none" />
-
-<!-- GENERATE MODAL -->
-<div class="modal-backdrop" id="generateBackdrop">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="generateTitle">Generate content</div>
-        <div class="helper-text" id="generateSubtitle"></div>
-      </div>
-      <div class="modal-close" onclick="closeGenerateModal()">×</div>
-    </div>
-    <div class="modal-body">
-      <div>
-        <div class="field-label">Content type</div>
-        <div class="field-row">
-          <select id="genType">
-            <option value="instrument">Instrument / Beat</option>
-            <option value="fx">FX / Atmosphere</option>
-            <option value="vocals">Vocals (lead / backing)</option>
-            <option value="shot">Shot / video segment</option>
-            <option value="transition">Transition</option>
-            <option value="grade">Color / look pass</option>
-            <option value="photo">Photolab restyle</option>
-          </select>
-          <select id="genGenre">
-            <option value="auto">Auto detect</option>
-            <option value="afrobeat">Afrobeat</option>
-            <option value="amapiano">Amapiano</option>
-            <option value="gospel">Gospel / Worship</option>
-            <option value="pop">Pop</option>
-            <option value="rnb">R&amp;B</option>
-            <option value="hiphop">Hip-hop</option>
-            <option value="cinema">Cinematic film</option>
-            <option value="sitcom">Sitcom / comedy</option>
-            <option value="custom">Custom only (prompt-driven)</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <div class="field-label">Prompt / Description</div>
-        <textarea id="genPrompt" placeholder="Example for drums: 'Amapiano kick pattern with heavy log drums, syncopated but not too busy, locked to current groove.'&#10;&#10;Example for video: 'Add handheld close-ups of dancers, slow motion hits on the chorus, keep lighting neon purple and blue.'"></textarea>
-      </div>
-      <div>
-        <div class="field-label">Lyrics (for vocals)</div>
-        <textarea id="genLyrics" placeholder="Paste or write lyrics if you are generating vocals. Leave empty for instruments, FX, or visuals."></textarea>
-      </div>
-      <div>
-        <div class="field-label">Context & placement</div>
-        <div class="field-row">
-          <select id="genContext">
-            <option value="full">Use full arrangement (all unmuted tracks)</option>
-            <option value="track">Use only this track/stem</option>
-          </select>
-          <select id="genPlacement">
-            <option value="selection">Place in current selection (if any)</option>
-            <option value="fromStart">Start at beginning of song / sequence</option>
-          </select>
-        </div>
-        <div class="helper-text">
-          Studio will read all active stems (muted tracks are ignored), match tempo, key,
-          and progression, and place the generated result into this track.
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;">
-        <div class="helper-text">
-          For example, mute your current kick track, create a new track, choose Drum/Instrument,
-          set genre to Amapiano, describe the new kick you want, and Studio will generate it in sync.
-        </div>
-        <button class="btn-primary" type="button" onclick="alert('This would send the request to your backend AI engine.')">
-          Generate
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- RECORD MODAL -->
-<div class="modal-backdrop" id="recordBackdrop">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="recordTitle">Record to track</div>
-        <div class="helper-text" id="recordSubtitle">Choose what you want to record for this track.</div>
-      </div>
-      <div class="modal-close" onclick="closeRecordModal()">×</div>
-    </div>
-    <div class="modal-body">
-      <div>
-        <div class="field-label">Record type</div>
-        <div class="field-row">
-          <select id="recordMainType" onchange="updateRecordSubType()">
-            <option value="vocals">Vocals</option>
-            <option value="instrument">Instrumental</option>
-          </select>
-          <select id="recordSubType">
-            <!-- filled by JS -->
-          </select>
-        </div>
-      </div>
-      <div>
-        <div class="field-label">Input & monitoring</div>
-        <div class="helper-text">
-          Once connected, Studio will use your selected audio device, enable monitoring,
-          and sync the recording with the project tempo and metronome.
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;">
-        <div class="helper-text">
-          After you arm the track, click the record button (●) or press R to start recording.
-          The track name will update based on the selected role (e.g. Lead Vocals).
-        </div>
-        <button class="btn-primary" type="button" onclick="armTrackForRecording()">
-          Arm track with this role
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MASTERING MODAL -->
-<div class="modal-backdrop" id="masterBackdrop">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title">Mastering Suite · Mix Bus</div>
-        <div class="helper-text">Ozone-style chain: EQ · Dynamics · Imager · Maximizer</div>
-      </div>
-      <div class="modal-close" onclick="closeMasterModal()">×</div>
-    </div>
-    <div class="modal-body">
-      <div>
-        <div class="field-label">Preset</div>
-        <div class="field-row">
-          <select>
-            <option>Detect automatically from song</option>
-            <option>Afrobeat – Streaming</option>
-            <option>Amapiano – Club / Loud</option>
-            <option>Gospel – Dynamic</option>
-            <option>Pop – Radio</option>
-            <option>Film score – Wide & soft</option>
-          </select>
-          <button class="btn" type="button" onclick="alert('Would analyse mix and choose a starting preset.')">
-            Master Assistant
-          </button>
-        </div>
-      </div>
-      <div class="mastering-grid">
-        <div class="master-box">
-          <div class="field-label">Tone & EQ</div>
-          <div class="master-knobs">
-            <div class="knob"><div>+1.5 dB</div><span>Low</span></div>
-            <div class="knob"><div>0.0 dB</div><span>Mid</span></div>
-            <div class="knob"><div>+2.0 dB</div><span>High</span></div>
-          </div>
-        </div>
-        <div class="master-box">
-          <div class="field-label">Dynamics</div>
-          <div class="master-knobs">
-            <div class="knob"><div>-3 dB</div><span>Comp</span></div>
-            <div class="knob"><div>-6 dB</div><span>Limiter</span></div>
-            <div class="knob"><div>-10 LUFS</div><span>Loudness</span></div>
-          </div>
-        </div>
-        <div class="master-box">
-          <div class="field-label">Stereo & Space</div>
-          <div class="master-knobs">
-            <div class="knob"><div>120%</div><span>Width</span></div>
-            <div class="knob"><div>30%</div><span>Reverb</span></div>
-            <div class="knob"><div>0%</div><span>Mono bass</span></div>
-          </div>
-        </div>
-        <div class="master-box">
-          <div class="field-label">Output</div>
-          <div class="master-knobs">
-            <div class="knob"><div>-0.8 dB</div><span>Ceiling</span></div>
-            <div class="knob"><div>Safe</div><span>True peak</span></div>
-            <div class="knob"><div>On</div><span>Clipping guard</span></div>
-          </div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;flex-wrap:wrap;">
-        <div class="helper-text">
-          Once connected, you’ll preview before/after and export WAV or MP3 at target loudness per platform.
-        </div>
-        <button class="btn-primary" type="button" onclick="alert('This would render a mastered version of the current mix.')">
-          Apply mastering
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+<footer>
+  <span>Sulandra Creative Studio · Studio Hub v1.0</span>
+  <span>Update this hub anytime without touching the individual apps.</span>
+</footer>
 
 <script>
+  // Simple user mock for labels
   const user = { plan: 'creatorUltimate', credits: 3420 };
   document.getElementById('creditsLabel').textContent = user.credits;
   document.getElementById('planLabel').textContent =
@@ -2190,251 +942,119 @@
     user.plan === 'pro' ? 'Pro' :
     user.plan === 'creator' ? 'Creator' : 'Creator Ultimate';
 
+  // THEME TOGGLE
+  const themeNeonBtn = document.getElementById('themeNeon');
+  const themeGrayBtn = document.getElementById('themeGray');
+
+  themeNeonBtn.addEventListener('click', () => setTheme('neon'));
+  themeGrayBtn.addEventListener('click', () => setTheme('gray'));
+
   function setTheme(theme) {
     document.body.setAttribute('data-theme', theme);
-    document.getElementById('themeNeon').classList.toggle('active', theme === 'neon');
-    document.getElementById('themeGray').classList.toggle('active', theme === 'gray');
+    themeNeonBtn.classList.toggle('active', theme === 'neon');
+    themeGrayBtn.classList.toggle('active', theme === 'gray');
   }
 
-  function switchMode(mode) {
-    const sound = document.getElementById('modeSound');
-    const cinema = document.getElementById('modeCinema');
-    const photo = document.getElementById('modePhoto');
-    sound.classList.remove('active'); cinema.classList.remove('active'); photo.classList.remove('active');
-    if (mode === 'sound') sound.classList.add('active');
-    if (mode === 'cinema') cinema.classList.add('active');
-    if (mode === 'photo') photo.classList.add('active');
-
-    document.getElementById('tabSound').classList.toggle('active', mode === 'sound');
-    document.getElementById('tabCinema').classList.toggle('active', mode === 'cinema');
-    document.getElementById('tabPhoto').classList.toggle('active', mode === 'photo');
-
-    const routeBadge = document.getElementById('routeBadge');
-    const helper = document.getElementById('modeHelperText');
-    if (mode === 'sound') {
-      routeBadge.textContent = 'Mode: SOUND · Audio Project';
-      helper.innerHTML = 'Audio from Music Lab opens in <strong>SOUND</strong>. Use stems, MIDI, mixer, and mastering to finish records.';
-    } else if (mode === 'cinema') {
-      routeBadge.textContent = 'Mode: CINEMA · Video Project';
-      helper.innerHTML = 'Short films and clips open in <strong>CINEMA</strong>. Edit like Premiere, then send to Film Lab or back to SOUND.';
-    } else {
-      routeBadge.textContent = 'Mode: PHOTOLAB · Image Project';
-      helper.innerHTML = 'Images from Image Lab open in <strong>PHOTOLAB</strong>. Edit like Photoshop and send directly to other Labs.';
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  /* PLAYBACK, METRONOME & SHORTCUTS */
-  let isPlaying = false;
-  let isRecording = false;
-  let metronomeOn = false;
-
-  const globalPlayBtn = document.getElementById('globalPlayBtn');
-  const globalRecordBtn = document.getElementById('globalRecordBtn');
-  const cinemaPlayBtn = document.getElementById('cinemaPlayBtn');
-  const loopToggle = document.getElementById('loopToggle');
-  const metronomeBtn = document.getElementById('metronomeBtn');
-
-  function updatePlayButtons() {
-    if (isPlaying) {
-      globalPlayBtn.classList.add('playing');
-      cinemaPlayBtn.classList.add('playing');
-    } else {
-      globalPlayBtn.classList.remove('playing');
-      cinemaPlayBtn.classList.remove('playing');
+  // APP ROUTING – THESE ARE THE MAIN LINKS TO YOUR FUTURE FILES
+  function goToApp(app) {
+    if (app === 'sound') {
+      window.location.href = 'sound.html';      // create sound.html later
+    } else if (app === 'cinema') {
+      window.location.href = 'cinema.html';     // create cinema.html later
+    } else if (app === 'photo') {
+      window.location.href = 'photolab.html';   // create photolab.html later
     }
   }
 
-  function togglePlay() {
-    isPlaying = !isPlaying;
-    updatePlayButtons();
-  }
-
-  function stopPlay() {
-    isPlaying = false;
-    updatePlayButtons();
-  }
-
-  function toggleRecord() {
-    isRecording = !isRecording;
-    if (isRecording) {
-      globalRecordBtn.classList.add('recording');
-    } else {
-      globalRecordBtn.classList.remove('recording');
+  // HERO SLIDER
+  const slides = [
+    {
+      title: 'Create, mix, and master songs in SOUND.',
+      body: 'Record vocals, arrange stems, design drums, and master your tracks inside Sound. No external plugins or DAWs required – the goal is for creators to finish a whole record here and send the final master straight into Cinema.'
+    },
+    {
+      title: 'Cut full music videos and short films in CINEMA.',
+      body: 'Import clips from Video/Film Labs, add shots from AI, drop your mastered song from Sound, and let Cinema handle cuts, transitions, lip-sync, and titles. One project, one building.'
+    },
+    {
+      title: 'Design covers, thumbnails, and frames in PHOTOLAB.',
+      body: 'Take AI-generated models and scenes into Photolab, refine them with real editing tools, then send them back to Sound and Cinema to use as covers, overlays, and storyboard frames.'
     }
+  ];
+  let currentSlide = 0;
+
+  const slideTitleEl = document.getElementById('slideTitle');
+  const slideBodyEl = document.getElementById('slideBody');
+  const sliderDotsEl = document.getElementById('sliderDots');
+  const slidePrevBtn = document.getElementById('slidePrev');
+  const slideNextBtn = document.getElementById('slideNext');
+
+  function renderSliderDots() {
+    sliderDotsEl.innerHTML = '';
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('div');
+      dot.className = 'slider-dot' + (idx === currentSlide ? ' active' : '');
+      sliderDotsEl.appendChild(dot);
+    });
   }
 
-  function toggleMetronome() {
-    metronomeOn = !metronomeOn;
-    metronomeBtn.classList.toggle('metronome-on', metronomeOn);
+  function renderSlide() {
+    const slide = slides[currentSlide];
+    slideTitleEl.textContent = slide.title;
+    slideBodyEl.textContent = slide.body;
+    renderSliderDots();
   }
 
-  globalPlayBtn.addEventListener('click', togglePlay);
-  document.getElementById('btnStop').addEventListener('click', stopPlay);
-  globalRecordBtn.addEventListener('click', toggleRecord);
-  metronomeBtn.addEventListener('click', toggleMetronome);
-
-  cinemaPlayBtn.addEventListener('click', togglePlay);
-  document.getElementById('cinemaStop').addEventListener('click', () => { stopPlay(); });
-
-  document.addEventListener('keydown', (e) => {
-    const tag = (e.target.tagName || '').toLowerCase();
-    if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
-
-    if (e.code === 'Space') {
-      e.preventDefault();
-      togglePlay();
-    } else if (e.key === 'r' || e.key === 'R') {
-      toggleRecord();
-    } else if (e.key === 'l' || e.key === 'L') {
-      loopToggle.checked = !loopToggle.checked;
-    }
+  slidePrevBtn.addEventListener('click', () => {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    renderSlide();
+  });
+  slideNextBtn.addEventListener('click', () => {
+    currentSlide = (currentSlide + 1) % slides.length;
+    renderSlide();
   });
 
-  /* SOLO / MUTE / ARM UI */
-  function toggleMute(btn) {
-    btn.classList.toggle('mute-on');
-  }
-  function toggleSolo(btn) {
-    btn.classList.toggle('solo-on');
-  }
-  function toggleArm(btn) {
-    btn.classList.toggle('recording');
-  }
+  let sliderInterval = setInterval(() => {
+    currentSlide = (currentSlide + 1) % slides.length;
+    renderSlide();
+  }, 9000);
 
-  /* GENERATE MODAL */
-  let currentGenerate = { mode: 'sound', track: '' };
+  // Reset interval on manual navigation
+  [slidePrevBtn, slideNextBtn].forEach(btn => {
+    btn.addEventListener('click', () => {
+      clearInterval(sliderInterval);
+      sliderInterval = setInterval(() => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        renderSlide();
+      }, 9000);
+    });
+  });
 
-  function openGenerateModal(mode, trackName) {
-    currentGenerate.mode = mode;
-    currentGenerate.track = trackName || '';
-    const backdrop = document.getElementById('generateBackdrop');
-    const title = document.getElementById('generateTitle');
-    const subtitle = document.getElementById('generateSubtitle');
+  renderSlide();
 
-    if (mode === 'sound') {
-      title.textContent = 'Create audio for “' + (trackName || 'Track') + '”';
-      subtitle.textContent = 'Choose instrument, FX, or vocals – Studio will match tempo, key, and progression based on active stems.';
-    } else if (mode === 'cinema') {
-      title.textContent = 'Create video for “' + (trackName || 'Track') + '”';
-      subtitle.textContent = 'Create shots, transitions, lip-sync, or visual passes that match your current sequence.';
-    } else {
-      title.textContent = 'Photolab restyle';
-      subtitle.textContent = 'Describe how to restyle this image. You can send the result to any Lab after editing.';
-    }
-
-    document.getElementById('genType').value = mode === 'cinema' ? 'shot' : (mode === 'photo' ? 'photo' : 'instrument');
-    document.getElementById('genGenre').value = 'auto';
-    document.getElementById('genPrompt').value = '';
-    document.getElementById('genLyrics').value = '';
-    document.getElementById('genContext').value = 'full';
-    document.getElementById('genPlacement').value = 'selection';
-
-    backdrop.style.display = 'flex';
-  }
-
-  function closeGenerateModal() {
-    document.getElementById('generateBackdrop').style.display = 'none';
-  }
-
-  /* MASTER MODAL */
-  function openMasterModal() {
-    document.getElementById('masterBackdrop').style.display = 'flex';
-  }
-  function closeMasterModal() {
-    document.getElementById('masterBackdrop').style.display = 'none';
-  }
-
-  /* RECORD MODAL LOGIC */
-  let recordTargetTrackId = null;
-
-  function openRecordModal(trackId, mode) {
-    recordTargetTrackId = trackId;
-    const title = document.getElementById('recordTitle');
-    const subtitle = document.getElementById('recordSubtitle');
-    title.textContent = 'Record to ' + prettyTrackName(trackId, mode);
-    subtitle.textContent = mode === 'cinema'
-      ? 'Choose whether to record voiceover or other audio for this video track.'
-      : 'Choose what you want to record (vocals or instruments) for this audio track.';
-    document.getElementById('recordMainType').value = 'vocals';
-    updateRecordSubType();
-    document.getElementById('recordBackdrop').style.display = 'flex';
-  }
-
-  function closeRecordModal() {
-    document.getElementById('recordBackdrop').style.display = 'none';
-    recordTargetTrackId = null;
-  }
-
-  function updateRecordSubType() {
-    const mainType = document.getElementById('recordMainType').value;
-    const sub = document.getElementById('recordSubType');
-    sub.innerHTML = '';
-    if (mainType === 'vocals') {
-      ['Lead vocals','Backing vocals','Choir','Ad-libs'].forEach(label => {
-        const opt = document.createElement('option');
-        opt.value = label;
-        opt.textContent = label;
-        sub.appendChild(opt);
-      });
-    } else {
-      ['Piano','Guitar','Bass','Drums','Pad','Synth','Custom instrument'].forEach(label => {
-        const opt = document.createElement('option');
-        opt.value = label;
-        opt.textContent = label;
-        sub.appendChild(opt);
-      });
-    }
-  }
-
-  function prettyTrackName(trackId, mode) {
-    const el = document.getElementById(trackId);
-    if (!el) return mode === 'cinema' ? 'video track' : 'audio track';
-    const nameSpan = el.querySelector('.track-name-main, .cinema-track-name');
-    return nameSpan ? nameSpan.textContent : (mode === 'cinema' ? 'video track' : 'audio track');
-  }
-
-  function armTrackForRecording() {
-    if (!recordTargetTrackId) { closeRecordModal(); return; }
-    const mainType = document.getElementById('recordMainType').value;
-    const subType = document.getElementById('recordSubType').value;
-    const trackEl = document.getElementById(recordTargetTrackId);
-    if (trackEl) {
-      const nameSpan = trackEl.querySelector('.track-name-main, .cinema-track-name');
-      if (nameSpan && subType) {
-        nameSpan.textContent = subType;
+  // SIDE MENU SCROLL
+  const sideLinks = document.querySelectorAll('.side-link');
+  sideLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const targetId = link.getAttribute('data-target');
+      const section = document.getElementById(targetId);
+      if (section) {
+        window.scrollTo({
+          top: section.getBoundingClientRect().top + window.scrollY - 80,
+          behavior: 'smooth'
+        });
       }
-      const armBtn = trackEl.querySelector('.pill-small.red');
-      if (armBtn) armBtn.classList.add('recording');
-    }
-    alert('Track armed for recording as: ' + subType + '. Once wired to backend, clicking ● or pressing R will start recording with metronome = ' + (metronomeOn ? 'ON' : 'OFF') + '.');
-    closeRecordModal();
-  }
+      sideLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
 
-  /* TRACK ACTION HANDLER */
-  function handleTrackAction(mode, trackId, action) {
-    if (!action) return;
-    const select = event.target;
-    if (action === 'record') {
-      openRecordModal(trackId, mode);
-    } else if (action === 'upload') {
-      const input = document.getElementById('audioUploadInput');
-      input.onchange = () => {
-        if (input.files && input.files[0]) {
-          alert('File "' + input.files[0].name + '" selected. Once wired, it would be placed on ' +
-            prettyTrackName(trackId, mode) + ' and snapped to project tempo.');
-          input.value = '';
-        }
-      };
-      input.click();
-    } else if (action === 'import') {
-      alert('Import from Labs: this would open a picker to choose audio/video from Music / Video / Film Labs and drop it onto ' +
-        prettyTrackName(trackId, mode) + '.');
-    } else if (action === 'create') {
-      openGenerateModal(mode === 'cinema' ? 'cinema' : 'sound', prettyTrackName(trackId, mode));
-    }
-    // reset dropdown
-    if (select) select.value = '';
+  // ROUTING HINTS (PLACEHOLDER FOR REAL WIRES)
+  function routingHint(from, to, description) {
+    alert(
+      'Route: ' + from + ' → ' + to + '\n\n' +
+      description + '\n\nLater, this will call your internal API instead of showing an alert.'
+    );
   }
 </script>
 </body>
