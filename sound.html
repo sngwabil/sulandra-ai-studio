@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Sulandra AI Studio – Sound DAW</title>
+  <title>Sulandra AI Studio – Mixer Console</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Load Tailwind CSS for flexible component styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
       --bg: #050709;
@@ -26,6 +28,9 @@
       --track-bg-alt: #0b151f;
       --grid-line: rgba(255,255,255,0.05);
       --menu-bg: #141f2c;
+      /* Mixer specific */
+      --fader-red: #ff3838;
+      --fader-blue: #3884ff;
     }
 
     * { box-sizing: border-box; }
@@ -38,11 +43,12 @@
       color: var(--text-main);
       display: flex;
       flex-direction: column;
+      font-size: 14px; /* Default font size for better readability */
     }
 
     a { color: inherit; text-decoration: none; }
 
-    /* TOP APP BAR (like FL Studio title/toolbar) */
+    /* TOP APP BAR (like FL Studio title/toolbar) - Kept from original */
     header {
       background: linear-gradient(to bottom,#141f2c,#0c141d);
       border-bottom: 1px solid var(--border-soft);
@@ -146,7 +152,7 @@
       gap: 6px;
     }
 
-    /* MENU BAR (File / Edit / etc) + TRANSPORT STRIP */
+    /* MENU BAR (File / Edit / etc) + TRANSPORT STRIP - Kept from original */
     .menu-transport {
       background: var(--menu-bg);
       border-radius: 7px;
@@ -255,333 +261,231 @@
       box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
     }
 
-    /* MAIN DAW LAYOUT – like FL Playlist + Browser */
-    .daw-shell {
+    /* NEW MIXER STYLES */
+    .mixer-console {
       margin-top: 4px;
-      background: #020609;
+      background: radial-gradient(circle at top,#1c2734 0,#05070b 55%,#000 100%);
       border-radius: 9px;
       border: 1px solid rgba(0,0,0,0.9);
-      display: grid;
-      grid-template-columns: 260px minmax(0,1fr);
-      gap: 0;
-      overflow: hidden;
       box-shadow: var(--shadow-soft);
       min-height: 520px;
-    }
-    @media (max-width: 900px) {
-      .daw-shell {
-        grid-template-columns: minmax(0,1fr);
-      }
-    }
-
-    /* LEFT BROWSER (including big FL Studio Reference Manual list) */
-    .browser {
-      background: radial-gradient(circle at top,#18242f 0,#04070c 60%);
-      border-right: 1px solid #000;
       display: flex;
       flex-direction: column;
-      min-height: 0;
+      overflow: hidden;
     }
-    .browser-header {
-      padding: 5px 7px;
+    .mixer-header {
+      background: linear-gradient(to bottom,#182533,#0a1017);
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      padding: 6px 10px;
+      color: var(--accent-strong);
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .mixer-strip-container {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      display: flex;
+      padding: 10px 8px;
+    }
+    .mixer-strip {
+      width: 120px;
+      min-width: 120px;
+      background: #0d161d;
+      border-radius: 6px;
+      margin-right: 8px;
+      border: 1px solid rgba(0,0,0,0.5);
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+    }
+    .mixer-strip-master {
+      min-width: 150px;
+      width: 150px;
+      background: #0e0717; /* Master track distinct background */
+      border-color: var(--fader-red);
+      box-shadow: 0 0 10px rgba(255,56,56,0.3), inset 0 0 5px rgba(0,0,0,0.9);
+    }
+
+    /* Plugin Slots */
+    .plugin-slots {
+      height: 140px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: #090f15;
+      border-radius: 5px 5px 0 0;
+      border-bottom: 1px solid rgba(0,0,0,0.5);
+    }
+    .plugin-slot {
+      height: 18px;
+      border-radius: 3px;
+      background: #192430;
+      border: 1px solid rgba(0,0,0,0.8);
+      color: var(--text-muted);
+      font-size: 9px;
       display: flex;
       align-items: center;
-      gap: 6px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to bottom,#1a2836,#091017);
-      font-size: 11px;
+      padding-left: 5px;
+      cursor: pointer;
+      transition: background 0.1s ease;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
-    .browser-title {
+    .plugin-slot:hover {
+      background: #253342;
+      color: var(--text-main);
+    }
+    .plugin-slot.active {
+      background: var(--fader-blue);
+      color: #000;
       font-weight: 600;
-      color: var(--accent-strong);
-      text-transform: uppercase;
-      letter-spacing: .12em;
+      box-shadow: 0 0 8px rgba(56,132,255,0.7);
     }
-    .browser-search {
-      margin-left: auto;
-      flex: 1;
+
+    /* Fader and Knob Area */
+    .fader-area {
+      padding: 6px;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      justify-content: space-between;
+    }
+    .knob-wrapper {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .knob {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2c3a47, #1c2734);
+      border: 2px solid #3c4a5c;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.9), 0 2px 5px rgba(0,0,0,0.5);
+      cursor: grab;
+      position: relative;
+    }
+    .knob-marker {
+      position: absolute;
+      width: 2px;
+      height: 10px;
+      background: var(--accent);
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg); /* Initial position for visual effect */
+      transform-origin: bottom center;
+      transition: transform 0.05s linear;
+    }
+
+    /* LED Meter */
+    .meter {
+      width: 18px;
+      height: 120px;
+      background: #000;
+      border-radius: 3px;
+      border: 1px solid #1a242c;
+      padding: 2px;
+      display: flex;
+      flex-direction: column-reverse;
+      box-shadow: inset 0 0 3px rgba(0,0,0,0.8);
+    }
+    .meter-bar {
+      width: 100%;
+      background: linear-gradient(to top, var(--accent), #ffcc00, var(--fader-red));
+      height: 0%; /* Controlled by JS */
+      border-radius: 1px;
+      transition: height 0.05s ease-out;
+    }
+
+    /* Fader Rail */
+    .fader-rail {
+      width: 100%;
+      height: 150px;
+      background: #131d25;
+      border-radius: 4px;
+      border: 1px solid #1c2734;
+      position: relative;
+      padding: 0 4px;
+    }
+    .fader-cap {
+      width: 20px;
+      height: 8px;
+      background: var(--fader-blue);
+      border-radius: 2px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 75px; /* Mid-point */
+      cursor: ns-resize;
+      box-shadow: 0 0 8px rgba(56,132,255,0.7);
+    }
+    .mixer-strip-master .fader-cap {
+      background: var(--fader-red);
+      box-shadow: 0 0 8px rgba(255,56,56,0.7);
+    }
+
+    /* Mute/Solo/Track Name */
+    .track-controls {
+      display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 4px;
-    }
-    .browser-search input {
-      width: 100%;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: #050c12;
-      color: var(--text-main);
-      font-size: 10px;
-      padding: 3px 7px;
-    }
-    .browser-search input::placeholder {
-      color: rgba(158,170,182,0.6);
-    }
-
-    .browser-tabs {
-      display: flex;
-      gap: 2px;
-      padding: 4px 4px 3px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: #091019;
+      padding-bottom: 6px;
       font-size: 10px;
     }
-    .browser-tab {
-      padding: 3px 6px;
-      border-radius: 4px 4px 0 0;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-    .browser-tab.active {
-      background: #151f2b;
-      color: var(--accent-strong);
-    }
-
-    .browser-body {
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .browser-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding: 4px 6px 8px;
-      font-size: 11px;
-      scrollbar-width: thin;
-    }
-
-    .browser-section {
-      margin-bottom: 6px;
-    }
-    .browser-section-title {
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-size: 9px;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-    .browser-item {
-      padding: 3px 4px;
+    .btn-control {
+      width: 24px;
+      height: 24px;
       border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      color: #c9d3dd;
+      font-weight: 700;
+      color: #3b4c5c;
+      border: 1px solid #1c2734;
+      background: #111a22;
+      box-shadow: inset 0 0 3px rgba(0,0,0,0.7);
     }
-    .browser-item:hover {
-      background: rgba(255,255,255,0.05);
+    .btn-control.mute.active {
+      background: var(--fader-red);
+      color: #000;
+      box-shadow: 0 0 8px rgba(255,56,56,0.7);
     }
-
-    .browser-tree {
-      margin-left: 6px;
-      border-left: 1px solid rgba(255,255,255,0.05);
-      padding-left: 4px;
-      margin-top: 2px;
+    .btn-control.solo.active {
+      background: #ffcc00;
+      color: #000;
+      box-shadow: 0 0 8px rgba(255,204,0,0.7);
     }
-    .tree-group {
-      margin-bottom: 4px;
-    }
-    .tree-title {
-      color: var(--accent-strong);
-      cursor: pointer;
-      padding: 2px 2px;
-      border-radius: 3px;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-    }
-    .tree-title::before {
-      content: "▾";
-      font-size: 8px;
-      color: var(--accent-strong);
-    }
-    .tree-title.collapsed::before {
-      content: "▸";
-    }
-    .tree-content {
-      margin-top: 3px;
-      padding-left: 8px;
-      border-left: 1px dashed rgba(255,255,255,0.08);
-    }
-    .tree-content.collapsed {
-      display: none;
-    }
-    .tree-content ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .tree-content li {
-      padding: 2px 0;
-      color: #cbd6e3;
-      cursor: default;
-    }
-
-    /* RIGHT – PLAYLIST / ARRANGEMENT */
-    .playlist-wrap {
-      background: radial-gradient(circle at top,#1c2734 0,#05070b 55%,#000 100%);
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-
-    .playlist-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 8px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to bottom,#182533,#0a1017);
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .playlist-title {
-      color: var(--accent-strong);
-      font-weight: 600;
-    }
-
-    .playlist-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
-    }
-    .small-pill {
-      padding: 2px 5px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.7);
-      background: #071015;
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-    .small-pill.active {
-      border-color: var(--border-strong);
-      color: var(--accent-strong);
-    }
-
-    .playlist-main {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 120px minmax(0,1fr);
-      min-height: 0;
-    }
-    .track-names {
-      background: #04080d;
-      border-right: 1px solid #000;
-      font-size: 11px;
-      color: var(--text-muted);
-      position: relative;
-    }
-    .track-name-row {
-      height: 28px;
-      display: flex;
-      align-items: center;
-      padding: 0 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      background: linear-gradient(to bottom,rgba(9,16,23,0.9),rgba(4,7,11,0.9));
-    }
-    .track-name-row:nth-child(odd) {
-      background: linear-gradient(to bottom,rgba(11,19,27,0.9),rgba(5,9,13,0.9));
-    }
-    .track-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 4px;
-      background: var(--accent-soft);
-      box-shadow: 0 0 7px rgba(112,255,99,0.7);
-    }
-    .track-label-text {
-      color: #d3dfe7;
-    }
-
-    .playlist-grid {
-      position: relative;
-      background: var(--track-bg);
-      min-height: 0;
-      overflow: auto;
-    }
-
-    .timeline-ruler {
-      position: sticky;
-      top: 0;
-      left: 0;
-      right: 0;
+    .track-label {
+      text-align: center;
+      padding: 0 4px;
       height: 20px;
       display: flex;
-      align-items: flex-end;
-      font-size: 9px;
-      background: #071019;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.8);
-      z-index: 2;
-    }
-    .timeline-ruler-inner {
-      display: flex;
-      gap: 48px;
-      padding: 2px 6px;
-      white-space: nowrap;
-      color: var(--text-muted);
-    }
-
-    .grid-inner {
-      position: relative;
-      min-width: 1100px;
-      padding: 2px 6px 6px;
-      background-image:
-        linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
-        linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
-      background-size: 48px 1px, 1px 28px;
-    }
-
-    .pattern-block {
-      position: absolute;
-      top: 6px;
-      left: 80px;
-      width: 288px;
-      height: 22px;
-      border-radius: 4px;
-      background: linear-gradient(120deg,rgba(112,255,99,0.7),rgba(39,181,130,0.8));
-      box-shadow: 0 0 16px rgba(112,255,99,0.9);
-      color: #02110b;
-      font-size: 10px;
-      display: flex;
       align-items: center;
-      padding-left: 6px;
-    }
-    .pattern-block.second {
-      top: 34px;
-      left: 200px;
-      width: 360px;
-      background: linear-gradient(120deg,rgba(112,255,99,0.4),rgba(39,181,130,0.6));
-    }
-
-    .playhead {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: var(--accent);
-      box-shadow: 0 0 8px rgba(112,255,99,0.9);
-      left: 140px;
-    }
-
-    /* FOOTER HINT BAR */
-    .hint-bar {
-      margin-top: 4px;
-      border-radius: 6px;
-      border: 1px solid rgba(0,0,0,0.85);
-      background: linear-gradient(to right,#121a22,#06090d);
+      justify-content: center;
+      border-radius: 3px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: #192430;
+      border: 1px solid #1c2734;
+      width: 100%;
+      text-transform: uppercase;
       font-size: 10px;
-      padding: 3px 6px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 4px;
     }
-    .hint-bar span.key {
-      color: var(--accent-strong);
+    .mixer-strip-master .track-label {
+      background: #4a1f1f;
+      color: var(--fader-red);
     }
   </style>
 </head>
@@ -592,7 +496,8 @@
       <div class="brand-icon">S</div>
       <div>
         <div class="brand-title-main">Sulandra AI Studio</div>
-        <div class="brand-title-sub">Sound · Daw View</div>
+        <!-- Updated sub-title to reflect Mixer view -->
+        <div class="brand-title-sub">Sound · Mixer Console</div>
       </div>
     </div>
     <nav class="top-nav-links">
@@ -603,7 +508,9 @@
       <a href="film.html">Film Lab</a>
       <a href="explore.html">Explore</a>
       <a href="studio.html">Studio</a>
-      <a href="sound.html" class="active">Sound DAW</a>
+      <!-- Link back to the imaginary Playlist/DAW view -->
+      <a href="sound.html">Sound DAW</a>
+      <a href="#" class="active">Mixer</a>
     </nav>
     <div class="profile-pill">
       <div class="profile-dot"></div>
@@ -613,15 +520,14 @@
 </header>
 
 <main>
-  <!-- MENU + TRANSPORT, LIKE TOP OF FL STUDIO -->
+  <!-- MENU + TRANSPORT, KEPT FROM ORIGINAL -->
   <section class="menu-transport">
     <div class="menu-row">
       <div class="menu-item">File</div>
       <div class="menu-item">Edit</div>
-      <div class="menu-item">Add</div>
-      <div class="menu-item">Patterns</div>
       <div class="menu-item">View</div>
-      <div class="menu-item">Options</div>
+      <div class="menu-item">Mixer Options</div>
+      <div class="menu-item">Routing</div>
       <div class="menu-item">Tools</div>
       <div class="menu-item">Help</div>
     </div>
@@ -666,325 +572,495 @@
     </div>
   </section>
 
-  <!-- DAW BODY: LEFT BROWSER + RIGHT PLAYLIST -->
-  <section class="daw-shell">
-    <!-- LEFT BROWSER -->
-    <aside class="browser">
-      <div class="browser-header">
-        <span class="browser-title">Browser</span>
-        <div class="browser-search">
-          <input type="text" placeholder="Search · samples, presets, help topics…" />
+  <!-- MIXER CONSOLE -->
+  <section class="mixer-console">
+    <div class="mixer-header">
+      MIXER TRACKS
+    </div>
+    <div class="mixer-strip-container" id="mixerContainer">
+      <!-- Master Strip (Always first) -->
+      <div class="mixer-strip mixer-strip-master" data-track-id="0">
+        <div class="plugin-slots">
+          <div class="plugin-slot active">Maximus (Limiter)</div>
+          <div class="plugin-slot">Fruity Parametric EQ 2</div>
+          <div class="plugin-slot">Fruity Soft Clipper</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
         </div>
-      </div>
-      <div class="browser-tabs">
-        <div class="browser-tab active" data-tab="project">Project</div>
-        <div class="browser-tab" data-tab="manual">Reference Manual</div>
-      </div>
-      <div class="browser-body">
-        <!-- PROJECT TAB -->
-        <div class="browser-scroll" id="tab-project">
-          <div class="browser-section">
-            <div class="browser-section-title">PROJECT</div>
-            <div class="browser-item">Current project</div>
-            <div class="browser-item">Recent files</div>
-          </div>
-          <div class="browser-section">
-            <div class="browser-section-title">BROWSERS</div>
-            <div class="browser-item">Plugin database</div>
-            <div class="browser-item">Channel presets</div>
-            <div class="browser-item">Mixer presets</div>
-            <div class="browser-item">Scores</div>
-            <div class="browser-item">Packs</div>
-            <div class="browser-item">Recorded</div>
-            <div class="browser-item">Rendered</div>
-          </div>
-          <div class="browser-section">
-            <div class="browser-section-title">UTILITIES</div>
-            <div class="browser-item">Backup</div>
-            <div class="browser-item">Clipboard files</div>
-            <div class="browser-item">Templates</div>
-            <div class="browser-item">User data</div>
-          </div>
-        </div>
-
-        <!-- MANUAL TAB WITH BIG TREE -->
-        <div class="browser-scroll" id="tab-manual" style="display:none;">
-          <div class="browser-section">
-            <div class="browser-section-title">FL STUDIO REFERENCE MANUAL</div>
-            <div class="browser-tree">
-              <!-- TOP LEVEL GROUP -->
-              <div class="tree-group">
-                <div class="tree-title">Overview & Getting Started</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Title Page</li>
-                    <li>What is FL Studio?</li>
-                    <li>What's New in FL Studio?</li>
-                    <li>Product Information</li>
-                    <li>Purchasing & Registration</li>
-                    <li>Introduction to FL Studio</li>
-                    <li>The user interface</li>
-                    <li>Video tutorials</li>
-                    <li>Making music (Tutorial)</li>
-                    <li>Hardware controllers</li>
-                    <li>Software controllers</li>
-                    <li>Touch Controllers</li>
-                    <li>FL Studio Remote App</li>
-                    <li>Keyboard & Mouse shortcuts</li>
-                    <li>Useful web-links</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tree-group">
-                <div class="tree-title">Setting Up & System Options</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Setup Wizard</li>
-                    <li>Audio Setup</li>
-                    <li>ASIO Driver Setup</li>
-                    <li>Primary Sound Driver Setup</li>
-                    <li>MIDI Setup</li>
-                    <li>File Settings Setup</li>
-                    <li>Next Steps</li>
-                    <li>System Settings</li>
-                    <li>MIDI Settings</li>
-                    <li>Audio Settings</li>
-                    <li>Audio ASIO4ALL Settings</li>
-                    <li>General Settings</li>
-                    <li>File Settings</li>
-                    <li>Theme</li>
-                    <li>Debugging Information</li>
-                    <li>Project Settings</li>
-                    <li>Project Information</li>
-                    <li>Project General Settings</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tree-group">
-                <div class="tree-title">Main Menu, Panels & Tool Bars</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Main Menu Bar</li>
-                    <li>File Menu</li>
-                    <li>Edit Menu</li>
-                    <li>Add Menu</li>
-                    <li>Patterns Menu</li>
-                    <li>View Menu</li>
-                    <li>Options Menu</li>
-                    <li>Tools Menu</li>
-                    <li>Help Menu</li>
-                    <li>Toolbar</li>
-                    <li>Editing the Toolbar</li>
-                    <li>Main Menu</li>
-                    <li>Title & Hint Panel</li>
-                    <li>Transport Panel</li>
-                    <li>CPU & Memory Panel</li>
-                    <li>Global Snap Panel</li>
-                    <li>Output Panel</li>
-                    <li>Online Panel</li>
-                    <li>Pattern Panel</li>
-                    <li>Shortcut Icons</li>
-                    <li>Time Panel</li>
-                    <li>Multilink Controllers Icon</li>
-                    <li>Main Volume & Pitch Panel</li>
-                    <li>Window Controls</li>
-                    <li>File Browser</li>
-                    <li>Plugin Database</li>
-                    <li>Project Browser</li>
-                    <li>Library Tab</li>
-                    <li>Sounds Tab (FL Cloud)</li>
-                    <li>Advanced folder stuff</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tree-group">
-                <div class="tree-title">Core Windows & Workflow</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Channel Rack & Step Sequencer</li>
-                    <li>Channel Button Menu</li>
-                    <li>Loop Starter</li>
-                    <li>Swing Controls</li>
-                    <li>Graph Editor</li>
-                    <li>Channel Settings</li>
-                    <li>Main Control</li>
-                    <li>Sampler Setting</li>
-                    <li>Instrument Setting</li>
-                    <li>Miscellaneous Setting</li>
-                    <li>Automation Clip Setting</li>
-                    <li>Layer Setting</li>
-                    <li>Plugin Window Setting</li>
-                    <li>Piano Roll & Tools (Arpeggiator, Chopper, Chord Progression, etc.)</li>
-                    <li>Playlist – Patterns, Audio Clips, Automation Clips, Performance Mode</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tree-group">
-                <div class="tree-title">Instrument / Generator Plugins</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Plugin Wrapper & Options</li>
-                    <li>3x Osc, Autogun, BooBass, FLEX, FL Keys, FL Slayer, FPC, Drumaxx, Harmless, Harmor, Kepler, Morphine, Ogun, Patcher…</li>
-                    <li>Fruity DrumSynth Live, Fruity Granulizer, Slicex, Sytrus, Toxic Biohazard, Transistor Bass, Wasp & Wasp XT, Wave Traveller</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tree-group">
-                <div class="tree-title">Mixer & Effects</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Mixer Functions & Menu</li>
-                    <li>Plugin Effects</li>
-                    <li>Mixer Track Properties</li>
-                    <li>Audio Routing & Recording</li>
-                    <li>Levels, Mixing and Clipping</li>
-                    <li>Effect Plugins (Fruity Reeverb, Parametric EQ 2, Maximus, Gross Beat, Vocodex, ZGameEditor Visualizer, etc.)</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tree-group">
-                <div class="tree-title">Recording & Automation</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Audio Recording</li>
-                    <li>Note Recording & Step Entry</li>
-                    <li>Automation Recording</li>
-                    <li>Linking USB/MIDI Controllers</li>
-                    <li>MIDI Scripting & Preconfigured Controllers</li>
-                    <li>Automation Clips & Tools</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tree-group">
-                <div class="tree-title">Files, Formats & Integration</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Installing & Using VST / AU Plugins</li>
-                    <li>ReWire Support</li>
-                    <li>FL Studio as a Plugin</li>
-                    <li>Open / Import File Formats</li>
-                    <li>Save & Export File Formats</li>
-                    <li>Project Files & Zipped Projects</li>
-                    <li>Sample / Preset / State / Score Files</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tree-group">
-                <div class="tree-title">Troubleshooting & Extras</div>
-                <div class="tree-content">
-                  <ul>
-                    <li>Optimizing CPU Performance</li>
-                    <li>Plugins Behaving Badly</li>
-                    <li>Missing Plugins or Files</li>
-                    <li>Reset Settings · Clean Installation</li>
-                    <li>Lifetime Free Updates</li>
-                    <li>Pitch or Tempo Problems</li>
-                    <li>Audio Myths & DAW Wars</li>
-                    <li>Monitor Speakers</li>
-                    <li>Glossary (Cutoff, Resonance, Envelope, Gate, LFO…)</li>
-                    <li>Acknowledgements</li>
-                  </ul>
-                </div>
-              </div>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="90"></div>
             </div>
           </div>
-        </div> <!-- end manual tab -->
-      </div>
-    </aside>
-
-    <!-- RIGHT: PLAYLIST -->
-    <section class="playlist-wrap">
-      <div class="playlist-header">
-        <div class="playlist-title">Playlist – Arrangement (none)</div>
-        <div class="playlist-toolbar">
-          <div class="small-pill active">Track mode</div>
-          <div class="small-pill">Draw</div>
-          <div class="small-pill">Paint</div>
-          <div class="small-pill">Slice</div>
-          <div class="small-pill">Mute</div>
-          <div class="small-pill">Zoom</div>
+          <div class="meter">
+            <div class="meter-bar" style="height: 60%;" data-meter-level="60"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="75"></div>
+          </div>
+        </div>
+        <div class="track-controls">
+          <div class="btn-control solo">S</div>
+          <div class="track-label">MASTER</div>
+          <div class="text-xs text-text-muted">Send to: None</div>
         </div>
       </div>
 
-      <div class="playlist-main">
-        <!-- Track names -->
-        <div class="track-names">
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 1</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 2</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 3</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 4</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 5</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 6</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 7</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 8</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 9</span></div>
-          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 10</span></div>
+      <!-- Insert Strip Template (Tracks 1-10) -->
+      <!-- Track 1 - Kick -->
+      <div class="mixer-strip" data-track-id="1">
+        <div class="plugin-slots">
+          <div class="plugin-slot active">Fruity Limiter</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
         </div>
-
-        <!-- Grid -->
-        <div class="playlist-grid">
-          <div class="timeline-ruler">
-            <div class="timeline-ruler-inner">
-              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
-              <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="135"></div>
             </div>
           </div>
-          <div class="grid-inner">
-            <div class="playhead"></div>
-            <div class="pattern-block">Pattern 1 – Intro groove</div>
-            <div class="pattern-block second">Pattern 1 – Hook loop</div>
+          <div class="meter">
+            <div class="meter-bar" style="height: 75%;" data-meter-level="75"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="60"></div>
           </div>
         </div>
+        <div class="track-controls">
+          <div class="btn-control mute">M</div>
+          <div class="btn-control solo">S</div>
+          <div class="track-label">KICK DRUM</div>
+          <div class="text-xs text-text-muted">Send to: Master</div>
+        </div>
       </div>
-    </section>
+
+      <!-- Track 2 - Snare -->
+      <div class="mixer-strip" data-track-id="2">
+        <div class="plugin-slots">
+          <div class="plugin-slot">Fruity Reeverb</div>
+          <div class="plugin-slot active">Fruity Compressor</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+        </div>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="225"></div>
+            </div>
+          </div>
+          <div class="meter">
+            <div class="meter-bar" style="height: 68%;" data-meter-level="68"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="70"></div>
+          </div>
+        </div>
+        <div class="track-controls">
+          <div class="btn-control mute">M</div>
+          <div class="btn-control solo">S</div>
+          <div class="track-label">SNARE</div>
+          <div class="text-xs text-text-muted">Send to: Master</div>
+        </div>
+      </div>
+      
+      <!-- Track 3 - Hi-Hat (Muted) -->
+      <div class="mixer-strip" data-track-id="3">
+        <div class="plugin-slots">
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+        </div>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="45"></div>
+            </div>
+          </div>
+          <div class="meter">
+            <div class="meter-bar" style="height: 0%;" data-meter-level="0"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="140"></div>
+          </div>
+        </div>
+        <div class="track-controls">
+          <div class="btn-control mute active">M</div>
+          <div class="btn-control solo">S</div>
+          <div class="track-label">HI-HATS</div>
+          <div class="text-xs text-text-muted">Send to: Master</div>
+        </div>
+      </div>
+
+      <!-- Track 4 - Bassline (Soloed) -->
+      <div class="mixer-strip" data-track-id="4">
+        <div class="plugin-slots">
+          <div class="plugin-slot active">Harmor (Synth)</div>
+          <div class="plugin-slot active">Compressor 2</div>
+          <div class="plugin-slot active">Saturation</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+        </div>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="90"></div>
+            </div>
+          </div>
+          <div class="meter">
+            <div class="meter-bar" style="height: 55%;" data-meter-level="55"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="80"></div>
+          </div>
+        </div>
+        <div class="track-controls">
+          <div class="btn-control mute">M</div>
+          <div class="btn-control solo active">S</div>
+          <div class="track-label">BASSLINE</div>
+          <div class="text-xs text-text-muted">Send to: Master</div>
+        </div>
+      </div>
+
+      <!-- Track 5 - Lead Synth -->
+      <div class="mixer-strip" data-track-id="5">
+        <div class="plugin-slots">
+          <div class="plugin-slot active">Sytrus (Synth)</div>
+          <div class="plugin-slot active">Delay 3</div>
+          <div class="plugin-slot active">Reverb 2</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+        </div>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="180"></div>
+            </div>
+          </div>
+          <div class="meter">
+            <div class="meter-bar" style="height: 85%;" data-meter-level="85"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="45"></div>
+          </div>
+        </div>
+        <div class="track-controls">
+          <div class="btn-control mute">M</div>
+          <div class="btn-control solo">S</div>
+          <div class="track-label">LEAD SYNTH</div>
+          <div class="text-xs text-text-muted">Send to: Master</div>
+        </div>
+      </div>
+
+      <!-- Track 6 - Pad -->
+      <div class="mixer-strip" data-track-id="6">
+        <div class="plugin-slots">
+          <div class="plugin-slot active">FLEX (Pad)</div>
+          <div class="plugin-slot active">Gross Beat</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+        </div>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="0"></div>
+            </div>
+          </div>
+          <div class="meter">
+            <div class="meter-bar" style="height: 40%;" data-meter-level="40"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="90"></div>
+          </div>
+        </div>
+        <div class="track-controls">
+          <div class="btn-control mute">M</div>
+          <div class="btn-control solo">S</div>
+          <div class="track-label">PAD</div>
+          <div class="text-xs text-text-muted">Send to: Master</div>
+        </div>
+      </div>
+
+      <!-- Track 7 - FX (Delay Return) -->
+      <div class="mixer-strip" data-track-id="7">
+        <div class="plugin-slots">
+          <div class="plugin-slot active">Delay 3 (Send)</div>
+          <div class="plugin-slot active">Fruity Filter</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+        </div>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="90"></div>
+            </div>
+          </div>
+          <div class="meter">
+            <div class="meter-bar" style="height: 30%;" data-meter-level="30"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="100"></div>
+          </div>
+        </div>
+        <div class="track-controls">
+          <div class="btn-control mute">M</div>
+          <div class="btn-control solo">S</div>
+          <div class="track-label">FX DELAY</div>
+          <div class="text-xs text-text-muted">Send to: Master</div>
+        </div>
+      </div>
+
+      <!-- Add Track Button -->
+      <div class="flex flex-col items-center justify-center p-4">
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-xs shadow-lg transition duration-150 ease-in-out transform hover:scale-105" onclick="addNewTrack()">
+          + ADD TRACK
+        </button>
+      </div>
+
+    </div>
   </section>
 
   <!-- FOOTER HINTS -->
   <section class="hint-bar">
-    <span>Press <span class="key">Space</span> to Play / Pause • <span class="key">R</span> to arm record (future wiring).</span>
-    <span>Browser includes a condensed FL Studio Reference Manual tree so users can quickly jump to help topics while working.</span>
+    <span>Click the <span class="key">plugin slots</span> to open or insert a new effect.</span>
+    <span>Use <span class="key">M / S</span> buttons to Mute or Solo individual tracks.</span>
+    <span>Knobs control <span class="key">Pan/Stereo Position</span>. Faders control <span class="key">Volume</span>.</span>
   </section>
 </main>
 
 <script>
-  // Simple tab toggle left browser
-  const tabButtons = document.querySelectorAll('.browser-tab');
-  const tabProject = document.getElementById('tab-project');
-  const tabManual = document.getElementById('tab-manual');
+  // --- UTILITY FUNCTIONS ---
 
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  // Function to create a new, functional mixer strip (Insert Track)
+  const createMixerStrip = (trackId, trackName, meterLevel, faderPos, panAngle) => {
+    return `
+      <div class="mixer-strip" data-track-id="${trackId}">
+        <div class="plugin-slots">
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+          <div class="plugin-slot">+ Insert Effect Slot</div>
+        </div>
+        <div class="fader-area">
+          <div class="knob-wrapper">
+            <div class="knob">
+              <div class="knob-marker" data-knob-angle="${panAngle}"></div>
+            </div>
+          </div>
+          <div class="meter">
+            <div class="meter-bar" style="height: ${meterLevel}%;" data-meter-level="${meterLevel}"></div>
+          </div>
+          <div class="fader-rail">
+            <div class="fader-cap" data-fader-pos="${faderPos}"></div>
+          </div>
+        </div>
+        <div class="track-controls">
+          <div class="btn-control mute">M</div>
+          <div class="btn-control solo">S</div>
+          <div class="track-label">${trackName}</div>
+          <div class="text-xs text-text-muted">Send to: Master</div>
+        </div>
+      </div>
+    `;
+  };
 
-      const tab = btn.dataset.tab;
-      if (tab === 'project') {
-        tabProject.style.display = 'block';
-        tabManual.style.display = 'none';
-      } else {
-        tabProject.style.display = 'none';
-        tabManual.style.display = 'block';
-      }
+  // Function to calculate rotation from pan angle
+  const getKnobRotationStyle = (angle) => {
+    // Convert 0-360 angle to CSS rotation (0deg is top)
+    // We adjust it so that the initial marker position (45deg offset) is taken into account
+    return `transform: translateX(-50%) rotate(${angle - 90}deg);`;
+  };
+
+  // Function to calculate fader position (0px is bottom, 142px is top)
+  const getFaderPositionStyle = (position) => {
+    // Position 0 is top, 142 is bottom (inverted for visual DAW faders)
+    return `bottom: ${position}px;`;
+  };
+
+  // --- CORE INTERACTIVITY ---
+
+  const initMixerControls = () => {
+    // 1. Initialize Knob Markers
+    document.querySelectorAll('.knob-marker').forEach(marker => {
+      const angle = parseFloat(marker.dataset.knobAngle);
+      marker.style.cssText = getKnobRotationStyle(angle);
     });
-  });
 
-  // Collapsible manual tree groups
-  document.querySelectorAll('.tree-group').forEach(group => {
-    const title = group.querySelector('.tree-title');
-    const content = group.querySelector('.tree-content');
-    title.addEventListener('click', () => {
-      title.classList.toggle('collapsed');
-      content.classList.toggle('collapsed');
+    // 2. Initialize Fader Caps
+    document.querySelectorAll('.fader-cap').forEach(fader => {
+      const pos = parseFloat(fader.dataset.faderPos);
+      fader.style.cssText = getFaderPositionStyle(pos);
     });
-  });
+
+    // 3. Setup Mute/Solo Toggles
+    document.querySelectorAll('.btn-control').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.currentTarget.classList.toggle('active');
+
+        // Logic for Solo: If a track is soloed, mute all others (except Master, which is controlled externally)
+        if (e.currentTarget.classList.contains('solo') && e.currentTarget.classList.contains('active')) {
+          document.querySelectorAll('.btn-control.solo').forEach(otherSoloBtn => {
+            if (otherSoloBtn !== e.currentTarget) {
+              otherSoloBtn.classList.remove('active');
+            }
+          });
+          document.querySelectorAll('.btn-control.mute').forEach(muteBtn => {
+            muteBtn.classList.add('active');
+          });
+          // Unmute the soloed track's mute button
+          e.currentTarget.closest('.track-controls').querySelector('.mute').classList.remove('active');
+        } else if (e.currentTarget.classList.contains('mute')) {
+          // If unmuting a track, unslo all other tracks and unmute everything.
+          if (!e.currentTarget.classList.contains('active')) {
+             // If we are unmuting, make sure solo is off
+             e.currentTarget.closest('.track-controls').querySelector('.solo').classList.remove('active');
+          }
+        }
+      });
+    });
+
+    // 4. Implement simple Knob Dragging (Pan control)
+    document.querySelectorAll('.knob').forEach(knob => {
+      const marker = knob.querySelector('.knob-marker');
+      let isDragging = false;
+      let startY = 0;
+      let startAngle = 0;
+
+      knob.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        knob.style.cursor = 'grabbing';
+        startY = e.clientY;
+        startAngle = parseFloat(marker.dataset.knobAngle || 0);
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        const deltaY = startY - e.clientY;
+        // Simple linear mapping: 1px movement = 0.5 degree change
+        let newAngle = startAngle + deltaY * 0.5;
+
+        // Clamp the angle (0 to 360 degrees)
+        if (newAngle > 360) newAngle -= 360;
+        if (newAngle < 0) newAngle += 360;
+
+        marker.dataset.knobAngle = newAngle.toFixed(2);
+        marker.style.cssText = getKnobRotationStyle(newAngle);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          knob.style.cursor = 'grab';
+        }
+      });
+    });
+
+    // 5. Implement simple Fader Dragging (Volume control)
+    document.querySelectorAll('.fader-cap').forEach(fader => {
+      let isDragging = false;
+      let startY = 0;
+      let startPos = 0;
+
+      fader.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startY = e.clientY;
+        startPos = parseFloat(fader.dataset.faderPos || 0);
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        const deltaY = startY - e.clientY;
+        let newPos = startPos + deltaY;
+
+        // Clamp the position (0px is bottom, approx 142px is top)
+        newPos = Math.max(0, Math.min(142, newPos));
+
+        fader.dataset.faderPos = newPos.toFixed(0);
+        fader.style.cssText = getFaderPositionStyle(newPos);
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    });
+
+    // 6. Animate Metering (Simulated)
+    const meterInterval = setInterval(() => {
+      document.querySelectorAll('.meter-bar').forEach(bar => {
+        const currentLevel = parseInt(bar.dataset.meterLevel, 10);
+        // Simulate level fluctuation: -5 to +5 difference
+        const fluctuation = Math.floor(Math.random() * 11) - 5;
+        let newLevel = Math.max(0, Math.min(100, currentLevel + fluctuation));
+
+        // Tracks 3 (Hi-Hats) is muted, so keep it at 0
+        const trackStrip = bar.closest('.mixer-strip');
+        if (trackStrip && trackStrip.dataset.trackId === '3' || trackStrip.querySelector('.mute')?.classList.contains('active')) {
+             newLevel = 0;
+        }
+
+        bar.dataset.meterLevel = newLevel;
+        bar.style.height = `${newLevel}%`;
+
+        // Highlight clipping for Master track (>90%)
+        if (trackStrip.classList.contains('mixer-strip-master') && newLevel > 90) {
+           bar.style.backgroundColor = 'red';
+           bar.style.boxShadow = '0 0 5px red';
+        } else {
+           bar.style.backgroundColor = '';
+           bar.style.boxShadow = '';
+        }
+
+      });
+    }, 100); // Update every 100ms
+  };
+
+  // Function to add a new track dynamically
+  let trackCounter = 8;
+  window.addNewTrack = () => {
+    const container = document.getElementById('mixerContainer');
+    const newTrackId = trackCounter++;
+    const randomLevel = Math.floor(Math.random() * 60) + 20; // 20% to 80%
+    const randomFader = Math.floor(Math.random() * 100) + 40; // 40px to 140px
+    const randomPan = Math.floor(Math.random() * 360); // 0 to 360 degrees
+    const newStripHTML = createMixerStrip(newTrackId, `INSERT ${newTrackId}`, randomLevel, randomFader, randomPan);
+
+    // Find the position of the last existing strip (before the 'Add Track' button)
+    const lastStrip = container.querySelector('.mixer-strip:last-of-type');
+    lastStrip.insertAdjacentHTML('afterend', newStripHTML);
+
+    // Re-initialize controls to include the new strip
+    initMixerControls();
+    
+    // Scroll to show the new track
+    container.scrollLeft = container.scrollWidth;
+  };
+
+
+  // Start initialization when the DOM is ready
+  window.addEventListener('load', initMixerControls);
+
 </script>
 </body>
 </html>
