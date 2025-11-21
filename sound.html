@@ -592,6 +592,10 @@
       cursor: pointer;
       white-space: nowrap;
     }
+    .pattern-block.selected {
+      box-shadow: 0 0 16px rgba(255,255,255,0.9);
+      border: 1px solid #fff;
+    }
 
     .playhead {
       position: absolute;
@@ -618,6 +622,88 @@
       gap: 4px;
     }
     .hint-bar span.key { color: var(--accent-strong); }
+
+    /* STEP SEQUENCER */
+    .step-sequencer {
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: linear-gradient(to bottom,#101821,#05070b);
+      box-shadow: var(--shadow-soft);
+      padding: 6px 8px 8px;
+      font-size: 11px;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .step-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-title {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent-strong);
+      font-size: 10px;
+    }
+    .step-current-pattern {
+      font-size: 10px;
+      color: var(--text-main);
+    }
+    .step-hint {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+    .step-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 2px;
+      overflow-x: auto;
+    }
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .step-label {
+      width: 40px;
+      text-align: right;
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+    .step-cells {
+      display: flex;
+      gap: 2px;
+    }
+    .step-cell {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.7);
+      background: #050b10;
+      cursor: pointer;
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.9);
+    }
+    .step-cell.on {
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(112,255,99,0.9);
+      border-color: var(--border-strong);
+    }
+    .step-cell.beat {
+      border-top: 1px solid rgba(255,255,255,0.3);
+    }
+    .step-cell.subbeat {
+      opacity: 0.85;
+    }
+    .step-cell.active-step {
+      outline: 1px solid #fff;
+    }
   </style>
 </head>
 <body>
@@ -723,7 +809,7 @@
           </div>
         </div>
 
-        <!-- MANUAL TAB (condensed) -->
+        <!-- MANUAL TAB (condensed tree) -->
         <div class="browser-scroll" id="tab-manual" style="display:none;">
           <div class="browser-section">
             <div class="browser-section-title">FL STUDIO REFERENCE MANUAL</div>
@@ -734,7 +820,6 @@
                   <ul>
                     <li>What is FL Studio?</li>
                     <li>What's New in FL Studio?</li>
-                    <li>Introduction to FL Studio</li>
                     <li>The user interface</li>
                     <li>Making music (Tutorial)</li>
                   </ul>
@@ -759,7 +844,6 @@
                     <li>Mixer Functions & Effects</li>
                     <li>Generator Plugins</li>
                     <li>Effect Plugins</li>
-                    <li>Recording & Automation</li>
                   </ul>
                 </div>
               </div>
@@ -815,32 +899,55 @@
     </section>
   </section>
 
+  <!-- STEP SEQUENCER -->
+  <section class="step-sequencer" id="step-sequencer">
+    <div class="step-header">
+      <div class="step-header-left">
+        <div class="step-title">Pattern Step Sequencer</div>
+        <div class="step-current-pattern" id="step-current-pattern">No pattern selected</div>
+      </div>
+      <div class="step-hint">
+        Click a pattern in the playlist to edit • 16 steps = 4 beats (Kick / Snare / Hat)
+      </div>
+    </div>
+    <div class="step-grid" id="step-grid">
+      <!-- Rows will be filled by JS -->
+    </div>
+  </section>
+
   <!-- HINTS -->
   <section class="hint-bar">
-    <span>Double-click track name to rename • Use M/S buttons for mute / solo • Use menu › Upload / Record / Create pattern.</span>
-    <span>Play moves the visual playhead. Hook Web Audio to these events to make it a real DAW engine.</span>
+    <span>Double-click track name to rename • Use M/S for mute / solo • Track menu → Upload / Record / Create pattern.</span>
+    <span>Play = metronome + active patterns (Kick / Snare / Hat) at 130 BPM – all in the browser.</span>
   </section>
 </main>
 
 <input type="file" id="hidden-file-input" style="display:none" accept="audio/*" />
 
 <script>
-  // --- BASIC STATE ---
+  // === BASIC STATE ===
   const NUM_TRACKS = 9;
-  const GRID_BEATS = 32;           // number of beat columns
-  const BEAT_PIXELS = 48;          // px per beat
+  const GRID_BEATS = 32;         // number of beats across the grid
+  const BEAT_PIXELS = 48;        // pixels per beat
   const TRACK_HEIGHT_MIN = 24;
   const TRACK_HEIGHT_MAX = 64;
 
   const tracks = [];
-  let patterns = [];               // {trackIndex, startBeat, lengthBeats, label}
+  let patterns = [];             // {id, trackIndex, startBeat, lengthBeats, label, steps}
+  let selectedPatternId = null;
+
   let isPlaying = false;
   let playStartTime = 0;
-  let lastAnimTime = 0;
-  let playheadStartX = 80;         // starting px from left
-  let tempo = 130;                 // bpm
+  let playheadStartX = 80;
+  let tempo = 130;
   let loopEnabled = false;
 
+  let lastGlobalStep = -1;       // for metronome + sequencer
+  const STEPS_PER_BEAT = 4;      // 16th notes
+  const STEPS_PER_BAR = 16;      // 4 beats * 4
+  const SEQ_ROWS = ['kick','snare','hat'];
+
+  // DOM references
   const playBtn = document.getElementById('btn-play');
   const stopBtn = document.getElementById('btn-stop');
   const loopBtn = document.getElementById('btn-loop');
@@ -855,19 +962,122 @@
   const trackHeaders = document.getElementById('track-headers');
   const timelineLabels = document.getElementById('timeline-labels');
   const hiddenFileInput = document.getElementById('hidden-file-input');
+  const stepGridEl = document.getElementById('step-grid');
+  const stepCurrentPattern = document.getElementById('step-current-pattern');
 
-  // --- INIT TIMELINE LABELS ---
+  // === WEB AUDIO ===
+  let audioCtx = null;
+  let noiseBuffer = null;
+
+  function ensureAudioContext() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+      createNoiseBuffer();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  function createNoiseBuffer() {
+    if (!audioCtx || noiseBuffer) return;
+    const length = audioCtx.sampleRate * 0.5; // 0.5 seconds of noise
+    const buffer = audioCtx.createBuffer(1, length, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < length; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    noiseBuffer = buffer;
+  }
+
+  function playMetronome(accent) {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'square';
+    const freq = accent ? 3000 : 2000;
+    osc.frequency.setValueAtTime(freq, now);
+
+    gain.gain.setValueAtTime(accent ? 0.3 : 0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.1);
+  }
+
+  function playKick() {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
+
+    gain.gain.setValueAtTime(0.9, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.2);
+  }
+
+  function playSnare() {
+    if (!audioCtx || !noiseBuffer) return;
+    const now = audioCtx.currentTime;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = noiseBuffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1800;
+    filter.Q.value = 1;
+
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+    noise.connect(filter).connect(gain).connect(audioCtx.destination);
+    noise.start(now);
+    noise.stop(now + 0.2);
+  }
+
+  function playHat() {
+    if (!audioCtx || !noiseBuffer) return;
+    const now = audioCtx.currentTime;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = noiseBuffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 7000;
+
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+    noise.connect(filter).connect(gain).connect(audioCtx.destination);
+    noise.start(now);
+    noise.stop(now + 0.1);
+  }
+
+  // === INIT TIMELINE LABELS ===
   for (let i = 1; i <= GRID_BEATS; i++) {
     const span = document.createElement('span');
     span.textContent = i;
     timelineLabels.appendChild(span);
   }
 
-  // --- INIT TRACKS ---
+  // === TRACKS ===
   function createTrack(index) {
     const track = {
       index,
-      name: `Track ${index+1}`,
+      name: `Track ${index + 1}`,
       height: 32,
       muted: false,
       solo: false,
@@ -877,10 +1087,34 @@
   }
   for (let i = 0; i < NUM_TRACKS; i++) createTrack(i);
 
+  // === PATTERN / SEQUENCER HELPERS ===
+  function defaultSteps() {
+    // simple 4-on-the-floor kick, snare on 5 & 13, hats every 2nd step
+    const steps = {
+      kick: Array(STEPS_PER_BAR).fill(false),
+      snare: Array(STEPS_PER_BAR).fill(false),
+      hat: Array(STEPS_PER_BAR).fill(false)
+    };
+    for (let s = 0; s < STEPS_PER_BAR; s += 4) {
+      steps.kick[s] = true; // beats 1,2,3,4
+    }
+    steps.snare[4] = true;  // beat 2
+    steps.snare[12] = true; // beat 4
+    for (let s = 0; s < STEPS_PER_BAR; s += 2) {
+      steps.hat[s] = true;
+    }
+    return steps;
+  }
+
+  function findPatternById(id) {
+    return patterns.find(p => p.id === id) || null;
+  }
+
+  // === RENDER TRACKS & GRID ===
   function renderTracks() {
     trackHeaders.innerHTML = '';
     gridInner.querySelectorAll('.grid-track-row').forEach(el => el.remove());
-    // make grid rows and headers
+
     tracks.forEach(track => {
       const rowWrap = document.createElement('div');
       rowWrap.className = 'track-row';
@@ -904,7 +1138,7 @@
       });
       label.addEventListener('blur', () => {
         label.contentEditable = 'false';
-        track.name = label.textContent.trim() || `Track ${track.index+1}`;
+        track.name = label.textContent.trim() || `Track ${track.index + 1}`;
         label.textContent = track.name;
       });
       label.addEventListener('keydown', (e) => {
@@ -972,7 +1206,7 @@
       itemRecord.className = 'track-menu-item';
       itemRecord.textContent = 'Record (mic) – stub';
       itemRecord.addEventListener('click', () => {
-        alert('Here you can hook getUserMedia / Web Audio to record into ' + track.name);
+        alert('Hook Web Audio / getUserMedia here to record into ' + track.name);
         menu.classList.remove('open');
       });
 
@@ -1015,7 +1249,6 @@
 
       trackHeaders.appendChild(rowWrap);
 
-      // grid row
       const gridRow = document.createElement('div');
       gridRow.className = 'grid-track-row';
       gridRow.style.height = track.height + 'px';
@@ -1026,43 +1259,131 @@
     renderPatterns();
   }
 
-  // --- PATTERNS ---
+  // === PATTERNS ===
   function addPatternForTrack(trackIndex) {
     const existing = patterns.filter(p => p.trackIndex === trackIndex);
-    const startBeat = existing.length * 4; // simple stacking
+    const startBeat = existing.length * 4; // each new pattern 4 beats later
     const pattern = {
       id: Date.now() + '_' + Math.random(),
       trackIndex,
       startBeat,
       lengthBeats: 4,
-      label: 'Pattern ' + (existing.length + 1)
+      label: 'Pattern ' + (existing.length + 1),
+      steps: defaultSteps()
     };
     patterns.push(pattern);
+    selectedPatternId = pattern.id;
     renderPatterns();
+    updateStepSequencerUI();
   }
 
   function renderPatterns() {
-    // remove old pattern blocks
     gridInner.querySelectorAll('.pattern-block').forEach(el => el.remove());
 
     patterns.forEach(p => {
       const trackRow = gridInner.querySelector(`.grid-track-row[data-track-index="${p.trackIndex}"]`);
       if (!trackRow) return;
-      const rect = trackRow.getBoundingClientRect();
       const top = trackRow.offsetTop;
 
       const block = document.createElement('div');
       block.className = 'pattern-block';
+      if (p.id === selectedPatternId) block.classList.add('selected');
       block.textContent = p.label;
       block.style.left = playheadStartX + p.startBeat * BEAT_PIXELS + 'px';
       block.style.top = top + 4 + 'px';
       block.style.width = (p.lengthBeats * BEAT_PIXELS - 6) + 'px';
+      block.dataset.patternId = p.id;
+
+      block.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectedPatternId = p.id;
+        renderPatterns();
+        updateStepSequencerUI();
+      });
 
       gridInner.appendChild(block);
     });
   }
 
-  // --- RESIZE TRACKS ---
+  // === STEP SEQUENCER UI ===
+  function buildStepGrid() {
+    stepGridEl.innerHTML = '';
+    for (const rowName of SEQ_ROWS) {
+      const rowEl = document.createElement('div');
+      rowEl.className = 'step-row';
+
+      const labelEl = document.createElement('div');
+      labelEl.className = 'step-label';
+      labelEl.textContent = rowName[0].toUpperCase() + rowName.slice(1);
+      rowEl.appendChild(labelEl);
+
+      const cellsWrap = document.createElement('div');
+      cellsWrap.className = 'step-cells';
+
+      for (let i = 0; i < STEPS_PER_BAR; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'step-cell';
+        // Mark each beat (every 4th step)
+        if (i % 4 === 0) {
+          cell.classList.add('beat');
+        } else if (i % 2 === 0) {
+          cell.classList.add('subbeat');
+        }
+        cell.dataset.row = rowName;
+        cell.dataset.step = i;
+        cell.addEventListener('click', () => toggleStepCell(cell));
+        cellsWrap.appendChild(cell);
+      }
+
+      rowEl.appendChild(cellsWrap);
+      stepGridEl.appendChild(rowEl);
+    }
+  }
+
+  function toggleStepCell(cell) {
+    const pattern = findPatternById(selectedPatternId);
+    if (!pattern) return;
+    const row = cell.dataset.row;
+    const step = parseInt(cell.dataset.step, 10);
+    const current = !!pattern.steps[row][step];
+    pattern.steps[row][step] = !current;
+    cell.classList.toggle('on', !current);
+  }
+
+  function updateStepSequencerUI(activeGlobalStep = null) {
+    const pattern = findPatternById(selectedPatternId);
+    if (!pattern) {
+      stepCurrentPattern.textContent = 'No pattern selected';
+      document.querySelectorAll('.step-cell').forEach(c => {
+        c.classList.remove('on','active-step');
+      });
+      return;
+    }
+    stepCurrentPattern.textContent = `${pattern.label} – Track ${pattern.trackIndex + 1}`;
+
+    // Update on/off
+    document.querySelectorAll('.step-cell').forEach(cell => {
+      const row = cell.dataset.row;
+      const step = parseInt(cell.dataset.step, 10);
+      cell.classList.toggle('on', !!pattern.steps[row][step]);
+      cell.classList.remove('active-step');
+    });
+
+    // Highlight current step if provided
+    if (activeGlobalStep !== null) {
+      // Map from globalStep to local step in this pattern
+      const startStep = pattern.startBeat * STEPS_PER_BEAT;
+      const patternTotalSteps = pattern.lengthBeats * STEPS_PER_BEAT;
+      if (activeGlobalStep >= startStep &&
+          activeGlobalStep < startStep + patternTotalSteps) {
+        const localStep = (activeGlobalStep - startStep) % patternTotalSteps;
+        document.querySelectorAll(`.step-cell[data-step="${localStep}"]`)
+          .forEach(c => c.classList.add('active-step'));
+      }
+    }
+  }
+
+  // === RESIZE TRACKS ===
   let resizingTrackIndex = null;
   let startY = 0;
   let startHeight = 0;
@@ -1086,6 +1407,7 @@
     tracks[resizingTrackIndex].height = newHeight;
     renderTracks();
   });
+
   window.addEventListener('mouseup', () => {
     if (resizingTrackIndex != null) {
       resizingTrackIndex = null;
@@ -1093,7 +1415,7 @@
     }
   });
 
-  // --- BROWSER TABS ---
+  // === BROWSER TABS & MANUAL TREE ===
   document.querySelectorAll('.browser-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.browser-tab').forEach(b => b.classList.remove('active'));
@@ -1107,7 +1429,6 @@
     });
   });
 
-  // manual collapse
   document.querySelectorAll('.tree-group').forEach(group => {
     const title = group.querySelector('.tree-title');
     const content = group.querySelector('.tree-content');
@@ -1117,7 +1438,7 @@
     });
   });
 
-  // --- TRANSPORT / PLAYHEAD ANIMATION ---
+  // === TRANSPORT / PLAYHEAD / AUDIO LOOP ===
   function bpmToPixelsPerSecond(bpm) {
     const secondsPerBeat = 60 / bpm;
     return BEAT_PIXELS / secondsPerBeat;
@@ -1132,23 +1453,31 @@
     const bars = Math.floor(totalBeats / 4);
     const beats = Math.floor(totalBeats % 4) + 1;
     const ticks = Math.floor((totalBeats * 96) % 96);
-    timeDisplay.textContent = `${bars}:${beats.toString().padStart(2,'0')}:${ticks.toString().padStart(2,'0')}`;
+    timeDisplay.textContent = `${bars}:${beats.toString().padStart(2, '0')}:${ticks.toString().padStart(2,'0')}`;
   }
 
   function animationLoop(timestamp) {
     if (!isPlaying) return;
-    if (!lastAnimTime) lastAnimTime = timestamp;
 
     const elapsed = (timestamp - playStartTime) / 1000; // seconds
     const pxPerSec = bpmToPixelsPerSecond(tempo);
     const newX = playheadStartX + elapsed * pxPerSec;
     const maxX = playheadStartX + GRID_BEATS * BEAT_PIXELS;
 
+    const totalBeats = (elapsed / 60) * tempo;
+    const globalStep = Math.floor(totalBeats * STEPS_PER_BEAT); // 16th notes from start
+
+    if (globalStep !== lastGlobalStep) {
+      handleStepChange(globalStep);
+      lastGlobalStep = globalStep;
+    }
+
     if (newX >= maxX) {
       if (loopEnabled) {
         playStartTime = timestamp;
         setPlayheadPosition(playheadStartX);
         updateTimeDisplay(0);
+        lastGlobalStep = -1;
       } else {
         stopPlayback();
         return;
@@ -1157,17 +1486,59 @@
       setPlayheadPosition(newX);
       updateTimeDisplay(elapsed);
     }
+
     requestAnimationFrame(animationLoop);
+  }
+
+  function handleStepChange(globalStep) {
+    if (!audioCtx) return;
+
+    const beatsFromStart = globalStep / STEPS_PER_BEAT;
+    const isBarStart = (globalStep % STEPS_PER_BAR === 0);
+    const isBeatStart = (globalStep % STEPS_PER_BEAT === 0);
+
+    // Metronome: click every beat, stronger on bar
+    if (isBeatStart) {
+      playMetronome(isBarStart);
+    }
+
+    // Play active patterns' steps
+    patterns.forEach(pattern => {
+      const startStep = pattern.startBeat * STEPS_PER_BEAT;
+      const patternSteps = pattern.lengthBeats * STEPS_PER_BEAT;
+      const endStep = startStep + patternSteps;
+
+      if (globalStep >= startStep && globalStep < endStep) {
+        const localStep = (globalStep - startStep) % patternSteps;
+
+        // Kick
+        if (pattern.steps.kick[localStep]) {
+          playKick();
+        }
+        // Snare
+        if (pattern.steps.snare[localStep]) {
+          playSnare();
+        }
+        // Hat
+        if (pattern.steps.hat[localStep]) {
+          playHat();
+        }
+      }
+    });
+
+    // Update sequencer highlight for current pattern
+    updateStepSequencerUI(globalStep);
   }
 
   function startPlayback() {
     if (isPlaying) return;
+    ensureAudioContext();
     isPlaying = true;
     playStartTime = performance.now();
-    lastAnimTime = 0;
+    lastGlobalStep = -1;
     playBtn.textContent = '⏸';
     playBtn.classList.add('active-outline');
-    statusLabel.textContent = 'Playing (visual only)';
+    statusLabel.textContent = 'Playing (metronome + patterns)';
     requestAnimationFrame(animationLoop);
   }
 
@@ -1177,15 +1548,17 @@
     playBtn.classList.remove('active-outline');
     setPlayheadPosition(playheadStartX);
     updateTimeDisplay(0);
+    lastGlobalStep = -1;
     statusLabel.textContent = 'Stopped';
+    updateStepSequencerUI(); // clear active-step highlight
   }
 
   playBtn.addEventListener('click', () => {
     if (isPlaying) {
       isPlaying = false;
-      statusLabel.textContent = 'Paused';
       playBtn.textContent = '▶';
       playBtn.classList.remove('active-outline');
+      statusLabel.textContent = 'Paused';
     } else {
       startPlayback();
     }
@@ -1200,10 +1573,9 @@
   });
 
   fwdBtn.addEventListener('click', () => {
-    // jump playhead to end visually
     const maxX = playheadStartX + GRID_BEATS * BEAT_PIXELS;
     setPlayheadPosition(maxX);
-    statusLabel.textContent = 'Jumped to end';
+    statusLabel.textContent = 'Jumped to end (visual only)';
   });
 
   loopBtn.addEventListener('click', () => {
@@ -1216,11 +1588,11 @@
     recordBtn.classList.toggle('active-outline');
     const active = recordBtn.classList.contains('active-outline');
     statusLabel.textContent = active
-      ? 'Record armed (hook Web Audio here)'
+      ? 'Record armed (connect to engine)'
       : 'Record disarmed';
   });
 
-  // --- FILE UPLOAD STUB ---
+  // === FILE UPLOAD STUB ===
   hiddenFileInput.addEventListener('change', () => {
     if (hiddenFileInput.files.length) {
       const file = hiddenFileInput.files[0];
@@ -1228,16 +1600,18 @@
     }
   });
 
-  // --- GLOBAL CLICK TO CLOSE MENUS ---
+  // === GLOBAL CLICK TO CLOSE MENUS ===
   window.addEventListener('click', () => {
     document.querySelectorAll('.track-menu').forEach(m => m.classList.remove('open'));
   });
 
-  // --- INIT ---
+  // === INIT ===
   renderTracks();
   setPlayheadPosition(playheadStartX);
   updateTimeDisplay(0);
   tempoDisplay.textContent = tempo.toFixed(3);
+  buildStepGrid();
+  updateStepSequencerUI();
 </script>
 </body>
 </html>
