@@ -1,147 +1,990 @@
-\documentclass[11pt, a4paper]{article}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sulandra AI Studio – Sound DAW</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050709;
+      --bg-deep: #020305;
+      --panel: #101820;
+      --panel-dark: #0a1219;
+      --panel-soft: #141e28;
+      --accent: #70ff63;
+      --accent-soft: rgba(112,255,99,0.2);
+      --accent-strong: #9aff8f;
+      --text-main: #f2f9ff;
+      --text-muted: #9eaab6;
+      --border-soft: rgba(255,255,255,0.06);
+      --border-strong: rgba(112,255,99,0.7);
+      --radius-sm: 6px;
+      --radius-md: 9px;
+      --radius-lg: 12px;
+      --shadow-soft: 0 0 32px rgba(0,0,0,0.85);
+      --track-bg: #0d1821;
+      --track-bg-alt: #0b151f;
+      --grid-line: rgba(255,255,255,0.05);
+      --menu-bg: #141f2c;
+    }
 
-% --- UNIVERSAL PREAMBLE BLOCK ---
-\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
-\usepackage{fontspec}
-\usepackage{amsmath} % For math environments
-\usepackage{booktabs} % For professional tables
-\usepackage{enumitem} % For list customization
-\usepackage{url} % For handling URLs
-\usepackage[dvipsnames, svgnames, x11names]{xcolor} % For colors
+    * { box-sizing: border-box; }
 
-\usepackage[english, bidi=basic, provide=*]{babel}
-\babelprovide[import, onchar=ids fonts]{english}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+      background: radial-gradient(circle at top left,#1b2635 0,#020305 55%,#000 100%);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
 
-% Set default/Latin font to Sans Serif in the main (rm) slot
-\babelfont{rm}{Noto Sans}
-\usepackage{titlesec} % For section customization
-\usepackage{longtable} % For multi-page tables
-\usepackage{graphicx} % To allow for images (placeholders)
-\usepackage{array} % For table column formatting
-\usepackage[colorlinks=true, allcolors=MidnightBlue]{hyperref} % MUST BE LAST
+    a { color: inherit; text-decoration: none; }
 
-\setlength{\parindent}{0pt} % No indentation for paragraphs
-\setlength{\parskip}{1em} % Space between paragraphs
+    /* TOP APP BAR (like FL Studio title/toolbar) */
+    header {
+      background: linear-gradient(to bottom,#141f2c,#0c141d);
+      border-bottom: 1px solid var(--border-soft);
+      box-shadow: 0 0 14px rgba(0,0,0,0.9);
+      z-index: 20;
+    }
+    .app-header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 4px 14px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: radial-gradient(circle at 20% 0%,#7dff64,#28b88e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #02110b;
+      font-weight: 900;
+      font-size: 15px;
+      box-shadow: 0 0 15px rgba(112,255,99,0.8);
+    }
+    .brand-title-main {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .brand-title-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+    }
 
-\titleformat{\section}{\Large\bfseries\centering}{\thesection}{1em}{}
-\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
-\titleformat{\subsubsection}{\bfseries}{\thesubsubsection}{1em}{}
+    .top-nav-links {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 11px;
+      flex-wrap: wrap;
+    }
+    .top-nav-links a {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+    }
+    .top-nav-links a:hover {
+      border-color: var(--border-soft);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-main);
+    }
+    .top-nav-links a.active {
+      border-color: var(--border-strong);
+      color: #02110b;
+      background: linear-gradient(120deg,#70ff63,#2fdcaa);
+      box-shadow: 0 0 14px rgba(112,255,99,0.8);
+      font-weight: 600;
+    }
 
-\begin{document}
+    .profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(2,5,8,0.9);
+    }
+    .profile-pill span {
+      color: var(--text-muted);
+    }
+    .profile-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(112,255,99,0.8);
+    }
 
-\title{\textbf{FL Studio 21: The Beginner's Guide to Digital Audio Production}}
-\author{The Music Producer's Handbook}
-\date{November 2025}
-\maketitle
-\thispagestyle{empty} % No page number on the first page
+    /* MAIN LAYOUT */
+    main {
+      flex: 1;
+      max-width: 1400px;
+      margin: 6px auto 10px;
+      padding: 0 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-\newpage
+    /* MENU BAR (File / Edit / etc) + TRANSPORT STRIP */
+    .menu-transport {
+      background: var(--menu-bg);
+      border-radius: 7px;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
 
-\section{Introduction to FL Studio}
+    .menu-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 8px;
+      font-size: 11px;
+      border-bottom: 1px solid rgba(0,0,0,0.4);
+      background: linear-gradient(to bottom,#1a2836,#121d27);
+    }
+    .menu-item {
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: default;
+      color: var(--text-muted);
+    }
+    .menu-item:hover {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-main);
+    }
 
-FL Studio is a complete software music production environment, or Digital Audio Workstation (DAW). It represents over 25 years of innovative development and offers everything you need in one package to compose, arrange, record, edit, mix, and master professional quality music.
+    .transport-row {
+      display: grid;
+      grid-template-columns: minmax(0,1.6fr) minmax(0,2.2fr) minmax(0,1.6fr);
+      gap: 4px;
+      padding: 4px 8px 6px;
+      background: linear-gradient(to bottom,#111a23,#060b10);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    @media (max-width: 900px) {
+      .transport-row {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
 
-\subsection{Key Concepts}
-\begin{itemize}
-    \item \textbf{DAW (Digital Audio Workstation):} The software platform used for music production.
-    \item \textbf{Project:} The single file containing all the data, settings, and patterns for a track.
-    \item \textbf{MIDI:} Musical Instrument Digital Interface. Data that tells the computer how to play a note (pitch, duration, velocity).
-    \item \textbf{Audio Clip:} A recorded or imported sound file (WAV, MP3, etc.).
-\end{itemize}
+    .transport-left,
+    .transport-center,
+    .transport-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
 
-\section{The FL Studio Interface}
+    .btn-transport {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--border-soft);
+      background: #071016;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.7);
+    }
+    .btn-transport.green {
+      background: radial-gradient(circle at 20% 0%,#70ff63,#27b87e);
+      color: #02110b;
+      border-color: var(--border-strong);
+      box-shadow: 0 0 12px rgba(112,255,99,0.9);
+    }
+    .btn-transport.record {
+      background: radial-gradient(circle at 20% 0%,#ff5757,#b02020);
+      border-color: rgba(255,110,110,0.9);
+      color: #000;
+      box-shadow: 0 0 12px rgba(255,120,120,0.9);
+    }
 
-Understanding the main windows and panels is crucial for an efficient workflow.
+    .tempo-block,
+    .snap-block,
+    .pattern-block {
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.65);
+      background: #050b0f;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--accent-strong);
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+    }
+    .tempo-value {
+      font-weight: 600;
+      color: var(--accent-strong);
+    }
+    .display-field {
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.7);
+      background: #040a10;
+      min-width: 90px;
+      text-align: center;
+      color: #9ff792;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+    }
 
-\subsection{Main Windows}
+    /* MAIN DAW LAYOUT – like FL Playlist + Browser */
+    .daw-shell {
+      margin-top: 4px;
+      background: #020609;
+      border-radius: 9px;
+      border: 1px solid rgba(0,0,0,0.9);
+      display: grid;
+      grid-template-columns: 260px minmax(0,1fr);
+      gap: 0;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      min-height: 520px;
+    }
+    @media (max-width: 900px) {
+      .daw-shell {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
 
-\begin{itemize}
-    \item \textbf{Browser:} Used to navigate all data: presets, samples, plugins, and project files. It is the primary location for finding and loading sounds.
-    \item \textbf{Channel Rack \& Step Sequencer:} This is where you compose loops and patterns for all instruments (channels).
-    \item \textbf{Playlist:} The main timeline where Patterns (from the Channel Rack), Audio Clips, and Automation Clips are arranged to create the full song structure.
-    \item \textbf{Mixer:} Used to balance the levels of the audio (Mixing) and apply effects (FX) to individual instrument tracks.
-\end{itemize}
+    /* LEFT BROWSER (including big FL Studio Reference Manual list) */
+    .browser {
+      background: radial-gradient(circle at top,#18242f 0,#04070c 60%);
+      border-right: 1px solid #000;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .browser-header {
+      padding: 5px 7px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      background: linear-gradient(to bottom,#1a2836,#091017);
+      font-size: 11px;
+    }
+    .browser-title {
+      font-weight: 600;
+      color: var(--accent-strong);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .browser-search {
+      margin-left: auto;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .browser-search input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      background: #050c12;
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 3px 7px;
+    }
+    .browser-search input::placeholder {
+      color: rgba(158,170,182,0.6);
+    }
 
-\subsection{Toolbar Panels}
-The main toolbar provides essential controls.
+    .browser-tabs {
+      display: flex;
+      gap: 2px;
+      padding: 4px 4px 3px;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      background: #091019;
+      font-size: 10px;
+    }
+    .browser-tab {
+      padding: 3px 6px;
+      border-radius: 4px 4px 0 0;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .browser-tab.active {
+      background: #151f2b;
+      color: var(--accent-strong);
+    }
 
-\begin{itemize}
-    \item \textbf{Transport Controls:} Start/Stop playback, Record, Loop mode, Metronome, and Wait for Input.
-    \item \textbf{Pattern/Song Selector:} Toggles between playing the currently selected Pattern (for creation/editing) or playing the full Song arrangement (for listening/mixing).
-    \item \textbf{CPU \& Memory Panel:} Real-time DSP load monitoring and performance options.
-    \item \textbf{Tempo and Time Signature:} Controls the speed and rhythmic structure of the project.
-\end{itemize}
+    .browser-body {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-\section{Workflow: From Idea to Arrangement}
+    .browser-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 6px 8px;
+      font-size: 11px;
+      scrollbar-width: thin;
+    }
 
-The typical FL Studio workflow follows four steps:
+    .browser-section {
+      margin-bottom: 6px;
+    }
+    .browser-section-title {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+    .browser-item {
+      padding: 3px 4px;
+      border-radius: 3px;
+      cursor: pointer;
+      color: #c9d3dd;
+    }
+    .browser-item:hover {
+      background: rgba(255,255,255,0.05);
+    }
 
-\begin{enumerate}
-    \item \textbf{Sound Design \& Pattern Creation:} Use the Channel Rack to select instruments (plugins) and use the Step Sequencer or Piano Roll to create short rhythmic or melodic patterns.
-    \item \textbf{Mixing:} Route Channels to Mixer tracks, adjust levels and panning, and apply basic effects like compression and EQ.
-    \item \textbf{Arrangement:} Arrange the Patterns, Audio Clips, and Automation Clips in the Playlist to form the complete song structure (Intro, Verse, Chorus, etc.).
-    \item \textbf{Mastering:} Apply final processing to the Master track in the Mixer to ensure the track meets industry loudness standards.
-\end{enumerate}
+    .browser-tree {
+      margin-left: 6px;
+      border-left: 1px solid rgba(255,255,255,0.05);
+      padding-left: 4px;
+      margin-top: 2px;
+    }
+    .tree-group {
+      margin-bottom: 4px;
+    }
+    .tree-title {
+      color: var(--accent-strong);
+      cursor: pointer;
+      padding: 2px 2px;
+      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .tree-title::before {
+      content: "▾";
+      font-size: 8px;
+      color: var(--accent-strong);
+    }
+    .tree-title.collapsed::before {
+      content: "▸";
+    }
+    .tree-content {
+      margin-top: 3px;
+      padding-left: 8px;
+      border-left: 1px dashed rgba(255,255,255,0.08);
+    }
+    .tree-content.collapsed {
+      display: none;
+    }
+    .tree-content ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .tree-content li {
+      padding: 2px 0;
+      color: #cbd6e3;
+      cursor: default;
+    }
 
-\section{Essential Built-in Plugins}
+    /* RIGHT – PLAYLIST / ARRANGEMENT */
+    .playlist-wrap {
+      background: radial-gradient(circle at top,#1c2734 0,#05070b 55%,#000 100%);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
 
-FL Studio comes with a powerful suite of native plugins. This table summarizes some of the most critical ones.
+    .playlist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      background: linear-gradient(to bottom,#182533,#0a1017);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .playlist-title {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
 
-\begin{longtable}{p{0.3\textwidth}|p{0.6\textwidth}}
-\caption{Essential FL Studio Plugins} \label{tab:plugins} \\
-\toprule
-\textbf{Plugin Name} & \textbf{Type and Function} \\
-\midrule
-\endfirsthead
+    .playlist-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+    }
+    .small-pill {
+      padding: 2px 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.7);
+      background: #071015;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .small-pill.active {
+      border-color: var(--border-strong);
+      color: var(--accent-strong);
+    }
 
-\multicolumn{2}{c}{\textbf{\tablename\ \thetable: Essential FL Studio Plugins (Continued)}} \\
-\toprule
-\textbf{Plugin Name} & \textbf{Type and Function} \\
-\midrule
-\endhead
+    .playlist-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 120px minmax(0,1fr);
+      min-height: 0;
+    }
+    .track-names {
+      background: #04080d;
+      border-right: 1px solid #000;
+      font-size: 11px;
+      color: var(--text-muted);
+      position: relative;
+    }
+    .track-name-row {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      background: linear-gradient(to bottom,rgba(9,16,23,0.9),rgba(4,7,11,0.9));
+    }
+    .track-name-row:nth-child(odd) {
+      background: linear-gradient(to bottom,rgba(11,19,27,0.9),rgba(5,9,13,0.9));
+    }
+    .track-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+      background: var(--accent-soft);
+      box-shadow: 0 0 7px rgba(112,255,99,0.7);
+    }
+    .track-label-text {
+      color: #d3dfe7;
+    }
 
-\bottomrule
-\multicolumn{2}{r}{\footnotesize{Continued on next page}} \\
-\endfoot
+    .playlist-grid {
+      position: relative;
+      background: var(--track-bg);
+      min-height: 0;
+      overflow: auto;
+    }
 
-\bottomrule
-\endlastfoot
+    .timeline-ruler {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      display: flex;
+      align-items: flex-end;
+      font-size: 9px;
+      background: #071019;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.8);
+      z-index: 2;
+    }
+    .timeline-ruler-inner {
+      display: flex;
+      gap: 48px;
+      padding: 2px 6px;
+      white-space: nowrap;
+      color: var(--text-muted);
+    }
 
-\textbf{Fruity Parametric EQ 2} & Mixer Effect. Precision 7-band Equalizer for tone shaping and frequency cleanup. \\
-\textbf{Fruity Limiter} & Mixer Effect. A combination of a Limiter, Compressor, and Gate. Essential for controlling dynamics and loudness. \\
-\textbf{Sytrus} & Generator/Synthesizer. Powerful FM, RM, Subtractive, and Additive Synthesis engine. Extremely versatile. \\
-\textbf{Fruity Delay 3} & Mixer Effect. Advanced delay plugin with filtering and stereo processing. \\
-\textbf{Fruity Reeverb 2} & Mixer Effect. Algorithmic Reverb used to add space and depth to sounds. \\
-\textbf{Edison} & Audio Editor/Recorder. A sample editor integrated into the Mixer. Great for cleaning, normalizing, and processing audio. \\
-\textbf{Harmor} & Generator/Synthesizer. Powerful Additive/Subtractive Synth with Resynthesis capabilities. \\
-\textbf{ZGameEditor Visualizer} & Visualizer. Creates stunning, automated video content synchronized to your music. \\
-\end{longtable}
+    .grid-inner {
+      position: relative;
+      min-width: 1100px;
+      padding: 2px 6px 6px;
+      background-image:
+        linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
+        linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
+      background-size: 48px 1px, 1px 28px;
+    }
 
-\section{Tips and Tricks}
+    .pattern-block {
+      position: absolute;
+      top: 6px;
+      left: 80px;
+      width: 288px;
+      height: 22px;
+      border-radius: 4px;
+      background: linear-gradient(120deg,rgba(112,255,99,0.7),rgba(39,181,130,0.8));
+      box-shadow: 0 0 16px rgba(112,255,99,0.9);
+      color: #02110b;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      padding-left: 6px;
+    }
+    .pattern-block.second {
+      top: 34px;
+      left: 200px;
+      width: 360px;
+      background: linear-gradient(120deg,rgba(112,255,99,0.4),rgba(39,181,130,0.6));
+    }
 
-\subsection{Mixing \& Panning}
-\begin{itemize}
-    \item Use the Master volume knob conservatively; it should be left at $0\text{ dB}$ (unity gain) for mixing.
-    \item The most important tool is the \textbf{Fruity Parametric EQ 2}. Learn to use it to remove mud (low-mids) and harshness (high-mids).
-    \item For professional results, keep the mix's peak level (the loudest point) around $-6\text{ dBFS}$ before mastering.
-\end{itemize}
+    .playhead {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(112,255,99,0.9);
+      left: 140px;
+    }
 
-\subsection{Shortcuts}
-\begin{longtable}{p{0.3\textwidth}|p{0.6\textwidth}}
-\caption{Essential FL Studio Shortcuts} \label{tab:shortcuts} \\
-\toprule
-\textbf{Shortcut} & \textbf{Action} \\
-\midrule
-\endhead
+    /* FOOTER HINT BAR */
+    .hint-bar {
+      margin-top: 4px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.85);
+      background: linear-gradient(to right,#121a22,#06090d);
+      font-size: 10px;
+      padding: 3px 6px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .hint-bar span.key {
+      color: var(--accent-strong);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="app-header-inner">
+    <div class="brand-wrap">
+      <div class="brand-icon">S</div>
+      <div>
+        <div class="brand-title-main">Sulandra AI Studio</div>
+        <div class="brand-title-sub">Sound · Daw View</div>
+      </div>
+    </div>
+    <nav class="top-nav-links">
+      <a href="index.html">Home</a>
+      <a href="image.html">Image Lab</a>
+      <a href="video.html">Video Lab</a>
+      <a href="music.html">Music Lab</a>
+      <a href="film.html">Film Lab</a>
+      <a href="explore.html">Explore</a>
+      <a href="studio.html">Studio</a>
+      <a href="sound.html" class="active">Sound DAW</a>
+    </nav>
+    <div class="profile-pill">
+      <div class="profile-dot"></div>
+      <span>Project: <strong>We Need A Miracle</strong></span>
+    </div>
+  </div>
+</header>
 
-\bottomrule
-\endlastfoot
+<main>
+  <!-- MENU + TRANSPORT, LIKE TOP OF FL STUDIO -->
+  <section class="menu-transport">
+    <div class="menu-row">
+      <div class="menu-item">File</div>
+      <div class="menu-item">Edit</div>
+      <div class="menu-item">Add</div>
+      <div class="menu-item">Patterns</div>
+      <div class="menu-item">View</div>
+      <div class="menu-item">Options</div>
+      <div class="menu-item">Tools</div>
+      <div class="menu-item">Help</div>
+    </div>
+    <div class="transport-row">
+      <div class="transport-left">
+        <button class="btn-transport">⏮</button>
+        <button class="btn-transport green">▶</button>
+        <button class="btn-transport">⏹</button>
+        <button class="btn-transport">⏭</button>
+        <button class="btn-transport">🔄</button>
+        <div class="pattern-block">
+          <span>PAT</span>
+          <span>Pattern 1</span>
+        </div>
+      </div>
 
-\texttt{Spacebar} & Start/Stop playback. \\
-\texttt{F5/F6/F7/F9} & Toggle Browser/Mixer/Piano Roll/Playlist windows. \\
-\texttt{Ctrl + B} & Duplicate selection in the Playlist. \\
-\texttt{Ctrl + L} & Route selected Channel to a free Mixer track. \\
-\texttt{Shift + Q} & Quantize notes in the Piano Roll (aligns them to the grid). \\
-\end{longtable}
+      <div class="transport-center">
+        <div class="tempo-block">
+          <span>Tempo</span>
+          <span class="tempo-value">130.000</span>
+          <span>BPM</span>
+        </div>
+        <div class="display-field">4:00:00</div>
+        <div class="snap-block">
+          <span>Snap:</span>
+          <span>Line</span>
+        </div>
+        <div class="snap-block">
+          <span>Song</span>
+        </div>
+        <div class="snap-block">
+          <span>Loop</span>
+        </div>
+      </div>
 
-\end{document}
+      <div class="transport-right">
+        <button class="btn-transport record">●</button>
+        <span>CPU 7%</span>
+        <span>|</span>
+        <span>408 MB</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAW BODY: LEFT BROWSER + RIGHT PLAYLIST -->
+  <section class="daw-shell">
+    <!-- LEFT BROWSER -->
+    <aside class="browser">
+      <div class="browser-header">
+        <span class="browser-title">Browser</span>
+        <div class="browser-search">
+          <input type="text" placeholder="Search · samples, presets, help topics…" />
+        </div>
+      </div>
+      <div class="browser-tabs">
+        <div class="browser-tab active" data-tab="project">Project</div>
+        <div class="browser-tab" data-tab="manual">Reference Manual</div>
+      </div>
+      <div class="browser-body">
+        <!-- PROJECT TAB -->
+        <div class="browser-scroll" id="tab-project">
+          <div class="browser-section">
+            <div class="browser-section-title">PROJECT</div>
+            <div class="browser-item">Current project</div>
+            <div class="browser-item">Recent files</div>
+          </div>
+          <div class="browser-section">
+            <div class="browser-section-title">BROWSERS</div>
+            <div class="browser-item">Plugin database</div>
+            <div class="browser-item">Channel presets</div>
+            <div class="browser-item">Mixer presets</div>
+            <div class="browser-item">Scores</div>
+            <div class="browser-item">Packs</div>
+            <div class="browser-item">Recorded</div>
+            <div class="browser-item">Rendered</div>
+          </div>
+          <div class="browser-section">
+            <div class="browser-section-title">UTILITIES</div>
+            <div class="browser-item">Backup</div>
+            <div class="browser-item">Clipboard files</div>
+            <div class="browser-item">Templates</div>
+            <div class="browser-item">User data</div>
+          </div>
+        </div>
+
+        <!-- MANUAL TAB WITH BIG TREE -->
+        <div class="browser-scroll" id="tab-manual" style="display:none;">
+          <div class="browser-section">
+            <div class="browser-section-title">FL STUDIO REFERENCE MANUAL</div>
+            <div class="browser-tree">
+              <!-- TOP LEVEL GROUP -->
+              <div class="tree-group">
+                <div class="tree-title">Overview & Getting Started</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Title Page</li>
+                    <li>What is FL Studio?</li>
+                    <li>What's New in FL Studio?</li>
+                    <li>Product Information</li>
+                    <li>Purchasing & Registration</li>
+                    <li>Introduction to FL Studio</li>
+                    <li>The user interface</li>
+                    <li>Video tutorials</li>
+                    <li>Making music (Tutorial)</li>
+                    <li>Hardware controllers</li>
+                    <li>Software controllers</li>
+                    <li>Touch Controllers</li>
+                    <li>FL Studio Remote App</li>
+                    <li>Keyboard & Mouse shortcuts</li>
+                    <li>Useful web-links</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="tree-group">
+                <div class="tree-title">Setting Up & System Options</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Setup Wizard</li>
+                    <li>Audio Setup</li>
+                    <li>ASIO Driver Setup</li>
+                    <li>Primary Sound Driver Setup</li>
+                    <li>MIDI Setup</li>
+                    <li>File Settings Setup</li>
+                    <li>Next Steps</li>
+                    <li>System Settings</li>
+                    <li>MIDI Settings</li>
+                    <li>Audio Settings</li>
+                    <li>Audio ASIO4ALL Settings</li>
+                    <li>General Settings</li>
+                    <li>File Settings</li>
+                    <li>Theme</li>
+                    <li>Debugging Information</li>
+                    <li>Project Settings</li>
+                    <li>Project Information</li>
+                    <li>Project General Settings</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="tree-group">
+                <div class="tree-title">Main Menu, Panels & Tool Bars</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Main Menu Bar</li>
+                    <li>File Menu</li>
+                    <li>Edit Menu</li>
+                    <li>Add Menu</li>
+                    <li>Patterns Menu</li>
+                    <li>View Menu</li>
+                    <li>Options Menu</li>
+                    <li>Tools Menu</li>
+                    <li>Help Menu</li>
+                    <li>Toolbar</li>
+                    <li>Editing the Toolbar</li>
+                    <li>Main Menu</li>
+                    <li>Title & Hint Panel</li>
+                    <li>Transport Panel</li>
+                    <li>CPU & Memory Panel</li>
+                    <li>Global Snap Panel</li>
+                    <li>Output Panel</li>
+                    <li>Online Panel</li>
+                    <li>Pattern Panel</li>
+                    <li>Shortcut Icons</li>
+                    <li>Time Panel</li>
+                    <li>Multilink Controllers Icon</li>
+                    <li>Main Volume & Pitch Panel</li>
+                    <li>Window Controls</li>
+                    <li>File Browser</li>
+                    <li>Plugin Database</li>
+                    <li>Project Browser</li>
+                    <li>Library Tab</li>
+                    <li>Sounds Tab (FL Cloud)</li>
+                    <li>Advanced folder stuff</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="tree-group">
+                <div class="tree-title">Core Windows & Workflow</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Channel Rack & Step Sequencer</li>
+                    <li>Channel Button Menu</li>
+                    <li>Loop Starter</li>
+                    <li>Swing Controls</li>
+                    <li>Graph Editor</li>
+                    <li>Channel Settings</li>
+                    <li>Main Control</li>
+                    <li>Sampler Setting</li>
+                    <li>Instrument Setting</li>
+                    <li>Miscellaneous Setting</li>
+                    <li>Automation Clip Setting</li>
+                    <li>Layer Setting</li>
+                    <li>Plugin Window Setting</li>
+                    <li>Piano Roll & Tools (Arpeggiator, Chopper, Chord Progression, etc.)</li>
+                    <li>Playlist – Patterns, Audio Clips, Automation Clips, Performance Mode</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="tree-group">
+                <div class="tree-title">Instrument / Generator Plugins</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Plugin Wrapper & Options</li>
+                    <li>3x Osc, Autogun, BooBass, FLEX, FL Keys, FL Slayer, FPC, Drumaxx, Harmless, Harmor, Kepler, Morphine, Ogun, Patcher…</li>
+                    <li>Fruity DrumSynth Live, Fruity Granulizer, Slicex, Sytrus, Toxic Biohazard, Transistor Bass, Wasp & Wasp XT, Wave Traveller</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="tree-group">
+                <div class="tree-title">Mixer & Effects</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Mixer Functions & Menu</li>
+                    <li>Plugin Effects</li>
+                    <li>Mixer Track Properties</li>
+                    <li>Audio Routing & Recording</li>
+                    <li>Levels, Mixing and Clipping</li>
+                    <li>Effect Plugins (Fruity Reeverb, Parametric EQ 2, Maximus, Gross Beat, Vocodex, ZGameEditor Visualizer, etc.)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="tree-group">
+                <div class="tree-title">Recording & Automation</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Audio Recording</li>
+                    <li>Note Recording & Step Entry</li>
+                    <li>Automation Recording</li>
+                    <li>Linking USB/MIDI Controllers</li>
+                    <li>MIDI Scripting & Preconfigured Controllers</li>
+                    <li>Automation Clips & Tools</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="tree-group">
+                <div class="tree-title">Files, Formats & Integration</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Installing & Using VST / AU Plugins</li>
+                    <li>ReWire Support</li>
+                    <li>FL Studio as a Plugin</li>
+                    <li>Open / Import File Formats</li>
+                    <li>Save & Export File Formats</li>
+                    <li>Project Files & Zipped Projects</li>
+                    <li>Sample / Preset / State / Score Files</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="tree-group">
+                <div class="tree-title">Troubleshooting & Extras</div>
+                <div class="tree-content">
+                  <ul>
+                    <li>Optimizing CPU Performance</li>
+                    <li>Plugins Behaving Badly</li>
+                    <li>Missing Plugins or Files</li>
+                    <li>Reset Settings · Clean Installation</li>
+                    <li>Lifetime Free Updates</li>
+                    <li>Pitch or Tempo Problems</li>
+                    <li>Audio Myths & DAW Wars</li>
+                    <li>Monitor Speakers</li>
+                    <li>Glossary (Cutoff, Resonance, Envelope, Gate, LFO…)</li>
+                    <li>Acknowledgements</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- end manual tab -->
+      </div>
+    </aside>
+
+    <!-- RIGHT: PLAYLIST -->
+    <section class="playlist-wrap">
+      <div class="playlist-header">
+        <div class="playlist-title">Playlist – Arrangement (none)</div>
+        <div class="playlist-toolbar">
+          <div class="small-pill active">Track mode</div>
+          <div class="small-pill">Draw</div>
+          <div class="small-pill">Paint</div>
+          <div class="small-pill">Slice</div>
+          <div class="small-pill">Mute</div>
+          <div class="small-pill">Zoom</div>
+        </div>
+      </div>
+
+      <div class="playlist-main">
+        <!-- Track names -->
+        <div class="track-names">
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 1</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 2</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 3</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 4</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 5</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 6</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 7</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 8</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 9</span></div>
+          <div class="track-name-row"><span class="track-dot"></span><span class="track-label-text">Track 10</span></div>
+        </div>
+
+        <!-- Grid -->
+        <div class="playlist-grid">
+          <div class="timeline-ruler">
+            <div class="timeline-ruler-inner">
+              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+              <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+            </div>
+          </div>
+          <div class="grid-inner">
+            <div class="playhead"></div>
+            <div class="pattern-block">Pattern 1 – Intro groove</div>
+            <div class="pattern-block second">Pattern 1 – Hook loop</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- FOOTER HINTS -->
+  <section class="hint-bar">
+    <span>Press <span class="key">Space</span> to Play / Pause • <span class="key">R</span> to arm record (future wiring).</span>
+    <span>Browser includes a condensed FL Studio Reference Manual tree so users can quickly jump to help topics while working.</span>
+  </section>
+</main>
+
+<script>
+  // Simple tab toggle left browser
+  const tabButtons = document.querySelectorAll('.browser-tab');
+  const tabProject = document.getElementById('tab-project');
+  const tabManual = document.getElementById('tab-manual');
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const tab = btn.dataset.tab;
+      if (tab === 'project') {
+        tabProject.style.display = 'block';
+        tabManual.style.display = 'none';
+      } else {
+        tabProject.style.display = 'none';
+        tabManual.style.display = 'block';
+      }
+    });
+  });
+
+  // Collapsible manual tree groups
+  document.querySelectorAll('.tree-group').forEach(group => {
+    const title = group.querySelector('.tree-title');
+    const content = group.querySelector('.tree-content');
+    title.addEventListener('click', () => {
+      title.classList.toggle('collapsed');
+      content.classList.toggle('collapsed');
+    });
+  });
+</script>
+</body>
+</html>
