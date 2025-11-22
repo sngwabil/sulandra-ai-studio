@@ -1,2505 +1,1016 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sulandra AI Studio – SOUND DAW</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg-deep: #020419;
-      --bg-surface: #050b2a;
-      --bg-panel: #071134;
-      --bg-panel-soft: #091746;
-      --border-soft: rgba(129,166,255,0.25);
-      --border-strong: rgba(129,166,255,0.9);
-      --accent: #7cffc7;
-      --accent2: #ff7cf1;
-      --accent3: #ffd77c;
-      --accent4: #7cbeff;
-      --text-main: #f7fbff;
-      --text-muted: #9cb3ff;
-      --grid-line: rgba(167,194,255,0.18);
-      --clip-blue: #3d7cff;
-      --clip-purple: #a96cff;
-      --clip-pink: #ff6ca4;
-      --clip-green: #4dffbb;
-      --radius: 7px;
-      --shadow-soft: 0 0 32px rgba(0,0,0,0.85);
-      --beat-width: 48px;
-      --track-height: 46px;
-      --beats-per-bar: 4;
-    }
+    <meta charset="UTF-8">
+    <title>Sulandra SOUND – DAW Core</title>
+    <style>
+        body {
+            background-color: #181818;
+            color: #ccc;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+        }
 
-    * { box-sizing: border-box; }
+        /* TOP TRANSPORT + SECTION BAR */
+        #top-bar {
+            height: 40px;
+            background-color: #202020;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            gap: 8px;
+        }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
-      background:
-        radial-gradient(circle at 0 0,#2744ff 0,transparent 45%),
-        radial-gradient(circle at 100% 0,#ff3ccf 0,transparent 45%),
-        radial-gradient(circle at 50% 100%,#00ffc8 0,transparent 50%),
-        #020419;
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-    }
+        .btn {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
 
-    a { color: inherit; text-decoration: none; }
+        .btn:hover { background-color: #555; }
+        .btn.icon {
+            width: 30px;
+            height: 26px;
+            padding: 0;
+        }
 
-    header {
-      background: linear-gradient(to bottom,rgba(10,20,70,0.98),rgba(4,8,35,0.98));
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      box-shadow: 0 0 18px rgba(0,0,0,0.9);
-      z-index: 20;
-    }
-    .header-inner {
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 4px 14px 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .brand-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .brand-logo {
-      width: 30px;
-      height: 30px;
-      border-radius: 10px;
-      background: conic-gradient(from 120deg,#7cffc7,#7cbeff,#ff7cf1,#ffd77c,#7cffc7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #01030d;
-      font-weight: 900;
-      font-size: 16px;
-      box-shadow: 0 0 20px rgba(124,190,255,0.8);
-    }
-    .brand-text-main {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      background: linear-gradient(to right,#7cffc7,#ffd77c,#ff7cf1,#7cbeff);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-    .brand-text-sub {
-      font-size: 10px;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .brand-sound-pill {
-      margin-left: 10px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: radial-gradient(circle at 0 0,#3f7cff,#050b2a);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: .18em;
-      color: var(--accent);
-      box-shadow: 0 0 14px rgba(61,124,255,0.9);
-    }
+        .btn.active {
+            background-color: #d9534f;
+        }
 
-    .top-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-    .session-pill {
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: radial-gradient(circle at 0 0,#2135ff,#050b1a);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .session-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 8px rgba(124,255,199,0.9);
-    }
+        #section-buttons {
+            display: flex;
+            gap: 6px;
+            margin-left: 12px;
+        }
 
-    main {
-      flex: 1;
-      max-width: 1440px;
-      margin: 6px auto 12px;
-      padding: 0 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+        #status-labels {
+            margin-left: auto;
+            font-size: 12px;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
 
-    /* ===== TOP ICON BAR ===== */
-    .icon-dock {
-      border-radius: var(--radius);
-      border: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to right,rgba(7,17,52,0.96),rgba(7,11,45,0.98));
-      box-shadow: var(--shadow-soft);
-      padding: 4px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 11px;
-    }
-    .icon-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .dock-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      border: 1px solid rgba(0,0,0,0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      position: relative;
-      box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      transition: transform .08s, box-shadow .08s, border-color .08s;
-      background: #02041b;
-      overflow: hidden;
-    }
-    .dock-icon img {
-      width: 22px;
-      height: 22px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 4px rgba(0,0,0,0.7));
-      pointer-events: none;
-    }
-    .dock-icon[data-panel="browser"] { background: radial-gradient(circle at 0 0,#4aa8ff,#071134); }
-    .dock-icon[data-panel="rack"]    { background: radial-gradient(circle at 0 0,#7cffc7,#071134); }
-    .dock-icon[data-panel="mixer"]   { background: radial-gradient(circle at 0 0,#ff7cf1,#071134); }
-    .dock-icon[data-panel="piano"]   { background: radial-gradient(circle at 0 0,#ffd77c,#071134); }
-    .dock-icon[data-panel="plugins"] { background: radial-gradient(circle at 0 0,#7cbeff,#071134); }
-    .dock-icon[data-panel="timeline"]{ background: radial-gradient(circle at 0 0,#ff8a7c,#071134); }
+        /* 4-SCREEN DISPLAY STRIP */
+        #display-strip-wrapper {
+            background-color: #101010;
+            border-bottom: 1px solid #333;
+            padding: 8px 12px;
+        }
 
-    .dock-icon.active {
-      transform: translateY(-2px);
-      border-color: #fff;
-      box-shadow: 0 0 12px rgba(255,255,255,0.8);
-    }
-    .dock-icon-labels {
-      display: flex;
-      gap: 10px;
-      font-size: 10px;
-      color: var(--text-muted);
-      flex-wrap: wrap;
-    }
-    .dock-icon-labels span {
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: rgba(7,15,66,0.9);
-    }
+        #display-strip {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
 
-    /* ===== MAIN GRID ===== */
-    .main-grid {
-      margin-top: 4px;
-      border-radius: 9px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#1a2aff,#050821 55%,#010313 100%);
-      box-shadow: var(--shadow-soft);
-      display: grid;
-      grid-template-columns: 260px minmax(0,1fr) 220px;
-      min-height: 450px;
-      overflow: hidden;
-    }
-    @media (max-width: 1100px) {
-      .main-grid { grid-template-columns: 220px minmax(0,1fr); }
-      .right-placeholder { display: none; }
-    }
-    @media (max-width: 800px) {
-      .main-grid { grid-template-columns: minmax(0,1fr); }
-      .left-browser { display: none; }
-    }
+        .display-cell {
+            background-color: #000;
+            border-radius: 6px;
+            padding: 6px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 0 0 1px #333 inset;
+            min-height: 40px;
+        }
 
-    .left-browser {
-      background: linear-gradient(to bottom,#050b2a,#020319);
-      border-right: 1px solid #000;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-    .center-timeline-wrap {
-      background: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%);
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      border-right: 1px solid #000;
-    }
-    .right-placeholder {
-      background: linear-gradient(to bottom,#050b2a,#020319);
-      border-left: 1px solid #000;
-      padding: 6px 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
+        .display-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 2px;
+        }
 
-    /* ===== LEFT BROWSER ===== */
-    .panel-header {
-      padding: 4px 8px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to bottom,#091650,#050a28);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-    }
-    .panel-title {
-      text-transform: uppercase;
-      letter-spacing: .14em;
-      font-size: 10px;
-      color: var(--accent4);
-    }
-    .panel-tabs {
-      display: flex;
-      gap: 4px;
-      font-size: 10px;
-    }
-    .panel-tab {
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: #050b2a;
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-    .panel-tab.active {
-      border-color: var(--border-strong);
-      color: var(--accent);
-    }
+        .display-value {
+            font-size: 13px;
+        }
 
-    .browser-search {
-      padding: 4px 8px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #050b26;
-      font-size: 10px;
-    }
-    .browser-search input {
-      flex: 1;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: #02041b;
-      color: var(--text-main);
-      font-size: 10px;
-      padding: 3px 8px;
-    }
-    .browser-scroll {
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      padding: 6px 8px 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-      scrollbar-width: thin;
-    }
-    .browser-section-title {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: .14em;
-      color: #7cbeff;
-      margin: 6px 0 2px;
-    }
-    .browser-item {
-      padding: 3px 4px;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .browser-item:hover {
-      background: rgba(124,190,255,0.15);
-    }
-    .browser-item span:last-child {
-      font-size: 9px;
-      color: #ffd77c;
-    }
-    .pattern-item {
-      border-left: 3px solid transparent;
-    }
-    .pattern-item.active {
-      border-left-color: var(--accent3);
-      background: rgba(255,215,124,0.1);
-    }
+        #mix-display {
+            transition: box-shadow 0.1s, color 0.1s;
+        }
 
-    /* ===== TIMELINE HEADER & SCREENS ===== */
-    .timeline-header {
-      padding: 4px 8px 2px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to bottom,#091650,#050a24);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 11px;
-    }
+        /* WORKSPACE SPLIT: TRACK LIST + TIMELINE + BOTTOM MIXER */
+        #workspace {
+            position: absolute;
+            top: 40px + 56px; /* overwritten in JS using calc, keep for clarity */
+        }
 
-    .timeline-screen {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 4px 0 6px;
-      background: #02030f;
-    }
-    .screen-grid {
-      display: flex;
-      gap: 6px;
-      max-width: 720px;
-      width: 100%;
-      justify-content: center;
-      padding: 4px 6px;
-      border-radius: 8px;
-      background: #02030f;
-    }
-    .screen-box {
-      flex: 1 1 0;
-      min-width: 140px;
-      border-radius: 5px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: #02041b;
-      padding: 4px 8px 5px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .screen-label {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: .18em;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-    .screen-value {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 12px;
-      letter-spacing: .12em;
-      color: #f7fbff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .screen-box.mix {
-      transition: box-shadow .12s, border-color .12s, background .12s;
-    }
-    .screen-box.mix.low {
-      border-color: #4aa8ff;
-      box-shadow: 0 0 10px rgba(74,168,255,0.45);
-    }
-    .screen-box.mix.normal {
-      border-color: #7cffc7;
-      box-shadow: 0 0 10px rgba(124,255,199,0.45);
-    }
-    .screen-box.mix.clip {
-      border-color: #ff6c8a;
-      box-shadow: 0 0 12px rgba(255,108,138,0.7);
-    }
+        #workspace {
+            top: 96px; /* 40 top bar + ~56 display */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .timeline-row-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .timeline-title {
-      color: var(--accent3);
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: 10px;
-    }
-    .transport-buttons {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .transport-btn {
-      width: 26px;
-      height: 24px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#4aa8ff,#050a24);
-      color: #02041b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.85);
-    }
-    .transport-btn.rec {
-      background: radial-gradient(circle at 0 0,#ff4a7a,#3a0210);
-      color: #ffe9f0;
-    }
-    .transport-btn.metro {
-      width: 30px;
-      font-size: 13px;
-    }
-    .transport-btn.export {
-      background: radial-gradient(circle at 0 0,#7cffc7,#01402a);
-      font-size: 14px;
-    }
-    .transport-btn.active {
-      box-shadow: 0 0 14px rgba(255,255,255,0.85);
-      border-color: #fff;
-    }
+        #timeline-row {
+            flex: 1;
+            display: flex;
+            min-height: 150px;
+            overflow: hidden;
+        }
 
-    .tempo-zoom-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10px;
-      color: var(--text-muted);
-      flex-wrap: wrap;
-    }
-    .tempo-pill, .pattern-pill {
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: rgba(4,8,40,0.9);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .tempo-value {
-      color: #ffd77c;
-      font-weight: 600;
-    }
-    .pattern-select {
-      background: #02041b;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      color: var(--text-main);
-      font-size: 10px;
-      padding: 2px 6px;
-    }
-    .pattern-pill button {
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#ff7cf1,#050a24);
-      color: #02041b;
-      font-size: 10px;
-      padding: 2px 8px;
-      cursor: pointer;
-    }
+        #track-list {
+            width: 140px;
+            background-color: #202020;
+            border-right: 1px solid #333;
+            padding-top: 30px; /* align with ruler */
+            box-sizing: border-box;
+        }
 
-    /* HORIZONTAL TIMELINE SLIDER */
-    .timeline-scrollbar {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: #040825;
-      border: 1px solid rgba(0,0,0,0.9);
-      overflow: hidden;
-      margin-top: 3px;
-      position: relative;
-    }
-    .timeline-scroll-thumb {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(to right,#4aa8ff,#7cffc7);
-      box-shadow: 0 0 12px rgba(124,190,255,0.9);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: default;
-    }
-    .timeline-scroll-handle {
-      width: 14px;
-      height: 100%;
-      background: rgba(0,0,0,0.32);
-      cursor: ew-resize;
-    }
-    .timeline-scroll-center {
-      flex: 1;
-      height: 100%;
-      cursor: grab;
-    }
+        .track-label {
+            height: 100px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            font-size: 11px;
+        }
 
-    /* ===== TIMELINE GRID AREA ===== */
-    .timeline-main {
-      flex: 1;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: 190px minmax(0,1fr) 18px;
-    }
+        #timeline-container {
+            position: relative;
+            flex: 1;
+            background-color: #181818;
+            overflow: hidden;
+        }
 
-    /* RIGHT VERTICAL SCROLLBAR + BUTTONS */
-    .timeline-vscroll-right {
-      background: linear-gradient(to bottom,#050a27,#020318);
-      border-left: 1px solid #000;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 2px;
-      padding: 2px 2px;
-    }
-    .timeline-vscroll-btn {
-      height: 18px;
-      border-radius: 6px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #050a27;
-      color: #7cbeff;
-      font-size: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .timeline-vscroll-track {
-      flex: 1;
-      position: relative;
-      border-radius: 999px;
-      background: #040825;
-      overflow: hidden;
-    }
-    .timeline-vscroll-thumb {
-      position: absolute;
-      left: 2px;
-      right: 2px;
-      height: 40px;
-      border-radius: 999px;
-      background: linear-gradient(to bottom,#4aa8ff,#7cffc7);
-      box-shadow: 0 0 10px rgba(124,190,255,0.8);
-      cursor: pointer;
-    }
+        #dawCanvas {
+            display: block;
+        }
 
-    .track-list {
-      background: linear-gradient(to bottom,#050a28,#020317);
-      border-right: 1px solid #000;
-      font-size: 11px;
-      color: var(--text-muted);
-      position: relative;
-      overflow-y: auto;
-    }
-    .track-header {
-      display: flex;
-      align-items: center;
-      padding: 4px 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      background: rgba(7,14,60,0.96);
-      gap: 4px;
-      cursor: default;
-      height: var(--track-height);
-    }
-    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
-    .track-color-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg,#4aa8ff,#ffd77c);
-      box-shadow: 0 0 8px rgba(124,190,255,0.9);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .track-name {
-      flex: 1;
-      padding: 2px 4px;
-      border-radius: 4px;
-      color: #f7fbff;
-      font-size: 11px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .track-name[contenteditable="true"] {
-      outline: 1px solid var(--accent);
-      background: #02041b;
-    }
-    .track-controls {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      flex-shrink: 0;
-    }
-    .track-btn {
-      width: 22px;
-      height: 18px;
-      border-radius: 4px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #050a27;
-      color: var(--text-muted);
-      font-size: 9px;
-      cursor: pointer;
-    }
-    .track-btn.active {
-      background: var(--accent);
-      color: #02041b;
-      border-color: #fff;
-    }
-    .track-menu-btn {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #02041b;
-      color: #9cb3ff;
-      font-size: 10px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .add-track-bar {
-      padding: 4px 6px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      background: rgba(4,8,40,0.96);
-      display: flex;
-      justify-content: center;
-    }
-    .add-track-btn {
-      padding: 2px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#7cffc7,#050a24);
-      font-size: 11px;
-      cursor: pointer;
-      color: #02041b;
-    }
+        #timeline-help {
+            position: absolute;
+            bottom: 8px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 8px;
+            font-size: 10px;
+            pointer-events: none;
+        }
 
-    .timeline-grid-wrap {
-      position: relative;
-      background: #050822;
-      overflow: auto;
-    }
+        /* BOTTOM RESIZABLE MIXER PANEL */
+        #bottom-panel {
+            height: 220px;
+            min-height: 40px;
+            background-color: #161616;
+            border-top: 1px solid #333;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .timeline-ruler {
-      position: sticky;
-      top: 0;
-      height: 22px;
-      background: linear-gradient(to bottom,#091650,#050a24);
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      display: flex;
-      align-items: flex-end;
-      z-index: 2;
-      font-size: 9px;
-      color: var(--text-muted);
-      user-select: none;
-    }
-    .timeline-ruler-inner {
-      display: flex;
-      padding: 3px 8px;
-      white-space: nowrap;
-      gap: 0;
-    }
-    .timeline-ruler-inner span {
-      display: inline-block;
-      min-width: calc(var(--beat-width) * var(--beats-per-bar));
-      text-align: left;
-    }
+        #bottom-resize-handle {
+            height: 6px;
+            cursor: ns-resize;
+            background: #2a2a2a;
+        }
 
-    .grid-inner {
-      position: relative;
-      padding: 0 8px 8px;
-      background-image:
-        linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
-        linear-gradient(to right,rgba(124,190,255,0.12) 1px,transparent 1px),
-        linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
-      background-size:
-        var(--beat-width) 1px,
-        calc(var(--beat-width) / 4) 1px,
-        1px var(--track-height);
-      background-repeat: repeat;
-    }
-    .grid-track-row {
-      height: var(--track-height);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      position: relative;
-    }
+        #bottom-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
 
-    .playhead {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom,#ffd77c,#ff7cf1);
-      box-shadow: 0 0 12px rgba(255,215,124,0.9);
-      pointer-events: none;
-    }
+        .bottom-section {
+            flex: 1;
+            display: none;
+        }
 
-    /* ===== CLIPS ===== */
-    .clip {
-      position: absolute;
-      top: 6px;
-      height: 32px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.6);
-      box-shadow: 0 0 16px rgba(0,0,0,0.9);
-      display: flex;
-      align-items: center;
-      padding: 0 6px;
-      font-size: 10px;
-      color: #02041b;
-      cursor: move;
-      user-select: none;
-      white-space: nowrap;
-    }
-    .clip[data-color="blue"]   { background: linear-gradient(135deg,var(--clip-blue),#7cbeff); }
-    .clip[data-color="purple"] { background: linear-gradient(135deg,var(--clip-purple),#ffb4ff); }
-    .clip[data-color="pink"]   { background: linear-gradient(135deg,var(--clip-pink),#ffd7f0); }
-    .clip[data-color="green"]  { background: linear-gradient(135deg,var(--clip-green),#b5ffd8); }
+        .bottom-section.active {
+            display: flex;
+        }
 
-    .clip-label { flex: 1; }
-    .clip-handle-left,
-    .clip-handle-right {
-      width: 5px;
-      height: 80%;
-      border-radius: 4px;
-      background: rgba(0,0,0,0.35);
-      margin: 0 3px;
-      cursor: ew-resize;
-    }
+        /* simple mixer visual placeholder */
+        #mixer-panel {
+            padding: 10px;
+            gap: 8px;
+            overflow-x: auto;
+        }
 
-    /* ===== RIGHT PLACEHOLDER ===== */
-    .right-placeholder h3 {
-      margin: 2px 0 6px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--accent2);
-    }
-    .colored-list span {
-      display: inline-block;
-      margin: 2px 0;
-      padding: 2px 6px;
-      border-radius: 999px;
-      font-size: 10px;
-    }
-    .colored-list span:nth-child(1){ background: rgba(61,124,255,0.3); }
-    .colored-list span:nth-child(2){ background: rgba(255,124,241,0.3); }
-    .colored-list span:nth-child(3){ background: rgba(124,255,199,0.3); }
-    .colored-list span:nth-child(4){ background: rgba(255,215,124,0.3); }
+        .mixer-strip {
+            width: 40px;
+            background: #111;
+            border-radius: 4px;
+            box-shadow: 0 0 0 1px #333 inset;
+            margin-right: 6px;
+            padding: 6px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 9px;
+        }
 
-    /* ===== BOTTOM DOCK (MIXER / PIANO / RACK) ===== */
-    .bottom-dock {
-      margin-top: 6px;
-      border-radius: 9px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#2a3bff,#050a21 45%,#020419 100%);
-      box-shadow: var(--shadow-soft);
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      max-height: 520px;
-      position: relative;
-      overflow: hidden;
-    }
-    .bottom-resize-handle {
-      position: absolute;
-      top: -5px;
-      left: 0;
-      right: 0;
-      height: 6px;
-      cursor: row-resize;
-      background: linear-gradient(to right,transparent,var(--grid-line),transparent);
-    }
-    .bottom-tabs {
-      display: flex;
-      padding: 4px 8px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to bottom,#091650,#050a24);
-      font-size: 10px;
-      gap: 6px;
-    }
-    .bottom-tab {
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: rgba(4,8,40,0.9);
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-    .bottom-tab.active {
-      border-color: #fff;
-      color: var(--accent3);
-      box-shadow: 0 0 10px rgba(255,215,124,0.8);
-    }
-    .bottom-panels {
-      flex: 1;
-      min-height: 0;
-      display: grid;
-    }
-    .bottom-panel {
-      padding: 6px 8px;
-      font-size: 11px;
-      display: none;
-      overflow: auto;
-    }
-    .bottom-panel.active {
-      display: block;
-    }
-    .bottom-panel h4 {
-      margin: 0 0 4px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--accent4);
-    }
-    .bottom-panel p {
-      margin: 2px 0;
-      color: var(--text-muted);
-    }
-    .panel-note {
-      font-size: 10px;
-      color: var(--accent2);
-      margin-top: 4px;
-    }
+        .mixer-fader {
+            width: 10px;
+            height: 80px;
+            background: linear-gradient(to top, #222, #555);
+            border-radius: 4px;
+            margin: 4px 0;
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* ===== MIXER ===== */
-    .mixer-strips {
-      display: flex;
-      align-items: stretch;
-      gap: 6px;
-      height: 100%;
-      overflow-x: auto;
-      padding: 6px 4px 8px;
-      background: radial-gradient(circle at 0 0,#0a102b,#01020c 55%);
-    }
-    .mixer-strip {
-      width: 55px;
-      border-radius: 6px;
-      background: linear-gradient(to bottom,#050814,#010108 65%,#050814);
-      border: 1px solid rgba(0,0,0,0.9);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 3px 2px 6px;
-      font-size: 9px;
-      color: var(--text-muted);
-      box-shadow: 0 0 18px rgba(0,0,0,0.95);
-    }
-    .mixer-strip.master {
-      border-color: #ff8a3a;
-      box-shadow: 0 0 18px rgba(255,138,58,0.6);
-    }
-    .mixer-strip-title {
-      font-size: 9px;
-      color: #f7fbff;
-      text-align: center;
-      margin-bottom: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
-    }
-    .mixer-type-tag {
-      font-size: 8px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      margin-bottom: 3px;
-      color: var(--accent4);
-      text-align: center;
-    }
-    .mixer-main {
-      flex: 1;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 3px;
-      width: 100%;
-      padding: 2px 0 3px;
-    }
-    .mixer-meter {
-      width: 7px;
-      height: 100%;
-      border-radius: 999px;
-      background: #02041b;
-      border: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      align-items: flex-end;
-      overflow: hidden;
-      box-shadow: inset 0 0 6px rgba(0,0,0,0.95);
-    }
-    .mixer-meter-inner {
-      width: 100%;
-      border-radius: 999px;
-      background: linear-gradient(to top,#ff4a6c,#ffd77c,#45ff9b);
-      height: 30%;
-    }
-    .mixer-fader {
-      position: relative;
-      width: 22px;
-      height: 100%;
-      border-radius: 10px;
-      background: linear-gradient(to bottom,#050a1a,#020111);
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
-    }
-    .mixer-fader-track {
-      position: absolute;
-      left: 10px;
-      top: 4px;
-      bottom: 4px;
-      width: 2px;
-      border-radius: 999px;
-      background: linear-gradient(to bottom,#1a294b,#060918);
-    }
-    .mixer-fader-knob {
-      position: absolute;
-      left: 4px;
-      width: 14px;
-      height: 11px;
-      border-radius: 999px;
-      background: linear-gradient(to right,#7cffc7,#4aa8ff);
-      box-shadow: 0 0 10px rgba(124,190,255,0.9);
-      cursor: pointer;
-    }
-    .mixer-bottom-label {
-      font-size: 8px;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: 2px;
-    }
-    .mixer-btn-row {
-      display: flex;
-      justify-content: center;
-      gap: 3px;
-      margin-top: 3px;
-    }
-    .mixer-small-btn {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #101425;
-      cursor: pointer;
-      box-shadow: 0 0 5px rgba(0,0,0,0.9);
-    }
-    .mixer-small-btn.muted {
-      background: radial-gradient(circle at 30% 20%,#444f6a,#090c16);
-    }
-    .mixer-small-btn.solo {
-      background: radial-gradient(circle at 30% 20%,#45ff9b,#093120);
-    }
+        .mixer-fader-thumb {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: #f0ad4e;
+            border-radius: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-    /* ===== HINT BAR ===== */
-    .hint-bar {
-      margin-top: 4px;
-      border-radius: 7px;
-      border: 1px solid rgba(0,0,0,0.85);
-      background: linear-gradient(to right,#050b2b,#020419);
-      font-size: 10px;
-      padding: 4px 8px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    /* ===== SIMPLE PLUGIN POPUP (placeholder) ===== */
-    .plugin-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,15,0.75);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-    .plugin-window {
-      width: min(520px, 95vw);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: radial-gradient(circle at 0 0,#3246ff,#050822 40%,#020419 100%);
-      box-shadow: 0 0 40px rgba(0,0,0,0.95);
-      padding: 10px 12px 12px;
-      color: var(--text-main);
-      font-size: 12px;
-    }
-    .plugin-window-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    .plugin-window-title {
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: 11px;
-      color: var(--accent3);
-    }
-    .plugin-close-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
-      color: #02041b;
-      font-size: 11px;
-      padding: 2px 8px;
-      cursor: pointer;
-    }
-    .plugin-window-body {
-      background: rgba(4,8,40,0.9);
-      border-radius: 8px;
-      border: 1px solid rgba(0,0,0,0.9);
-      padding: 8px;
-      max-height: 260px;
-      overflow: auto;
-    }
-    .plugin-window-body p {
-      margin: 4px 0;
-      color: var(--text-muted);
-    }
-    .plugin-window-body code {
-      background: rgba(0,0,0,0.5);
-      padding: 1px 4px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
-  </style>
+        /* prevent text selection while dragging bottom handle */
+        .noselect {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
 </head>
-<body>
-<header>
-  <div class="header-inner">
-    <div class="brand-left">
-      <div class="brand-logo">S</div>
-      <div>
-        <div class="brand-text-main">Sulandra Creative Studio</div>
-        <div class="brand-text-sub">
-          <span style="color:#7cffc7;">AI</span> ·
-          <span style="color:#ff7cf1;">Mix</span> ·
-          <span style="color:#ffd77c;">Master</span>
+<body class="noselect">
+
+<div id="top-bar">
+    <!-- Transport -->
+    <button id="btnPlay" class="btn">▶</button>
+    <button id="btnStop" class="btn">■</button>
+    <button id="btnExport" class="btn">Export WAV</button>
+
+    <!-- Section toggles -->
+    <div id="section-buttons">
+        <button class="btn icon active" id="btnTimeline" title="Timeline">T</button>
+        <button class="btn icon" id="btnMixer" title="Mixer">M</button>
+        <button class="btn icon" id="btnRack" title="Channel Rack">R</button>
+        <button class="btn icon" id="btnPiano" title="Piano Roll">P</button>
+    </div>
+
+    <div id="status-labels">
+        <span>BPM: <span id="bpmLabel">120</span></span>
+        <span>Playhead: <span id="playheadLabel">00:00.000</span></span>
+    </div>
+</div>
+
+<!-- 4 DISPLAY SCREENS -->
+<div id="display-strip-wrapper">
+    <div id="display-strip">
+        <div class="display-cell">
+            <div class="display-label">Time</div>
+            <div class="display-value" id="display-time">00:00.000</div>
         </div>
-      </div>
-      <div class="brand-sound-pill">Sound</div>
-    </div>
-    <div class="top-right">
-      <div class="session-pill">
-        <div class="session-dot"></div>
-        <span>Session: <span style="color:#ffd77c;">Untitled Track 01</span></span>
-      </div>
-    </div>
-  </div>
-</header>
-
-<main>
-  <!-- TOP ICON BAR -->
-  <section class="icon-dock">
-    <div class="icon-row">
-      <div class="dock-icon active" data-panel="browser" title="File / Samples">
-        <!-- replace src paths with your own icon files -->
-        <img src="assets/icons/file-browser.svg" alt="Browser">
-      </div>
-      <div class="dock-icon" data-panel="rack" title="Channel Rack">
-        <img src="assets/icons/channel-rack.svg" alt="Rack">
-      </div>
-      <div class="dock-icon" data-panel="mixer" title="Mixer">
-        <img src="assets/icons/mixer.svg" alt="Mixer">
-      </div>
-      <div class="dock-icon" data-panel="piano" title="Piano Roll">
-        <img src="assets/icons/piano-roll.svg" alt="Piano Roll">
-      </div>
-      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX">
-        <img src="assets/icons/plugins.svg" alt="Plugins">
-      </div>
-      <div class="dock-icon active" data-panel="timeline" title="Timeline View">
-        <img src="assets/icons/timeline.svg" alt="Timeline">
-      </div>
-    </div>
-    <div class="dock-icon-labels">
-      <span style="color:#4aa8ff;">File & Samples</span>
-      <span style="color:#7cffc7;">Rack & Patterns</span>
-      <span style="color:#ff7cf1;">Mixer</span>
-      <span style="color:#ffd77c;">Piano Roll</span>
-      <span style="color:#7cbeff;">Plugins</span>
-      <span style="color:#ff8a7c;">Timeline</span>
-    </div>
-  </section>
-
-  <!-- MAIN GRID -->
-  <section class="main-grid">
-    <!-- LEFT BROWSER PANEL -->
-    <aside class="left-browser dock-panel" data-panel-id="browser">
-      <div class="panel-header">
-        <div class="panel-title">Browser</div>
-        <div class="panel-tabs">
-          <div class="panel-tab active">Project</div>
-          <div class="panel-tab">Samples</div>
+        <div class="display-cell">
+            <div class="display-label">Key</div>
+            <div class="display-value" id="display-key">Auto Detect</div>
         </div>
-      </div>
-      <div class="browser-search">
-        <span>🔍</span>
-        <input type="text" placeholder="Search in project / samples…" />
-      </div>
-      <div class="browser-scroll" id="browser-scroll">
-        <div class="browser-section-title">Project</div>
-        <div class="browser-item"><span>Current project</span><span>.flp</span></div>
-        <div class="browser-item"><span>Recent files</span><span>5</span></div>
+        <div class="display-cell">
+            <div class="display-label">BPM</div>
+            <div class="display-value" id="display-bpm">120</div>
+        </div>
+        <div class="display-cell" id="mix-display">
+            <div class="display-label">Mix Level</div>
+            <div class="display-value" id="display-mix">-∞ dB</div>
+        </div>
+    </div>
+</div>
 
-        <div class="browser-section-title">Generators & Instruments</div>
-        <div class="browser-item"><span>FLEX – Pads & Keys</span><span>GEN</span></div>
-        <div class="browser-item"><span>Sytrus – Leads</span><span>FM</span></div>
-        <div class="browser-item"><span>Drumaxx – Kits</span><span>DRM</span></div>
+<!-- WORKSPACE -->
+<div id="workspace">
+    <div id="timeline-row">
+        <!-- Track labels (simple mirror of clips' trackIndex for now) -->
+        <div id="track-list">
+            <div class="track-label">Track 1</div>
+            <div class="track-label">Track 2</div>
+            <div class="track-label">Track 3</div>
+            <div class="track-label">Track 4</div>
+        </div>
 
-        <div class="browser-section-title">Patterns</div>
-        <div id="pattern-list"></div>
-
-        <div class="browser-section-title">Effect Chains</div>
-        <div class="browser-item"><span>Vocal Polished Chain</span><span>FX</span></div>
-        <div class="browser-item"><span>Mastering Glue Chain</span><span>FX</span></div>
-      </div>
-    </aside>
-
-    <!-- CENTER TIMELINE -->
-    <section class="center-timeline-wrap dock-panel" data-panel-id="timeline">
-      <div class="timeline-header">
-        <!-- 4-SCREEN DISPLAY -->
-        <div class="timeline-screen">
-          <div class="screen-grid">
-            <div class="screen-box">
-              <div class="screen-label">Time</div>
-              <div class="screen-value" id="screen-time">00:00.000</div>
+        <!-- Canvas timeline -->
+        <div id="timeline-container">
+            <canvas id="dawCanvas"></canvas>
+            <div id="timeline-help">
+                Scroll: Zoom • Shift+Scroll: Pan<br>
+                Drag clip to move • Drag edge to resize<br>
+                Drag white dots: automation points
             </div>
-            <div class="screen-box" id="screen-key-box" title="Click to set song key">
-              <div class="screen-label">Key</div>
-              <div class="screen-value" id="screen-key">C# MINOR</div>
+        </div>
+    </div>
+
+    <!-- Bottom mixer / rack / piano roll (resizable) -->
+    <div id="bottom-panel">
+        <div id="bottom-resize-handle"></div>
+        <div id="bottom-content">
+            <div id="mixer-panel" class="bottom-section active">
+                <!-- simple 8 strips mirroring timeline tracks -->
+                <div class="mixer-strip">
+                    <div>Master</div>
+                    <div class="mixer-fader"><div class="mixer-fader-thumb"></div></div>
+                </div>
+                <div class="mixer-strip">
+                    <div>Ch 1</div>
+                    <div class="mixer-fader"><div class="mixer-fader-thumb"></div></div>
+                </div>
+                <div class="mixer-strip">
+                    <div>Ch 2</div>
+                    <div class="mixer-fader"><div class="mixer-fader-thumb"></div></div>
+                </div>
+                <div class="mixer-strip">
+                    <div>Ch 3</div>
+                    <div class="mixer-fader"><div class="mixer-fader-thumb"></div></div>
+                </div>
+                <div class="mixer-strip">
+                    <div>Ch 4</div>
+                    <div class="mixer-fader"><div class="mixer-fader-thumb"></div></div>
+                </div>
             </div>
-            <div class="screen-box">
-              <div class="screen-label">BPM</div>
-              <div class="screen-value" id="screen-bpm">130.0</div>
+
+            <div id="rack-panel" class="bottom-section">
+                <!-- placeholder for channel rack UI -->
             </div>
-            <div class="screen-box mix low" id="screen-mix-box">
-              <div class="screen-label">Mix Level</div>
-              <div class="screen-value" id="screen-mix">-24.0 dB · LOW</div>
+            <div id="piano-panel" class="bottom-section">
+                <!-- placeholder for piano roll UI -->
             </div>
-          </div>
         </div>
-
-        <div class="timeline-row-top">
-          <div class="timeline-title">Playlist · Arrangement A (Main)</div>
-          <div class="transport-buttons">
-            <button class="transport-btn" id="btn-back">⏮</button>
-            <button class="transport-btn" id="btn-play">▶</button>
-            <button class="transport-btn" id="btn-stop">⏹</button>
-            <button class="transport-btn rec" id="btn-rec">●</button>
-            <button class="transport-btn metro" id="btn-metronome" title="Metronome">♩</button>
-            <!-- NEW: Export WAV -->
-            <button class="transport-btn export" id="btn-export" title="Export WAV">⤓</button>
-          </div>
-        </div>
-        <div class="tempo-zoom-row">
-          <div class="tempo-pill">
-            <span>Tempo</span>
-            <span class="tempo-value" id="tempo-value">130.0</span>
-            <span>BPM</span>
-          </div>
-          <div class="pattern-pill">
-            <span>Active pattern</span>
-            <select id="pattern-select" class="pattern-select"></select>
-            <button id="new-pattern-btn">+ New</button>
-          </div>
-          <div>Double-click empty grid to place active pattern · Spacebar toggles play/pause.</div>
-        </div>
-        <!-- bottom slider now handles zoom + horizontal scroll -->
-        <div class="timeline-scrollbar">
-          <div class="timeline-scroll-thumb" id="timeline-thumb">
-            <div class="timeline-scroll-handle" id="thumb-left"></div>
-            <div class="timeline-scroll-center" id="thumb-center"></div>
-            <div class="timeline-scroll-handle" id="thumb-right"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="timeline-main">
-        <!-- TRACK LIST -->
-        <div class="track-list" id="track-list">
-          <div class="add-track-bar">
-            <button class="add-track-btn" id="add-track-btn">+ Add Track</button>
-          </div>
-        </div>
-
-        <!-- GRID -->
-        <div class="timeline-grid-wrap" id="timeline-scroll">
-          <div class="timeline-ruler">
-            <div class="timeline-ruler-inner" id="ruler-inner"></div>
-          </div>
-          <div class="grid-inner" id="grid-inner">
-            <div class="playhead" id="playhead"></div>
-          </div>
-        </div>
-
-        <!-- RIGHT VERTICAL SCROLLBAR + ARROWS -->
-        <div class="timeline-vscroll-right">
-          <button class="timeline-vscroll-btn" id="vscroll-btn-up">▲</button>
-          <div class="timeline-vscroll-track" id="vscroll-track">
-            <div class="timeline-vscroll-thumb" id="vscroll-thumb"></div>
-          </div>
-          <button class="timeline-vscroll-btn" id="vscroll-btn-down">▼</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- RIGHT PLACEHOLDER / PLUGINS LIST -->
-    <aside class="right-placeholder dock-panel" data-panel-id="plugins">
-      <h3>Plugin Slots</h3>
-      <p>Each slot below can later be a dedicated <b>plugin.html</b> or similar:</p>
-      <div class="colored-list">
-        <span>Slot 1 – Vocal Chain</span>
-        <span>Slot 2 – Drum Bus</span>
-        <span>Slot 3 – Master FX</span>
-        <span>Slot 4 – Creative FX</span>
-      </div>
-      <p style="margin-top:8px;">Click the <span style="color:#ff7cf1;">Plugins</span> icon at the top row to hide/show this panel.</p>
-      <p class="panel-note">Later you can replace this block with an &lt;iframe src="plugins.html"&gt; or inject content from your AI engine.</p>
-    </aside>
-  </section>
-
-  <!-- BOTTOM DOCK -->
-  <section class="bottom-dock" id="bottom-dock">
-    <div class="bottom-resize-handle" id="bottom-resize"></div>
-    <div class="bottom-tabs">
-      <div class="bottom-tab active" data-bottom-panel="mixer">Mixer</div>
-      <div class="bottom-tab" data-bottom-panel="piano">Piano Roll</div>
-      <div class="bottom-tab" data-bottom-panel="rack">Channel Rack</div>
     </div>
-    <div class="bottom-panels">
-      <div class="bottom-panel active" id="bottom-mixer">
-        <h4>Mixer</h4>
-        <div id="mixer-strips" class="mixer-strips"></div>
-        <p class="panel-note">Tracks above are mirrored as mixer channels here · resize this panel and the faders grow with it.</p>
-      </div>
-      <div class="bottom-panel" id="bottom-piano">
-        <h4>Piano Roll (placeholder)</h4>
-        <p>Design a full piano roll editor here or in <code>piano.html</code>.</p>
-      </div>
-      <div class="bottom-panel" id="bottom-rack">
-        <h4>Channel Rack Details (placeholder)</h4>
-        <p>Use this area for deeper rack controls, generator previews, AI preset suggestions, etc.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="hint-bar">
-    <span>Tip: Spacebar toggles play / pause without resetting the playhead.</span>
-    <span>Hold left mouse on empty grid + scroll wheel to zoom at cursor · use +/- keys or slider handles to zoom · arrows/vertical bar scroll tracks.</span>
-  </section>
-</main>
-
-<!-- PLUGIN POPUP -->
-<div class="plugin-overlay" id="plugin-overlay">
-  <div class="plugin-window">
-    <div class="plugin-window-header">
-      <div class="plugin-window-title" id="plugin-title">Plugin Window</div>
-      <button class="plugin-close-btn" id="plugin-close-btn">Close</button>
-    </div>
-    <div class="plugin-window-body" id="plugin-body">
-      <p>This is a placeholder for a plugin or track window.</p>
-      <p>Later, you can embed <code>&lt;iframe src="plugin.html"&gt;</code> or inject your custom HTML per clip / track.</p>
-    </div>
-  </div>
 </div>
 
 <script>
-  // ===== BASIC CONSTANTS + STATE (inspired by your C++ view engine + JS engine) =====
-  const BEATS_PER_BAR = 4;
-  const GRID_LEFT_OFFSET = 8; // padding-left in .grid-inner
-  let gridBars = 200;         // default visible bars
+/**
+ * ============================================================
+ * 1. DATA + STATE (JS port of your C++ structures)
+ * ============================================================
+ */
+const CONFIG = {
+    bpm: 120,
+    sampleRate: 44100,
+    trackHeight: 100,
+    handleWidth: 10
+};
 
-  const MIN_BEAT_WIDTH = 4;    // very zoomed out
-  const MAX_BEAT_WIDTH = 260;  // very zoomed in
-  let beatWidth = 48;          // px per beat
+const VIEW = {
+    scrollX: 0,
+    zoomX: 100,
+    width: 0,
+    height: 0
+};
 
-  let tracks = [];
-  let clips = [];
-  let patterns = [];
-  let currentPatternId = null;
-  let nextTrackId = 1;
-  let nextClipId = 1;
-  let nextPatternId = 1;
+const STATE = {
+    isPlaying: false,
+    playheadTime: 0.0,
+    lastFrameTime: 0,
+    dragMode: 'NONE', // NONE, MOVE_CLIP, RESIZE_L, RESIZE_R, MOVE_AUTO
+    activeClip: null,
+    activePointIndex: -1,
+    dragStartMouseX: 0,
+    dragStartMouseY: 0,
+    originalTime: 0,
+    originalDuration: 0,
+    cursor: 'default',
+    meterLevel: 0 // 0..1
+};
 
-  // Playback state (timeline)
-  let tempo = 130;
-  let isPlaying = false;
-  let playheadBeat = 0;
-  let playStartTime = 0;
-  let playheadBeatAtStart = 0;
+const PROJECT = {
+    clips: [],
+    bpm: CONFIG.bpm,
+    sampleRate: CONFIG.sampleRate,
+    totalLength: 16.0
+};
 
-  // Zoom/scroll helpers
-  let isTimelineMouseDown = false;
-
-  // Vertical scroll sync
-  let vSyncing = false;
-
-  // DOM refs
-  const trackListEl   = document.getElementById('track-list');
-  const trackAddBar   = trackListEl.querySelector('.add-track-bar');
-  const timelineScroll= document.getElementById('timeline-scroll');
-  const rulerInner    = document.getElementById('ruler-inner');
-  const gridInner     = document.getElementById('grid-inner');
-  const playheadEl    = document.getElementById('playhead');
-  const addTrackBtn   = document.getElementById('add-track-btn');
-
-  const patternSelect = document.getElementById('pattern-select');
-  const patternListEl = document.getElementById('pattern-list');
-  const newPatternBtn = document.getElementById('new-pattern-btn');
-
-  const thumb         = document.getElementById('timeline-thumb');
-  const thumbLeft     = document.getElementById('thumb-left');
-  const thumbRight    = document.getElementById('thumb-right');
-  const thumbCenter   = document.getElementById('thumb-center');
-
-  const vscrollTrack  = document.getElementById('vscroll-track');
-  const vscrollThumb  = document.getElementById('vscroll-thumb');
-  const vscrollBtnUp  = document.getElementById('vscroll-btn-up');
-  const vscrollBtnDown= document.getElementById('vscroll-btn-down');
-
-  const playBtn       = document.getElementById('btn-play');
-  const stopBtn       = document.getElementById('btn-stop');
-  const backBtn       = document.getElementById('btn-back');
-  const recBtn        = document.getElementById('btn-rec');
-  const metroBtn      = document.getElementById('btn-metronome');
-  const exportBtn     = document.getElementById('btn-export');
-  const tempoValueEl  = document.getElementById('tempo-value');
-
-  const mixerStripsEl = document.getElementById('mixer-strips');
-
-  const screenTimeEl  = document.getElementById('screen-time');
-  const screenKeyBox  = document.getElementById('screen-key-box');
-  const screenKeyEl   = document.getElementById('screen-key');
-  const screenBpmEl   = document.getElementById('screen-bpm');
-  const screenMixBox  = document.getElementById('screen-mix-box');
-  const screenMixEl   = document.getElementById('screen-mix');
-
-  const pluginOverlay = document.getElementById('plugin-overlay');
-  const pluginTitleEl = document.getElementById('plugin-title');
-  const pluginBodyEl  = document.getElementById('plugin-body');
-  const pluginCloseBtn= document.getElementById('plugin-close-btn');
-
-  const bottomDock    = document.getElementById('bottom-dock');
-  const bottomHandle  = document.getElementById('bottom-resize');
-  const bottomTabs    = document.querySelectorAll('.bottom-tab');
-  const bottomPanels  = {
-    mixer: document.getElementById('bottom-mixer'),
-    piano: document.getElementById('bottom-piano'),
-    rack : document.getElementById('bottom-rack')
-  };
-
-  const dockIcons     = document.querySelectorAll('.dock-icon');
-  const dockPanels    = document.querySelectorAll('.dock-panel');
-
-  let songKey = 'C# MINOR';
-  let metronomeOn = false;
-
-  // ===== Utility / display =====
-  function bpmToSecPerBeat(bpm) { return 60 / bpm; }
-
-  function formatTimeFromBeats(beats) {
-    const sec = beats * bpmToSecPerBeat(tempo);
-    const totalMs = sec * 1000;
-    const minutes = Math.floor(totalMs / 60000);
-    const remainingMs = totalMs - minutes * 60000;
-    const seconds = Math.floor(remainingMs / 1000);
-    const ms = Math.floor(remainingMs - seconds * 1000);
-    const mm = String(minutes).padStart(2, '0');
-    const ss = String(seconds).padStart(2, '0');
-    const mmm = String(ms).padStart(3, '0');
-    return `${mm}:${ss}.${mmm}`;
-  }
-
-  function updateScreenDisplay(now) {
-    screenTimeEl.textContent = formatTimeFromBeats(playheadBeat);
-    screenKeyEl.textContent  = songKey;
-    screenBpmEl.textContent  = tempo.toFixed(1);
-
-    // Simple animated mix level just for visual feedback
-    const t = (now ?? performance.now()) / 600;
-    let mixLevel = 0.2 + 0.6 * (0.5 + 0.5 * Math.sin(t + playheadBeat * 0.3));
-    mixLevel = Math.max(0, Math.min(1.2, mixLevel));
-    const db = -48 + mixLevel * 51;
-
-    let status = '';
-    let cls = 'screen-box mix';
-    if (db < -24) { status = 'LOW'; cls += ' low'; }
-    else if (db <= 0) { status = 'NORMAL'; cls += ' normal'; }
-    else { status = 'CLIPPING'; cls += ' clip'; }
-
-    screenMixEl.textContent = `${db.toFixed(1)} dB · ${status}`;
-    screenMixBox.className = cls;
-  }
-
-  // ===== Ruler & grid sizing =====
-  function buildRuler() {
-    rulerInner.innerHTML = '';
-    for (let bar = 1; bar <= gridBars; bar++) {
-      const span = document.createElement('span');
-      span.textContent = bar;
-      rulerInner.appendChild(span);
-    }
-  }
-
-  function updateGridSizes() {
-    document.documentElement.style.setProperty('--beat-width', beatWidth + 'px');
-    const totalBeats = gridBars * BEATS_PER_BAR;
-    const totalWidth = GRID_LEFT_OFFSET + totalBeats * beatWidth + 16;
-    gridInner.style.minWidth   = totalWidth + 'px';
-    rulerInner.style.minWidth  = totalWidth + 'px';
-  }
-
-  function ensureGridForBeat(beat) {
-    const requiredBar = Math.floor(beat / BEATS_PER_BAR) + 2;
-    if (requiredBar > gridBars) {
-      gridBars = requiredBar + 50;
-      buildRuler();
-      updateGridSizes();
-      renderClips();
-      updateHorizontalThumb();
-    }
-  }
-
-  // ===== Patterns =====
-  function addPattern(name, color) {
-    const id = nextPatternId++;
-    patterns.push({ id, name, color });
-    if (!currentPatternId) currentPatternId = id;
-    renderPatterns();
-    return id;
-  }
-
-  function renderPatterns() {
-    patternSelect.innerHTML = '';
-    patterns.forEach(p => {
-      const opt = document.createElement('option');
-      opt.value = p.id;
-      opt.textContent = p.name;
-      patternSelect.appendChild(opt);
+function updateProjectLength() {
+    let maxEnd = 0;
+    PROJECT.clips.forEach(c => {
+        const end = c.startTime + c.duration;
+        if (end > maxEnd) maxEnd = end;
     });
-    if (currentPatternId) patternSelect.value = currentPatternId;
-
-    patternListEl.innerHTML = '';
-    patterns.forEach(p => {
-      const item = document.createElement('div');
-      item.className = 'browser-item pattern-item';
-      if (p.id === currentPatternId) item.classList.add('active');
-      item.dataset.patternId = p.id;
-
-      const left = document.createElement('span');
-      left.textContent = p.name;
-      left.style.color =
-        p.color === 'blue' ? '#7cbeff' :
-        p.color === 'green'? '#7cffc7' :
-        p.color === 'purple' ? '#ffb4ff' : '#ffd7f0';
-
-      const right = document.createElement('span');
-      right.textContent = 'PAT';
-
-      item.appendChild(left);
-      item.appendChild(right);
-
-      item.addEventListener('click', () => {
-        currentPatternId = p.id;
-        renderPatterns();
-      });
-
-      patternListEl.appendChild(item);
-    });
-  }
-
-  patternSelect.addEventListener('change', () => {
-    currentPatternId = parseInt(patternSelect.value, 10) || null;
-    renderPatterns();
-  });
-
-  newPatternBtn.addEventListener('click', () => {
-    const name = prompt('Name of new pattern:', 'New Pattern');
-    if (!name) return;
-    const colors = ['blue','green','purple','pink'];
-    const color = colors[patterns.length % colors.length];
-    addPattern(name, color);
-  });
-
-  // ===== Tracks & Clips =====
-  function addTrack(name) {
-    const id = nextTrackId++;
-    tracks.push({ id, name: name || `Track ${id}`, type: 'Audio' });
-    renderTracks();
-    return id;
-  }
-
-  function renderTracks() {
-    // Remove all track headers except add-track bar
-    Array.from(trackListEl.querySelectorAll('.track-header')).forEach(e => e.remove());
-
-    // Remove all grid-track-rows
-    Array.from(gridInner.querySelectorAll('.grid-track-row')).forEach(e => e.remove());
-
-    tracks.forEach(t => {
-      const header = document.createElement('div');
-      header.className = 'track-header';
-      header.dataset.trackId = t.id;
-
-      const dot = document.createElement('div');
-      dot.className = 'track-color-dot';
-
-      const nameEl = document.createElement('div');
-      nameEl.className = 'track-name';
-      nameEl.textContent = t.name;
-      nameEl.addEventListener('dblclick', () => {
-        nameEl.contentEditable = 'true';
-        nameEl.focus();
-        document.execCommand('selectAll', false, null);
-      });
-      nameEl.addEventListener('blur', () => {
-        nameEl.contentEditable = 'false';
-        t.name = nameEl.textContent.trim() || t.name;
-        nameEl.textContent = t.name;
-        renderMixer();
-      });
-      nameEl.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
-      });
-
-      const controls = document.createElement('div');
-      controls.className = 'track-controls';
-
-      const mBtn = document.createElement('button');
-      mBtn.className = 'track-btn';
-      mBtn.textContent = 'M';
-      mBtn.title = 'Mute (visual only)';
-      mBtn.addEventListener('click', () => mBtn.classList.toggle('active'));
-
-      const sBtn = document.createElement('button');
-      sBtn.className = 'track-btn';
-      sBtn.textContent = 'S';
-      sBtn.title = 'Solo (visual only)';
-      sBtn.addEventListener('click', () => sBtn.classList.toggle('active'));
-
-      const menuBtn = document.createElement('button');
-      menuBtn.className = 'track-menu-btn';
-      menuBtn.textContent = '⋯';
-      menuBtn.title = `Track type: ${t.type}`;
-      menuBtn.addEventListener('click', () => {
-        const types = ['Audio','Instrument','Create with AI'];
-        const idx = types.indexOf(t.type);
-        t.type = types[(idx + 1) % types.length];
-        menuBtn.title = `Track type: ${t.type}`;
-        renderMixer();
-      });
-
-      controls.appendChild(mBtn);
-      controls.appendChild(sBtn);
-      controls.appendChild(menuBtn);
-
-      header.appendChild(dot);
-      header.appendChild(nameEl);
-      header.appendChild(controls);
-
-      trackListEl.insertBefore(header, trackAddBar);
-
-      const row = document.createElement('div');
-      row.className = 'grid-track-row';
-      row.dataset.trackId = t.id;
-      gridInner.appendChild(row);
-    });
-
-    renderClips();
-    renderMixer();
-    updateVerticalThumb();
-  }
-
-  addTrackBtn.addEventListener('click', () => {
-    const id = addTrack();
-    if (clips.length === 0 && patterns.length > 0) {
-      const p = patterns[0];
-      createClip(id, 0, 4, p.name, p.color, p.id);
-    }
-  });
-
-  function renderMixer() {
-    mixerStripsEl.innerHTML = '';
-
-    // Master + inserts: master is first strip, then each track
-    const masterStrip = buildMixerStrip('Master', 'BUS', true);
-    mixerStripsEl.appendChild(masterStrip);
-
-    tracks.forEach((t, i) => {
-      const strip = buildMixerStrip(t.name || `Insert ${i+1}`, t.type || 'Audio', false);
-      mixerStripsEl.appendChild(strip);
-    });
-  }
-
-  function buildMixerStrip(title, type, isMaster) {
-    const strip = document.createElement('div');
-    strip.className = 'mixer-strip';
-    if (isMaster) strip.classList.add('master');
-
-    const titleEl = document.createElement('div');
-    titleEl.className = 'mixer-strip-title';
-    titleEl.textContent = title;
-
-    const typeTag = document.createElement('div');
-    typeTag.className = 'mixer-type-tag';
-    typeTag.textContent = type.toUpperCase();
-
-    const main = document.createElement('div');
-    main.className = 'mixer-main';
-
-    const meter = document.createElement('div');
-    meter.className = 'mixer-meter';
-    const meterInner = document.createElement('div');
-    meterInner.className = 'mixer-meter-inner';
-    meterInner.style.height = '35%';
-    meter.appendChild(meterInner);
-
-    const fader = document.createElement('div');
-    fader.className = 'mixer-fader';
-    const faderTrack = document.createElement('div');
-    faderTrack.className = 'mixer-fader-track';
-    const knob = document.createElement('div');
-    knob.className = 'mixer-fader-knob';
-    knob.style.bottom = isMaster ? '50%' : '40%';
-
-    fader.appendChild(faderTrack);
-    fader.appendChild(knob);
-
-    knob.addEventListener('mousedown', e => {
-      e.preventDefault();
-      const startY = e.clientY;
-      const startBottom = parseFloat(knob.style.bottom) || 40;
-      function onMove(ev) {
-        const dy = ev.clientY - startY;
-        let newBottom = startBottom - dy / 2;
-        newBottom = Math.max(5, Math.min(90, newBottom));
-        knob.style.bottom = newBottom + '%';
-      }
-      function onUp() {
-        window.removeEventListener('mousemove', onMove);
-        window.removeEventListener('mouseup', onUp);
-      }
-      window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', onUp);
-    });
-
-    main.appendChild(meter);
-    main.appendChild(fader);
-
-    const btnRow = document.createElement('div');
-    btnRow.className = 'mixer-btn-row';
-    const muteBtn = document.createElement('div');
-    muteBtn.className = 'mixer-small-btn muted';
-    const soloBtn = document.createElement('div');
-    soloBtn.className = 'mixer-small-btn solo';
-
-    btnRow.appendChild(muteBtn);
-    btnRow.appendChild(soloBtn);
-
-    const bottomLabel = document.createElement('div');
-    bottomLabel.className = 'mixer-bottom-label';
-    bottomLabel.textContent = isMaster ? 'MASTER' : 'INSERT';
-
-    strip.appendChild(titleEl);
-    strip.appendChild(typeTag);
-    strip.appendChild(main);
-    strip.appendChild(btnRow);
-    strip.appendChild(bottomLabel);
-
-    return strip;
-  }
-
-  function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
-    const id = nextClipId++;
-    clips.push({ id, trackId, startBeat, lengthBeats, label, color, patternId: patternId || null });
-    ensureGridForBeat(startBeat + lengthBeats);
-    renderClips();
-  }
-
-  function renderClips() {
-    gridInner.querySelectorAll('.clip').forEach(c => c.remove());
-
-    clips.forEach(c => {
-      const row = gridInner.querySelector(`.grid-track-row[data-track-id="${c.trackId}"]`);
-      if (!row) return;
-
-      const el = document.createElement('div');
-      el.className = 'clip';
-      el.dataset.clipId = c.id;
-      el.dataset.color = c.color || 'blue';
-
-      el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
-      el.style.top  = (row.offsetTop + 4) + 'px';
-      el.style.width= (c.lengthBeats * beatWidth - 6) + 'px';
-
-      const leftHandle = document.createElement('div');
-      leftHandle.className = 'clip-handle-left';
-      leftHandle.dataset.handle = 'left';
-
-      const label = document.createElement('div');
-      label.className = 'clip-label';
-      label.textContent = c.label;
-
-      const rightHandle = document.createElement('div');
-      rightHandle.className = 'clip-handle-right';
-      rightHandle.dataset.handle = 'right';
-
-      el.appendChild(leftHandle);
-      el.appendChild(label);
-      el.appendChild(rightHandle);
-
-      addClipDragHandlers(el, c);
-
-      el.addEventListener('dblclick', () => {
-        openPluginWindow(
-          `Clip – ${c.label}`,
-          `<p>Future clip editor for <b>${c.label}</b> on Track ${c.trackId}.</p>`
-        );
-      });
-
-      gridInner.appendChild(el);
-    });
-  }
-
-  function addClipDragHandlers(el, clip) {
-    let dragging = false;
-    let resizing = null;
-    let startX   = 0;
-    let startLeft= 0;
-    let startWidth = 0;
-
-    el.addEventListener('mousedown', e => {
-      const handle = e.target.dataset.handle;
-      dragging = !handle;
-      resizing = handle || null;
-      startX = e.clientX;
-      startLeft = parseFloat(el.style.left);
-      startWidth = parseFloat(el.style.width);
-      e.preventDefault();
-      e.stopPropagation();
-    });
-
-    window.addEventListener('mousemove', e => {
-      if (!dragging && !resizing) return;
-      const dx = e.clientX - startX;
-
-      if (dragging) {
-        let newLeft = startLeft + dx;
-        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
-        beatFromZero = Math.max(0, Math.round(beatFromZero));
-        clip.startBeat = beatFromZero;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
-
-        const rect = gridInner.getBoundingClientRect();
-        const y = e.clientY - rect.top;
-        const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-        let closestRow = null;
-        let closestDist = Infinity;
-        rows.forEach(r => {
-          const rRect = r.getBoundingClientRect();
-          const mid = rRect.top + rRect.height / 2 - rect.top;
-          const dist = Math.abs(y - mid);
-          if (dist < closestDist) {
-            closestDist = dist;
-            closestRow = r;
-          }
-        });
-        if (closestRow) {
-          clip.trackId = parseInt(closestRow.dataset.trackId, 10);
-          el.style.top = (closestRow.offsetTop + 4) + 'px';
-        }
-      } else if (resizing === 'left') {
-        let newLeft = startLeft + dx;
-        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
-        let snappedBeat = Math.round(beatFromZero);
-        let maxBeat = clip.startBeat + clip.lengthBeats - 1;
-        if (snappedBeat < 0) snappedBeat = 0;
-        if (snappedBeat >= maxBeat) snappedBeat = maxBeat - 1;
-        const newLength = clip.startBeat + clip.lengthBeats - snappedBeat;
-        clip.startBeat = snappedBeat;
-        clip.lengthBeats = newLength;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.left  = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
-        el.style.width = (clip.lengthBeats * beatWidth - 6) + 'px';
-      } else if (resizing === 'right') {
-        let newWidth = startWidth + dx;
-        let beats = Math.max(1, Math.round((newWidth + 6) / beatWidth));
-        clip.lengthBeats = beats;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.width = (clip.lengthBeats * beatWidth - 6) + 'px';
-      }
-    });
-
-    window.addEventListener('mouseup', () => {
-      dragging = false;
-      resizing = null;
-    });
-  }
-
-  // ===== Zoom & scroll – core logic =====
-  function zoomAtBeatWidth(newBeatWidth, anchorClientX) {
-    newBeatWidth = Math.max(MIN_BEAT_WIDTH, Math.min(MAX_BEAT_WIDTH, newBeatWidth));
-    if (newBeatWidth === beatWidth) return;
-
-    const rect = timelineScroll.getBoundingClientRect();
-    const centerX = anchorClientX ?? (rect.left + rect.width / 2);
-    const xInScroll = centerX - rect.left + timelineScroll.scrollLeft;
-    const beatAtCursorBefore = (xInScroll - GRID_LEFT_OFFSET) / beatWidth;
-
-    beatWidth = newBeatWidth;
-    updateGridSizes();
-    renderClips();
-
-    const newX = GRID_LEFT_OFFSET + beatAtCursorBefore * beatWidth;
-    timelineScroll.scrollLeft = Math.max(0, newX - rect.width / 2);
-
-    updatePlayheadPosition(false);
-    updateHorizontalThumb();
-  }
-
-  // Horizontal thumb (center) pan
-  let thumbDrag = false;
-  let thumbStartX = 0;
-  let thumbStartScroll = 0;
-
-  thumbCenter.addEventListener('mousedown', e => {
-    thumbDrag = true;
-    thumbStartX = e.clientX;
-    thumbStartScroll = timelineScroll.scrollLeft;
-    thumbCenter.style.cursor = 'grabbing';
-    e.preventDefault();
-  });
-
-  window.addEventListener('mousemove', e => {
-    if (!thumbDrag) return;
-    const dx = e.clientX - thumbStartX;
-    const bar = thumb.parentElement;
-    const total = bar.clientWidth;
-    const scrollWidth = timelineScroll.scrollWidth;
-    const clientWidth = timelineScroll.clientWidth;
-    const maxScroll = Math.max(0, scrollWidth - clientWidth);
-    if (maxScroll <= 0 || total <= 0) return;
-
-    const thumbWidth = thumb.clientWidth;
-    const maxLeft = total - thumbWidth;
-    const scrollPerPixel = maxScroll / maxLeft;
-    let newScroll = thumbStartScroll + dx * scrollPerPixel;
-    newScroll = Math.max(0, Math.min(maxScroll, newScroll));
-    timelineScroll.scrollLeft = newScroll;
-    updateHorizontalThumb();
-  });
-
-  window.addEventListener('mouseup', () => {
-    thumbDrag = false;
-    thumbCenter.style.cursor = 'grab';
-    thumbResizeMode = null;
-  });
-
-  // Horizontal thumb resize (handles -> zoom)
-  let thumbResizeMode = null;
-  let thumbResizeStartX = 0;
-  let thumbResizeStartWidth = 0;
-
-  function startThumbResize(mode, e) {
-    thumbResizeMode = mode;
-    thumbResizeStartX = e.clientX;
-    thumbResizeStartWidth = thumb.clientWidth;
-    e.preventDefault();
-  }
-
-  thumbLeft.addEventListener('mousedown', e => startThumbResize('left', e));
-  thumbRight.addEventListener('mousedown', e => startThumbResize('right', e));
-
-  window.addEventListener('mousemove', e => {
-    if (!thumbResizeMode) return;
-    const bar = thumb.parentElement;
-    const barWidth = bar.clientWidth;
-    if (barWidth <= 0) return;
-
-    const dx = e.clientX - thumbResizeStartX;
-    let newWidth = thumbResizeStartWidth + (thumbResizeMode === 'right' ? dx : -dx);
-    newWidth = Math.max(40, Math.min(barWidth, newWidth));
-
-    const newFraction = newWidth / barWidth;
-    const clientWidth = timelineScroll.clientWidth || 1;
-    const totalBeats = gridBars * BEATS_PER_BAR;
-    const newBeatWidth = clientWidth / (totalBeats * newFraction);
-
-    const rect = timelineScroll.getBoundingClientRect();
-    const anchorX = (thumbResizeMode === 'left') ? rect.left + 20 : rect.right - 20;
-    zoomAtBeatWidth(newBeatWidth, anchorX);
-  });
-
-  function updateHorizontalThumb() {
-    const bar = thumb.parentElement;
-    if (!bar) return;
-    const barWidth = bar.clientWidth;
-    const scrollWidth = timelineScroll.scrollWidth;
-    const clientWidth = timelineScroll.clientWidth;
-
-    if (scrollWidth <= 0 || clientWidth <= 0 || barWidth <= 0) {
-      thumb.style.width = barWidth + 'px';
-      thumb.style.left = '0px';
-      return;
+    PROJECT.totalLength = Math.max(maxEnd, 4);
+}
+
+// Dummy sine clips (procedural audio)
+function createDummyClip(start, duration, track, freq) {
+    const totalSamples = Math.floor(duration * CONFIG.sampleRate);
+    const buffer = new Float32Array(totalSamples);
+
+    for (let i = 0; i < totalSamples; i++) {
+        const t = i / CONFIG.sampleRate;
+        buffer[i] = Math.sin(2 * Math.PI * freq * t) * 0.5;
     }
 
-    if (scrollWidth <= clientWidth) {
-      thumb.style.width = barWidth + 'px';
-      thumb.style.left = '0px';
-      return;
-    }
-
-    const fraction = clientWidth / scrollWidth;
-    const width = Math.max(40, barWidth * fraction);
-    const maxLeft = barWidth - width;
-    const maxScroll = scrollWidth - clientWidth;
-    const leftRatio = maxScroll > 0 ? (timelineScroll.scrollLeft / maxScroll) : 0;
-    const left = maxLeft * leftRatio;
-
-    thumb.style.width = width + 'px';
-    thumb.style.left = left + 'px';
-  }
-
-  // Wheel-zoom on grid while holding mouse
-  gridInner.addEventListener('mousedown', e => {
-    if (e.button === 0 && !e.target.closest('.clip')) {
-      isTimelineMouseDown = true;
-    }
-  });
-  window.addEventListener('mouseup', () => { isTimelineMouseDown = false; });
-
-  gridInner.addEventListener('wheel', e => {
-    if (!isTimelineMouseDown) return;
-    e.preventDefault();
-    const delta = e.deltaY;
-    const step = 6;
-    const newBeat = beatWidth + (delta < 0 ? step : -step);
-    zoomAtBeatWidth(newBeat, e.clientX);
-  }, { passive: false });
-
-  // Basic +/- key zoom
-  window.addEventListener('keydown', e => {
-    const active = document.activeElement;
-    const typing = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
-    if (typing) return;
-
-    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth + 6, window.innerWidth / 2);
-    } else if (e.key === '-' || e.key === '_') {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth - 6, window.innerWidth / 2);
-    }
-  });
-
-  // ===== Vertical scroll sync =====
-  function setVerticalScrollRatio(ratio) {
-    ratio = Math.max(0, Math.min(1, ratio));
-    vSyncing = true;
-
-    const maxTrackScroll = trackListEl.scrollHeight - trackListEl.clientHeight;
-    const maxGridScroll  = timelineScroll.scrollHeight - timelineScroll.clientHeight;
-    if (maxTrackScroll > 0) trackListEl.scrollTop = ratio * maxTrackScroll;
-    if (maxGridScroll  > 0) timelineScroll.scrollTop = ratio * maxGridScroll;
-
-    const trackHeight = vscrollTrack.clientHeight;
-    const thumbHeight = vscrollThumb.clientHeight;
-    const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
-    vscrollThumb.style.top = (ratio * maxThumbTop) + 'px';
-
-    vSyncing = false;
-  }
-
-  function updateVerticalThumb() {
-    const maxTrackScroll = trackListEl.scrollHeight - trackListEl.clientHeight;
-    const ratio = maxTrackScroll > 0 ? (trackListEl.scrollTop / maxTrackScroll) : 0;
-    setVerticalScrollRatio(ratio);
-  }
-
-  trackListEl.addEventListener('scroll', () => {
-    if (vSyncing) return;
-    const maxTrackScroll = trackListEl.scrollHeight - trackListEl.clientHeight;
-    const ratio = maxTrackScroll > 0 ? (trackListEl.scrollTop / maxTrackScroll) : 0;
-    setVerticalScrollRatio(ratio);
-  });
-
-  timelineScroll.addEventListener('scroll', () => {
-    if (vSyncing) return;
-    const maxGridScroll = timelineScroll.scrollHeight - timelineScroll.clientHeight;
-    const ratio = maxGridScroll > 0 ? (timelineScroll.scrollTop / maxGridScroll) : 0;
-    setVerticalScrollRatio(ratio);
-    updateHorizontalThumb();
-  });
-
-  // Drag vertical thumb
-  let vThumbDrag = false;
-  let vThumbStartY = 0;
-  let vThumbStartTop = 0;
-
-  vscrollThumb.addEventListener('mousedown', e => {
-    vThumbDrag = true;
-    vThumbStartY = e.clientY;
-    vThumbStartTop = parseFloat(getComputedStyle(vscrollThumb).top) || 0;
-    e.preventDefault();
-  });
-
-  window.addEventListener('mousemove', e => {
-    if (!vThumbDrag) return;
-    const dy = e.clientY - vThumbStartY;
-    const trackHeight = vscrollTrack.clientHeight;
-    const thumbHeight = vscrollThumb.clientHeight;
-    const maxTop = Math.max(0, trackHeight - thumbHeight);
-    let newTop = vThumbStartTop + dy;
-    newTop = Math.max(0, Math.min(maxTop, newTop));
-    const ratio = maxTop > 0 ? (newTop / maxTop) : 0;
-    setVerticalScrollRatio(ratio);
-  });
-
-  window.addEventListener('mouseup', () => {
-    vThumbDrag = false;
-  });
-
-  vscrollBtnUp.addEventListener('click', () => {
-    const maxTrackScroll = trackListEl.scrollHeight - trackListEl.clientHeight;
-    const ratio = maxTrackScroll > 0 ? ((trackListEl.scrollTop - 40) / maxTrackScroll) : 0;
-    setVerticalScrollRatio(ratio);
-  });
-
-  vscrollBtnDown.addEventListener('click', () => {
-    const maxTrackScroll = trackListEl.scrollHeight - trackListEl.clientHeight;
-    const ratio = maxTrackScroll > 0 ? ((trackListEl.scrollTop + 40) / maxTrackScroll) : 0;
-    setVerticalScrollRatio(ratio);
-  });
-
-  // ===== Playback (visual) + Audio Engine integration =====
-  function updatePlayheadPosition(autoScroll) {
-    ensureGridForBeat(playheadBeat + 4);
-    const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
-    playheadEl.style.left = x + 'px';
-
-    if (autoScroll) {
-      const marginLeft = 50;
-      const marginRight = 100;
-      const viewLeft = timelineScroll.scrollLeft;
-      const viewRight = viewLeft + timelineScroll.clientWidth;
-      if (x < viewLeft + marginLeft) {
-        timelineScroll.scrollLeft = Math.max(0, x - marginLeft);
-      } else if (x > viewRight - marginRight) {
-        timelineScroll.scrollLeft = x - timelineScroll.clientWidth + marginRight;
-      }
-    }
-    updateScreenDisplay();
-  }
-
-  function playLoop(ts) {
-    if (!isPlaying) {
-      updateScreenDisplay(ts);
-      return;
-    }
-    const elapsedSec = (ts - playStartTime) / 1000;
-    const secPerBeat = bpmToSecPerBeat(tempo);
-    const elapsedBeats = elapsedSec / secPerBeat;
-    playheadBeat = Math.max(0, playheadBeatAtStart + elapsedBeats);
-    updatePlayheadPosition(true);
-    requestAnimationFrame(playLoop);
-  }
-
-  // ===== AUDIO ENGINE (from JS DAW + C++ logic, adapted) =====
-  const AUDIO_CONFIG = {
-    sampleRate: 44100
-  };
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  let activeAudioNodes = [];
-
-  function buildAudioClipsFromTimeline() {
-    const secPerBeat = bpmToSecPerBeat(tempo);
-    const result = [];
-    if (!clips.length) return result;
-
-    clips.forEach(c => {
-      const startTime = c.startBeat * secPerBeat;
-      const duration = c.lengthBeats * secPerBeat;
-      const trackIndex = (c.trackId || 1) - 1;
-
-      const freqBase = 220 + trackIndex * 110;
-      const freq = freqBase + (c.patternId || 0) * 15;
-
-      const totalSamples = Math.max(1, Math.floor(duration * AUDIO_CONFIG.sampleRate));
-      const buffer = new Float32Array(totalSamples);
-      for (let i = 0; i < totalSamples; i++) {
-        const t = i / AUDIO_CONFIG.sampleRate;
-        buffer[i] = Math.sin(2 * Math.PI * freq * t) * 0.4; // 0.4 amplitude
-      }
-
-      result.push({
-        startTime,
-        duration,
-        trackIndex,
-        buffer,
-        name: c.label || 'Clip',
+    return {
+        startTime: start,
+        duration: duration,
+        offset: 0.0,
+        trackIndex: track,
+        buffer: buffer,
+        sampleRate: CONFIG.sampleRate,
+        name: `Sine ${freq}Hz`,
+        isSelected: false,
         automation: [
-          { time: startTime,           value: 0.8 },
-          { time: startTime + duration, value: 0.8 }
+            { time: start, value: 0.5 },
+            { time: start + duration, value: 0.5 }
         ]
-      });
-    });
+    };
+}
 
-    return result;
-  }
+PROJECT.clips.push(createDummyClip(0.0, 4.0, 0, 440));
+PROJECT.clips.push(createDummyClip(4.0, 4.0, 1, 261.6));
+updateProjectLength();
 
-  function getAutomationValueAtTime(clip, time) {
+/**
+ * ============================================================
+ * 2. AUDIO ENGINE + EXPORT (JS AudioEngine/WAVExporter)
+ * ============================================================
+ */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let activeNodes = [];
+
+function getAutomationValueAtTime(clip, time) {
     const pts = clip.automation || [];
-    if (!pts.length) return 1.0;
+    if (pts.length === 0) return 1.0;
     if (time <= pts[0].time) return pts[0].value;
     if (time >= pts[pts.length - 1].time) return pts[pts.length - 1].value;
 
     for (let i = 0; i < pts.length - 1; i++) {
-      if (time >= pts[i].time && time < pts[i + 1].time) {
-        const range = pts[i + 1].time - pts[i].time;
-        const dist = time - pts[i].time;
-        const t = dist / range;
-        return pts[i].value + t * (pts[i + 1].value - pts[i].value);
-      }
+        const a = pts[i];
+        const b = pts[i + 1];
+        if (time >= a.time && time < b.time) {
+            const t = (time - a.time) / (b.time - a.time);
+            return a.value + t * (b.value - a.value);
+        }
     }
     return 1.0;
-  }
+}
 
-  function playEngineAudio() {
-    if (activeAudioNodes.length) {
-      stopEngineAudio();
+const AudioEngine = {
+    processBlock(project, outBuffer, numSamples, startTime) {
+        const sr = project.sampleRate;
+        const secondsPerSample = 1.0 / sr;
+
+        for (let i = 0; i < numSamples; i++) outBuffer[i] = 0.0;
+
+        for (let i = 0; i < numSamples; i++) {
+            const currentTime = startTime + i * secondsPerSample;
+            let mixedSample = 0.0;
+
+            for (const clip of project.clips) {
+                if (currentTime >= clip.startTime && currentTime < clip.startTime + clip.duration) {
+                    const localTime = (currentTime - clip.startTime) + (clip.offset || 0);
+                    const sampleIdx = Math.floor(localTime * clip.sampleRate);
+                    if (sampleIdx >= 0 && sampleIdx < clip.buffer.length) {
+                        const vol = getAutomationValueAtTime(clip, currentTime);
+                        mixedSample += clip.buffer[sampleIdx] * vol;
+                    }
+                }
+            }
+
+            if (mixedSample > 1.0) mixedSample = 1.0;
+            if (mixedSample < -1.0) mixedSample = -1.0;
+
+            outBuffer[i] = mixedSample;
+        }
     }
+};
+
+function playAudio() {
+    if (STATE.isPlaying) return;
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
-    const audioClips = buildAudioClipsFromTimeline();
-    if (!audioClips.length) return;
+    STATE.isPlaying = true;
+    STATE.lastFrameTime = performance.now();
+    activeNodes = [];
 
-    activeAudioNodes = [];
+    PROJECT.clips.forEach(clip => {
+        if (clip.startTime + clip.duration > STATE.playheadTime) {
+            const source = audioCtx.createBufferSource();
+            const buffer = audioCtx.createBuffer(1, clip.buffer.length, CONFIG.sampleRate);
+            buffer.copyToChannel(clip.buffer, 0);
+            source.buffer = buffer;
 
-    const now = audioCtx.currentTime;
-    const playheadSec = playheadBeat * bpmToSecPerBeat(tempo);
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = getAutomationValueAtTime(
+                clip,
+                Math.max(STATE.playheadTime, clip.startTime)
+            );
 
-    audioClips.forEach(clip => {
-      if (clip.startTime + clip.duration <= playheadSec) return;
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
 
-      const source = audioCtx.createBufferSource();
-      const buffer = audioCtx.createBuffer(1, clip.buffer.length, AUDIO_CONFIG.sampleRate);
-      buffer.copyToChannel(clip.buffer, 0);
-      source.buffer = buffer;
+            let when = audioCtx.currentTime + (clip.startTime - STATE.playheadTime);
+            let offset = 0;
 
-      const gainNode = audioCtx.createGain();
-      gainNode.gain.value = clip.automation?.[0]?.value ?? 0.8;
+            if (STATE.playheadTime > clip.startTime) {
+                when = audioCtx.currentTime;
+                offset = STATE.playheadTime - clip.startTime;
+            }
 
-      source.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      let when = now + (clip.startTime - playheadSec);
-      let offset = 0;
-
-      if (playheadSec > clip.startTime) {
-        when = now;
-        offset = playheadSec - clip.startTime;
-      }
-
-      if (when >= now) {
-        try {
-          source.start(when, offset);
-          activeAudioNodes.push(source);
-        } catch (e) {
-          console.warn('Audio start error', e);
+            if (when >= audioCtx.currentTime) {
+                source.start(when, offset);
+                activeNodes.push(source);
+            }
         }
-      }
     });
-  }
+}
 
-  function stopEngineAudio() {
-    activeAudioNodes.forEach(node => {
-      try { node.stop(); } catch {}
-    });
-    activeAudioNodes = [];
-  }
+function stopAudio() {
+    STATE.isPlaying = false;
+    activeNodes.forEach(n => n.stop());
+    activeNodes = [];
+}
 
-  function encodeWAV(samples, sampleRate) {
-    const buffer = new ArrayBuffer(44 + samples.length * 2);
+// compute meter from playhead position
+function computeMeterLevel(t) {
+    let mixed = 0.0;
+    for (const clip of PROJECT.clips) {
+        if (t >= clip.startTime && t < clip.startTime + clip.duration) {
+            const localTime = (t - clip.startTime) + (clip.offset || 0);
+            const idx = Math.floor(localTime * clip.sampleRate);
+            if (idx >= 0 && idx < clip.buffer.length) {
+                const vol = getAutomationValueAtTime(clip, t);
+                mixed += clip.buffer[idx] * vol;
+            }
+        }
+    }
+    mixed = Math.max(-1, Math.min(1, mixed));
+    return Math.abs(mixed); // 0..1
+}
+
+// WAV export (block renderer)
+function exportWAV() {
+    updateProjectLength();
+
+    const sr = PROJECT.sampleRate;
+    const duration = PROJECT.totalLength;
+    const totalSamples = Math.floor(duration * sr);
+    const blockSize = 1024;
+
+    const floatBlock = new Float32Array(blockSize);
+    const buffer = new ArrayBuffer(44 + totalSamples * 2);
     const view = new DataView(buffer);
 
-    const writeString = (offset, string) => {
-      for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+    const writeString = (offset, str) => {
+        for (let i = 0; i < str.length; i++) {
+            view.setUint8(offset + i, str.charCodeAt(i));
+        }
     };
 
     writeString(0, 'RIFF');
-    view.setUint32(4, 36 + samples.length * 2, true);
+    view.setUint32(4, 36 + totalSamples * 2, true);
     writeString(8, 'WAVE');
     writeString(12, 'fmt ');
     view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true); // PCM
-    view.setUint16(22, 1, true); // Mono
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sr, true);
+    view.setUint32(28, sr * 2, true);
     view.setUint16(32, 2, true);
     view.setUint16(34, 16, true);
     writeString(36, 'data');
-    view.setUint32(40, samples.length * 2, true);
+    view.setUint32(40, totalSamples * 2, true);
 
-    for (let i = 0; i < samples.length; i++) {
-      let s = Math.max(-1, Math.min(1, samples[i]));
-      view.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-    }
+    let renderHead = 0;
+    let byteOffset = 44;
 
-    return view;
-  }
+    while (renderHead < duration) {
+        const remaining = totalSamples - Math.floor(renderHead * sr);
+        const thisBlock = Math.min(blockSize, remaining);
 
-  function exportTimelineToWAV() {
-    const audioClips = buildAudioClipsFromTimeline();
-    if (!audioClips.length) {
-      alert('No clips on the timeline to export yet.');
-      return;
-    }
+        AudioEngine.processBlock(PROJECT, floatBlock, thisBlock, renderHead);
 
-    let totalDuration = 0;
-    audioClips.forEach(clip => {
-      totalDuration = Math.max(totalDuration, clip.startTime + clip.duration);
-    });
-    if (totalDuration <= 0) totalDuration = 1;
-
-    const lengthInSamples = Math.floor(totalDuration * AUDIO_CONFIG.sampleRate);
-    const mixBuffer = new Float32Array(lengthInSamples);
-
-    for (let i = 0; i < lengthInSamples; i++) {
-      const time = i / AUDIO_CONFIG.sampleRate;
-      let sample = 0;
-
-      audioClips.forEach(clip => {
-        if (time >= clip.startTime && time < clip.startTime + clip.duration) {
-          const localTime = time - clip.startTime;
-          const idx = Math.floor(localTime * AUDIO_CONFIG.sampleRate);
-          if (idx < clip.buffer.length) {
-            const vol = getAutomationValueAtTime(clip, time);
-            sample += clip.buffer[idx] * vol;
-          }
+        for (let i = 0; i < thisBlock; i++) {
+            let s = floatBlock[i];
+            if (s > 1.0) s = 1.0;
+            if (s < -1.0) s = -1.0;
+            const int16 = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            view.setInt16(byteOffset + i * 2, int16, true);
         }
-      });
-      mixBuffer[i] = sample;
+
+        byteOffset += thisBlock * 2;
+        renderHead += thisBlock / sr;
     }
 
-    const wavBytes = encodeWAV(mixBuffer, AUDIO_CONFIG.sampleRate);
-    const blob = new Blob([wavBytes], { type: 'audio/wav' });
+    const blob = new Blob([buffer], { type: 'audio/wav' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'sulandra_timeline_export.wav';
+    a.download = 'Sulandra_Track.wav';
     a.click();
-    URL.revokeObjectURL(url);
-  }
+}
 
-  // ===== Playback control wired to audio engine =====
-  function startPlayback() {
-    if (isPlaying) return;
-    isPlaying = true;
-    playBtn.classList.add('active');
-    playheadBeatAtStart = playheadBeat;
-    playStartTime = performance.now();
-    playEngineAudio();
-    requestAnimationFrame(playLoop);
-  }
+/**
+ * ============================================================
+ * 3. VIEW ENGINE (canvas)
+ * ============================================================
+ */
+const canvas = document.getElementById('dawCanvas');
+const ctx = canvas.getContext('2d');
 
-  function pausePlayback() {
-    if (!isPlaying) return;
-    isPlaying = false;
-    playBtn.classList.remove('active');
-    stopEngineAudio();
-  }
+function resizeCanvas() {
+    const rect = document.getElementById('timeline-container').getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    VIEW.width = canvas.width;
+    VIEW.height = canvas.height;
+    draw();
+}
+window.addEventListener('resize', resizeCanvas);
 
-  playBtn.addEventListener('click', () => {
-    if (isPlaying) pausePlayback();
-    else startPlayback();
-  });
+const timeToPx = t => (t - VIEW.scrollX) * VIEW.zoomX;
+const pxToTime = p => (p / VIEW.zoomX) + VIEW.scrollX;
+const trackToPy = idx => (idx * CONFIG.trackHeight) + 30;
+const valToPy = (val, trackIdx) =>
+    trackToPy(trackIdx) + CONFIG.trackHeight - (val * CONFIG.trackHeight);
+const pyToVal = (y, trackIdx) =>
+    1.0 - ((y - trackToPy(trackIdx)) / CONFIG.trackHeight);
 
-  stopBtn.addEventListener('click', () => {
-    pausePlayback();
-    playheadBeat = 0;
-    updatePlayheadPosition(false);
-  });
+function draw() {
+    ctx.fillStyle = '#1e1e1e';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  backBtn.addEventListener('click', () => {
-    playheadBeat = 0;
-    updatePlayheadPosition(false);
-  });
+    // ruler
+    ctx.fillStyle = '#2d2d2d';
+    ctx.fillRect(0, 0, canvas.width, 30);
+    ctx.fillStyle = '#fff';
+    ctx.font = '11px Arial';
+    ctx.fillText('Timeline', 10, 18);
 
-  recBtn.addEventListener('click', () => {
-    recBtn.classList.toggle('active');
-    alert('Recording will be wired to Web Audio / backend later.');
-  });
+    // grid
+    const beatInterval = 60 / PROJECT.bpm;
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#aaa';
+    ctx.font = '10px Arial';
 
-  metroBtn.addEventListener('click', () => {
-    metronomeOn = !metronomeOn;
-    metroBtn.classList.toggle('active', metronomeOn);
-  });
+    const startBeat = Math.floor(VIEW.scrollX / beatInterval);
+    const endBeat = Math.ceil(pxToTime(VIEW.width) / beatInterval);
 
-  exportBtn.addEventListener('click', () => {
-    exportTimelineToWAV();
-  });
+    for (let i = startBeat; i <= endBeat; i++) {
+        const time = i * beatInterval;
+        const x = timeToPx(time);
 
-  // Spacebar for play/pause
-  window.addEventListener('keydown', e => {
-    const active = document.activeElement;
-    const typing = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+        ctx.beginPath();
+        ctx.moveTo(x, 30);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
 
-    if (e.code === 'Space') {
-      if (typing) return;
-      e.preventDefault();
-      if (isPlaying) pausePlayback();
-      else startPlayback();
+        if (x >= 0 && x <= canvas.width) {
+            ctx.fillText((i + 1).toString(), x + 2, 20);
+        }
     }
-  });
 
-  // ===== Snapping for double-click placement =====
-  gridInner.addEventListener('dblclick', e => {
-    if (e.target.closest('.clip')) return;
-    if (!currentPatternId) {
-      alert('Create or select a pattern first.');
-      return;
+    // clips
+    PROJECT.clips.forEach(clip => {
+        const x = timeToPx(clip.startTime);
+        const w = clip.duration * VIEW.zoomX;
+        const y = trackToPy(clip.trackIndex);
+        const h = CONFIG.trackHeight;
+
+        if (x + w < 0 || x > canvas.width) return;
+
+        ctx.fillStyle = clip.isSelected ? '#d9534f' : '#f0ad4e';
+        ctx.fillRect(x, y + 2, w, h - 4);
+
+        ctx.fillStyle = '#000';
+        ctx.font = '11px Arial';
+        ctx.fillText(clip.name, x + 5, y + 15);
+
+        if (clip.automation && clip.automation.length > 0) {
+            ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            clip.automation.forEach((pt, idx) => {
+                const px = timeToPx(pt.time);
+                const py = valToPy(pt.value, clip.trackIndex);
+                if (idx === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            });
+            ctx.stroke();
+
+            ctx.fillStyle = '#fff';
+            clip.automation.forEach(pt => {
+                const px = timeToPx(pt.time);
+                const py = valToPy(pt.value, clip.trackIndex);
+                ctx.beginPath();
+                ctx.arc(px, py, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        if (clip.isSelected) {
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.fillRect(x, y + 2, CONFIG.handleWidth, h - 4);
+            ctx.fillRect(x + w - CONFIG.handleWidth, y + 2, CONFIG.handleWidth, h - 4);
+        }
+    });
+
+    // playhead
+    const phX = timeToPx(STATE.playheadTime);
+    if (phX >= 0 && phX <= canvas.width) {
+        ctx.strokeStyle = '#0f0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(phX, 0);
+        ctx.lineTo(phX, canvas.height);
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f0';
+        ctx.beginPath();
+        ctx.moveTo(phX - 6, 0);
+        ctx.lineTo(phX + 6, 0);
+        ctx.lineTo(phX, 10);
+        ctx.fill();
     }
-    const pattern = patterns.find(p => p.id === currentPatternId);
-    if (!pattern) return;
 
-    const rect = gridInner.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    canvas.style.cursor = STATE.cursor;
+}
 
-    const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-    if (!rows.length) return;
-    let closestRow = rows[0];
-    let closestDist = Infinity;
-    rows.forEach(r => {
-      const rRect = r.getBoundingClientRect();
-      const mid = rRect.top + rRect.height / 2 - rect.top;
-      const dist = Math.abs(y - mid);
-      if (dist < closestDist) {
-        closestDist = dist;
-        closestRow = r;
-      }
-    });
-    const trackId = parseInt(closestRow.dataset.trackId, 10);
+/**
+ * ============================================================
+ * 4. INPUT (mouse / wheel)
+ * ============================================================
+ */
+function snapTime(t) {
+    const beat = 60 / PROJECT.bpm;
+    const snapped = Math.round(t / beat) * beat;
+    return Math.abs(t - snapped) < 0.2 ? snapped : t;
+}
 
-    let beatFromZero = (x - GRID_LEFT_OFFSET) / beatWidth;
-    if (beatFromZero < 0) beatFromZero = 0;
-    const snappedBeat = Math.round(beatFromZero);
-    const lengthBeats = 4;
-    createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
-  });
+canvas.addEventListener('mousedown', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const mTime = pxToTime(mx);
 
-  // ===== Plugin popup placeholder =====
-  function openPluginWindow(title, html) {
-    pluginTitleEl.textContent = title;
-    pluginBodyEl.innerHTML = html;
-    pluginOverlay.style.display = 'flex';
-  }
-  function closePluginWindow() {
-    pluginOverlay.style.display = 'none';
-  }
-  pluginCloseBtn.addEventListener('click', closePluginWindow);
-  pluginOverlay.addEventListener('click', e => {
-    if (e.target === pluginOverlay) closePluginWindow();
-  });
+    // automation points
+    for (const c of PROJECT.clips) {
+        if (!c.automation) continue;
+        for (let i = 0; i < c.automation.length; i++) {
+            const pt = c.automation[i];
+            const px = timeToPx(pt.time);
+            const py = valToPy(pt.value, c.trackIndex);
+            const dist = Math.hypot(mx - px, my - py);
+            if (dist < 8) {
+                STATE.dragMode = 'MOVE_AUTO';
+                STATE.activeClip = c;
+                STATE.activePointIndex = i;
+                return;
+            }
+        }
+    }
 
-  // ===== Key screen change =====
-  screenKeyBox.addEventListener('click', () => {
-    const val = prompt('Set song key (example: C# MINOR, A MAJOR):', songKey);
-    if (!val) return;
-    songKey = val.trim().toUpperCase();
-    screenKeyEl.textContent = songKey;
-  });
+    let clickedClip = null;
+    for (const c of PROJECT.clips) {
+        const x = timeToPx(c.startTime);
+        const w = c.duration * VIEW.zoomX;
+        const y = trackToPy(c.trackIndex);
+        if (mx >= x && mx <= x + w && my >= y && my <= y + CONFIG.trackHeight) {
+            clickedClip = c;
+            break;
+        }
+    }
 
-  // ===== Bottom dock behavior (resizable) =====
-  let bottomResizing = false;
-  let bottomStartY = 0;
-  let bottomStartHeight = 0;
+    PROJECT.clips.forEach(c => (c.isSelected = false));
 
-  bottomHandle.addEventListener('mousedown', e => {
-    bottomResizing = true;
-    bottomStartY = e.clientY;
-    bottomStartHeight = bottomDock.getBoundingClientRect().height;
-    e.preventDefault();
-  });
+    if (clickedClip) {
+        const c = clickedClip;
+        c.isSelected = true;
+        STATE.activeClip = c;
+        STATE.dragStartMouseX = mx;
+        STATE.originalTime = c.startTime;
+        STATE.originalDuration = c.duration;
 
-  window.addEventListener('mousemove', e => {
-    if (!bottomResizing) return;
-    const dy = bottomStartY - e.clientY; // drag up -> bigger
-    let newHeight = bottomStartHeight + dy;
-    newHeight = Math.max(24, Math.min(520, newHeight));
-    bottomDock.style.height = newHeight + 'px';
-  });
+        const x = timeToPx(c.startTime);
+        const w = c.duration * VIEW.zoomX;
 
-  window.addEventListener('mouseup', () => {
-    bottomResizing = false;
-  });
-
-  bottomTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const panelKey = tab.dataset.bottomPanel;
-      bottomTabs.forEach(t => t.classList.toggle('active', t === tab));
-      Object.entries(bottomPanels).forEach(([key, el]) => {
-        el.classList.toggle('active', key === panelKey);
-      });
-    });
-  });
-
-  // ===== Dock icon simple panel toggle (browser / plugins) =====
-  dockIcons.forEach(icon => {
-    icon.addEventListener('click', () => {
-      const panel = icon.dataset.panel;
-      if (panel === 'timeline') {
-        // Timeline is always visible; we could scroll to it or flash it later.
+        if (mx < x + CONFIG.handleWidth) STATE.dragMode = 'RESIZE_L';
+        else if (mx > x + w - CONFIG.handleWidth) STATE.dragMode = 'RESIZE_R';
+        else STATE.dragMode = 'MOVE_CLIP';
         return;
-      }
-      dockIcons.forEach(i => {
-        if (i.dataset.panel === panel) {
-          i.classList.toggle('active');
+    }
+
+    if (my < 30) {
+        STATE.playheadTime = mTime;
+        return;
+    }
+
+    STATE.dragMode = 'NONE';
+    STATE.activeClip = null;
+});
+
+canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const mTime = pxToTime(mx);
+    const snappedTime = snapTime(mTime);
+
+    if (STATE.dragMode !== 'NONE' && STATE.activeClip) {
+        const clip = STATE.activeClip;
+        if (STATE.dragMode === 'MOVE_CLIP') {
+            const dt = pxToTime(mx) - pxToTime(STATE.dragStartMouseX);
+            clip.startTime = snapTime(STATE.originalTime + dt);
+            updateProjectLength();
+        } else if (STATE.dragMode === 'RESIZE_R') {
+            const newDur = snappedTime - clip.startTime;
+            if (newDur > 0.1) clip.duration = newDur;
+            updateProjectLength();
+        } else if (STATE.dragMode === 'RESIZE_L') {
+            const endTime = STATE.originalTime + STATE.originalDuration;
+            const newStart = Math.min(snappedTime, endTime - 0.1);
+            clip.startTime = newStart;
+            clip.duration = endTime - newStart;
+            updateProjectLength();
+        } else if (STATE.dragMode === 'MOVE_AUTO') {
+            const pt = clip.automation[STATE.activePointIndex];
+            pt.time = Math.max(clip.startTime, Math.min(clip.startTime + clip.duration, mTime));
+            pt.value = Math.max(0, Math.min(1, pyToVal(my, clip.trackIndex)));
         }
-      });
-      dockPanels.forEach(p => {
-        if (p.dataset.panelId === panel) {
-          p.style.display = (p.style.display === 'none' ? '' : 'none');
+    } else {
+        STATE.cursor = 'default';
+        for (const c of PROJECT.clips) {
+            const x = timeToPx(c.startTime);
+            const w = c.duration * VIEW.zoomX;
+            const y = trackToPy(c.trackIndex);
+            if (mx >= x && mx <= x + w && my >= y && my <= y + CONFIG.trackHeight) {
+                if (mx < x + CONFIG.handleWidth || mx > x + w - CONFIG.handleWidth) {
+                    STATE.cursor = 'col-resize';
+                } else {
+                    STATE.cursor = 'move';
+                }
+            }
         }
-      });
+    }
+});
+
+canvas.addEventListener('mouseup', () => {
+    STATE.dragMode = 'NONE';
+    STATE.activeClip = null;
+    STATE.activePointIndex = -1;
+});
+
+// Zoom + pan
+canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    if (e.shiftKey) {
+        VIEW.scrollX += e.deltaY > 0 ? 0.5 : -0.5;
+        if (VIEW.scrollX < 0) VIEW.scrollX = 0;
+    } else {
+        const mouseTime = pxToTime(e.offsetX);
+        const factor = e.deltaY > 0 ? 0.9 : 1.1;
+        VIEW.zoomX *= factor;
+        if (VIEW.zoomX < 10) VIEW.zoomX = 10;
+        if (VIEW.zoomX > 500) VIEW.zoomX = 500;
+        VIEW.scrollX = mouseTime - e.offsetX / VIEW.zoomX;
+        if (VIEW.scrollX < 0) VIEW.scrollX = 0;
+    }
+});
+
+/**
+ * ============================================================
+ * 5. UI WIRING (buttons, display, mixer dock)
+ * ============================================================
+ */
+document.getElementById('btnPlay').onclick = playAudio;
+document.getElementById('btnStop').onclick = () => {
+    stopAudio();
+    STATE.isPlaying = false;
+};
+document.getElementById('btnExport').onclick = exportWAV;
+
+document.getElementById('bpmLabel').textContent = PROJECT.bpm.toString();
+document.getElementById('display-bpm').textContent = PROJECT.bpm.toString();
+
+// toggle bottom sections
+function setBottomSection(sectionId) {
+    document.querySelectorAll('.bottom-section').forEach(sec => {
+        sec.classList.remove('active');
     });
-  });
+    const sec = document.getElementById(sectionId);
+    if (sec) sec.classList.add('active');
+}
 
-  // ===== Initial setup =====
-  function initDemoData() {
-    // Default patterns
-    addPattern('Pattern 1', 'blue');
-    addPattern('Pattern 2', 'green');
+document.getElementById('btnMixer').onclick = () => {
+    setBottomSection('mixer-panel');
+};
+document.getElementById('btnRack').onclick = () => {
+    setBottomSection('rack-panel');
+};
+document.getElementById('btnPiano').onclick = () => {
+    setBottomSection('piano-panel');
+};
 
-    // Default tracks
-    const t1 = addTrack('Drums');
-    const t2 = addTrack('Bass');
-    const t3 = addTrack('Keys');
+// resize bottom panel by dragging handle
+(function () {
+    const bottomPanel = document.getElementById('bottom-panel');
+    const handle = document.getElementById('bottom-resize-handle');
+    let isDragging = false;
+    let startY = 0;
+    let startHeight = 0;
 
-    const secPerBeat = bpmToSecPerBeat(tempo);
-    // Place a few default clips
-    createClip(t1, 0, 4, 'Drum Loop', 'blue', 1);
-    createClip(t2, 4, 4, 'Bassline', 'green', 2);
-    createClip(t3, 8, 4, 'Chords', 'purple', 1);
-  }
+    handle.addEventListener('mousedown', e => {
+        isDragging = true;
+        startY = e.clientY;
+        startHeight = bottomPanel.getBoundingClientRect().height;
+        document.body.classList.add('noselect');
+    });
 
-  // Initialize grid and UI
-  buildRuler();
-  updateGridSizes();
-  initDemoData();
-  updatePlayheadPosition(false);
-  updateHorizontalThumb();
-  updateScreenDisplay();
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dy = e.clientY - startY;
+        let newHeight = startHeight - dy;
+        if (newHeight < 40) newHeight = 40;
+        if (newHeight > window.innerHeight - 120) newHeight = window.innerHeight - 120;
+        bottomPanel.style.height = newHeight + 'px';
+        resizeCanvas();
+    });
 
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+        document.body.classList.remove('noselect');
+    });
+})();
+
+/**
+ * ============================================================
+ * 6. MAIN LOOP – updates display + meter + canvas
+ * ============================================================
+ */
+function formatTime(t) {
+    if (t < 0) t = 0;
+    const ms = Math.floor((t % 1) * 1000);
+    const totalSeconds = Math.floor(t);
+    const sec = totalSeconds % 60;
+    const min = Math.floor(totalSeconds / 60);
+    const pad = n => (n < 10 ? '0' + n : '' + n);
+    const pad3 = n => (n < 10 ? '00' + n : n < 100 ? '0' + n : '' + n);
+    return `${pad(min)}:${pad(sec)}.${pad3(ms)}`;
+}
+
+function updateDisplays() {
+    const timeStr = formatTime(STATE.playheadTime);
+    document.getElementById('playheadLabel').textContent = timeStr;
+    document.getElementById('display-time').textContent = timeStr;
+
+    if (STATE.isPlaying) {
+        STATE.meterLevel = computeMeterLevel(STATE.playheadTime);
+    } else {
+        STATE.meterLevel *= 0.9; // quick falloff
+    }
+
+    const level = STATE.meterLevel;
+    let db;
+    if (level <= 0.0001) db = -Infinity;
+    else db = 20 * Math.log10(level);
+
+    const mixText = db === -Infinity ? '-∞ dB' : db.toFixed(1) + ' dB';
+    const mixDisplay = document.getElementById('mix-display');
+    document.getElementById('display-mix').textContent = mixText;
+
+    let color = '#3498db'; // blue
+    if (level > 0.8) color = '#e74c3c'; // red
+    else if (level > 0.3) color = '#2ecc71'; // green
+    mixDisplay.style.boxShadow = `0 0 0 1px ${color} inset`;
+    mixDisplay.style.color = color;
+}
+
+function mainLoop() {
+    const now = performance.now();
+    const dt = (now - STATE.lastFrameTime) / 1000;
+    STATE.lastFrameTime = now;
+
+    if (STATE.isPlaying) {
+        STATE.playheadTime += dt;
+        const phX = timeToPx(STATE.playheadTime);
+        if (phX > VIEW.width * 0.9) {
+            VIEW.scrollX = STATE.playheadTime;
+        }
+    }
+
+    updateDisplays();
+    draw();
+    requestAnimationFrame(mainLoop);
+}
+
+// init
+resizeCanvas();
+STATE.lastFrameTime = performance.now();
+mainLoop();
 </script>
 </body>
 </html>
