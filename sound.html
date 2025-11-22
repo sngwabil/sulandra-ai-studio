@@ -82,6 +82,9 @@
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: .16em;
+      background: linear-gradient(to right,#7cffc7,#ffd77c,#ff7cf1,#7cbeff);
+      -webkit-background-clip: text;
+      color: transparent;
     }
     .brand-text-sub {
       font-size: 10px;
@@ -241,7 +244,7 @@
       color: var(--text-muted);
     }
 
-    /* ===== LEFT BROWSER (FILE / SAMPLES) ===== */
+    /* ===== LEFT BROWSER (FILE / SAMPLES / PATTERNS) ===== */
     .panel-header {
       padding: 4px 8px;
       border-bottom: 1px solid rgba(0,0,0,0.9);
@@ -324,8 +327,15 @@
       font-size: 9px;
       color: #ffd77c;
     }
+    .pattern-item {
+      border-left: 3px solid transparent;
+    }
+    .pattern-item.active {
+      border-left-color: var(--accent3);
+      background: rgba(255,215,124,0.1);
+    }
 
-    /* ===== TRANSPORT & TIMELINE TOOLBAR (ABOVE GRID) ===== */
+    /* ===== TRANSPORT & TIMELINE TOOLBAR ===== */
     .timeline-header {
       padding: 4px 8px 2px;
       border-bottom: 1px solid rgba(0,0,0,0.9);
@@ -340,6 +350,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      flex-wrap: wrap;
     }
     .timeline-title {
       color: var(--accent3);
@@ -383,7 +394,7 @@
       color: var(--text-muted);
       flex-wrap: wrap;
     }
-    .tempo-pill, .zoom-pill {
+    .tempo-pill, .zoom-pill, .pattern-pill {
       padding: 2px 6px;
       border-radius: 999px;
       border: 1px solid rgba(0,0,0,0.8);
@@ -399,6 +410,24 @@
     .zoom-pill input[type="range"] {
       width: 120px;
     }
+    .pattern-select {
+      background: #02041b;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+    .pattern-pill button {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#ff7cf1,#050a24);
+      color: #02041b;
+      font-size: 10px;
+      padding: 2px 8px;
+      cursor: pointer;
+    }
+
     .timeline-scrollbar {
       width: 100%;
       height: 6px;
@@ -453,6 +482,7 @@
       border-radius: 50%;
       background: linear-gradient(135deg,#4aa8ff,#ffd77c);
       box-shadow: 0 0 8px rgba(124,190,255,0.9);
+      cursor: pointer;
     }
     .track-name {
       flex: 1;
@@ -559,7 +589,7 @@
       pointer-events: none;
     }
 
-    /* ===== CLIPS (SAMPLES) ===== */
+    /* ===== CLIPS (SAMPLES / PATTERNS) ===== */
     .clip {
       position: absolute;
       top: 6px;
@@ -614,7 +644,7 @@
     .colored-list span:nth-child(3){ background: rgba(124,255,199,0.3); }
     .colored-list span:nth-child(4){ background: rgba(255,215,124,0.3); }
 
-    /* ===== BOTTOM DOCK: MIXER / PIANO / PLUGINS ===== */
+    /* ===== BOTTOM DOCK: MIXER / PIANO / RACK DETAIL ===== */
     .bottom-dock {
       margin-top: 6px;
       border-radius: 9px;
@@ -702,6 +732,67 @@
       gap: 6px;
       flex-wrap: wrap;
     }
+
+    /* ===== PLUGIN POPUP WINDOW ===== */
+    .plugin-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,15,0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .plugin-window {
+      width: min(520px, 95vw);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: radial-gradient(circle at 0 0,#3246ff,#050822 40%,#020419 100%);
+      box-shadow: 0 0 40px rgba(0,0,0,0.95);
+      padding: 10px 12px 12px;
+      color: var(--text-main);
+      font-size: 12px;
+    }
+    .plugin-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .plugin-window-title {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 11px;
+      color: var(--accent3);
+    }
+    .plugin-close-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
+      color: #02041b;
+      font-size: 11px;
+      padding: 2px 8px;
+      cursor: pointer;
+    }
+    .plugin-window-body {
+      background: rgba(4,8,40,0.9);
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.9);
+      padding: 8px;
+      max-height: 260px;
+      overflow: auto;
+    }
+    .plugin-window-body p {
+      margin: 4px 0;
+      color: var(--text-muted);
+    }
+    .plugin-window-body code {
+      background: rgba(0,0,0,0.5);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
   </style>
 </head>
 <body>
@@ -763,7 +854,7 @@
 
   <!-- MAIN GRID -->
   <section class="main-grid">
-    <!-- LEFT BROWSER PANEL (TOGGLED BY FILE ICON) -->
+    <!-- LEFT BROWSER PANEL -->
     <aside class="left-browser dock-panel" data-panel-id="browser">
       <div class="panel-header">
         <div class="panel-title">Browser</div>
@@ -776,7 +867,7 @@
         <span>🔍</span>
         <input type="text" placeholder="Search in project / samples…" />
       </div>
-      <div class="browser-scroll">
+      <div class="browser-scroll" id="browser-scroll">
         <div class="browser-section-title">Project</div>
         <div class="browser-item"><span>Current project</span><span>.flp</span></div>
         <div class="browser-item"><span>Recent files</span><span>5</span></div>
@@ -785,6 +876,9 @@
         <div class="browser-item"><span>FLEX – Pads & Keys</span><span>GEN</span></div>
         <div class="browser-item"><span>Sytrus – Leads</span><span>FM</span></div>
         <div class="browser-item"><span>Drumaxx – Kits</span><span>DRM</span></div>
+
+        <div class="browser-section-title">Patterns</div>
+        <div id="pattern-list"></div>
 
         <div class="browser-section-title">Effect Chains</div>
         <div class="browser-item"><span>Vocal Polished Chain</span><span>FX</span></div>
@@ -814,7 +908,12 @@
             <span>Timeline zoom</span>
             <input type="range" id="zoom-range" min="40" max="120" value="48">
           </div>
-          <div>Click + to add tracks · Drag clips to move / resize · Snap to grid.</div>
+          <div class="pattern-pill">
+            <span>Active pattern</span>
+            <select id="pattern-select" class="pattern-select"></select>
+            <button id="new-pattern-btn">+ New</button>
+          </div>
+          <div>Double-click empty grid to place active pattern · Drag to rearrange.</div>
         </div>
         <div class="timeline-scrollbar">
           <div class="timeline-scroll-thumb" id="timeline-thumb"></div>
@@ -824,7 +923,7 @@
       <div class="timeline-main">
         <!-- TRACK LIST -->
         <div class="track-list" id="track-list">
-          <!-- generated -->
+          <!-- dynamic track headers here -->
           <div class="add-track-bar">
             <button class="add-track-btn" id="add-track-btn">+ Add Track</button>
           </div>
@@ -891,9 +990,28 @@
 
   <section class="hint-bar">
     <span>Tip: Click the colorful icons at the top (F, R, M, P, X, T) to hide / show each major window. All of them are resizable placeholders for future HTML pages.</span>
-    <span>Drag clips on the timeline to move them · drag their edges to trim · right now they snap to the grid based on zoom level.</span>
+    <span>Double-click empty grid row to drop the active pattern as a clip · double-click a clip or track color dot to open the plugin window.</span>
   </section>
 </main>
+
+<!-- PLUGIN POPUP -->
+<div class="plugin-overlay" id="plugin-overlay">
+  <div class="plugin-window">
+    <div class="plugin-window-header">
+      <div class="plugin-window-title" id="plugin-title">Plugin Window</div>
+      <button class="plugin-close-btn" id="plugin-close-btn">Close</button>
+    </div>
+    <div class="plugin-window-body" id="plugin-body">
+      <p>This is a placeholder for a plugin or track window.</p>
+      <p>Later, you can embed <code>&lt;iframe src="plugin.html"&gt;</code> or inject your custom HTML per clip / track.</p>
+      <p>For example:</p>
+      <ul>
+        <li>Clip-based editor (stretch, reverse, slice, AI remix)</li>
+        <li>Track-based FX chain (EQ, compressor, reverb controls)</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 <script>
   /* ========= BASIC DATA ========= */
@@ -901,8 +1019,12 @@
   const GRID_BEATS = 32;
   const tracks = [];
   const clips = [];
+
+  let patterns = [];
+  let currentPatternId = null;
   let nextTrackId = 1;
   let nextClipId = 1;
+  let nextPatternId = 1;
 
   const trackListEl = document.getElementById('track-list');
   const rulerInner = document.getElementById('ruler-inner');
@@ -911,6 +1033,30 @@
   const zoomRange = document.getElementById('zoom-range');
   const playheadEl = document.getElementById('playhead');
   const addTrackBtn = document.getElementById('add-track-btn');
+  const patternSelect = document.getElementById('pattern-select');
+  const patternListEl = document.getElementById('pattern-list');
+  const newPatternBtn = document.getElementById('new-pattern-btn');
+
+  const pluginOverlay = document.getElementById('plugin-overlay');
+  const pluginTitleEl = document.getElementById('plugin-title');
+  const pluginBodyEl = document.getElementById('plugin-body');
+  const pluginCloseBtn = document.getElementById('plugin-close-btn');
+
+  /* ========= PLUGIN WINDOW ========= */
+  function openPluginWindow(title, descriptionHtml) {
+    pluginTitleEl.textContent = title;
+    pluginBodyEl.innerHTML = descriptionHtml;
+    pluginOverlay.style.display = 'flex';
+  }
+
+  function closePluginWindow() {
+    pluginOverlay.style.display = 'none';
+  }
+
+  pluginCloseBtn.addEventListener('click', closePluginWindow);
+  pluginOverlay.addEventListener('click', (e) => {
+    if (e.target === pluginOverlay) closePluginWindow();
+  });
 
   /* ========= INIT RULER ========= */
   function buildRuler() {
@@ -921,6 +1067,75 @@
       rulerInner.appendChild(span);
     }
   }
+
+  /* ========= PATTERNS ========= */
+  function addPattern(name, color) {
+    const id = nextPatternId++;
+    patterns.push({
+      id,
+      name,
+      color
+    });
+    if (!currentPatternId) currentPatternId = id;
+    renderPatterns();
+    return id;
+  }
+
+  function renderPatterns() {
+    // update select
+    patternSelect.innerHTML = '';
+    patterns.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      patternSelect.appendChild(opt);
+    });
+    if (currentPatternId) {
+      patternSelect.value = currentPatternId;
+    }
+
+    // update browser list
+    patternListEl.innerHTML = '';
+    patterns.forEach(p => {
+      const item = document.createElement('div');
+      item.className = 'browser-item pattern-item';
+      if (p.id === currentPatternId) item.classList.add('active');
+      item.dataset.patternId = p.id;
+
+      const left = document.createElement('span');
+      left.textContent = p.name;
+      left.style.color = p.color === 'blue' ? '#7cbeff'
+                       : p.color === 'green' ? '#7cffc7'
+                       : p.color === 'purple' ? '#ffb4ff'
+                       : '#ffd7f0';
+
+      const right = document.createElement('span');
+      right.textContent = 'PAT';
+
+      item.appendChild(left);
+      item.appendChild(right);
+
+      item.addEventListener('click', () => {
+        currentPatternId = p.id;
+        renderPatterns();
+      });
+
+      patternListEl.appendChild(item);
+    });
+  }
+
+  patternSelect.addEventListener('change', () => {
+    currentPatternId = parseInt(patternSelect.value, 10) || null;
+    renderPatterns();
+  });
+
+  newPatternBtn.addEventListener('click', () => {
+    const name = prompt('Name of new pattern:', 'New Pattern');
+    if (!name) return;
+    const colors = ['blue','green','purple','pink'];
+    const color = colors[patterns.length % colors.length];
+    addPattern(name, color);
+  });
 
   /* ========= TRACKS ========= */
   function addTrack(name) {
@@ -945,6 +1160,20 @@
 
       const dot = document.createElement('div');
       dot.className = 'track-color-dot';
+      // double-click dot opens plugin window
+      dot.addEventListener('dblclick', () => {
+        openPluginWindow(
+          `Track Plugin – ${t.name}`,
+          `<p>This is the future plugin window for <b>${t.name}</b>.</p>
+           <p>Later you can load <code>track-${t.id}-plugin.html</code> or a dynamic UI here.</p>
+           <p>Ideas:</p>
+           <ul>
+             <li>Track EQ, compressor, reverb chain</li>
+             <li>AI suggestions for presets per genre</li>
+             <li>Routing & send controls</li>
+           </ul>`
+        );
+      });
 
       const nameEl = document.createElement('div');
       nameEl.className = 'track-name';
@@ -1034,15 +1263,16 @@
 
   addTrackBtn.addEventListener('click', () => {
     const id = addTrack();
-    if (clips.length === 0) {
-      createClip(id, 0, 8, 'Intro Loop', 'blue');
+    if (clips.length === 0 && patterns.length > 0) {
+      const p = patterns[0];
+      createClip(id, 0, 8, p.name, p.color, p.id);
     }
   });
 
   /* ========= CLIPS ========= */
-  function createClip(trackId, startBeat, lengthBeats, label, color) {
+  function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
     const id = nextClipId++;
-    clips.push({ id, trackId, startBeat, lengthBeats, label, color });
+    clips.push({ id, trackId, startBeat, lengthBeats, label, color, patternId: patternId || null });
     renderClips();
   }
 
@@ -1079,6 +1309,25 @@
       el.appendChild(rightHandle);
 
       addClipDragHandlers(el, c);
+
+      // double-click opens plugin window
+      el.addEventListener('dblclick', () => {
+        const patternDesc = c.patternId
+          ? `<p>This clip references <b>Pattern ${c.patternId}</b>. Later you can open a pattern-specific editor here.</p>`
+          : `<p>This is a free audio / MIDI clip (no specific pattern bound yet).</p>`;
+        openPluginWindow(
+          `Clip Plugin – ${c.label}`,
+          `<p>You double-clicked clip <b>${c.label}</b> on Track ID ${c.trackId}.</p>
+           ${patternDesc}
+           <p>Ideas for this window:</p>
+           <ul>
+             <li>Audio editing (trim, fade, reverse, time-stretch)</li>
+             <li>AI remix tools (genre swap, stem split, harmony)</li>
+             <li>Per-clip FX chain and automation overview</li>
+           </ul>`
+        );
+      });
+
       gridInner.appendChild(el);
     });
   }
@@ -1098,6 +1347,7 @@
       startLeft = parseFloat(el.style.left);
       startWidth = parseFloat(el.style.width);
       e.preventDefault();
+      e.stopPropagation();
     });
 
     window.addEventListener('mousemove', e => {
@@ -1158,9 +1408,50 @@
 
     el.addEventListener('contextmenu', e => {
       e.preventDefault();
-      alert('Here you can later open a clip options menu – stretch, normalize, open clip.html, etc.');
+      alert('Later: show a context menu for clip options – normalize, reverse, open detailed editor, etc.');
     });
   }
+
+  /* ========= PLACE ACTIVE PATTERN ON TIMELINE (DOUBLE-CLICK EMPTY) ========= */
+  gridInner.addEventListener('dblclick', (e) => {
+    // ignore if user double-clicked a clip
+    if (e.target.classList.contains('clip') || e.target.closest('.clip')) return;
+
+    if (!currentPatternId) {
+      alert('Create or select a pattern first.');
+      return;
+    }
+    const pattern = patterns.find(p => p.id === currentPatternId);
+    if (!pattern) return;
+
+    const rect = gridInner.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // find nearest track row
+    const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
+    if (!rows.length) return;
+    let closestRow = rows[0];
+    let closestDist = Infinity;
+    rows.forEach(r => {
+      const rRect = r.getBoundingClientRect();
+      const mid = rRect.top + rRect.height / 2 - rect.top;
+      const dist = Math.abs(y - mid);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestRow = r;
+      }
+    });
+    const trackId = parseInt(closestRow.dataset.trackId, 10);
+
+    let beatFromZero = (x - 80) / beatWidth;
+    if (beatFromZero < 0) beatFromZero = 0;
+    const snappedBeat = Math.round(beatFromZero);
+
+    // default 4-beat pattern length; you can change this later per pattern
+    const lengthBeats = 4;
+    createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
+  });
 
   /* ========= ZOOM ========= */
   zoomRange.addEventListener('input', () => {
@@ -1313,12 +1604,13 @@
 
       if (panel === 'mixer' || panel === 'piano' || panel === 'rack') {
         // toggle matching bottom panel
-        const tab = document.querySelector(`.bottom-tab[data-bottom-panel="${panel === 'rack' ? 'rack' : panel}"]`);
-        const panelEl = document.getElementById('bottom-' + (panel === 'rack' ? 'rack' : panel));
-        const isVisible = panelEl.classList.contains('active');
+        const mapped = panel === 'rack' ? 'rack' : panel;
+        const tab = document.querySelector(`.bottom-tab[data-bottom-panel="${mapped}"]`);
+        const panelEl = document.getElementById('bottom-' + mapped);
+        const isVisible = bottomDock.style.display !== 'none';
         if (!isVisible) {
-          tab.click();
           bottomDock.style.display = 'flex';
+          if (tab) tab.click();
         } else {
           bottomDock.style.display = 'none';
         }
@@ -1334,7 +1626,7 @@
     });
   });
 
-  /* ========= TIMELINE SCROLL THUMB (VISUAL) ========= */
+  /* ========= TIMELINE SCROLL THUMB ========= */
   const thumb = document.getElementById('timeline-thumb');
   let thumbDragging = false;
   let thumbStartX = 0;
@@ -1354,7 +1646,7 @@
     newLeft = Math.max(0, Math.min(maxLeft, newLeft));
     thumb.style.left = newLeft + 'px';
 
-    const scrollRatio = newLeft / maxLeft;
+    const scrollRatio = maxLeft > 0 ? newLeft / maxLeft : 0;
     const maxScroll = timelineScroll.scrollWidth - timelineScroll.clientWidth;
     timelineScroll.scrollLeft = maxScroll * scrollRatio;
   });
@@ -1365,13 +1657,20 @@
   gridInner.style.setProperty('--beat-width', beatWidth + 'px');
   gridInner.style.setProperty('--track-height', '40px');
 
+  // Default patterns
+  const pDrums = addPattern('Pattern 1 – Drums', 'blue');
+  const pBass  = addPattern('Pattern 2 – Bass', 'green');
+  const pChrd  = addPattern('Pattern 3 – Chords', 'purple');
+
+  // Default tracks
   const firstTrack = addTrack('Drums');
   const t2 = addTrack('Bass');
   const t3 = addTrack('Chords');
 
-  createClip(firstTrack, 0, 8, 'Drum Loop', 'blue');
-  createClip(t2, 4, 8, 'Bass Groove', 'green');
-  createClip(t3, 8, 8, 'Chord Progression', 'purple');
+  // Some starter clips from patterns
+  createClip(firstTrack, 0, 8, 'Pattern 1 – Drums', 'blue', pDrums);
+  createClip(t2, 4, 8, 'Pattern 2 – Bass', 'green', pBass);
+  createClip(t3, 8, 8, 'Pattern 3 – Chords', 'purple', pChrd);
 
 </script>
 </body>
