@@ -172,8 +172,11 @@
       color: #02041b;
       transition: transform .08s, box-shadow .08s, border-color .08s;
     }
-    .dock-icon span {
-      font-weight: 700;
+    .dock-icon img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.6));
     }
     .dock-icon[data-panel="browser"] { background: radial-gradient(circle at 0 0,#4aa8ff,#071134); }
     .dock-icon[data-panel="rack"]    { background: radial-gradient(circle at 0 0,#7cffc7,#071134); }
@@ -201,50 +204,106 @@
       background: rgba(7,15,66,0.9);
     }
 
-    /* ===== MAIN GRID: LEFT BROWSER + CENTER TIMELINE + RIGHT PLACEHOLDER ===== */
-    .main-grid {
+    /* ===== WORKSPACE / TIMELINE SHELL ===== */
+    .main-grid.workspace {
       margin-top: 4px;
       border-radius: 9px;
       border: 1px solid rgba(0,0,0,0.9);
       background: radial-gradient(circle at 0 0,#1a2aff,#050821 55%,#010313 100%);
       box-shadow: var(--shadow-soft);
-      display: grid;
-      grid-template-columns: 260px minmax(0,1fr) 220px;
       min-height: 450px;
       overflow: hidden;
-    }
-    @media (max-width: 1100px) {
-      .main-grid { grid-template-columns: 220px minmax(0,1fr); }
-      .right-placeholder { display: none; }
-    }
-    @media (max-width: 800px) {
-      .main-grid { grid-template-columns: minmax(0,1fr); }
-      .left-browser { display: none; }
+      position: relative;
     }
 
-    .left-browser {
-      background: linear-gradient(to bottom,#050b2a,#020319);
-      border-right: 1px solid #000;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
     .center-timeline-wrap {
       background: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%);
       display: flex;
       flex-direction: column;
       min-height: 0;
-      border-right: 1px solid #000;
+      position: relative;
+      z-index: 1; /* base layer – windows float above */
     }
-    .right-placeholder {
-      background: linear-gradient(to bottom,#050b2a,#020319);
-      border-left: 1px solid #000;
-      padding: 6px 8px;
+
+    /* ===== FLOATING WINDOWS LAYER ===== */
+    .floating-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none; /* re-enabled inside windows */
+      z-index: 5;
+    }
+
+    .floating-window {
+      position: absolute;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.24);
+      background: radial-gradient(circle at 0 0,#3246ff,#050822 40%,#020419 100%);
+      box-shadow: 0 0 32px rgba(0,0,0,0.95);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      pointer-events: auto;
+      min-width: 260px;
+      min-height: 180px;
+    }
+    .floating-window.hidden {
+      display: none;
+    }
+    .floating-window-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      background: linear-gradient(to right,#091650,#050a24);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 11px;
+      cursor: move;
+      user-select: none;
+    }
+    .floating-window-title {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 10px;
+      color: var(--accent3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .window-header-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .window-close {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
+      color: #02041b;
+      font-size: 11px;
+      padding: 1px 7px;
+      cursor: pointer;
+    }
+    .floating-window-body {
+      flex: 1;
+      background: rgba(4,8,40,0.96);
+      padding: 6px 8px 8px;
+      overflow: auto;
       font-size: 11px;
       color: var(--text-muted);
     }
+    .window-resize-handle {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 14px;
+      height: 14px;
+      cursor: nwse-resize;
+      background: linear-gradient(135deg,transparent,rgba(255,255,255,0.4));
+      opacity: 0.6;
+    }
 
-    /* ===== LEFT BROWSER (FILE / SAMPLES / PATTERNS) ===== */
+    /* ===== LEFT-BROWSER STYLE (REUSED INSIDE WINDOW) ===== */
     .panel-header {
       padding: 4px 8px;
       border-bottom: 1px solid rgba(0,0,0,0.9);
@@ -299,11 +358,14 @@
     .browser-scroll {
       flex: 1;
       min-height: 0;
+      max-height: 260px;
       overflow-y: auto;
       padding: 6px 8px 10px;
       font-size: 11px;
       color: var(--text-muted);
       scrollbar-width: thin;
+      background: linear-gradient(to bottom,#050b2a,#020319);
+      border-radius: 0 0 8px 8px;
     }
     .browser-section-title {
       font-size: 9px;
@@ -335,7 +397,52 @@
       background: rgba(255,215,124,0.1);
     }
 
-    /* ===== TRANSPORT & TIMELINE TOOLBAR ===== */
+    /* ===== RIGHT-PLACEHOLDER STYLE (PLUGINS) ===== */
+    .right-placeholder-window h3 {
+      margin: 2px 0 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--accent2);
+    }
+    .colored-list span {
+      display: inline-block;
+      margin: 2px 0;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+    }
+    .colored-list span:nth-child(1){ background: rgba(61,124,255,0.3); }
+    .colored-list span:nth-child(2){ background: rgba(255,124,241,0.3); }
+    .colored-list span:nth-child(3){ background: rgba(124,255,199,0.3); }
+    .colored-list span:nth-child(4){ background: rgba(255,215,124,0.3); }
+
+    /* ===== MIXER / PIANO / RACK WINDOW TEXT ===== */
+    .bottom-panel h4 {
+      margin: 0 0 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--accent4);
+    }
+    .bottom-panel p {
+      margin: 2px 0;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+    .bottom-panel ul {
+      margin: 4px 0 0 16px;
+      padding: 0;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+    .panel-note {
+      font-size: 10px;
+      color: var(--accent2);
+      margin-top: 4px;
+    }
+
+    /* ===== TIMELINE HEADER / TRANSPORT ===== */
     .timeline-header {
       padding: 4px 8px 2px;
       border-bottom: 1px solid rgba(0,0,0,0.9);
@@ -589,7 +696,7 @@
       pointer-events: none;
     }
 
-    /* ===== CLIPS (SAMPLES / PATTERNS) ===== */
+    /* ===== CLIPS ===== */
     .clip {
       position: absolute;
       top: 6px;
@@ -624,100 +731,6 @@
       cursor: ew-resize;
     }
 
-    /* ===== RIGHT PLACEHOLDER (PLUGINS, INFO) ===== */
-    .right-placeholder h3 {
-      margin: 2px 0 6px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--accent2);
-    }
-    .colored-list span {
-      display: inline-block;
-      margin: 2px 0;
-      padding: 2px 6px;
-      border-radius: 999px;
-      font-size: 10px;
-    }
-    .colored-list span:nth-child(1){ background: rgba(61,124,255,0.3); }
-    .colored-list span:nth-child(2){ background: rgba(255,124,241,0.3); }
-    .colored-list span:nth-child(3){ background: rgba(124,255,199,0.3); }
-    .colored-list span:nth-child(4){ background: rgba(255,215,124,0.3); }
-
-    /* ===== BOTTOM DOCK: MIXER / PIANO / RACK DETAIL ===== */
-    .bottom-dock {
-      margin-top: 6px;
-      border-radius: 9px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#2a3bff,#050a21 45%,#020419 100%);
-      box-shadow: var(--shadow-soft);
-      display: flex;
-      flex-direction: column;
-      min-height: 180px;
-      max-height: 340px;
-      position: relative;
-    }
-    .bottom-resize-handle {
-      position: absolute;
-      top: -5px;
-      left: 0;
-      right: 0;
-      height: 6px;
-      cursor: row-resize;
-      background: linear-gradient(to right,transparent,var(--grid-line),transparent);
-    }
-    .bottom-tabs {
-      display: flex;
-      padding: 4px 8px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to bottom,#091650,#050a24);
-      font-size: 10px;
-      gap: 6px;
-    }
-    .bottom-tab {
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: rgba(4,8,40,0.9);
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-    .bottom-tab.active {
-      border-color: #fff;
-      color: var(--accent3);
-      box-shadow: 0 0 10px rgba(255,215,124,0.8);
-    }
-    .bottom-panels {
-      flex: 1;
-      min-height: 0;
-      display: grid;
-    }
-    .bottom-panel {
-      padding: 6px 8px;
-      font-size: 11px;
-      display: none;
-      overflow: auto;
-    }
-    .bottom-panel.active {
-      display: block;
-    }
-    .bottom-panel h4 {
-      margin: 0 0 4px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--accent4);
-    }
-    .bottom-panel p {
-      margin: 2px 0;
-      color: var(--text-muted);
-    }
-    .panel-note {
-      font-size: 10px;
-      color: var(--accent2);
-      margin-top: 4px;
-    }
-
     /* ===== HINT BAR ===== */
     .hint-bar {
       margin-top: 4px;
@@ -733,7 +746,7 @@
       flex-wrap: wrap;
     }
 
-    /* ===== PLUGIN POPUP WINDOW ===== */
+    /* ===== PLUGIN POPUP (DOUBLE-CLICK CLIP / TRACK) ===== */
     .plugin-overlay {
       position: fixed;
       inset: 0;
@@ -823,23 +836,23 @@
   <!-- TOP ICON BAR -->
   <section class="icon-dock">
     <div class="icon-row">
-      <div class="dock-icon active" data-panel="browser" title="File / Samples (browser.html later)">
-        <span>F</span>
+      <div class="dock-icon" data-panel="browser" title="File / Samples (Browser)">
+        <img src="icons/browser.png" alt="Browser">
       </div>
-      <div class="dock-icon active" data-panel="rack" title="Channel Rack (rack.html later)">
-        <span>R</span>
+      <div class="dock-icon" data-panel="rack" title="Channel Rack">
+        <img src="icons/rack.png" alt="Rack">
       </div>
-      <div class="dock-icon active" data-panel="mixer" title="Mixer (mixer.html later)">
-        <span>M</span>
+      <div class="dock-icon" data-panel="mixer" title="Mixer">
+        <img src="icons/mixer.png" alt="Mixer">
       </div>
-      <div class="dock-icon active" data-panel="piano" title="Piano Roll (piano.html later)">
-        <span>P</span>
+      <div class="dock-icon" data-panel="piano" title="Piano Roll">
+        <img src="icons/piano.png" alt="Piano Roll">
       </div>
-      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX (plugins.html later)">
-        <span>X</span>
+      <div class="dock-icon" data-panel="plugins" title="Plugins / FX">
+        <img src="icons/plugins.png" alt="Plugins">
       </div>
-      <div class="dock-icon active" data-panel="timeline" title="Timeline View (timeline.html later)">
-        <span>T</span>
+      <div class="dock-icon active" data-panel="timeline" title="Timeline View">
+        <img src="icons/timeline.png" alt="Timeline">
       </div>
     </div>
     <div class="dock-icon-labels">
@@ -852,42 +865,10 @@
     </div>
   </section>
 
-  <!-- MAIN GRID -->
-  <section class="main-grid">
-    <!-- LEFT BROWSER PANEL -->
-    <aside class="left-browser dock-panel" data-panel-id="browser">
-      <div class="panel-header">
-        <div class="panel-title">Browser</div>
-        <div class="panel-tabs">
-          <div class="panel-tab active">Project</div>
-          <div class="panel-tab">Samples</div>
-        </div>
-      </div>
-      <div class="browser-search">
-        <span>🔍</span>
-        <input type="text" placeholder="Search in project / samples…" />
-      </div>
-      <div class="browser-scroll" id="browser-scroll">
-        <div class="browser-section-title">Project</div>
-        <div class="browser-item"><span>Current project</span><span>.flp</span></div>
-        <div class="browser-item"><span>Recent files</span><span>5</span></div>
-
-        <div class="browser-section-title">Generators & Instruments</div>
-        <div class="browser-item"><span>FLEX – Pads & Keys</span><span>GEN</span></div>
-        <div class="browser-item"><span>Sytrus – Leads</span><span>FM</span></div>
-        <div class="browser-item"><span>Drumaxx – Kits</span><span>DRM</span></div>
-
-        <div class="browser-section-title">Patterns</div>
-        <div id="pattern-list"></div>
-
-        <div class="browser-section-title">Effect Chains</div>
-        <div class="browser-item"><span>Vocal Polished Chain</span><span>FX</span></div>
-        <div class="browser-item"><span>Mastering Glue Chain</span><span>FX</span></div>
-      </div>
-    </aside>
-
-    <!-- CENTER TIMELINE -->
-    <section class="center-timeline-wrap dock-panel" data-panel-id="timeline">
+  <!-- WORKSPACE: TIMELINE + FLOATING WINDOWS -->
+  <section class="main-grid workspace">
+    <!-- CENTER TIMELINE (kept as the base view) -->
+    <section class="center-timeline-wrap" id="timeline-root">
       <div class="timeline-header">
         <div class="timeline-row-top">
           <div class="timeline-title">Playlist · Arrangement A (Main)</div>
@@ -942,55 +923,140 @@
       </div>
     </section>
 
-    <!-- RIGHT PLACEHOLDER / PLUGINS LIST -->
-    <aside class="right-placeholder dock-panel" data-panel-id="plugins">
-      <h3>Plugin Slots</h3>
-      <p>Each slot below can later be a dedicated <b>plugin.html</b> or similar:</p>
-      <div class="colored-list">
-        <span>Slot 1 – Vocal Chain</span>
-        <span>Slot 2 – Drum Bus</span>
-        <span>Slot 3 – Master FX</span>
-        <span>Slot 4 – Creative FX</span>
-      </div>
-      <p style="margin-top:8px;">Click the <span style="color:#ff7cf1;">X</span> icon at the top row to hide/show this panel.</p>
-      <p class="panel-note">Later you can replace this block with an &lt;iframe src="plugins.html"&gt; or inject content from your AI engine.</p>
-    </aside>
-  </section>
+    <!-- FLOATING WINDOWS LAYER -->
+    <div class="floating-layer" id="floating-layer">
+      <!-- BROWSER WINDOW -->
+      <div class="floating-window hidden" id="window-browser" data-panel-id="browser">
+        <div class="floating-window-header">
+          <div class="floating-window-title">Browser</div>
+          <div class="window-header-right">
+            <button class="window-close" data-panel-id="browser">✕</button>
+          </div>
+        </div>
+        <div class="floating-window-body">
+          <div class="panel-header">
+            <div class="panel-title">Browser</div>
+            <div class="panel-tabs">
+              <div class="panel-tab active">Project</div>
+              <div class="panel-tab">Samples</div>
+            </div>
+          </div>
+          <div class="browser-search">
+            <span>🔍</span>
+            <input type="text" placeholder="Search in project / samples…" />
+          </div>
+          <div class="browser-scroll" id="browser-scroll">
+            <div class="browser-section-title">Project</div>
+            <div class="browser-item"><span>Current project</span><span>.flp</span></div>
+            <div class="browser-item"><span>Recent files</span><span>5</span></div>
 
-  <!-- BOTTOM DOCK: MIXER / PIANO / RACK DETAIL -->
-  <section class="bottom-dock">
-    <div class="bottom-resize-handle" id="bottom-resize"></div>
-    <div class="bottom-tabs">
-      <div class="bottom-tab active" data-bottom-panel="mixer">Mixer</div>
-      <div class="bottom-tab" data-bottom-panel="piano">Piano Roll</div>
-      <div class="bottom-tab" data-bottom-panel="rack">Channel Rack</div>
-    </div>
-    <div class="bottom-panels">
-      <div class="bottom-panel active" id="bottom-mixer">
-        <h4>Mixer (mixer.html placeholder)</h4>
-        <p>This is a visual placeholder for the mixer. Later you can:</p>
-        <ul>
-          <li>Load content from <code>mixer.html</code> via iframe or JS include.</li>
-          <li>Map each track to a mixer strip, add meters & FX slots.</li>
-        </ul>
-        <p class="panel-note">The top <span style="color:#ff7cf1;">M</span> icon toggles this whole mixer dock on/off.</p>
+            <div class="browser-section-title">Generators & Instruments</div>
+            <div class="browser-item"><span>FLEX – Pads & Keys</span><span>GEN</span></div>
+            <div class="browser-item"><span>Sytrus – Leads</span><span>FM</span></div>
+            <div class="browser-item"><span>Drumaxx – Kits</span><span>DRM</span></div>
+
+            <div class="browser-section-title">Patterns</div>
+            <div id="pattern-list"></div>
+
+            <div class="browser-section-title">Effect Chains</div>
+            <div class="browser-item"><span>Vocal Polished Chain</span><span>FX</span></div>
+            <div class="browser-item"><span>Mastering Glue Chain</span><span>FX</span></div>
+          </div>
+        </div>
+        <div class="window-resize-handle"></div>
       </div>
-      <div class="bottom-panel" id="bottom-piano">
-        <h4>Piano Roll (piano.html placeholder)</h4>
-        <p>Design a full piano roll editor in a separate <code>piano.html</code> and plug it in here.</p>
-        <p class="panel-note">For now this is only a layout slot to make sure your DAW navigation feels complete.</p>
+
+      <!-- MIXER WINDOW -->
+      <div class="floating-window hidden" id="window-mixer" data-panel-id="mixer">
+        <div class="floating-window-header">
+          <div class="floating-window-title">Mixer</div>
+          <div class="window-header-right">
+            <button class="window-close" data-panel-id="mixer">✕</button>
+          </div>
+        </div>
+        <div class="floating-window-body">
+          <div class="bottom-panel" id="bottom-mixer">
+            <h4>Mixer (mixer.html placeholder)</h4>
+            <p>This is a visual placeholder for the mixer. Later you can:</p>
+            <ul>
+              <li>Load content from <code>mixer.html</code> via iframe or JS include.</li>
+              <li>Map each track to a mixer strip, add meters & FX slots.</li>
+            </ul>
+            <p class="panel-note">This window can become a full mixer view with channel meters, inserts, sends and AI mix suggestions.</p>
+          </div>
+        </div>
+        <div class="window-resize-handle"></div>
       </div>
-      <div class="bottom-panel" id="bottom-rack">
-        <h4>Channel Rack Details (rack.html placeholder)</h4>
-        <p>Use this area for deeper rack controls, generator previews, AI preset suggestions, etc.</p>
-        <p class="panel-note">The top <span style="color:#7cffc7;">R</span> icon can also be wired to jump into a dedicated rack page.</p>
+
+      <!-- PIANO ROLL WINDOW -->
+      <div class="floating-window hidden" id="window-piano" data-panel-id="piano">
+        <div class="floating-window-header">
+          <div class="floating-window-title">Piano Roll</div>
+          <div class="window-header-right">
+            <button class="window-close" data-panel-id="piano">✕</button>
+          </div>
+        </div>
+        <div class="floating-window-body">
+          <div class="bottom-panel" id="bottom-piano">
+            <h4>Piano Roll (piano.html placeholder)</h4>
+            <p>Design a full piano roll editor in a separate <code>piano.html</code> and plug it in here.</p>
+            <p>You could render notes as rectangles, allow MIDI editing, snapping, and AI chord/groove suggestions.</p>
+            <p class="panel-note">For now this is only a layout slot to make sure your DAW navigation feels complete.</p>
+          </div>
+        </div>
+        <div class="window-resize-handle"></div>
+      </div>
+
+      <!-- RACK WINDOW -->
+      <div class="floating-window hidden" id="window-rack" data-panel-id="rack">
+        <div class="floating-window-header">
+          <div class="floating-window-title">Channel Rack</div>
+          <div class="window-header-right">
+            <button class="window-close" data-panel-id="rack">✕</button>
+          </div>
+        </div>
+        <div class="floating-window-body">
+          <div class="bottom-panel" id="bottom-rack">
+            <h4>Channel Rack Details (rack.html placeholder)</h4>
+            <p>Use this area for rack controls, step sequencers, generator previews and AI preset suggestions.</p>
+            <ul>
+              <li>Show each channel as a row with mute/solo, pan, volume and routing.</li>
+              <li>Add pattern step buttons and per-channel FX or macros.</li>
+            </ul>
+            <p class="panel-note">Later, the rack can live in a dedicated <code>rack.html</code> and be injected into this window.</p>
+          </div>
+        </div>
+        <div class="window-resize-handle"></div>
+      </div>
+
+      <!-- PLUGINS WINDOW -->
+      <div class="floating-window hidden" id="window-plugins" data-panel-id="plugins">
+        <div class="floating-window-header">
+          <div class="floating-window-title">Plugins / FX</div>
+          <div class="window-header-right">
+            <button class="window-close" data-panel-id="plugins">✕</button>
+          </div>
+        </div>
+        <div class="floating-window-body right-placeholder-window">
+          <h3>Plugin Slots</h3>
+          <p>Each slot below can later be a dedicated <b>plugin.html</b> or similar:</p>
+          <div class="colored-list">
+            <span>Slot 1 – Vocal Chain</span>
+            <span>Slot 2 – Drum Bus</span>
+            <span>Slot 3 – Master FX</span>
+            <span>Slot 4 – Creative FX</span>
+          </div>
+          <p style="margin-top:8px;">You can replace this with an embedded plugin view per slot or an AI FX recommender.</p>
+          <p class="panel-note">Later you can replace this block with an <code>&lt;iframe src="plugins.html"&gt;</code> or inject content from your AI engine.</p>
+        </div>
+        <div class="window-resize-handle"></div>
       </div>
     </div>
   </section>
 
   <section class="hint-bar">
-    <span>Tip: Click the colorful icons at the top (F, R, M, P, X, T) to hide / show each major window. All of them are resizable placeholders for future HTML pages.</span>
-    <span>Double-click empty grid row to drop the active pattern as a clip · double-click a clip or track color dot to open the plugin window.</span>
+    <span>Tip: Click the colorful icons (Browser, Rack, Mixer, Piano, Plugins) to open floating windows on top of the timeline. They stay open until you hit the ✕.</span>
+    <span>Double-click empty grid row to drop the active pattern as a clip · double-click a clip or track color dot to open the plugin popup for that item.</span>
   </section>
 </main>
 
@@ -1041,6 +1107,9 @@
   const pluginTitleEl = document.getElementById('plugin-title');
   const pluginBodyEl = document.getElementById('plugin-body');
   const pluginCloseBtn = document.getElementById('plugin-close-btn');
+
+  const workspace = document.querySelector('.workspace');
+  const dockIcons = document.querySelectorAll('.dock-icon');
 
   /* ========= PLUGIN WINDOW ========= */
   function openPluginWindow(title, descriptionHtml) {
@@ -1448,7 +1517,7 @@
     if (beatFromZero < 0) beatFromZero = 0;
     const snappedBeat = Math.round(beatFromZero);
 
-    // default 4-beat pattern length; you can change this later per pattern
+    // default 4-beat pattern length
     const lengthBeats = 4;
     createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
   });
@@ -1549,80 +1618,162 @@
     }
   });
 
-  /* ========= BOTTOM DOCK RESIZE ========= */
-  const bottomDock = document.querySelector('.bottom-dock');
-  const bottomHandle = document.getElementById('bottom-resize');
-  let bottomResizing = false;
-  let bottomStartY = 0;
-  let bottomStartHeight = 0;
+  /* ========= FLOATING WINDOWS + ICONS ========= */
+  const windowMap = {};
+  let topZ = 20;
 
-  bottomHandle.addEventListener('mousedown', e => {
-    bottomResizing = true;
-    bottomStartY = e.clientY;
-    bottomStartHeight = bottomDock.offsetHeight;
-    document.body.style.userSelect = 'none';
-  });
-  window.addEventListener('mousemove', e => {
-    if (!bottomResizing) return;
-    const dy = -(e.clientY - bottomStartY);
-    let newH = Math.min(340, Math.max(160, bottomStartHeight + dy));
-    bottomDock.style.height = newH + 'px';
-  });
-  window.addEventListener('mouseup', () => {
-    if (bottomResizing) {
-      bottomResizing = false;
-      document.body.style.userSelect = '';
-    }
-  });
+  document.querySelectorAll('.floating-window').forEach(win => {
+    const id = win.dataset.panelId;
+    if (!id) return;
+    windowMap[id] = win;
 
-  /* ========= BOTTOM PANEL TABS ========= */
-  document.querySelectorAll('.bottom-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const id = tab.dataset.bottomPanel;
-      document.querySelectorAll('.bottom-panel').forEach(p => {
-        p.classList.toggle('active', p.id === 'bottom-' + id);
+    const header = win.querySelector('.floating-window-header');
+    const closeBtn = win.querySelector('.window-close');
+    const resizeHandle = win.querySelector('.window-resize-handle');
+
+    // Close button
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        hideWindow(id);
       });
+    }
+
+    // Drag logic
+    let dragging = false;
+    let dragStartX = 0, dragStartY = 0;
+    let startLeft = 0, startTop = 0;
+
+    if (header) {
+      header.addEventListener('mousedown', e => {
+        dragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        const rect = win.getBoundingClientRect();
+        startLeft = rect.left - workspace.getBoundingClientRect().left;
+        startTop = rect.top - workspace.getBoundingClientRect().top;
+        bringToFront(win);
+        document.body.style.userSelect = 'none';
+      });
+    }
+
+    // Resize logic
+    let resizingWin = false;
+    let resizeStartX = 0, resizeStartY = 0;
+    let startWidth = 0, startHeight = 0;
+
+    if (resizeHandle) {
+      resizeHandle.addEventListener('mousedown', e => {
+        e.stopPropagation();
+        resizingWin = true;
+        resizeStartX = e.clientX;
+        resizeStartY = e.clientY;
+        const rect = win.getBoundingClientRect();
+        startWidth = rect.width;
+        startHeight = rect.height;
+        bringToFront(win);
+        document.body.style.userSelect = 'none';
+      });
+    }
+
+    window.addEventListener('mousemove', e => {
+      if (dragging) {
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+        const bounds = workspace.getBoundingClientRect();
+        let newLeft = startLeft + dx;
+        let newTop = startTop + dy;
+        const maxLeft = bounds.width - win.offsetWidth;
+        const maxTop = bounds.height - 40;
+
+        if (newLeft < 0) newLeft = 0;
+        if (newTop < 0) newTop = 0;
+        if (newLeft > maxLeft) newLeft = maxLeft;
+        if (newTop > maxTop) newTop = maxTop;
+
+        win.style.left = newLeft + 'px';
+        win.style.top = newTop + 'px';
+      } else if (resizingWin) {
+        const dx = e.clientX - resizeStartX;
+        const dy = e.clientY - resizeStartY;
+        let newW = startWidth + dx;
+        let newH = startHeight + dy;
+        const bounds = workspace.getBoundingClientRect();
+
+        const minW = 260;
+        const minH = 180;
+
+        if (newW < minW) newW = minW;
+        if (newH < minH) newH = minH;
+        if (newW > bounds.width) newW = bounds.width;
+        if (newH > bounds.height) newH = bounds.height;
+
+        win.style.width = newW + 'px';
+        win.style.height = newH + 'px';
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (dragging || resizingWin) {
+        dragging = false;
+        resizingWin = false;
+        document.body.style.userSelect = '';
+      }
     });
   });
 
-  /* ========= TOP ICON PANEL TOGGLING ========= */
-  const dockIcons = document.querySelectorAll('.dock-icon');
-  const dockPanels = document.querySelectorAll('.dock-panel');
+  function bringToFront(win) {
+    topZ += 1;
+    win.style.zIndex = topZ;
+  }
 
-  dockIcons.forEach(icon => {
-    icon.addEventListener('click', () => {
-      const panel = icon.dataset.panel;
-      const relatedPanels = Array.from(dockPanels).filter(p => {
-        const id = p.dataset.panelId;
-        if (panel === 'timeline') return id === 'timeline';
-        if (panel === 'browser') return id === 'browser';
-        if (panel === 'plugins') return id === 'plugins';
-        return true; // M / R / P mapped to bottom dock only
-      });
+  function showWindow(id) {
+    const win = windowMap[id];
+    if (!win) return;
+    if (win.classList.contains('hidden')) {
+      win.classList.remove('hidden');
 
-      if (panel === 'mixer' || panel === 'piano' || panel === 'rack') {
-        // toggle matching bottom panel
-        const mapped = panel === 'rack' ? 'rack' : panel;
-        const tab = document.querySelector(`.bottom-tab[data-bottom-panel="${mapped}"]`);
-        const panelEl = document.getElementById('bottom-' + mapped);
-        const isVisible = bottomDock.style.display !== 'none';
-        if (!isVisible) {
-          bottomDock.style.display = 'flex';
-          if (tab) tab.click();
-        } else {
-          bottomDock.style.display = 'none';
-        }
-        icon.classList.toggle('active', bottomDock.style.display !== 'none');
-        return;
+      // First-time position: large, almost full view
+      if (!win.dataset.inited) {
+        const bounds = workspace.getBoundingClientRect();
+        const w = bounds.width * 0.8;
+        const h = bounds.height * 0.7;
+        win.style.width = w + 'px';
+        win.style.height = h + 'px';
+        win.style.left = (bounds.width * 0.1) + 'px';
+        win.style.top = 32 + 'px';
+        win.dataset.inited = 'true';
       }
+    }
+    bringToFront(win);
+    const icon = document.querySelector(`.dock-icon[data-panel="${id}"]`);
+    if (icon) icon.classList.add('active');
+  }
 
-      const currentlyVisible = relatedPanels.some(p => p.style.display !== 'none');
-      relatedPanels.forEach(p => {
-        p.style.display = currentlyVisible ? 'none' : '';
-      });
-      icon.classList.toggle('active', !currentlyVisible);
+  function hideWindow(id) {
+    const win = windowMap[id];
+    if (!win) return;
+    win.classList.add('hidden');
+    const icon = document.querySelector(`.dock-icon[data-panel="${id}"]`);
+    if (icon && id !== 'timeline') icon.classList.remove('active');
+  }
+
+  // Icon clicks → open/bring-to-front windows
+  dockIcons.forEach(icon => {
+    const panel = icon.dataset.panel;
+    if (panel === 'timeline') {
+      // Timeline is the base; icon just stays active as indicator
+      icon.classList.add('active');
+      return;
+    }
+    icon.addEventListener('click', () => {
+      const win = windowMap[panel];
+      if (!win) return;
+      if (win.classList.contains('hidden')) {
+        showWindow(panel);
+      } else {
+        // bring existing window to front
+        bringToFront(win);
+      }
     });
   });
 
@@ -1671,7 +1822,6 @@
   createClip(firstTrack, 0, 8, 'Pattern 1 – Drums', 'blue', pDrums);
   createClip(t2, 4, 8, 'Pattern 2 – Bass', 'green', pBass);
   createClip(t3, 8, 8, 'Pattern 3 – Chords', 'purple', pChrd);
-
 </script>
 </body>
 </html>
