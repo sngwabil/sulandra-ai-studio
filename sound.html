@@ -44,6 +44,7 @@
       color: var(--text-main);
       display: flex;
       flex-direction: column;
+      overflow: hidden; /* Prevent body scroll */
     }
 
     a { color: inherit; text-decoration: none; }
@@ -699,6 +700,7 @@
       background: linear-gradient(to bottom,#ffd77c,#ff7cf1);
       box-shadow: 0 0 12px rgba(255,215,124,0.9);
       pointer-events: none;
+      z-index: 10;
     }
 
     .loop-region {
@@ -1077,25 +1079,24 @@
 </header>
 
 <main>
-  <!-- TOP ICON BAR -->
   <section class="icon-dock">
     <div class="icon-row">
-      <div class="dock-icon active" data-panel="browser" title="File / Samples (browser.html later)">
+      <div class="dock-icon active" data-panel="browser" title="File / Samples">
         <span>F</span>
       </div>
-      <div class="dock-icon" data-panel="rack" title="Channel Rack (rack.html later)">
+      <div class="dock-icon" data-panel="rack" title="Channel Rack">
         <span>R</span>
       </div>
-      <div class="dock-icon" data-panel="mixer" title="Mixer (mixer.html later)">
+      <div class="dock-icon" data-panel="mixer" title="Mixer">
         <span>M</span>
       </div>
-      <div class="dock-icon" data-panel="piano" title="Piano Roll (piano.html later)">
+      <div class="dock-icon" data-panel="piano" title="Piano Roll">
         <span>P</span>
       </div>
-      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX (plugins.html later)">
+      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX">
         <span>X</span>
       </div>
-      <div class="dock-icon active" data-panel="timeline" title="Timeline View (timeline.html later)">
+      <div class="dock-icon active" data-panel="timeline" title="Timeline View">
         <span>T</span>
       </div>
     </div>
@@ -1109,9 +1110,7 @@
     </div>
   </section>
 
-  <!-- MAIN GRID -->
   <section class="main-grid">
-    <!-- LEFT BROWSER PANEL -->
     <aside class="left-browser dock-panel" data-panel-id="browser">
       <div class="panel-header">
         <div class="panel-title">Browser</div>
@@ -1143,10 +1142,8 @@
       </div>
     </aside>
 
-    <!-- CENTER TIMELINE -->
     <section class="center-timeline-wrap dock-panel" data-panel-id="timeline">
       <div class="timeline-header">
-        <!-- 4-SCREEN DISPLAY -->
         <div class="timeline-screen">
           <div class="screen-grid">
             <div class="screen-box">
@@ -1193,7 +1190,7 @@
             <select id="pattern-select" class="pattern-select"></select>
             <button id="new-pattern-btn">+ New</button>
           </div>
-          <div>Double-click empty grid to place active pattern · drag clips to move / resize.</div>
+          <div>Double-click empty grid to place active pattern · Alt+Scroll to zoom</div>
         </div>
         <div class="timeline-scrollbar">
           <div class="timeline-scroll-thumb" id="timeline-thumb">
@@ -1205,15 +1202,12 @@
       </div>
 
       <div class="timeline-main">
-        <!-- TRACK LIST -->
         <div class="track-list" id="track-list">
-          <!-- dynamic track headers here -->
           <div class="add-track-bar">
             <button class="add-track-btn" id="add-track-btn">+ Add Track</button>
           </div>
         </div>
 
-        <!-- GRID -->
         <div class="timeline-grid-wrap" id="timeline-scroll">
           <div class="timeline-ruler">
             <div class="timeline-ruler-inner" id="ruler-inner"></div>
@@ -1221,21 +1215,18 @@
           <div class="grid-inner" id="grid-inner">
             <div class="loop-region" id="loop-region"></div>
             <div class="playhead" id="playhead"></div>
-            <!-- track rows & clips via JS -->
-          </div>
+            </div>
         </div>
 
-        <!-- RIGHT VERTICAL SCROLLBAR -->
         <div class="timeline-vscroll-right" id="vscroll-right">
           <div class="timeline-vscroll-thumb" id="vscroll-thumb"></div>
         </div>
       </div>
     </section>
 
-    <!-- RIGHT PLACEHOLDER / PLUGINS LIST -->
     <aside class="right-placeholder dock-panel" data-panel-id="plugins">
       <h3>Plugin Slots</h3>
-      <p>Each slot below can later be a dedicated <b>plugin.html</b> or similar:</p>
+      <p>Each slot below can later be a dedicated plugin interface:</p>
       <div class="colored-list">
         <span>Slot 1 – Vocal Chain</span>
         <span>Slot 2 – Drum Bus</span>
@@ -1247,7 +1238,6 @@
     </aside>
   </section>
 
-  <!-- BOTTOM DOCK: MIXER / PIANO / RACK DETAIL -->
   <section class="bottom-dock" id="bottom-dock">
     <div class="bottom-resize-handle" id="bottom-resize"></div>
     <div class="bottom-tabs">
@@ -1264,23 +1254,19 @@
       <div class="bottom-panel" id="bottom-piano">
         <h4>Piano Roll (piano.html placeholder)</h4>
         <p>Design a full piano roll editor in a separate <code>piano.html</code> and plug it in here.</p>
-        <p class="panel-note">For now this is only a layout slot to make sure your DAW navigation feels complete.</p>
       </div>
       <div class="bottom-panel" id="bottom-rack">
         <h4>Channel Rack Details (rack.html placeholder)</h4>
         <p>Use this area for deeper rack controls, generator previews, AI preset suggestions, etc.</p>
-        <p class="panel-note">The top <span style="color:#7cffc7;">R</span> icon can also be wired to jump into a dedicated rack page.</p>
       </div>
     </div>
   </section>
 
   <section class="hint-bar">
-    <span>Tip: Spacebar toggles play / pause without resetting the playhead · right-click + drag on the bar numbers to set a loop region.</span>
-    <span>Scroll the track headers or grid to move the timeline vertically · drag the bottom bar handles or use + / – keys to zoom horizontally.</span>
+    <span>Tip: Spacebar toggles play / pause · Alt + Scroll to Zoom · Shift + Scroll to Pan · Drag edges to resize clips.</span>
   </section>
 </main>
 
-<!-- PLUGIN POPUP -->
 <div class="plugin-overlay" id="plugin-overlay">
   <div class="plugin-window">
     <div class="plugin-window-header">
@@ -1289,1360 +1275,377 @@
     </div>
     <div class="plugin-window-body" id="plugin-body">
       <p>This is a placeholder for a plugin or track window.</p>
-      <p>Later, you can embed <code>&lt;iframe src="plugin.html"&gt;</code> or inject your custom HTML per clip / track.</p>
-      <p>For example:</p>
-      <ul>
-        <li>Clip-based editor (stretch, reverse, slice, AI remix)</li>
-        <li>Track-based FX chain (EQ, compressor, reverb controls)</li>
-      </ul>
     </div>
   </div>
 </div>
 
 <script>
-  /* ========= BASIC DATA ========= */
+  /* ========= 1. DATA & STATE ========= */
   const BEATS_PER_BAR = 4;
-  let beatWidth = 48;                // pixels per beat
-  let gridBars = 200;                // starting bars on the timeline
-  const GRID_LEFT_OFFSET = 0;
-
-  let tracks = [];
+  let beatWidth = 48; // Zoom level (Pixels per beat)
+  let gridBars = 100;
+  
   let clips = [];
+  let tracks = [];
   let patterns = [];
 
-  let currentPatternId = null;
-  let nextTrackId = 1;
+  // Interaction State
   let nextClipId = 1;
+  let nextTrackId = 1;
   let nextPatternId = 1;
+  let currentPatternId = null;
 
-  // Playback state
-  let tempo = 130;
-  let baseSongBpm = tempo;
+  // Playback State
   let isPlaying = false;
-  let playheadBeat = 0;
-  let playStartTime = 0;
-  let playheadBeatAtStart = 0;
+  let playheadBeat = 0; // Current position in beats
+  let tempo = 130.0;
+  let startTime = 0;
+  let startBeat = 0;
 
-  // Loop state
-  let loopActive = false;
-  let loopStartBeat = 0;
-  let loopEndBeat = 0;
-  let loopSelecting = false;
-  let loopSelectAnchorBeat = 0;
+  // Key States for Shortcuts
+  let isAltHeld = false;
+  let isShiftHeld = false;
+  let isCtrlHeld = false;
 
-  // Zoom-on-wheel state
-  let isTimelineMouseDown = false;
-
-  // Display
-  let songKey = 'C# MINOR';
-  let mixLevel = 0.2;
-
-  // Metronome
-  let metronomeOn = false;
-
-  // Bottom dock visibility
-  let bottomVisible = false;
-  let currentBottomPanelKey = 'mixer';
-
-  const trackListEl = document.getElementById('track-list');
-  const rulerInner = document.getElementById('ruler-inner');
-  const gridInner = document.getElementById('grid-inner');
-  const loopRegionEl = document.getElementById('loop-region');
-  const playheadEl = document.getElementById('playhead');
+  // DOM Elements
   const timelineScroll = document.getElementById('timeline-scroll');
+  const gridInner = document.getElementById('grid-inner');
+  const rulerInner = document.getElementById('ruler-inner');
+  const playheadEl = document.getElementById('playhead');
   const zoomRange = document.getElementById('zoom-range');
-  const addTrackBtn = document.getElementById('add-track-btn');
-  const patternSelect = document.getElementById('pattern-select');
-  const patternListEl = document.getElementById('pattern-list');
-  const newPatternBtn = document.getElementById('new-pattern-btn');
-
-  const pluginOverlay = document.getElementById('plugin-overlay');
-  const pluginTitleEl = document.getElementById('plugin-title');
-  const pluginBodyEl = document.getElementById('plugin-body');
-  const pluginCloseBtn = document.getElementById('plugin-close-btn');
-
-  const thumb = document.getElementById('timeline-thumb');
-  const thumbLeftHandle = document.getElementById('thumb-left');
-  const thumbRightHandle = document.getElementById('thumb-right');
-  const thumbCenter = document.getElementById('thumb-center');
-
-  const playBtn = document.getElementById('btn-play');
-  const stopBtn = document.getElementById('btn-stop');
-  const backBtn = document.getElementById('btn-back');
-  const recBtn = document.getElementById('btn-rec');
-  const metronomeBtn = document.getElementById('btn-metronome');
-  const tempoDisplay = document.getElementById('tempo-value');
-
-  const bottomDock = document.getElementById('bottom-dock');
-  const bottomHandle = document.getElementById('bottom-resize');
-  const DEFAULT_BOTTOM_HEIGHT = 220;
-
-  const mixerStripsEl = document.getElementById('mixer-strips');
-
-  // Screen elements
+  const trackListEl = document.getElementById('track-list');
   const screenTimeEl = document.getElementById('screen-time');
-  const screenKeyEl  = document.getElementById('screen-key');
-  const screenBpmEl  = document.getElementById('screen-bpm');
-  const screenMixEl  = document.getElementById('screen-mix');
-  const screenMixBox = document.getElementById('screen-mix-box');
-  const screenKeyBox = document.getElementById('screen-key-box');
 
-  // Right vertical scrollbar
-  const vscrollRight = document.getElementById('vscroll-right');
-  const vscrollThumb = document.getElementById('vscroll-thumb');
-  let vThumbDragging = false;
-  let vThumbStartY = 0;
-  let vThumbStartTop = 0;
-  let syncingVertical = false;
+  /* ========= 2. INITIALIZATION ========= */
+  function init() {
+    // Setup initial Tracks
+    ['Drums', 'Bass', 'Chords', 'Vocals', 'FX'].forEach(name => addTrack(name));
+    
+    // Setup initial Patterns
+    addPattern('Pattern 1', 'blue');
+    addPattern('Pattern 2', 'green');
+    addPattern('Pattern 3', 'purple');
 
-  const mainGridEl = document.querySelector('.main-grid');
-  const leftBrowserPanel = document.querySelector('.left-browser');
-  const rightPluginsPanel = document.querySelector('.right-placeholder');
-
-  /* ========= PLUGIN WINDOW ========= */
-  function openPluginWindow(title, descriptionHtml) {
-    pluginTitleEl.textContent = title;
-    pluginBodyEl.innerHTML = descriptionHtml;
-    pluginOverlay.style.display = 'flex';
+    // Create some test clips
+    createClip(tracks[0].id, 0, 4, 'Pattern 1', 'blue');
+    createClip(tracks[1].id, 4, 4, 'Pattern 2', 'green');
+    
+    updateGridSizes();
+    buildRuler();
+    renderTracks();
+    requestAnimationFrame(animationLoop);
   }
 
-  function closePluginWindow() {
-    pluginOverlay.style.display = 'none';
+  /* ========= 3. GRID & RULER LOGIC ========= */
+  function updateGridSizes() {
+    document.documentElement.style.setProperty('--beat-width', beatWidth + 'px');
+    const totalWidth = gridBars * BEATS_PER_BAR * beatWidth + 100;
+    gridInner.style.width = totalWidth + 'px';
+    rulerInner.style.width = totalWidth + 'px';
   }
 
-  pluginCloseBtn.addEventListener('click', closePluginWindow);
-  pluginOverlay.addEventListener('click', (e) => {
-    if (e.target === pluginOverlay) closePluginWindow();
-  });
-
-  /* ========= RULER & GRID SIZE ========= */
   function buildRuler() {
     rulerInner.innerHTML = '';
-    for (let bar = 1; bar <= gridBars; bar++) {
+    for (let i = 1; i <= gridBars; i++) {
       const span = document.createElement('span');
-      span.textContent = bar;
+      span.textContent = i;
       rulerInner.appendChild(span);
     }
   }
 
-  function updateGridSizes() {
-    document.documentElement.style.setProperty('--beat-width', beatWidth + 'px');
-    const totalBeats = gridBars * BEATS_PER_BAR;
-    const totalWidth = GRID_LEFT_OFFSET + totalBeats * beatWidth + 16;
-    gridInner.style.minWidth = totalWidth + 'px';
-    rulerInner.style.minWidth = totalWidth + 'px';
-  }
-
-  function ensureGridForBeat(beat) {
-    const requiredBar = Math.floor(beat / BEATS_PER_BAR) + 2;
-    if (requiredBar > gridBars) {
-      gridBars = requiredBar + 50;
-      buildRuler();
-      updateGridSizes();
-      updateHorizontalThumb();
-    }
-  }
-
-  /* ========= PATTERNS ========= */
-  function addPattern(name, color) {
-    const id = nextPatternId++;
-    patterns.push({ id, name, color });
-    if (!currentPatternId) currentPatternId = id;
-    renderPatterns();
-    return id;
-  }
-
-  function renderPatterns() {
-    // update select
-    patternSelect.innerHTML = '';
-    patterns.forEach(p => {
-      const opt = document.createElement('option');
-      opt.value = p.id;
-      opt.textContent = p.name;
-      patternSelect.appendChild(opt);
-    });
-    if (currentPatternId) {
-      patternSelect.value = currentPatternId;
-    }
-
-    // update browser list
-    patternListEl.innerHTML = '';
-    patterns.forEach(p => {
-      const item = document.createElement('div');
-      item.className = 'browser-item pattern-item';
-      if (p.id === currentPatternId) item.classList.add('active');
-      item.dataset.patternId = p.id;
-
-      const left = document.createElement('span');
-      left.textContent = p.name;
-      left.style.color = p.color === 'blue' ? '#7cbeff'
-                       : p.color === 'green' ? '#7cffc7'
-                       : p.color === 'purple' ? '#ffb4ff'
-                       : '#ffd7f0';
-
-      const right = document.createElement('span');
-      right.textContent = 'PAT';
-
-      item.appendChild(left);
-      item.appendChild(right);
-
-      item.addEventListener('click', () => {
-        currentPatternId = p.id;
-        renderPatterns();
-      });
-
-      patternListEl.appendChild(item);
-    });
-  }
-
-  patternSelect.addEventListener('change', () => {
-    currentPatternId = parseInt(patternSelect.value, 10) || null;
-    renderPatterns();
-  });
-
-  newPatternBtn.addEventListener('click', () => {
-    const name = prompt('Name of new pattern:', 'New Pattern');
-    if (!name) return;
-    const colors = ['blue','green','purple','pink'];
-    const color = colors[patterns.length % colors.length];
-    addPattern(name, color);
-  });
-
-  /* ========= TRACKS ========= */
+  /* ========= 4. TRACKS & PATTERNS ========= */
   function addTrack(name) {
-    const id = nextTrackId++;
-    tracks.push({ id, name: name || `Track ${id}`, height: 40, type: 'Audio' });
-    renderTracks();
-    return id;
-  }
-
-  function moveTrack(id, dir) {
-    const index = tracks.findIndex(t => t.id === id);
-    if (index === -1) return;
-    const newIndex = index + dir;
-    if (newIndex < 0 || newIndex >= tracks.length) return;
-    const [track] = tracks.splice(index, 1);
-    tracks.splice(newIndex, 0, track);
+    tracks.push({ id: nextTrackId++, name: name, height: 40 });
     renderTracks();
   }
-
-  const trackListAddBar = trackListEl.querySelector('.add-track-bar');
-  let trackDragInfo = null;
 
   function renderTracks() {
-    const headers = Array.from(trackListEl.querySelectorAll('.track-header,.track-resize-handle'));
-    headers.forEach(h => h.remove());
-
-    const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-    rows.forEach(r => r.remove());
+    trackListEl.innerHTML = '<div class="add-track-bar"><button class="add-track-btn" onclick="addTrack(\'New Track\')">+ Add Track</button></div>';
+    
+    // Clear existing grid rows
+    const existingRows = document.querySelectorAll('.grid-track-row');
+    existingRows.forEach(r => r.remove());
 
     tracks.forEach(t => {
-      // left header
+      // 1. Create Header (Left)
       const header = document.createElement('div');
       header.className = 'track-header';
       header.style.height = t.height + 'px';
-      header.dataset.trackId = t.id;
+      header.innerHTML = `
+        <div class="track-color-dot"></div>
+        <div class="track-name" contenteditable="true">${t.name}</div>
+        <div class="track-controls">
+          <button class="track-btn">M</button>
+          <button class="track-btn">S</button>
+        </div>`;
+      trackListEl.insertBefore(header, trackListEl.lastChild);
 
-      const dot = document.createElement('div');
-      dot.className = 'track-color-dot';
-      dot.addEventListener('dblclick', () => {
-        openPluginWindow(
-          `Track Plugin – ${t.name}`,
-          `<p>This is the future plugin window for <b>${t.name}</b>.</p>
-           <p>Later you can load <code>track-${t.id}-plugin.html</code> or a dynamic UI here.</p>
-           <p>Ideas:</p>
-           <ul>
-             <li>Track EQ, compressor, reverb chain</li>
-             <li>AI suggestions for presets per genre</li>
-             <li>Routing &amp; send controls</li>
-           </ul>`
-        );
-      });
-
-      const nameEl = document.createElement('div');
-      nameEl.className = 'track-name';
-      nameEl.textContent = t.name;
-      nameEl.addEventListener('dblclick', () => {
-        nameEl.contentEditable = 'true';
-        nameEl.focus();
-        document.execCommand('selectAll', false, null);
-      });
-      nameEl.addEventListener('blur', () => {
-        nameEl.contentEditable = 'false';
-        t.name = nameEl.textContent.trim() || t.name;
-        nameEl.textContent = t.name;
-        renderMixer();
-      });
-      nameEl.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
-      });
-
-      const controls = document.createElement('div');
-      controls.className = 'track-controls';
-
-      const mBtn = document.createElement('button');
-      mBtn.className = 'track-btn';
-      mBtn.textContent = 'M';
-      mBtn.title = 'Mute (visual only for now)';
-      mBtn.addEventListener('click', () => {
-        mBtn.classList.toggle('active');
-      });
-
-      const sBtn = document.createElement('button');
-      sBtn.className = 'track-btn';
-      sBtn.textContent = 'S';
-      sBtn.title = 'Solo (visual only for now)';
-      sBtn.addEventListener('click', () => {
-        sBtn.classList.toggle('active');
-      });
-
-      const upBtn = document.createElement('button');
-      upBtn.className = 'track-btn';
-      upBtn.textContent = '▲';
-      upBtn.title = 'Move up';
-      upBtn.addEventListener('click', () => moveTrack(t.id, -1));
-
-      const downBtn = document.createElement('button');
-      downBtn.className = 'track-btn';
-      downBtn.textContent = '▼';
-      downBtn.title = 'Move down';
-      downBtn.addEventListener('click', () => moveTrack(t.id, +1));
-
-      const menuBtn = document.createElement('button');
-      menuBtn.className = 'track-btn track-menu-btn';
-      menuBtn.textContent = '⋯';
-      menuBtn.title = 'Track options (Audio / Instrument / Create with AI)';
-      menuBtn.addEventListener('click', () => {
-        const choice = prompt(
-          'Set track type:\n1 = Audio\n2 = Instrument\n3 = Create with AI',
-          t.type || 'Audio'
-        );
-        if (!choice) return;
-        let val = choice.trim().toLowerCase();
-        if (val === '1' || val.startsWith('au')) t.type = 'Audio';
-        else if (val === '2' || val.startsWith('in')) t.type = 'Instrument';
-        else if (val === '3' || val.startsWith('cre')) t.type = 'Create with AI';
-        else t.type = choice.trim();
-        renderMixer();
-      });
-
-      controls.appendChild(mBtn);
-      controls.appendChild(sBtn);
-      controls.appendChild(upBtn);
-      controls.appendChild(downBtn);
-      controls.appendChild(menuBtn);
-
-      header.appendChild(dot);
-      header.appendChild(nameEl);
-      header.appendChild(controls);
-
-      const resize = document.createElement('div');
-      resize.className = 'track-resize-handle';
-      resize.dataset.trackId = t.id;
-
-      trackListEl.insertBefore(resize, trackListAddBar);
-      trackListEl.insertBefore(header, resize);
-
-      // Drag-to-reorder for header
-      header.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.track-btn') || e.target.classList.contains('track-color-dot')) return;
-        if (e.button !== 0) return;
-        trackDragInfo = {
-          id: t.id,
-          startY: e.clientY
-        };
-        header.classList.add('dragging');
-      });
-
-      // grid row
-      const gridRow = document.createElement('div');
-      gridRow.className = 'grid-track-row';
-      gridRow.dataset.trackId = t.id;
-      gridRow.style.height = t.height + 'px';
-      gridInner.appendChild(gridRow);
+      // 2. Create Grid Row (Right)
+      const row = document.createElement('div');
+      row.className = 'grid-track-row';
+      row.dataset.trackId = t.id;
+      row.style.height = t.height + 'px';
+      gridInner.appendChild(row);
     });
 
-    gridInner.style.setProperty('--track-height', '40px');
-    renderClips();
-    renderMixer();
-    updatePlayheadPosition(false);
-    updateLoopRegion();
-    updateVerticalThumb();
-    updateHorizontalThumb();
+    renderClips(); // Re-render clips on top of new rows
   }
 
-  addTrackBtn.addEventListener('click', () => {
-    const id = addTrack();
-    if (clips.length === 0 && patterns.length > 0) {
-      const p = patterns[0];
-      createClip(id, 0, 4, p.name, p.color, p.id);
-    }
-  });
+  function addPattern(name, color) {
+    patterns.push({ id: nextPatternId++, name, color });
+    const opt = document.createElement('option');
+    opt.value = patterns[patterns.length-1].id;
+    opt.textContent = name;
+    document.getElementById('pattern-select').appendChild(opt);
+    if (!currentPatternId) currentPatternId = patterns[0].id;
+  }
 
-  /* ========= MIXER ========= */
-  function renderMixer() {
-    if (!mixerStripsEl) return;
-    mixerStripsEl.innerHTML = '';
-    tracks.forEach((t, index) => {
-      const strip = document.createElement('div');
-      strip.className = 'mixer-strip';
-
-      const title = document.createElement('div');
-      title.className = 'mixer-strip-title';
-      title.textContent = t.name || `Track ${index+1}`;
-
-      const typeTag = document.createElement('div');
-      typeTag.className = 'mixer-type-tag';
-      typeTag.textContent = (t.type || 'Audio').toUpperCase();
-
-      const mainBlock = document.createElement('div');
-      mainBlock.className = 'mixer-main-block';
-
-      const ledRow = document.createElement('div');
-      ledRow.className = 'mixer-led-row';
-      const led = document.createElement('div');
-      led.className = 'mixer-led';
-      ledRow.appendChild(led);
-
-      const panRow = document.createElement('div');
-      panRow.className = 'mixer-pan-row';
-      const panKnob = document.createElement('div');
-      panKnob.className = 'mixer-pan-knob';
-      panRow.appendChild(panKnob);
-
-      const faderRow = document.createElement('div');
-      faderRow.className = 'mixer-fader-row';
-
-      const fader = document.createElement('div');
-      fader.className = 'mixer-fader';
-      const knob = document.createElement('div');
-      knob.className = 'mixer-fader-knob';
-      knob.style.bottom = '30%';
-      fader.appendChild(knob);
-
-      const meter = document.createElement('div');
-      meter.className = 'mixer-meter';
-      const meterInner = document.createElement('div');
-      meterInner.className = 'mixer-meter-inner';
-
-      const level = 20 + (index * 8) % 60;
-      meterInner.style.height = level + '%';
-      meter.appendChild(meterInner);
-
-      faderRow.appendChild(fader);
-      faderRow.appendChild(meter);
-
-      mainBlock.appendChild(ledRow);
-      mainBlock.appendChild(panRow);
-      mainBlock.appendChild(faderRow);
-
-      const bottomLabel = document.createElement('div');
-      bottomLabel.className = 'mixer-bottom-label';
-      bottomLabel.textContent = `CH ${index+1}`;
-
-      strip.appendChild(title);
-      strip.appendChild(typeTag);
-      strip.appendChild(mainBlock);
-      strip.appendChild(bottomLabel);
-
-      // Fader drag
-      knob.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        let startY = e.clientY;
-        let startBottom = parseFloat(knob.style.bottom) || 30;
-        function onMove(ev) {
-          const dy = ev.clientY - startY;
-          let newBottom = startBottom - dy / 2;
-          newBottom = Math.max(5, Math.min(90, newBottom));
-          knob.style.bottom = newBottom + '%';
-        }
-        function onUp() {
-          window.removeEventListener('mousemove', onMove);
-          window.removeEventListener('mouseup', onUp);
-        }
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('mouseup', onUp);
-      });
-
-      mixerStripsEl.appendChild(strip);
+  /* ========= 5. CLIP MANAGEMENT ========= */
+  function createClip(trackId, startBeat, lengthBeats, label, color) {
+    clips.push({
+      id: nextClipId++,
+      trackId,
+      startBeat,
+      lengthBeats,
+      label,
+      color
     });
-  }
-
-  /* ========= CLIPS ========= */
-  function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
-    const id = nextClipId++;
-    clips.push({ id, trackId, startBeat, lengthBeats, label, color, patternId: patternId || null });
-    ensureGridForBeat(startBeat + lengthBeats);
     renderClips();
   }
 
   function renderClips() {
-    gridInner.querySelectorAll('.clip').forEach(c => c.remove());
+    // Remove existing DOM clips to redraw
+    document.querySelectorAll('.clip').forEach(e => e.remove());
 
-    clips.forEach(c => {
-      const row = gridInner.querySelector(`.grid-track-row[data-track-id="${c.trackId}"]`);
+    clips.forEach(clip => {
+      // Find the row to place this clip
+      const row = document.querySelector(`.grid-track-row[data-track-id="${clip.trackId}"]`);
       if (!row) return;
-      const top = row.offsetTop;
 
       const el = document.createElement('div');
       el.className = 'clip';
-      el.dataset.clipId = c.id;
-      el.dataset.color = c.color || 'blue';
+      el.dataset.clipId = clip.id;
+      el.dataset.color = clip.color;
+      el.innerHTML = `
+        <div class="clip-handle-left" data-action="resize-left"></div>
+        <div class="clip-label">${clip.label}</div>
+        <div class="clip-handle-right" data-action="resize-right"></div>
+      `;
+      
+      // Positioning
+      el.style.left = (clip.startBeat * beatWidth) + 'px';
+      el.style.width = (clip.lengthBeats * beatWidth) + 'px';
+      el.style.top = (row.offsetTop + 6) + 'px'; // +6 padding
 
-      el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
-      el.style.top = (top + 4) + 'px';
-      el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
-
-      const leftHandle = document.createElement('div');
-      leftHandle.className = 'clip-handle-left';
-      leftHandle.dataset.handle = 'left';
-
-      const label = document.createElement('div');
-      label.className = 'clip-label';
-      label.textContent = c.label;
-
-      const rightHandle = document.createElement('div');
-      rightHandle.className = 'clip-handle-right';
-      rightHandle.dataset.handle = 'right';
-
-      el.appendChild(leftHandle);
-      el.appendChild(label);
-      el.appendChild(rightHandle);
-
-      addClipDragHandlers(el, c);
-
-      el.addEventListener('dblclick', () => {
-        const patternDesc = c.patternId
-          ? `<p>This clip references <b>Pattern ${c.patternId}</b>. Later you can open a pattern-specific editor here.</p>`
-          : `<p>This is a free audio / MIDI clip (no specific pattern bound yet).</p>`;
-        openPluginWindow(
-          `Clip Plugin – ${c.label}`,
-          `<p>You double-clicked clip <b>${c.label}</b> on Track ID ${c.trackId}.</p>
-           ${patternDesc}
-           <p>Ideas for this window:</p>
-           <ul>
-             <li>Audio editing (trim, fade, reverse, time-stretch)</li>
-             <li>AI remix tools (genre swap, stem split, harmony)</li>
-             <li>Per-clip FX chain and automation overview</li>
-           </ul>`
-        );
-      });
-
+      // Attach Logic
+      attachClipEvents(el, clip);
       gridInner.appendChild(el);
     });
   }
 
-  function addClipDragHandlers(el, clip) {
-    let dragging = false;
-    let resizing = null; // 'left' | 'right' | null
-    let startX = 0;
-    let startLeft = 0;
-    let startWidth = 0;
+  /* ========= 6. DRAG, DROP, RESIZE LOGIC ========= */
+  function attachClipEvents(el, clip) {
+    el.addEventListener('mousedown', (e) => {
+      e.stopPropagation(); // Don't trigger grid scroll
+      const startX = e.clientX;
+      const startLeft = parseFloat(el.style.left);
+      const startWidth = parseFloat(el.style.width);
+      const action = e.target.dataset.action || 'move';
+      
+      const onMove = (mv) => {
+        const deltaX = mv.clientX - startX;
+        const deltaBeats = deltaX / beatWidth;
 
-    el.addEventListener('mousedown', e => {
-      const handle = e.target.dataset.handle;
-      dragging = !handle;
-      resizing = handle || null;
-      startX = e.clientX;
-      startLeft = parseFloat(el.style.left);
-      startWidth = parseFloat(el.style.width);
-      e.preventDefault();
-      e.stopPropagation();
-    });
-
-    window.addEventListener('mousemove', e => {
-      if (!dragging && !resizing) return;
-      const dx = e.clientX - startX;
-
-      if (dragging) {
-        let newLeft = startLeft + dx;
-        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
-        beatFromZero = Math.max(0, Math.round(beatFromZero));
-        clip.startBeat = beatFromZero;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
-
-        // vertical: move to closest track
-        const rect = gridInner.getBoundingClientRect();
-        const y = e.clientY - rect.top;
-        const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-        let closestRow = null;
-        let closestDist = Infinity;
-        rows.forEach(r => {
-          const rRect = r.getBoundingClientRect();
-          const mid = rRect.top + rRect.height / 2 - rect.top;
-          const dist = Math.abs(y - mid);
-          if (dist < closestDist) {
-            closestDist = dist;
-            closestRow = r;
-          }
-        });
-        if (closestRow) {
-          clip.trackId = parseInt(closestRow.dataset.trackId, 10);
-          el.style.top = (closestRow.offsetTop + 4) + 'px';
+        if (action === 'move') {
+          // Calculate new beat position
+          let newStart = clip.startBeat + deltaBeats;
+          // Snapping (Round to nearest 0.25 beat)
+          if (!isAltHeld) newStart = Math.round(newStart * 4) / 4;
+          if (newStart < 0) newStart = 0;
+          
+          el.style.left = (newStart * beatWidth) + 'px';
+          // (Track changing logic would go here)
+        } 
+        else if (action === 'resize-right') {
+          let newLen = clip.lengthBeats + deltaBeats;
+          if (!isAltHeld) newLen = Math.round(newLen * 4) / 4;
+          if (newLen < 0.25) newLen = 0.25;
+          el.style.width = (newLen * beatWidth) + 'px';
         }
-      } else if (resizing === 'left') {
-        let newLeft = startLeft + dx;
-        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
-        let snappedBeat = Math.round(beatFromZero);
-        let maxBeat = clip.startBeat + clip.lengthBeats - 1;
-        if (snappedBeat < 0) snappedBeat = 0;
-        if (snappedBeat >= maxBeat) snappedBeat = maxBeat - 1;
-        const newLength = clip.startBeat + clip.lengthBeats - snappedBeat;
-        clip.startBeat = snappedBeat;
-        clip.lengthBeats = newLength;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
-        el.style.width = (clip.lengthBeats * beatWidth - 6) + 'px';
-      } else if (resizing === 'right') {
-        let newWidth = startWidth + dx;
-        let beats = Math.max(1, Math.round((newWidth + 6) / beatWidth));
-        clip.lengthBeats = beats;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.width = (clip.lengthBeats * beatWidth - 6) + 'px';
-      }
-    });
+        else if (action === 'resize-left') {
+           // Complex logic: Start moves right, width gets smaller
+           const originalEnd = clip.startBeat + clip.lengthBeats;
+           let newStart = clip.startBeat + deltaBeats;
+           if (!isAltHeld) newStart = Math.round(newStart * 4) / 4;
+           
+           if (newStart >= originalEnd - 0.1) newStart = originalEnd - 0.1;
+           if (newStart < 0) newStart = 0;
+           
+           const newLen = originalEnd - newStart;
+           
+           el.style.left = (newStart * beatWidth) + 'px';
+           el.style.width = (newLen * beatWidth) + 'px';
+        }
+      };
 
-    window.addEventListener('mouseup', () => {
-      dragging = false;
-      resizing = null;
-    });
+      const onUp = (up) => {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+        
+        // Commit changes to data model
+        const finalLeft = parseFloat(el.style.left);
+        const finalWidth = parseFloat(el.style.width);
+        
+        clip.startBeat = finalLeft / beatWidth;
+        clip.lengthBeats = finalWidth / beatWidth;
+        
+        // Snap data model
+        clip.startBeat = Math.round(clip.startBeat * 100) / 100;
+        clip.lengthBeats = Math.round(clip.lengthBeats * 100) / 100;
+      };
 
-    el.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      alert('Later: show a context menu for clip options – normalize, reverse, open detailed editor, etc.');
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
     });
   }
 
-  /* ========= PLACE PATTERN BY DOUBLE-CLICK ========= */
-  gridInner.addEventListener('dblclick', (e) => {
-    if (e.target.classList.contains('clip') || e.target.closest('.clip')) return;
-
-    if (!currentPatternId) {
-      alert('Create or select a pattern first.');
-      return;
+  /* ========= 7. ZOOM & SCROLL LOGIC ========= */
+  
+  // Detect Key Modifiers
+  window.addEventListener('keydown', e => {
+    if(e.key === 'Alt') isAltHeld = true;
+    if(e.key === 'Shift') isShiftHeld = true;
+    if(e.key === 'Control') isCtrlHeld = true;
+    
+    // Spacebar Play/Pause
+    if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+      e.preventDefault();
+      togglePlay();
     }
-    const pattern = patterns.find(p => p.id === currentPatternId);
-    if (!pattern) return;
-
-    const rect = gridInner.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-    if (!rows.length) return;
-    let closestRow = rows[0];
-    let closestDist = Infinity;
-    rows.forEach(r => {
-      const rRect = r.getBoundingClientRect();
-      const mid = rRect.top + rRect.height / 2 - rect.top;
-      const dist = Math.abs(y - mid);
-      if (dist < closestDist) {
-        closestDist = dist;
-        closestRow = r;
-      }
-    });
-    const trackId = parseInt(closestRow.dataset.trackId, 10);
-
-    let beatFromZero = (x - GRID_LEFT_OFFSET) / beatWidth;
-    if (beatFromZero < 0) beatFromZero = 0;
-    const snappedBeat = Math.round(beatFromZero);
-
-    const lengthBeats = 4;
-    createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
+  });
+  window.addEventListener('keyup', e => {
+    if(e.key === 'Alt') isAltHeld = false;
+    if(e.key === 'Shift') isShiftHeld = false;
+    if(e.key === 'Control') isCtrlHeld = false;
   });
 
-  /* ========= ZOOM ========= */
-  function updateHorizontalThumb() {
-    const bar = thumb.parentElement;
-    if (!bar) return;
-    const scrollWidth = timelineScroll.scrollWidth;
-    const clientWidth = timelineScroll.clientWidth;
-    const total = bar.clientWidth;
-
-    if (scrollWidth <= 0 || clientWidth <= 0 || total <= 0) {
-      thumb.style.width = total + 'px';
-      thumb.style.left = '0px';
-      return;
+  // Wheel Event for Zooming
+  timelineScroll.addEventListener('wheel', (e) => {
+    // Prevent default scroll if we are zooming
+    if (isAltHeld || isCtrlHeld) {
+      e.preventDefault();
+      
+      const zoomSpeed = 0.05;
+      const zoomFactor = e.deltaY > 0 ? (1 - zoomSpeed) : (1 + zoomSpeed);
+      
+      // Calculate mouse position relative to timeline content
+      const rect = timelineScroll.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const timeAtMouse = (timelineScroll.scrollLeft + mouseX) / beatWidth;
+      
+      // Apply Zoom
+      beatWidth *= zoomFactor;
+      
+      // Clamp Zoom
+      if (beatWidth < 10) beatWidth = 10;
+      if (beatWidth > 200) beatWidth = 200;
+      
+      // Update UI Slider
+      zoomRange.value = beatWidth;
+      
+      // Re-calculate Scroll to keep time centered under mouse
+      // NewScroll = (Time * NewScale) - MouseScreenOffset
+      timelineScroll.scrollLeft = (timeAtMouse * beatWidth) - mouseX;
+      
+      // Redraw
+      updateGridSizes();
+      renderClips();
+      updatePlayhead();
+    } 
+    // Shift + Scroll = Horizontal Scroll (Native usually handles this, but forcing it)
+    else if (isShiftHeld) {
+      e.preventDefault();
+      timelineScroll.scrollLeft += e.deltaY;
     }
+    // Else: Standard Vertical Scroll (handled by browser)
+  }, { passive: false });
 
-    if (scrollWidth <= clientWidth) {
-      thumb.style.width = total + 'px';
-      thumb.style.left = '0px';
-      return;
-    }
-
-    const ratio = clientWidth / scrollWidth;
-    const width = Math.max(30, total * ratio);
-    const maxLeft = total - width;
-    const maxScroll = scrollWidth - clientWidth;
-    const leftRatio = maxScroll > 0 ? (timelineScroll.scrollLeft / maxScroll) : 0;
-    const left = maxLeft * leftRatio;
-
-    thumb.style.width = width + 'px';
-    thumb.style.left = left + 'px';
-  }
-
-  function zoomAtBeatWidth(newBeatWidth, clientX) {
-    newBeatWidth = Math.max(32, Math.min(140, newBeatWidth));
-    if (newBeatWidth === beatWidth) return;
-
-    const rect = timelineScroll.getBoundingClientRect();
-    const centerX = clientX ?? (rect.left + rect.width / 2);
-    const xInScroll = centerX - rect.left + timelineScroll.scrollLeft;
-    const beatAtCursorBefore = (xInScroll - GRID_LEFT_OFFSET) / beatWidth;
-
-    beatWidth = newBeatWidth;
-    zoomRange.value = beatWidth;
+  zoomRange.addEventListener('input', (e) => {
+    beatWidth = parseInt(e.target.value);
     updateGridSizes();
     renderClips();
-    updatePlayheadPosition(false);
-    updateLoopRegion();
-    updateHorizontalThumb();
-  }
-
-  zoomRange.addEventListener('input', () => {
-    zoomAtBeatWidth(parseInt(zoomRange.value, 10), null);
+    updatePlayhead();
   });
 
-  gridInner.addEventListener('mousedown', (e) => {
-    if (e.button === 0) {
-      isTimelineMouseDown = true;
-    }
-  });
-  window.addEventListener('mouseup', () => {
-    isTimelineMouseDown = false;
-  });
-
-  // Wheel over grid = scroll vertically; wheel while holding mouse down = zoom
-  gridInner.addEventListener('wheel', (e) => {
-    if (isTimelineMouseDown) {
-      e.preventDefault();
-      const delta = e.deltaY;
-      const step = 4;
-      const newBeatWidth = beatWidth + (delta < 0 ? step : -step);
-      zoomAtBeatWidth(newBeatWidth, e.clientX);
-    } else {
-      e.preventDefault();
-      const delta = e.deltaY;
-      timelineScroll.scrollTop += delta;
-      syncVerticalScrollFrom(timelineScroll);
-    }
-  }, { passive: false });
-
-  // Wheel over track headers also scrolls timeline vertically
-  trackListEl.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const delta = e.deltaY;
-    timelineScroll.scrollTop += delta;
-    syncVerticalScrollFrom(timelineScroll);
-  }, { passive: false });
-
-  /* ========= HORIZONTAL THUMB DRAG ========= */
-  let thumbDragging = false;
-  let thumbStartX = 0;
-  let thumbScrollStart = 0;
-
-  thumbCenter.addEventListener('mousedown', e => {
-    thumbDragging = true;
-    thumbStartX = e.clientX;
-    thumbScrollStart = timelineScroll.scrollLeft;
-    e.preventDefault();
-  });
-
-  window.addEventListener('mousemove', e => {
-    if (thumbDragging) {
-      const bar = thumb.parentElement;
-      const total = bar.clientWidth;
-      const scrollWidth = timelineScroll.scrollWidth;
-      const clientWidth = timelineScroll.clientWidth;
-      const dx = e.clientX - thumbStartX;
-      const maxScroll = scrollWidth - clientWidth;
-      if (maxScroll <= 0) return;
-
-      const thumbWidth = thumb.clientWidth;
-      const maxLeft = total - thumbWidth;
-      const scrollPerPixel = maxScroll / maxLeft;
-      let newScroll = thumbScrollStart + dx * scrollPerPixel;
-      newScroll = Math.max(0, Math.min(maxScroll, newScroll));
-      timelineScroll.scrollLeft = newScroll;
-      updateHorizontalThumb();
-    }
-  });
-
-  window.addEventListener('mouseup', () => {
-    thumbDragging = false;
-  });
-
-  /* ========= HORIZONTAL THUMB RESIZE (ZOOM BY CORNERS) ========= */
-  let thumbResizeMode = null;
-  let thumbResizeStartX = 0;
-  let thumbResizeStartWidth = 0;
-  let thumbResizeInitialBeatWidth = 0;
-
-  function startThumbResize(mode, e) {
-    thumbResizeMode = mode;
-    thumbResizeStartX = e.clientX;
-    thumbResizeStartWidth = thumb.clientWidth;
-    thumbResizeInitialBeatWidth = beatWidth;
-    e.preventDefault();
-  }
-
-  thumbLeftHandle.addEventListener('mousedown', (e) => startThumbResize('left', e));
-  thumbRightHandle.addEventListener('mousedown', (e) => startThumbResize('right', e));
-
-  window.addEventListener('mousemove', (e) => {
-    if (!thumbResizeMode) return;
-    const bar = thumb.parentElement;
-    const total = bar.clientWidth;
-    if (total <= 0) return;
-
-    const dx = e.clientX - thumbResizeStartX;
-    let newWidth;
-
-    if (thumbResizeMode === 'right') {
-      newWidth = thumbResizeStartWidth + dx;
-    } else {
-      newWidth = thumbResizeStartWidth - dx;
-    }
-
-    newWidth = Math.max(30, Math.min(total, newWidth));
-    const factor = thumbResizeStartWidth / newWidth;
-    let newBeatWidth = thumbResizeInitialBeatWidth * factor;
-    zoomAtBeatWidth(newBeatWidth, window.innerWidth / 2);
-  });
-
-  window.addEventListener('mouseup', () => {
-    thumbResizeMode = null;
-  });
-
-  /* ========= PLAYBACK ========= */
-  function bpmToSecPerBeat(bpm) {
-    return 60 / bpm;
-  }
-
-  function formatTimeFromBeats(beats, bpm) {
-    const sec = beats * bpmToSecPerBeat(bpm);
-    const totalMs = sec * 1000;
-    const minutes = Math.floor(totalMs / 60000);
-    const remainingMs = totalMs - minutes * 60000;
-    const seconds = Math.floor(remainingMs / 1000);
-    const ms = Math.floor(remainingMs - seconds * 1000);
-    const mm = String(minutes).padStart(2, '0');
-    const ss = String(seconds).padStart(2, '0');
-    const mmm = String(ms).padStart(3, '0');
-    return `${mm}:${ss}.${mmm}`;
-  }
-
-  function updateScreenDisplay(timestampForMix) {
-    screenTimeEl.textContent = formatTimeFromBeats(playheadBeat, tempo);
-    screenKeyEl.textContent = songKey;
-    screenBpmEl.textContent = tempo.toFixed(1);
-
-    const t = (timestampForMix ?? performance.now()) / 600;
-    mixLevel = 0.2 + 0.6 * (0.5 + 0.5 * Math.sin(t + playheadBeat * 0.3));
-    mixLevel = Math.max(0, Math.min(1.2, mixLevel));
-
-    const db = -48 + mixLevel * 51;
-    let status = '';
-    let cls = 'screen-box mix';
-
-    if (db < -24) {
-      status = 'LOW';
-      cls += ' low';
-    } else if (db <= 0) {
-      status = 'NORMAL';
-      cls += ' normal';
-    } else {
-      status = 'CLIPPING';
-      cls += ' clip';
-    }
-
-    screenMixEl.textContent = `${db.toFixed(1)} dB · ${status}`;
-    screenMixBox.className = cls;
-  }
-
-  function updatePlayheadPosition(autoScroll) {
-    ensureGridForBeat(playheadBeat + 4);
-    const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
-    playheadEl.style.left = x + 'px';
-
-    if (autoScroll) {
-      const marginLeft = 50;
-      const marginRight = 100;
-      const viewLeft = timelineScroll.scrollLeft;
-      const viewRight = viewLeft + timelineScroll.clientWidth;
-
-      if (x < viewLeft + marginLeft) {
-        timelineScroll.scrollLeft = Math.max(0, x - marginLeft);
-      } else if (x > viewRight - marginRight) {
-        timelineScroll.scrollLeft = x - timelineScroll.clientWidth + marginRight;
-      }
-    }
-
-    updateScreenDisplay();
-  }
-
-  function playLoop(ts) {
-    if (!isPlaying) {
-      updateScreenDisplay(ts);
-      return;
-    }
-    const elapsedSec = (ts - playStartTime) / 1000;
-    const secPerBeat = bpmToSecPerBeat(tempo);
-    const elapsedBeats = elapsedSec / secPerBeat;
-    let currentBeat = playheadBeatAtStart + elapsedBeats;
-
-    if (loopActive && loopEndBeat > loopStartBeat) {
-      if (currentBeat >= loopEndBeat) {
-        currentBeat = loopStartBeat;
-        playheadBeatAtStart = loopStartBeat;
-        playStartTime = ts;
-      }
-    }
-
-    playheadBeat = Math.max(0, currentBeat);
-    updatePlayheadPosition(true);
-    updateScreenDisplay(ts);
-    requestAnimationFrame(playLoop);
-  }
-
-  function startPlayback() {
-    if (isPlaying) return;
-    isPlaying = true;
-    playBtn.classList.add('active');
-    playheadBeatAtStart = playheadBeat;
-    playStartTime = performance.now();
-    requestAnimationFrame(playLoop);
-  }
-
-  function pausePlayback() {
-    if (!isPlaying) return;
-    isPlaying = false;
-    playBtn.classList.remove('active');
-  }
-
-  playBtn.addEventListener('click', () => {
-    if (isPlaying) {
-      pausePlayback();
-    } else {
-      startPlayback();
-    }
-  });
-
-  stopBtn.addEventListener('click', () => {
-    pausePlayback();
-    playheadBeat = 0;
-    updatePlayheadPosition(false);
-  });
-
-  backBtn.addEventListener('click', () => {
-    playheadBeat = 0;
-    updatePlayheadPosition(false);
-  });
-
-  recBtn.addEventListener('click', () => {
-    recBtn.classList.toggle('active');
-    alert('Later you can connect this to Web Audio + getUserMedia to record into tracks.');
-  });
-
-  metronomeBtn.addEventListener('click', () => {
-    metronomeOn = !metronomeOn;
-    metronomeBtn.classList.toggle('active', metronomeOn);
-  });
-
-  screenKeyBox.addEventListener('click', () => {
-    const val = prompt('Set song key (example: C# MINOR, A MAJOR):', songKey);
-    if (!val) return;
-    songKey = val.trim().toUpperCase();
-    screenKeyEl.textContent = songKey;
-  });
-
-  // Keyboard: space = play/pause; +/- = zoom
-  window.addEventListener('keydown', (e) => {
-    const active = document.activeElement;
-    const typingInField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
-
-    if (e.code === 'Space') {
-      if (typingInField) return;
-      e.preventDefault();
-      if (isPlaying) pausePlayback();
-      else startPlayback();
-      return;
-    }
-
-    if (typingInField) return;
-
-    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
-    } else if (e.key === '-' || e.key === '_') {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
-    }
-  });
-
-  /* ========= LOOP SELECTION ========= */
-  function clientXToBeat(clientX) {
-    const rect = timelineScroll.getBoundingClientRect();
-    const xInScroll = clientX - rect.left + timelineScroll.scrollLeft;
-    let beat = (xInScroll - GRID_LEFT_OFFSET) / beatWidth;
-    if (beat < 0) beat = 0;
-    return beat;
-  }
-
-  function updateLoopRegion() {
-    if (!loopActive && !loopSelecting) {
-      loopRegionEl.style.display = 'none';
-      return;
-    }
-    if (loopEndBeat <= loopStartBeat) {
-      loopRegionEl.style.display = 'none';
-      return;
-    }
-    const left = GRID_LEFT_OFFSET + loopStartBeat * beatWidth;
-    const width = (loopEndBeat - loopStartBeat) * beatWidth;
-    loopRegionEl.style.display = 'block';
-    loopRegionEl.style.left = left + 'px';
-    loopRegionEl.style.width = width + 'px';
-  }
-
-  const rulerEl = document.querySelector('.timeline-ruler');
-
-  rulerEl.addEventListener('contextmenu', (e) => e.preventDefault());
-
-  rulerEl.addEventListener('mousedown', (e) => {
-    if (e.button !== 2) return;
-    e.preventDefault();
-    const beat = clientXToBeat(e.clientX);
-    loopSelecting = true;
-    loopSelectAnchorBeat = beat;
-    loopStartBeat = beat;
-    loopEndBeat = beat;
-    loopActive = false;
-    updateLoopRegion();
-  });
-
-  window.addEventListener('mousemove', (e) => {
-    if (!loopSelecting) return;
-    const beat = clientXToBeat(e.clientX);
-    loopStartBeat = Math.min(loopSelectAnchorBeat, beat);
-    loopEndBeat = Math.max(loopSelectAnchorBeat, beat);
-    updateLoopRegion();
-  });
-
-  window.addEventListener('mouseup', (e) => {
-    if (!loopSelecting) return;
-    if (e.button === 2) {
-      loopSelecting = false;
-      if (Math.abs(loopEndBeat - loopStartBeat) < 0.25) {
-        loopActive = false;
-        loopRegionEl.style.display = 'none';
-      } else {
-        loopActive = true;
-        updateLoopRegion();
-      }
-    }
-    // track drag finish
-    if (trackDragInfo) {
-      const headers = Array.from(trackListEl.querySelectorAll('.track-header'));
-      let closestIndex = 0;
-      let minDist = Infinity;
-      headers.forEach((h, idx) => {
-        const rect = h.getBoundingClientRect();
-        const mid = rect.top + rect.height / 2;
-        const dist = Math.abs(e.clientY - mid);
-        if (dist < minDist) {
-          minDist = dist;
-          closestIndex = idx;
-        }
-        h.classList.remove('dragging');
-      });
-
-      const trackId = trackDragInfo.id;
-      const currentIndex = tracks.findIndex(tr => tr.id === trackId);
-      if (currentIndex !== -1 && closestIndex !== currentIndex) {
-        const [trk] = tracks.splice(currentIndex, 1);
-        tracks.splice(closestIndex, 0, trk);
-        renderTracks();
-      }
-      trackDragInfo = null;
-    }
-  });
-
-  /* ========= TRACK RESIZE ========= */
-  let resizingTrackId = null;
-  let resizeStartY = 0;
-  let originalHeight = 0;
-
-  trackListEl.addEventListener('mousedown', e => {
-    const handle = e.target.closest('.track-resize-handle');
-    if (!handle) return;
-    resizingTrackId = parseInt(handle.dataset.trackId, 10);
-    resizeStartY = e.clientY;
-    const t = tracks.find(tr => tr.id === resizingTrackId);
-    originalHeight = t ? t.height : 40;
-    document.body.style.userSelect = 'none';
-  });
-
-  window.addEventListener('mousemove', e => {
-    if (!resizingTrackId) return;
-    const t = tracks.find(tr => tr.id === resizingTrackId);
-    if (!t) return;
-    const dy = e.clientY - resizeStartY;
-    let newH = Math.min(80, Math.max(28, originalHeight + dy));
-    t.height = newH;
-    renderTracks();
-  });
-
-  window.addEventListener('mouseup', () => {
-    if (resizingTrackId) {
-      resizingTrackId = null;
-      document.body.style.userSelect = '';
-    }
-  });
-
-  /* ========= BOTTOM DOCK RESIZE ========= */
-  let bottomResizing = false;
-  let bottomStartY = 0;
-  let bottomStartHeight = 0;
-
-  bottomHandle.addEventListener('mousedown', e => {
-    bottomResizing = true;
-    bottomStartY = e.clientY;
-    bottomStartHeight = bottomDock.offsetHeight;
-    document.body.style.userSelect = 'none';
-  });
-  window.addEventListener('mousemove', e => {
-    if (!bottomResizing) return;
-    const dy = e.clientY - bottomStartY;
-    let newH = bottomStartHeight - dy;
-    const viewportLimit = window.innerHeight - 140;
-    newH = Math.max(12, Math.min(viewportLimit, newH));
-    bottomDock.style.height = newH + 'px';
-    updateVerticalThumb();
-  });
-  window.addEventListener('mouseup', () => {
-    if (bottomResizing) {
-      bottomResizing = false;
-      document.body.style.userSelect = '';
-    }
-  });
-
-  /* ========= BOTTOM PANEL TABS ========= */
-  document.querySelectorAll('.bottom-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const id = tab.dataset.bottomPanel;
-      currentBottomPanelKey = id;
-      document.querySelectorAll('.bottom-panel').forEach(p => {
-        p.classList.toggle('active', p.id === 'bottom-' + id);
-      });
-    });
-  });
-
-  /* ========= TOP ICON PANEL TOGGLING ========= */
-  const dockIcons = document.querySelectorAll('.dock-icon');
-  const dockPanels = document.querySelectorAll('.dock-panel');
-
-  function refreshMainGridLayout() {
-    const leftVisible = leftBrowserPanel.style.display !== 'none';
-    const rightVisible = rightPluginsPanel.style.display !== 'none';
-
-    if (leftVisible && rightVisible) {
-      mainGridEl.style.gridTemplateColumns = '260px minmax(0,1fr) 220px';
-    } else if (leftVisible && !rightVisible) {
-      mainGridEl.style.gridTemplateColumns = '260px minmax(0,1fr)';
-    } else if (!leftVisible && rightVisible) {
-      mainGridEl.style.gridTemplateColumns = 'minmax(0,1fr) 220px';
-    } else {
-      mainGridEl.style.gridTemplateColumns = 'minmax(0,1fr)';
-    }
-  }
-
-  dockIcons.forEach(icon => {
-    icon.addEventListener('click', () => {
-      const panel = icon.dataset.panel;
-
-      // Bottom dock icons: Mixer / Piano / Rack
-      if (panel === 'mixer' || panel === 'piano' || panel === 'rack') {
-        const mapped = panel === 'rack' ? 'rack' : panel;
-
-        if (bottomVisible && currentBottomPanelKey === mapped) {
-          // toggle off
-          bottomDock.style.display = 'none';
-          bottomVisible = false;
-          dockIcons.forEach(ic => {
-            if (ic.dataset.panel === 'mixer' || ic.dataset.panel === 'piano' || ic.dataset.panel === 'rack') {
-              ic.classList.remove('active');
-            }
-          });
-        } else {
-          // show and focus this tab
-          bottomDock.style.display = 'flex';
-          bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
-          bottomVisible = true;
-          currentBottomPanelKey = mapped;
-
-          const tab = document.querySelector(`.bottom-tab[data-bottom-panel="${mapped}"]`);
-          if (tab) tab.click();
-
-          // update icon active state
-          dockIcons.forEach(ic => {
-            if (ic.dataset.panel === 'mixer' || ic.dataset.panel === 'piano' || ic.dataset.panel === 'rack') {
-              ic.classList.toggle('active', ic.dataset.panel === panel);
-            }
-          });
-        }
-        updateVerticalThumb();
-        return;
-      }
-
-      // Left/right/timeline panels
-      const relatedPanels = Array.from(dockPanels).filter(p => {
-        const id = p.dataset.panelId;
-        if (panel === 'timeline') return id === 'timeline';
-        if (panel === 'browser') return id === 'browser';
-        if (panel === 'plugins') return id === 'plugins';
-        return false;
-      });
-
-      const currentlyVisible = relatedPanels.some(p => p.style.display !== 'none');
-      relatedPanels.forEach(p => {
-        p.style.display = currentlyVisible ? 'none' : '';
-      });
-      icon.classList.toggle('active', !currentlyVisible);
-
-      refreshMainGridLayout();
-      updateVerticalThumb();
-      updateHorizontalThumb();
-    });
-  });
-
-  /* ========= VERTICAL SCROLL SYNC ========= */
-  function updateVerticalThumb() {
-    if (!vscrollRight || !vscrollThumb) return;
-    const contentHeight = timelineScroll.scrollHeight;
-    const viewportHeight = timelineScroll.clientHeight;
-    const containerHeight = vscrollRight.clientHeight;
-    const maxScroll = contentHeight - viewportHeight;
-
-    if (maxScroll <= 0 || containerHeight <= 0) {
-      vscrollThumb.style.display = 'none';
-      return;
-    }
-
-    vscrollThumb.style.display = 'block';
-
-    const visibleRatio = viewportHeight / contentHeight;
-    const thumbHeight = Math.max(30, containerHeight * visibleRatio);
-    vscrollThumb.style.height = thumbHeight + 'px';
-
-    const maxTop = containerHeight - thumbHeight;
-    const top = maxTop > 0 ? (timelineScroll.scrollTop / maxScroll) * maxTop : 0;
-    vscrollThumb.style.top = top + 'px';
-  }
-
-  function syncVerticalScrollFrom(sourceEl) {
-    if (syncingVertical) return;
-    syncingVertical = true;
-    const value = sourceEl.scrollTop;
-    trackListEl.scrollTop = value;
-    timelineScroll.scrollTop = value;
-    updateVerticalThumb();
-    syncingVertical = false;
-  }
-
+  // Sync Vertical Scroll (Track List <-> Grid)
   timelineScroll.addEventListener('scroll', () => {
-    updateHorizontalThumb();
-    syncVerticalScrollFrom(timelineScroll);
+    trackListEl.scrollTop = timelineScroll.scrollTop;
   });
 
-  vscrollThumb.addEventListener('mousedown', e => {
-    vThumbDragging = true;
-    vThumbStartY = e.clientY;
-    vThumbStartTop = parseFloat(getComputedStyle(vscrollThumb).top) || 0;
-    document.body.style.userSelect = 'none';
-    e.preventDefault();
-  });
+  /* ========= 8. PLAYHEAD & TRANSPORT ========= */
+  function togglePlay() {
+    if (isPlaying) {
+      isPlaying = false;
+      document.getElementById('btn-play').classList.remove('active');
+    } else {
+      isPlaying = true;
+      startTime = performance.now();
+      startBeat = playheadBeat;
+      document.getElementById('btn-play').classList.add('active');
+    }
+  }
 
-  window.addEventListener('mousemove', e => {
-    if (!vThumbDragging) return;
-    const containerHeight = vscrollRight.clientHeight;
-    const thumbHeight = vscrollThumb.clientHeight;
-    const maxTop = containerHeight - thumbHeight;
-    let newTop = vThumbStartTop + (e.clientY - vThumbStartY);
-    newTop = Math.max(0, Math.min(maxTop, newTop));
-    vscrollThumb.style.top = newTop + 'px';
+  document.getElementById('btn-play').onclick = togglePlay;
+  document.getElementById('btn-stop').onclick = () => {
+    isPlaying = false;
+    playheadBeat = 0;
+    updatePlayhead();
+    document.getElementById('btn-play').classList.remove('active');
+  };
 
-    const maxScroll = timelineScroll.scrollHeight - timelineScroll.clientHeight;
-    const ratio = maxTop > 0 ? newTop / maxTop : 0;
-    const newScroll = maxScroll * ratio;
+  function animationLoop() {
+    if (isPlaying) {
+      const now = performance.now();
+      const secondsElapsed = (now - startTime) / 1000;
+      const beatsElapsed = secondsElapsed * (tempo / 60);
+      playheadBeat = startBeat + beatsElapsed;
+      
+      updatePlayhead();
+      
+      // Auto-Scroll if playhead moves off screen
+      const playheadPx = playheadBeat * beatWidth;
+      if (playheadPx > timelineScroll.scrollLeft + timelineScroll.clientWidth) {
+         timelineScroll.scrollLeft = playheadPx; // Page flip
+      }
+    }
+    requestAnimationFrame(animationLoop);
+  }
 
-    syncingVertical = true;
-    trackListEl.scrollTop = newScroll;
-    timelineScroll.scrollTop = newScroll;
-    syncingVertical = false;
-  });
+  function updatePlayhead() {
+    playheadEl.style.left = (playheadBeat * beatWidth) + 'px';
+    
+    // Update Time Display
+    const totalSeconds = playheadBeat / (tempo / 60);
+    const m = Math.floor(totalSeconds / 60).toString().padStart(2,'0');
+    const s = Math.floor(totalSeconds % 60).toString().padStart(2,'0');
+    const ms = Math.floor((totalSeconds % 1) * 1000).toString().padStart(3,'0');
+    screenTimeEl.textContent = `${m}:${s}.${ms}`;
+  }
 
-  window.addEventListener('mouseup', () => {
-    if (vThumbDragging) {
-      vThumbDragging = false;
-      document.body.style.userSelect = '';
+  // Allow clicking on timeline to set playhead
+  gridInner.addEventListener('mousedown', (e) => {
+    // Only if clicking on empty space (ruler area mostly, but here generalized)
+    if (e.target === gridInner || e.target.classList.contains('grid-track-row')) {
+      const rect = gridInner.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      playheadBeat = x / beatWidth;
+      if (!isPlaying) updatePlayhead();
     }
   });
 
-  window.addEventListener('resize', () => {
-    updateVerticalThumb();
-    updateHorizontalThumb();
-  });
-
-  /* ========= INITIAL SETUP ========= */
-  function init() {
-    document.documentElement.style.setProperty('--beats-per-bar', BEATS_PER_BAR);
-    document.documentElement.style.setProperty('--beat-width', beatWidth + 'px');
-
-    buildRuler();
-    updateGridSizes();
-    refreshMainGridLayout();
-
-    // Hide bottom dock at startup – timeline fills the height
-    bottomDock.style.display = 'none';
-    bottomVisible = false;
-    bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
-
-    // Default patterns
-    const pDrums = addPattern('Pattern 1 – Drums', 'blue');
-    const pBass  = addPattern('Pattern 2 – Bass', 'green');
-    const pChrd  = addPattern('Pattern 3 – Chords', 'purple');
-
-    // Default tracks
-    const t1 = addTrack('Drums');
-    const t2 = addTrack('Bass');
-    const t3 = addTrack('Chords');
-    const t4 = addTrack('Vocals');
-    const t5 = addTrack('FX');
-    const t6 = addTrack('Strings');
-    const t7 = addTrack('Piano');
-    const t8 = addTrack('Percussion');
-    const t9 = addTrack('Synths');
-    const t10 = addTrack('Pads');
-
-    // Starter clips
-    createClip(t1, 0, 4, 'Pattern 1 – Drums', 'blue', pDrums);
-    createClip(t2, 4, 4, 'Pattern 2 – Bass', 'green', pBass);
-    createClip(t3, 8, 4, 'Pattern 3 – Chords', 'purple', pChrd);
-
-    playheadBeat = 0;
-    tempoDisplay.textContent = tempo.toFixed(1);
-    screenKeyEl.textContent = songKey;
-    updatePlayheadPosition(false);
-    updateVerticalThumb();
-    updateHorizontalThumb();
-  }
-
+  /* ========= START ========= */
   init();
+
 </script>
 </body>
 </html>
