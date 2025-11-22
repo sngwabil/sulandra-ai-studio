@@ -494,7 +494,7 @@
     /* HORIZONTAL TIMELINE SLIDER (zoom + scroll) */
     .timeline-scrollbar {
       width: 100%;
-      height: 10px;
+      height: 12px;
       border-radius: 999px;
       background: #040825;
       border: 1px solid rgba(0,0,0,0.9);
@@ -515,7 +515,7 @@
       justify-content: space-between;
     }
     .timeline-scroll-handle {
-      width: 14px;
+      width: 18px;
       height: 100%;
       background: rgba(0,0,0,0.32);
       cursor: ew-resize;
@@ -611,8 +611,7 @@
       color: #f7fbff;
       font-size: 11px;
       overflow: hidden;
-      /* allow full text instead of just "B" */
-      white-space: normal;
+      white-space: normal; /* show full names again */
     }
     .track-name[contenteditable="true"] {
       outline: 1px solid var(--accent);
@@ -1104,22 +1103,22 @@
   <!-- TOP ICON BAR -->
   <section class="icon-dock">
     <div class="icon-row">
-      <div class="dock-icon active" data-panel="browser" title="File / Samples (browser.html later)">
+      <div class="dock-icon active" data-panel="browser" title="File / Samples">
         <span>F</span>
       </div>
-      <div class="dock-icon" data-panel="rack" title="Channel Rack (rack.html later)">
+      <div class="dock-icon" data-panel="rack" title="Channel Rack">
         <span>R</span>
       </div>
-      <div class="dock-icon" data-panel="mixer" title="Mixer (mixer.html later)">
+      <div class="dock-icon" data-panel="mixer" title="Mixer">
         <span>M</span>
       </div>
-      <div class="dock-icon" data-panel="piano" title="Piano Roll (piano.html later)">
+      <div class="dock-icon" data-panel="piano" title="Piano Roll">
         <span>P</span>
       </div>
-      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX (plugins.html later)">
+      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX">
         <span>X</span>
       </div>
-      <div class="dock-icon active" data-panel="timeline" title="Timeline View (timeline.html later)">
+      <div class="dock-icon active" data-panel="timeline" title="Timeline View">
         <span>T</span>
       </div>
     </div>
@@ -1365,7 +1364,6 @@
   let metronomeOn = false;
 
   // Bottom dock
-  let bottomVisible = false;
   let currentBottomPanelKey = 'mixer';
   const DEFAULT_BOTTOM_HEIGHT = 220;
 
@@ -1420,7 +1418,6 @@
   let vThumbStartTop = 0;
   let syncingVertical = false;
 
-  const mainGridEl = document.querySelector('.main-grid');
   const leftBrowserPanel = document.querySelector('.left-browser');
   const rightPluginsPanel = document.querySelector('.right-placeholder');
 
@@ -1677,6 +1674,64 @@
       const p = patterns[0];
       createClip(id, 0, 4, p.name, p.color, p.id);
     }
+  });
+
+  /* track drag drop mouseup */
+  window.addEventListener('mouseup', e => {
+    if (trackDragInfo) {
+      const headers = Array.from(trackListEl.querySelectorAll('.track-header'));
+      let closestIndex = 0;
+      let minDist = Infinity;
+      headers.forEach((h, idx) => {
+        const rect = h.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        const dist = Math.abs(e.clientY - mid);
+        if (dist < minDist) {
+          minDist = dist;
+          closestIndex = idx;
+        }
+        h.classList.remove('dragging');
+      });
+      const trackId = trackDragInfo.id;
+      const currentIndex = tracks.findIndex(tr => tr.id === trackId);
+      if (currentIndex !== -1 && closestIndex !== currentIndex) {
+        const [trk] = tracks.splice(currentIndex, 1);
+        tracks.splice(closestIndex, 0, trk);
+        renderTracks();
+      }
+      trackDragInfo = null;
+    }
+  });
+
+  /* ========= TRACK HEIGHT RESIZE ========= */
+  let resizingTrackId = null;
+  let resizeStartY = 0;
+  let resizeStartHeight = 0;
+
+  trackListEl.addEventListener('mousedown', e => {
+    const handle = e.target.closest('.track-resize-handle');
+    if (!handle) return;
+    e.preventDefault();
+    resizingTrackId = parseInt(handle.dataset.trackId, 10);
+    const track = tracks.find(t => t.id === resizingTrackId);
+    if (!track) return;
+    resizeStartY = e.clientY;
+    resizeStartHeight = track.height;
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!resizingTrackId) return;
+    const track = tracks.find(t => t.id === resizingTrackId);
+    if (!track) return;
+    const dy = e.clientY - resizeStartY;
+    let newHeight = resizeStartHeight + dy;
+    newHeight = Math.max(26, Math.min(120, newHeight));
+    track.height = newHeight;
+    renderTracks();
+  });
+
+  window.addEventListener('mouseup', () => {
+    resizingTrackId = null;
   });
 
   /* ========= MIXER ========= */
@@ -1962,7 +2017,7 @@
     }
 
     const ratio = clientWidth / scrollWidth;
-    const width = Math.max(40, total * ratio);
+    const width = Math.max(60, total * ratio);
     const maxLeft = total - width;
     const maxScroll = scrollWidth - clientWidth;
     const leftRatio = maxScroll > 0 ? (timelineScroll.scrollLeft / maxScroll) : 0;
@@ -2060,12 +2115,11 @@
 
     const dx = e.clientX - thumbResizeStartX;
     let newWidth = thumbResizeStartWidth + (thumbResizeMode === 'right' ? dx : -dx);
-    newWidth = Math.max(40, Math.min(total, newWidth));
+    newWidth = Math.max(60, Math.min(total, newWidth));
 
     const factor = thumbResizeStartWidth / newWidth;
     let newBeatWidth = thumbResizeInitialBeatWidth * factor;
 
-    // anchor zoom on left or right edge of viewport
     const rect = timelineScroll.getBoundingClientRect();
     const anchorX = (thumbResizeMode === 'left') ? (rect.left + 20) : (rect.right - 20);
     zoomAtBeatWidth(newBeatWidth, anchorX);
@@ -2260,1028 +2314,203 @@
         updateLoopRegion();
       }
     }
-    if (trackDragInfo) {
-      const headers = Array.from(trackListEl.querySelectorAll('.track-header'));
-      let closestIndex = 0;
-      let minDist = Infinity;
-      headers.forEach((h, idx) => {
-        const rect = h.getBoundingClientRect();
-        const mid = rect.top + rect.height / 2;
-        const dist = Math.abs(e.clientY - mid);
-        if (dist < minDist) {
-          minDist = dist;
-          closestIndex = idx;
-        }
-        h.classList.remove('dragging');
-      });
-      const trackId = trackDragInfo.id;
-      const currentIndex = tracks.findIndex(tr => tr.id === trackId);
-      if (currentIndex !== -1 && closestIndex !== currentIndex) {
-        const [trk] = tracks.splice(currentIndex, 1);
-        tracks.splice(closestIndex, 0, trk);
-        renderTracks();
-      }
-      trackDragInfo =null;
-
-  function renderTracks() {
-    const headers = Array.from(trackListEl.querySelectorAll('.track-header,.track-resize-handle'));
-    headers.forEach(h => h.remove());
-    const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-    rows.forEach(r => r.remove());
-
-    tracks.forEach(t => {
-      const header = document.createElement('div');
-      header.className = 'track-header';
-      header.style.height = t.height + 'px';
-      header.dataset.trackId = t.id;
-
-      const dot = document.createElement('div');
-      dot.className = 'track-color-dot';
-      dot.addEventListener('dblclick', () => {
-        openPluginWindow(
-          `Track Plugin – ${t.name}`,
-          `<p>This is the future plugin window for <b>${t.name}</b>.</p>
-           <p>Ideas:</p>
-           <ul>
-             <li>Track EQ, compressor, reverb chain</li>
-             <li>AI suggestions for presets per genre</li>
-             <li>Routing &amp; send controls</li>
-           </ul>`
-        );
-      });
-
-      const nameEl = document.createElement('div');
-      nameEl.className = 'track-name';
-      nameEl.textContent = t.name;
-      nameEl.addEventListener('dblclick', () => {
-        nameEl.contentEditable = 'true';
-        nameEl.focus();
-        document.execCommand('selectAll', false, null);
-      });
-      nameEl.addEventListener('blur', () => {
-        nameEl.contentEditable = 'false';
-        t.name = nameEl.textContent.trim() || t.name;
-        nameEl.textContent = t.name;
-        renderMixer();
-      });
-      nameEl.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
-      });
-
-      const controls = document.createElement('div');
-      controls.className = 'track-controls';
-
-      const mBtn = document.createElement('button');
-      mBtn.className = 'track-btn';
-      mBtn.textContent = 'M';
-      mBtn.title = 'Mute (visual only)';
-      mBtn.addEventListener('click', () => {
-        mBtn.classList.toggle('active');
-      });
-
-      const sBtn = document.createElement('button');
-      sBtn.className = 'track-btn';
-      sBtn.textContent = 'S';
-      sBtn.title = 'Solo (visual only)';
-      sBtn.addEventListener('click', () => {
-        sBtn.classList.toggle('active');
-      });
-
-      const upBtn = document.createElement('button');
-      upBtn.className = 'track-btn';
-      upBtn.textContent = '▲';
-      upBtn.title = 'Move up';
-      upBtn.addEventListener('click', () => moveTrack(t.id, -1));
-
-      const downBtn = document.createElement('button');
-      downBtn.className = 'track-btn';
-      downBtn.textContent = '▼';
-      downBtn.title = 'Move down';
-      downBtn.addEventListener('click', () => moveTrack(t.id, +1));
-
-      const menuBtn = document.createElement('button');
-      menuBtn.className = 'track-menu-btn';
-      menuBtn.textContent = '⋯';
-      menuBtn.title = `Track type: ${t.type}`;
-      menuBtn.addEventListener('click', () => {
-        const types = ['Audio','Instrument','Create with AI'];
-        const currentIndex = types.indexOf(t.type);
-        const nextType = types[(currentIndex + 1) % types.length];
-        t.type = nextType;
-        menuBtn.title = `Track type: ${t.type}`;
-        renderMixer();
-      });
-
-      controls.appendChild(mBtn);
-      controls.appendChild(sBtn);
-      controls.appendChild(upBtn);
-      controls.appendChild(downBtn);
-      controls.appendChild(menuBtn);
-
-      header.appendChild(dot);
-      header.appendChild(nameEl);
-      header.appendChild(controls);
-
-      const resize = document.createElement('div');
-      resize.className = 'track-resize-handle';
-      resize.dataset.trackId = t.id;
-
-      trackListEl.insertBefore(resize, trackListAddBar);
-      trackListEl.insertBefore(header, resize);
-
-      header.addEventListener('mousedown', e => {
-        if (e.target.closest('.track-btn') || e.target.classList.contains('track-menu-btn') || e.target.classList.contains('track-color-dot')) return;
-        if (e.button !== 0) return;
-        trackDragInfo = { id: t.id };
-        header.classList.add('dragging');
-      });
-
-      const gridRow = document.createElement('div');
-      gridRow.className = 'grid-track-row';
-      gridRow.dataset.trackId = t.id;
-      gridRow.style.height = t.height + 'px';
-      gridInner.appendChild(gridRow);
-    });
-
-    renderClips();
-    renderMixer();
-    updatePlayheadPosition(false);
-    updateLoopRegion();
-    updateVerticalThumb();
-    updateHorizontalThumb();
-  }
-
-  addTrackBtn.addEventListener('click', () => {
-    const id = addTrack();
-    if (clips.length === 0 && patterns.length > 0) {
-      const p = patterns[0];
-      createClip(id, 0, 4, p.name, p.color, p.id);
-    }
   });
 
-  /* ========= MIXER ========= */
-  function renderMixer() {
-    if (!mixerStripsEl) return;
-    mixerStripsEl.innerHTML = '';
-
-    tracks.forEach((t, index) => {
-      const strip = document.createElement('div');
-      strip.className = 'mixer-strip';
-      if (index === 0) strip.classList.add('master');
-
-      const title = document.createElement('div');
-      title.className = 'mixer-strip-title';
-      title.textContent = index === 0 ? 'Master' : (t.name || `Insert ${index}`);
-
-      const typeTag = document.createElement('div');
-      typeTag.className = 'mixer-type-tag';
-      typeTag.textContent = (t.type || 'Audio').toUpperCase();
-
-      const main = document.createElement('div');
-      main.className = 'mixer-main';
-
-      const meter = document.createElement('div');
-      meter.className = 'mixer-meter';
-      const meterInner = document.createElement('div');
-      meterInner.className = 'mixer-meter-inner';
-      const level = 20 + (index * 8) % 60;
-      meterInner.style.height = level + '%';
-      meter.appendChild(meterInner);
-
-      const fader = document.createElement('div');
-      fader.className = 'mixer-fader';
-      const faderTrack = document.createElement('div');
-      faderTrack.className = 'mixer-fader-track';
-      const knob = document.createElement('div');
-      knob.className = 'mixer-fader-knob';
-      knob.style.bottom = (index === 0 ? 45 : 30) + '%';
-
-      fader.appendChild(faderTrack);
-      fader.appendChild(knob);
-
-      knob.addEventListener('mousedown', e => {
-        e.preventDefault();
-        let startY = e.clientY;
-        let startBottom = parseFloat(knob.style.bottom) || 30;
-        function onMove(ev) {
-          const dy = ev.clientY - startY;
-          let newBottom = startBottom - dy / 2;
-          newBottom = Math.max(5, Math.min(90, newBottom));
-          knob.style.bottom = newBottom + '%';
-        }
-        function onUp() {
-          window.removeEventListener('mousemove', onMove);
-          window.removeEventListener('mouseup', onUp);
-        }
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('mouseup', onUp);
-      });
-
-      main.appendChild(meter);
-      main.appendChild(fader);
-
-      const btnRow = document.createElement('div');
-      btnRow.className = 'mixer-btn-row';
-      const muteBtn = document.createElement('div');
-      muteBtn.className = 'mixer-small-btn muted';
-      const soloBtn = document.createElement('div');
-      soloBtn.className = 'mixer-small-btn solo';
-      btnRow.appendChild(muteBtn);
-      btnRow.appendChild(soloBtn);
-
-      const bottomLabel = document.createElement('div');
-      bottomLabel.className = 'mixer-bottom-label';
-      bottomLabel.textContent = index === 0 ? 'MASTER' : `INSERT ${index}`;
-
-      strip.appendChild(title);
-      strip.appendChild(typeTag);
-      strip.appendChild(main);
-      strip.appendChild(btnRow);
-      strip.appendChild(bottomLabel);
-
-      mixerStripsEl.appendChild(strip);
-    });
-  }
-
-  /* ========= CLIPS ========= */
-  function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
-    const id = nextClipId++;
-    clips.push({ id, trackId, startBeat, lengthBeats, label, color, patternId: patternId || null });
-    ensureGridForBeat(startBeat + lengthBeats);
-    renderClips();
-  }
-  function renderClips() {
-    gridInner.querySelectorAll('.clip').forEach(c => c.remove());
-    clips.forEach(c => {
-      const row = gridInner.querySelector(`.grid-track-row[data-track-id="${c.trackId}"]`);
-      if (!row) return;
-      const top = row.offsetTop;
-
-      const el = document.createElement('div');
-      el.className = 'clip';
-      el.dataset.clipId = c.id;
-      el.dataset.color = c.color || 'blue';
-
-      el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
-      el.style.top = (top + 4) + 'px';
-      el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
-
-      const leftHandle = document.createElement('div');
-      leftHandle.className = 'clip-handle-left';
-      leftHandle.dataset.handle = 'left';
-
-      const label = document.createElement('div');
-      label.className = 'clip-label';
-      label.textContent = c.label;
-
-      const rightHandle = document.createElement('div');
-      rightHandle.className = 'clip-handle-right';
-      rightHandle.dataset.handle = 'right';
-
-      el.appendChild(leftHandle);
-      el.appendChild(label);
-      el.appendChild(rightHandle);
-
-      addClipDragHandlers(el, c);
-
-      el.addEventListener('dblclick', () => {
-        const patternDesc = c.patternId
-          ? `<p>This clip references <b>Pattern ${c.patternId}</b>.</p>`
-          : `<p>This is a free audio / MIDI clip (no specific pattern bound yet).</p>`;
-        openPluginWindow(
-          `Clip Plugin – ${c.label}`,
-          `<p>You double-clicked clip <b>${c.label}</b> on Track ID ${c.trackId}.</p>
-           ${patternDesc}
-           <p>Ideas for this window:</p>
-           <ul>
-             <li>Audio editing (trim, fade, reverse, time-stretch)</li>
-             <li>AI remix tools (genre swap, stem split, harmony)</li>
-             <li>Per-clip FX chain and automation overview</li>
-           </ul>`
-        );
-      });
-
-      gridInner.appendChild(el);
-    });
-  }
-  function addClipDragHandlers(el, clip) {
-    let dragging = false;
-    let resizing = null;
-    let startX = 0;
-    let startLeft = 0;
-    let startWidth = 0;
-
-    el.addEventListener('mousedown', e => {
-      const handle = e.target.dataset.handle;
-      dragging = !handle;
-      resizing = handle || null;
-      startX = e.clientX;
-      startLeft = parseFloat(el.style.left);
-      startWidth = parseFloat(el.style.width);
-      e.preventDefault();
-      e.stopPropagation();
-    });
-
-    window.addEventListener('mousemove', e => {
-      if (!dragging && !resizing) return;
-      const dx = e.clientX - startX;
-
-      if (dragging) {
-        let newLeft = startLeft + dx;
-        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
-        beatFromZero = Math.max(0, Math.round(beatFromZero));
-        clip.startBeat = beatFromZero;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
-
-        const rect = gridInner.getBoundingClientRect();
-        const y = e.clientY - rect.top;
-        const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-        let closestRow = null;
-        let closestDist = Infinity;
-        rows.forEach(r => {
-          const rRect = r.getBoundingClientRect();
-          const mid = rRect.top + rRect.height / 2 - rect.top;
-          const dist = Math.abs(y - mid);
-          if (dist < closestDist) {
-            closestDist = dist;
-            closestRow = r;
-          }
-        });
-        if (closestRow) {
-          clip.trackId = parseInt(closestRow.dataset.trackId, 10);
-          el.style.top = (closestRow.offsetTop + 4) + 'px';
-        }
-      } else if (resizing === 'left') {
-        let newLeft = startLeft + dx;
-        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
-        let snappedBeat = Math.round(beatFromZero);
-        let maxBeat = clip.startBeat + clip.lengthBeats - 1;
-        if (snappedBeat < 0) snappedBeat = 0;
-        if (snappedBeat >= maxBeat) snappedBeat = maxBeat - 1;
-        const newLength = clip.startBeat + clip.lengthBeats - snappedBeat;
-        clip.startBeat = snappedBeat;
-        clip.lengthBeats = newLength;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
-        el.style.width = (clip.lengthBeats * beatWidth - 6) + 'px';
-      } else if (resizing === 'right') {
-        let newWidth = startWidth + dx;
-        let beats = Math.max(1, Math.round((newWidth + 6) / beatWidth));
-        clip.lengthBeats = beats;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.width = (clip.lengthBeats * beatWidth - 6) + 'px';
-      }
-    });
-
-    window.addEventListener('mouseup', () => {
-      dragging = false;
-      resizing = null;
-    });
-
-    el.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      alert('Later: show a context menu for clip options – normalize, reverse, open detailed editor, etc.');
-    });
-  }
-
-  /* ========= PLACE PATTERN (DOUBLE-CLICK GRID) ========= */
-  gridInner.addEventListener('dblclick', e => {
-    if (e.target.classList.contains('clip') || e.target.closest('.clip')) return;
-    if (!currentPatternId) {
-      alert('Create or select a pattern first.');
-      return;
-    }
-    const pattern = patterns.find(p => p.id === currentPatternId);
-    if (!pattern) return;
-
-    const rect = gridInner.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-    if (!rows.length) return;
-    let closestRow = rows[0];
-    let closestDist = Infinity;
-    rows.forEach(r => {
-      const rRect = r.getBoundingClientRect();
-      const mid = rRect.top + rRect.height / 2 - rect.top;
-      const dist = Math.abs(y - mid);
-      if (dist < closestDist) {
-        closestDist = dist;
-        closestRow = r;
-      }
-    });
-    const trackId = parseInt(closestRow.dataset.trackId, 10);
-
-    let beatFromZero = (x - GRID_LEFT_OFFSET) / beatWidth;
-    if (beatFromZero < 0) beatFromZero = 0;
-    const snappedBeat = Math.round(beatFromZero);
-    const lengthBeats = 4;
-    createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
-  });
-
-  /* ========= ZOOM ========= */
-  const timelineThumbBar = thumb.parentElement;
-  function updateHorizontalThumb() {
-    if (!timelineThumbBar) return;
-    const scrollWidth = timelineScroll.scrollWidth;
-    const clientWidth = timelineScroll.clientWidth;
-    const total = timelineThumbBar.clientWidth;
-
-    if (scrollWidth <= 0 || clientWidth <= 0 || total <= 0) {
-      thumb.style.width = total + 'px';
-      thumb.style.left = '0px';
-      return;
-    }
-    if (scrollWidth <= clientWidth) {
-      thumb.style.width = total + 'px';
-      thumb.style.left = '0px';
-      return;
-    }
-
-    const ratio = clientWidth / scrollWidth;
-    const width = Math.max(30, total * ratio);
-    const maxLeft = total - width;
-    const maxScroll = scrollWidth - clientWidth;
-    const leftRatio = maxScroll > 0 ? (timelineScroll.scrollLeft / maxScroll) : 0;
-    const left = maxLeft * leftRatio;
-
-    thumb.style.width = width + 'px';
-    thumb.style.left = left + 'px';
-  }
-
-  function zoomAtBeatWidth(newBeatWidth, clientX) {
-    newBeatWidth = Math.max(32, Math.min(140, newBeatWidth));
-    if (newBeatWidth === beatWidth) return;
-
-    const rect = timelineScroll.getBoundingClientRect();
-    const centerX = clientX ?? (rect.left + rect.width / 2);
-    const xInScroll = centerX - rect.left + timelineScroll.scrollLeft;
-    const beatAtCursorBefore = (xInScroll - GRID_LEFT_OFFSET) / beatWidth;
-
-    beatWidth = newBeatWidth;
-    zoomRange.value = beatWidth;
-    updateGridSizes();
-    renderClips();
-
-    const newX = GRID_LEFT_OFFSET + beatAtCursorBefore * beatWidth;
-    timelineScroll.scrollLeft = Math.max(0, newX - rect.width / 2);
-
-    updatePlayheadPosition(false);
-    updateLoopRegion();
-    updateHorizontalThumb();
-  }
-  zoomRange.addEventListener('input', () => {
-    zoomAtBeatWidth(parseInt(zoomRange.value, 10), null);
-  });
-
-  gridInner.addEventListener('mousedown', e => {
-    if (e.button === 0) isTimelineMouseDown = true;
-  });
-  window.addEventListener('mouseup', () => { isTimelineMouseDown = false; });
-
-  gridInner.addEventListener('wheel', e => {
-    if (!isTimelineMouseDown) return;
-    e.preventDefault();
-    const delta = e.deltaY;
-    const step = 4;
-    const newBeatWidth = beatWidth + (delta < 0 ? step : -step);
-    zoomAtBeatWidth(newBeatWidth, e.clientX);
-  }, { passive: false });
-
-  /* HORIZONTAL THUMB DRAG / RESIZE */
-  let thumbDragging = false;
-  let thumbStartX = 0;
-  let thumbScrollStart = 0;
-  thumbCenter.addEventListener('mousedown', e => {
-    thumbDragging = true;
-    thumbStartX = e.clientX;
-    thumbScrollStart = timelineScroll.scrollLeft;
-    e.preventDefault();
-  });
-  window.addEventListener('mousemove', e => {
-    if (thumbDragging) {
-      const bar = timelineThumbBar;
-      const total = bar.clientWidth;
-      const scrollWidth = timelineScroll.scrollWidth;
-      const clientWidth = timelineScroll.clientWidth;
-      const dx = e.clientX - thumbStartX;
-      const maxScroll = scrollWidth - clientWidth;
-      if (maxScroll <= 0) return;
-
-      const thumbWidth = thumb.clientWidth;
-      const maxLeft = total - thumbWidth;
-      const scrollPerPixel = maxScroll / maxLeft;
-      let newScroll = thumbScrollStart + dx * scrollPerPixel;
-      newScroll = Math.max(0, Math.min(maxScroll, newScroll));
-      timelineScroll.scrollLeft = newScroll;
-      updateHorizontalThumb();
-    }
-  });
-  window.addEventListener('mouseup', () => { thumbDragging = false; });
-
-  let thumbResizeMode = null;
-  let thumbResizeStartX = 0;
-  let thumbResizeStartWidth = 0;
-  let thumbResizeInitialBeatWidth = 0;
-  function startThumbResize(mode, e) {
-    thumbResizeMode = mode;
-    thumbResizeStartX = e.clientX;
-    thumbResizeStartWidth = thumb.clientWidth;
-    thumbResizeInitialBeatWidth = beatWidth;
-    e.preventDefault();
-  }
-  thumbLeftHandle.addEventListener('mousedown', e => startThumbResize('left', e));
-  thumbRightHandle.addEventListener('mousedown', e => startThumbResize('right', e));
-  window.addEventListener('mousemove', e => {
-    if (!thumbResizeMode) return;
-    const bar = timelineThumbBar;
-    const total = bar.clientWidth;
-    if (total <= 0) return;
-    const dx = e.clientX - thumbResizeStartX;
-    let newWidth = thumbResizeStartWidth + (thumbResizeMode === 'right' ? dx : -dx);
-    newWidth = Math.max(30, Math.min(total, newWidth));
-    const factor = thumbResizeStartWidth / newWidth;
-    let newBeatWidth = thumbResizeInitialBeatWidth * factor;
-    zoomAtBeatWidth(newBeatWidth, window.innerWidth / 2);
-  });
-  window.addEventListener('mouseup', () => { thumbResizeMode = null; });
-
-  /* ========= PLAYBACK ========= */
-  function bpmToSecPerBeat(bpm) {
-    return 60 / bpm;
-  }
-  function formatTimeFromBeats(beats, bpm) {
-    const sec = beats * bpmToSecPerBeat(bpm);
-    const totalMs = sec * 1000;
-    const minutes = Math.floor(totalMs / 60000);
-    const remainingMs = totalMs - minutes * 60000;
-    const seconds = Math.floor(remainingMs / 1000);
-    const ms = Math.floor(remainingMs - seconds * 1000);
-    const mm = String(minutes).padStart(2, '0');
-    const ss = String(seconds).padStart(2, '0');
-    const mmm = String(ms).padStart(3, '0');
-    return `${mm}:${ss}.${mmm}`;
-  }
-  function updateScreenDisplay(timestampForMix) {
-    screenTimeEl.textContent = formatTimeFromBeats(playheadBeat, tempo);
-    screenKeyEl.textContent = songKey;
-    screenBpmEl.textContent = tempo.toFixed(1);
-
-    const t = (timestampForMix ?? performance.now()) / 600;
-    mixLevel = 0.2 + 0.6 * (0.5 + 0.5 * Math.sin(t + playheadBeat * 0.3));
-    mixLevel = Math.max(0, Math.min(1.2, mixLevel));
-
-    const db = -48 + mixLevel * 51;
-    let status = '';
-    let cls = 'screen-box mix';
-    if (db < -24) { status = 'LOW'; cls += ' low'; }
-    else if (db <= 0) { status = 'NORMAL'; cls += ' normal'; }
-    else { status = 'CLIPPING'; cls += ' clip'; }
-    screenMixEl.textContent = `${db.toFixed(1)} dB · ${status}`;
-    screenMixBox.className = cls;
-  }
-  function updatePlayheadPosition(autoScroll) {
-    ensureGridForBeat(playheadBeat + 4);
-    const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
-    playheadEl.style.left = x + 'px';
-
-    if (autoScroll) {
-      const marginLeft = 50;
-      const marginRight = 100;
-      const viewLeft = timelineScroll.scrollLeft;
-      const viewRight = viewLeft + timelineScroll.clientWidth;
-      if (x < viewLeft + marginLeft) {
-        timelineScroll.scrollLeft = Math.max(0, x - marginLeft);
-      } else if (x > viewRight - marginRight) {
-        timelineScroll.scrollLeft = x - timelineScroll.clientWidth + marginRight;
-      }
-    }
-    updateScreenDisplay();
-  }
-
-  function playLoop(ts) {
-    if (!isPlaying) {
-      updateScreenDisplay(ts);
-      return;
-    }
-    const elapsedSec = (ts - playStartTime) / 1000;
-    const secPerBeat = bpmToSecPerBeat(tempo);
-    const elapsedBeats = elapsedSec / secPerBeat;
-    let currentBeat = playheadBeatAtStart + elapsedBeats;
-
-    if (loopActive && loopEndBeat > loopStartBeat) {
-      if (currentBeat >= loopEndBeat) {
-        currentBeat = loopStartBeat;
-        playheadBeatAtStart = loopStartBeat;
-        playStartTime = ts;
-      }
-    }
-    playheadBeat = Math.max(0, currentBeat);
-    updatePlayheadPosition(true);
-    updateScreenDisplay(ts);
-    requestAnimationFrame(playLoop);
-  }
-  function startPlayback() {
-    if (isPlaying) return;
-    isPlaying = true;
-    playBtn.classList.add('active');
-    playheadBeatAtStart = playheadBeat;
-    playStartTime = performance.now();
-    requestAnimationFrame(playLoop);
-  }
-  function pausePlayback() {
-    if (!isPlaying) return;
-    isPlaying = false;
-    playBtn.classList.remove('active');
-  }
-  playBtn.addEventListener('click', () => {
-    if (isPlaying) pausePlayback();
-    else startPlayback();
-  });
-  stopBtn.addEventListener('click', () => {
-    pausePlayback();
-    playheadBeat = 0;
-    updatePlayheadPosition(false);
-  });
-  backBtn.addEventListener('click', () => {
-    playheadBeat = 0;
-    updatePlayheadPosition(false);
-  });
-  recBtn.addEventListener('click', () => {
-    recBtn.classList.toggle('active');
-    alert('Later you can connect this to Web Audio + getUserMedia to record into tracks.');
-  });
-  metronomeBtn.addEventListener('click', () => {
-    metronomeOn = !metronomeOn;
-    metronomeBtn.classList.toggle('active', metronomeOn);
-  });
-  screenKeyBox.addEventListener('click', () => {
-    const val = prompt('Set song key (example: C# MINOR, A MAJOR):', songKey);
-    if (!val) return;
-    songKey = val.trim().toUpperCase();
-    screenKeyEl.textContent = songKey;
-  });
-
-  window.addEventListener('keydown', e => {
-    const active = document.activeElement;
-    const typingInField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
-
-    if (e.code === 'Space') {
-      if (typingInField) return;
-      e.preventDefault();
-      if (isPlaying) pausePlayback();
-      else startPlayback();
-      return;
-    }
-    if (typingInField) return;
-
-    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
-    } else if (e.key === '-' || e.key === '_') {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
-    }
-  });
-
-  /* ========= LOOP (RIGHT-CLICK RULER) ========= */
-  function clientXToBeat(clientX) {
-    const rect = timelineScroll.getBoundingClientRect();
-    const xInScroll = clientX - rect.left + timelineScroll.scrollLeft;
-    let beat = (xInScroll - GRID_LEFT_OFFSET) / beatWidth;
-    if (beat < 0) beat = 0;
-    return beat;
-  }
-  function updateLoopRegion() {
-    if ((!loopActive && !loopSelecting) || loopEndBeat <= loopStartBeat) {
-      loopRegionEl.style.display = 'none';
-      return;
-    }
-    const left = GRID_LEFT_OFFSET + loopStartBeat * beatWidth;
-    const width = (loopEndBeat - loopStartBeat) * beatWidth;
-    loopRegionEl.style.display = 'block';
-    loopRegionEl.style.left = left + 'px';
-    loopRegionEl.style.width = width + 'px';
-  }
-  const rulerEl = document.querySelector('.timeline-ruler');
-  rulerEl.addEventListener('contextmenu', e => e.preventDefault());
-  rulerEl.addEventListener('mousedown', e => {
-    if (e.button !== 2) return;
-    e.preventDefault();
-    const beat = clientXToBeat(e.clientX);
-    loopSelecting = true;
-    loopSelectAnchorBeat = beat;
-    loopStartBeat = beat;
-    loopEndBeat = beat;
-    loopActive = false;
-    updateLoopRegion();
-  });
-  window.addEventListener('mousemove', e => {
-    if (!loopSelecting) return;
-    const beat = clientXToBeat(e.clientX);
-    loopStartBeat = Math.min(loopSelectAnchorBeat, beat);
-    loopEndBeat = Math.max(loopSelectAnchorBeat, beat);
-    updateLoopRegion();
-  });
-  window.addEventListener('mouseup', e => {
-    if (loopSelecting && e.button === 2) {
-      loopSelecting = false;
-      if (Math.abs(loopEndBeat - loopStartBeat) < 0.25) {
-        loopActive = false;
-        loopRegionEl.style.display = 'none';
-      } else {
-        loopActive = true;
-        updateLoopRegion();
-      }
-    }
-    if (trackDragInfo) {
-      const headers = Array.from(trackListEl.querySelectorAll('.track-header'));
-      let closestIndex = 0;
-      let minDist = Infinity;
-      headers.forEach((h, idx) => {
-        const rect = h.getBoundingClientRect();
-        const mid = rect.top + rect.height / 2;
-        const dist = Math.abs(e.clientY - mid);
-        if (dist < minDist) {
-          minDist = dist;
-          closestIndex = idx;
-        }
-        h.classList.remove('dragging');
-      });
-      const trackId = trackDragInfo.id;
-      const currentIndex = tracks.findIndex(tr => tr.id === trackId);
-      if (currentIndex !== -1 && closestIndex !== currentIndex) {
-        const [trk] = tracks.splice(currentIndex, 1);
-        tracks.splice(closestIndex, 0, trk);
-        renderTracks();
-      }
-      trackDragInfo = null;
-    }
-  });
-
-  /* ========= TRACK HEIGHT RESIZE ========= */
-  let resizingTrackId = null;
-  let resizeStartY = 0;
-  let originalHeight = 0;
-  trackListEl.addEventListener('mousedown', e => {
-    const handle = e.target.closest('.track-resize-handle');
-    if (!handle) return;
-    resizingTrackId = parseInt(handle.dataset.trackId, 10);
-    resizeStartY = e.clientY;
-    const t = tracks.find(tr => tr.id === resizingTrackId);
-    originalHeight = t ? t.height : 40;
-    document.body.style.userSelect = 'none';
-  });
-  window.addEventListener('mousemove', e => {
-    if (!resizingTrackId) return;
-    const t = tracks.find(tr => tr.id === resizingTrackId);
-    if (!t) return;
-    const dy = e.clientY - resizeStartY;
-    let newH = Math.min(80, Math.max(28, originalHeight + dy));
-    t.height = newH;
-    renderTracks();
-  });
-  window.addEventListener('mouseup', () => {
-    if (resizingTrackId) {
-      resizingTrackId = null;
-      document.body.style.userSelect = '';
-    }
-  });
-
-  /* ========= BOTTOM DOCK RESIZE ========= */
-  let bottomResizing = false;
-  let bottomStartY = 0;
-  let bottomStartHeight = 0;
-  bottomHandle.addEventListener('mousedown', e => {
-    bottomResizing = true;
-    bottomStartY = e.clientY;
-    bottomStartHeight = bottomDock.offsetHeight;
-    document.body.style.userSelect = 'none';
-  });
-  window.addEventListener('mousemove', e => {
-    if (!bottomResizing) return;
-    const dy = e.clientY - bottomStartY;
-    let newH = bottomStartHeight - dy;
-    const viewportLimit = window.innerHeight - 140;
-    newH = Math.max(12, Math.min(viewportLimit, newH));
-    bottomDock.style.height = newH + 'px';
-    updateVerticalThumb();
-  });
-  window.addEventListener('mouseup', () => {
-    if (bottomResizing) {
-      bottomResizing = false;
-      document.body.style.userSelect = '';
-    }
-  });
-
-  /* ========= BOTTOM PANEL TABS ========= */
-  document.querySelectorAll('.bottom-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const id = tab.dataset.bottomPanel;
-      currentBottomPanelKey = id;
-      document.querySelectorAll('.bottom-panel').forEach(p => {
-        p.classList.toggle('active', p.id === 'bottom-' + id);
-      });
-    });
-  });
-
-  /* ========= TOP ICON PANEL TOGGLING ========= */
-  const dockIcons = document.querySelectorAll('.dock-icon');
-  const dockPanels = document.querySelectorAll('.dock-panel');
-
-  function refreshMainGridLayout() {
-    const leftVisible = leftBrowserPanel.style.display !== 'none';
-    const rightVisible = rightPluginsPanel.style.display !== 'none';
-    if (leftVisible && rightVisible) {
-      mainGridEl.style.gridTemplateColumns = '260px minmax(0,1fr) 220px';
-    } else if (leftVisible && !rightVisible) {
-      mainGridEl.style.gridTemplateColumns = '260px minmax(0,1fr)';
-    } else if (!leftVisible && rightVisible) {
-      mainGridEl.style.gridTemplateColumns = 'minmax(0,1fr) 220px';
-    } else {
-      mainGridEl.style.gridTemplateColumns = 'minmax(0,1fr)';
-    }
-  }
-
-  dockIcons.forEach(icon => {
-    icon.addEventListener('click', () => {
-      const panel = icon.dataset.panel;
-
-      if (panel === 'mixer' || panel === 'piano' || panel === 'rack') {
-        const mapped = panel === 'rack' ? 'rack' : panel;
-        if (bottomVisible && currentBottomPanelKey === mapped) {
-          bottomDock.style.display = 'none';
-          bottomVisible = false;
-          dockIcons.forEach(ic => {
-            if (['mixer','piano','rack'].includes(ic.dataset.panel)) ic.classList.remove('active');
-          });
-        } else {
-          bottomDock.style.display = 'flex';
-          bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
-          bottomVisible = true;
-          currentBottomPanelKey = mapped;
-          const tab = document.querySelector(`.bottom-tab[data-bottom-panel="${mapped}"]`);
-          if (tab) tab.click();
-          dockIcons.forEach(ic => {
-            if (['mixer','piano','rack'].includes(ic.dataset.panel)) {
-              ic.classList.toggle('active', ic.dataset.panel === panel);
-            }
-          });
-        }
-        updateVerticalThumb();
-        return;
-      }
-
-      const relatedPanels = Array.from(dockPanels).filter(p => {
-        const id = p.dataset.panelId;
-        if (panel === 'timeline') return id === 'timeline';
-        if (panel === 'browser') return id === 'browser';
-        if (panel === 'plugins') return id === 'plugins';
-        return false;
-      });
-      const currentlyVisible = relatedPanels.some(p => p.style.display !== 'none');
-      relatedPanels.forEach(p => { p.style.display = currentlyVisible ? 'none' : ''; });
-      icon.classList.toggle('active', !currentlyVisible);
-
-      refreshMainGridLayout();
-      updateVerticalThumb();
-      updateHorizontalThumb();
-    });
-  });
-
-  /* ========= VERTICAL SCROLL (TIMELINE ONLY) ========= */
+  /* ========= VERTICAL SCROLLBAR (TRACKS ONLY) ========= */
   function updateVerticalThumb() {
-    if (!vscrollTrack || !vscrollThumb) return;
-    const contentHeight = timelineScroll.scrollHeight;
-    const viewportHeight = timelineScroll.clientHeight;
-    const trackHeight = vscrollTrack.clientHeight;
-    const maxScroll = contentHeight - viewportHeight;
+    const scrollHeight = trackListEl.scrollHeight;
+    const clientHeight = trackListEl.clientHeight;
+    const barHeight = vscrollTrack.clientHeight;
 
-    if (maxScroll <= 0 || trackHeight <= 0) {
+    if (scrollHeight <= clientHeight || barHeight <= 0) {
       vscrollThumb.style.display = 'none';
       return;
     }
     vscrollThumb.style.display = 'block';
 
-    const visibleRatio = viewportHeight / contentHeight;
-    const thumbHeight = Math.max(30, trackHeight * visibleRatio);
-    vscrollThumb.style.height = thumbHeight + 'px';
+    const maxScrollable = scrollHeight - clientHeight;
+    const ratioVisible = clientHeight / scrollHeight;
+    const thumbHeight = Math.max(30, barHeight * ratioVisible);
+    const maxTop = barHeight - thumbHeight;
+    const topRatio = maxScrollable > 0 ? (trackListEl.scrollTop / maxScrollable) : 0;
+    const top = maxTop * topRatio;
 
-    const maxTop = trackHeight - thumbHeight;
-    const top = maxTop > 0 ? (timelineScroll.scrollTop / maxScroll) * maxTop : 0;
+    vscrollThumb.style.height = thumbHeight + 'px';
     vscrollThumb.style.top = top + 'px';
   }
 
-  function syncVerticalScrollFrom(sourceEl) {
+  function syncVerticalFromTrackList() {
     if (syncingVertical) return;
     syncingVertical = true;
-    const value = sourceEl.scrollTop;
-    trackListEl.scrollTop = value;
-    timelineScroll.scrollTop = value;
-    updateVerticalThumb();
+    timelineScroll.scrollTop = trackListEl.scrollTop;
     syncingVertical = false;
+    updateVerticalThumb();
   }
 
-  trackListEl.addEventListener('scroll', () => syncVerticalScrollFrom(trackListEl));
+  function syncVerticalFromTimeline() {
+    if (syncingVertical) return;
+    syncingVertical = true;
+    trackListEl.scrollTop = timelineScroll.scrollTop;
+    syncingVertical = false;
+    updateVerticalThumb();
+  }
+
+  trackListEl.addEventListener('scroll', syncVerticalFromTrackList);
   timelineScroll.addEventListener('scroll', () => {
+    syncVerticalFromTimeline();
     updateHorizontalThumb();
-    syncVerticalScrollFrom(timelineScroll);
   });
 
   vscrollThumb.addEventListener('mousedown', e => {
     vThumbDragging = true;
     vThumbStartY = e.clientY;
     vThumbStartTop = parseFloat(getComputedStyle(vscrollThumb).top) || 0;
-    document.body.style.userSelect = 'none';
     e.preventDefault();
   });
+
   window.addEventListener('mousemove', e => {
     if (!vThumbDragging) return;
-    const trackHeight = vscrollTrack.clientHeight;
+    const barHeight = vscrollTrack.clientHeight;
     const thumbHeight = vscrollThumb.clientHeight;
-    const maxTop = trackHeight - thumbHeight;
+    const maxTop = barHeight - thumbHeight;
     let newTop = vThumbStartTop + (e.clientY - vThumbStartY);
     newTop = Math.max(0, Math.min(maxTop, newTop));
+
     vscrollThumb.style.top = newTop + 'px';
 
-    const maxScroll = timelineScroll.scrollHeight - timelineScroll.clientHeight;
-    const ratio = maxTop > 0 ? newTop / maxTop : 0;
-    const newScroll = maxScroll * ratio;
+    const scrollHeight = trackListEl.scrollHeight;
+    const clientHeight = trackListEl.clientHeight;
+    const maxScrollable = scrollHeight - clientHeight;
+    if (maxScrollable <= 0) return;
 
+    const ratio = newTop / maxTop;
+    const newScrollTop = maxScrollable * ratio;
     syncingVertical = true;
-    trackListEl.scrollTop = newScroll;
-    timelineScroll.scrollTop = newScroll;
+    trackListEl.scrollTop = newScrollTop;
+    timelineScroll.scrollTop = newScrollTop;
     syncingVertical = false;
+  });
+
+  window.addEventListener('mouseup', () => {
+    vThumbDragging = false;
+  });
+
+  vscrollBtnUp.addEventListener('click', () => {
+    trackListEl.scrollTop -= 40;
+    syncVerticalFromTrackList();
+  });
+  vscrollBtnDown.addEventListener('click', () => {
+    trackListEl.scrollTop += 40;
+    syncVerticalFromTrackList();
+  });
+
+  /* ========= BOTTOM DOCK RESIZE ========= */
+  let bottomResizing = false;
+  let bottomStartY = 0;
+  let bottomStartHeight = 0;
+
+  bottomHandle.addEventListener('mousedown', e => {
+    bottomResizing = true;
+    bottomStartY = e.clientY;
+    bottomStartHeight = bottomDock.offsetHeight;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!bottomResizing) return;
+    const dy = bottomStartY - e.clientY;
+    let newHeight = bottomStartHeight + dy;
+    newHeight = Math.max(24, Math.min(520, newHeight));
+    bottomDock.style.height = newHeight + 'px';
   });
   window.addEventListener('mouseup', () => {
-    if (vThumbDragging) {
-      vThumbDragging = false;
-      document.body.style.userSelect = '';
-    }
+    bottomResizing = false;
   });
 
-  function scrollTimelineVertically(delta) {
-    const newScroll = Math.max(0, Math.min(
-      timelineScroll.scrollHeight - timelineScroll.clientHeight,
-      timelineScroll.scrollTop + delta
-    ));
-    syncingVertical = true;
-    timelineScroll.scrollTop = newScroll;
-    trackListEl.scrollTop = newScroll;
-    syncingVertical = false;
-    updateVerticalThumb();
-  }
-  vscrollBtnUp.addEventListener('click', () => scrollTimelineVertically(-60));
-  vscrollBtnDown.addEventListener('click', () => scrollTimelineVertically(60));
+  /* ========= BOTTOM TABS ========= */
+  const bottomTabs = document.querySelectorAll('.bottom-tab');
+  const bottomPanels = {
+    mixer: document.getElementById('bottom-mixer'),
+    piano: document.getElementById('bottom-piano'),
+    rack: document.getElementById('bottom-rack')
+  };
 
-  window.addEventListener('resize', () => {
-    updateVerticalThumb();
-    updateHorizontalThumb();
+  bottomTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const key = tab.dataset.bottomPanel;
+      currentBottomPanelKey = key;
+      bottomTabs.forEach(t => t.classList.toggle('active', t === tab));
+      Object.entries(bottomPanels).forEach(([k, el]) => {
+        el.classList.toggle('active', k === key);
+      });
+    });
+  });
+
+  /* ========= TOP DOCK ICONS (SHOW / HIDE PANELS) ========= */
+  const dockIcons = document.querySelectorAll('.dock-icon');
+  const dockPanels = document.querySelectorAll('.dock-panel');
+
+  dockIcons.forEach(icon => {
+    icon.addEventListener('click', () => {
+      const target = icon.dataset.panel;
+
+      if (target === 'browser') {
+        const isVisible = !leftBrowserPanel.classList.contains('hidden');
+        if (isVisible) {
+          leftBrowserPanel.style.display = 'none';
+        } else {
+          leftBrowserPanel.style.display = 'flex';
+        }
+      } else if (target === 'plugins') {
+        const isVisible = !rightPluginsPanel.classList.contains('hidden');
+        if (isVisible) {
+          rightPluginsPanel.style.display = 'none';
+        } else {
+          rightPluginsPanel.style.display = 'block';
+        }
+      } else if (target === 'mixer') {
+        // toggle bottom mixer visibility
+        if (bottomDock.style.height && parseInt(bottomDock.style.height, 10) < 40) {
+          bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
+        } else if (!bottomDock.style.height || parseInt(bottomDock.style.height, 10) <= 40) {
+          bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
+        } else {
+          bottomDock.style.height = '24px';
+        }
+      }
+    });
   });
 
   /* ========= INITIAL SETUP ========= */
   function init() {
-    document.documentElement.style.setProperty('--beats-per-bar', BEATS_PER_BAR);
-    document.documentElement.style.setProperty('--beat-width', beatWidth + 'px');
-
     buildRuler();
     updateGridSizes();
-    refreshMainGridLayout();
 
-    bottomDock.style.display = 'none';
-    bottomVisible = false;
+    // starter patterns
+    const pat1 = addPattern('Hook – Drums', 'blue');
+    const pat2 = addPattern('Bassline A', 'green');
+    const pat3 = addPattern('Chords Pad', 'purple');
+    currentPatternId = pat1;
+    renderPatterns();
+
+    // starter tracks
+    const t1 = addTrack('Master');
+    const t2 = addTrack('Drums');
+    const t3 = addTrack('Bass');
+    const t4 = addTrack('Keys');
+    const t5 = addTrack('Vox Lead');
+
+    createClip(t2, 0, 8, 'Hook – Drums', 'blue', pat1);
+    createClip(t3, 8, 8, 'Bassline A', 'green', pat2);
+    createClip(t4, 0, 16, 'Chords Pad', 'purple', pat3);
+
     bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
-
-    const pDrums = addPattern('Pattern 1 – Drums', 'blue');
-    const pBass  = addPattern('Pattern 2 – Bass', 'green');
-    const pChrd  = addPattern('Pattern 3 – Chords', 'purple');
-
-    const t1 = addTrack('Drums');
-    const t2 = addTrack('Bass');
-    const t3 = addTrack('Chords');
-    const t4 = addTrack('Vocals');
-    const t5 = addTrack('FX');
-    const t6 = addTrack('Strings');
-    const t7 = addTrack('Piano');
-    const t8 = addTrack('Percussion');
-    const t9 = addTrack('Synths');
-    const t10 = addTrack('Pads');
-
-    createClip(t1, 0, 4, 'Pattern 1 – Drums', 'blue', pDrums);
-    createClip(t2, 4, 4, 'Pattern 2 – Bass', 'green', pBass);
-    createClip(t3, 8, 4, 'Pattern 3 – Chords', 'purple', pChrd);
-
-    playheadBeat = 0;
-    tempoDisplay.textContent = tempo.toFixed(1);
-    screenKeyEl.textContent = songKey;
     updatePlayheadPosition(false);
-    updateVerticalThumb();
+    updateScreenDisplay();
     updateHorizontalThumb();
+    updateVerticalThumb();
   }
+
   init();
 </script>
 </body>
