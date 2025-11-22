@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -548,9 +548,7 @@
 
     .timeline-ruler {
       position: sticky;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; /* only stick vertically, allow horizontal scroll */
       height: 22px;
       background: linear-gradient(to bottom,#091650,#050a24);
       border-bottom: 1px solid rgba(0,0,0,0.9);
@@ -1018,7 +1016,7 @@
 
   <section class="hint-bar">
     <span>Tip: Spacebar toggles play / pause without resetting the playhead · right-click + drag on the bar numbers to set a loop region.</span>
-    <span>Click & hold on the grid or a clip, then use the mouse wheel to zoom in or out around your cursor.</span>
+    <span>Click & hold on the grid or a clip, then use the mouse wheel or + / – keys to zoom in or out.</span>
   </section>
 </main>
 
@@ -1655,19 +1653,32 @@
     alert('Later you can connect this to Web Audio + getUserMedia to record into tracks.');
   });
 
-  // Spacebar toggles play/pause (without resetting)
+  // Keyboard: space = play/pause; +/- = zoom in/out
   window.addEventListener('keydown', (e) => {
+    const active = document.activeElement;
+    const typingInField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+
+    // Spacebar playback toggle
     if (e.code === 'Space') {
-      const active = document.activeElement;
-      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
-        return; // don't hijack when typing
-      }
+      if (typingInField) return;
       e.preventDefault();
       if (isPlaying) {
         pausePlayback();
       } else {
         startPlayback();
       }
+      return;
+    }
+
+    // Zoom with keyboard (+ / -)
+    if (typingInField) return;
+
+    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
+      e.preventDefault();
+      zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
+    } else if (e.key === '-' || e.key === '_') {
+      e.preventDefault();
+      zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
     }
   });
 
