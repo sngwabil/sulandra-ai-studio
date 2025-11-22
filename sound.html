@@ -44,7 +44,7 @@
       color: var(--text-main);
       display: flex;
       flex-direction: column;
-      overflow: hidden; /* Prevent body scroll */
+      overflow: hidden; 
     }
 
     a { color: inherit; text-decoration: none; }
@@ -1190,7 +1190,7 @@
             <select id="pattern-select" class="pattern-select"></select>
             <button id="new-pattern-btn">+ New</button>
           </div>
-          <div>Double-click empty grid to place active pattern · Alt+Scroll to zoom</div>
+          <div>Double-click empty grid to place active pattern · Alt+Wheel to Zoom</div>
         </div>
         <div class="timeline-scrollbar">
           <div class="timeline-scroll-thumb" id="timeline-thumb">
@@ -1280,16 +1280,18 @@
 </div>
 
 <script>
-  /* ========= 1. DATA & STATE ========= */
+  /* ========= 1. CONFIG & STATE ========= */
   const BEATS_PER_BAR = 4;
-  let beatWidth = 48; // Zoom level (Pixels per beat)
-  let gridBars = 100;
-  
+  let beatWidth = 48; // Pixels per beat (Zoom level)
+  let gridBars = 200;
+  const GRID_LEFT_OFFSET = 0;
+
+  // Data Models
   let clips = [];
   let tracks = [];
   let patterns = [];
 
-  // Interaction State
+  // ID Generators
   let nextClipId = 1;
   let nextTrackId = 1;
   let nextPatternId = 1;
@@ -1299,10 +1301,9 @@
   let isPlaying = false;
   let playheadBeat = 0; // Current position in beats
   let tempo = 130.0;
-  let startTime = 0;
-  let startBeat = 0;
+  let lastFrameTime = 0;
 
-  // Key States for Shortcuts
+  // Input State
   let isAltHeld = false;
   let isShiftHeld = false;
   let isCtrlHeld = false;
@@ -1315,24 +1316,32 @@
   const zoomRange = document.getElementById('zoom-range');
   const trackListEl = document.getElementById('track-list');
   const screenTimeEl = document.getElementById('screen-time');
+  const mixerStripsEl = document.getElementById('mixer-strips');
+  const patternSelect = document.getElementById('pattern-select');
+  const patternListEl = document.getElementById('pattern-list');
 
   /* ========= 2. INITIALIZATION ========= */
   function init() {
-    // Setup initial Tracks
-    ['Drums', 'Bass', 'Chords', 'Vocals', 'FX'].forEach(name => addTrack(name));
+    // Setup Initial Tracks
+    ['Drums', 'Bass', 'Chords', 'Vocals', 'FX', 'Synth', 'Pads'].forEach(name => addTrack(name));
     
-    // Setup initial Patterns
-    addPattern('Pattern 1', 'blue');
-    addPattern('Pattern 2', 'green');
-    addPattern('Pattern 3', 'purple');
+    // Setup Initial Patterns
+    addPattern('Pattern 1 (Drums)', 'blue');
+    addPattern('Pattern 2 (Bass)', 'green');
+    addPattern('Pattern 3 (Chords)', 'purple');
 
-    // Create some test clips
+    // Create Demo Clips
     createClip(tracks[0].id, 0, 4, 'Pattern 1', 'blue');
     createClip(tracks[1].id, 4, 4, 'Pattern 2', 'green');
+    createClip(tracks[2].id, 8, 4, 'Pattern 3', 'purple');
     
+    // Initial Render
     updateGridSizes();
     buildRuler();
     renderTracks();
+    renderPatterns();
+    
+    // Start Playhead Loop
     requestAnimationFrame(animationLoop);
   }
 
@@ -1353,21 +1362,24 @@
     }
   }
 
-  /* ========= 4. TRACKS & PATTERNS ========= */
+  /* ========= 4. TRACKS & MIXER ========= */
   function addTrack(name) {
     tracks.push({ id: nextTrackId++, name: name, height: 40 });
     renderTracks();
+    renderMixer();
   }
 
   function renderTracks() {
-    trackListEl.innerHTML = '<div class="add-track-bar"><button class="add-track-btn" onclick="addTrack(\'New Track\')">+ Add Track</button></div>';
-    
-    // Clear existing grid rows
-    const existingRows = document.querySelectorAll('.grid-track-row');
-    existingRows.forEach(r => r.remove());
+    // Clear specific areas
+    document.querySelectorAll('.track-header').forEach(e => e.remove());
+    document.querySelectorAll('.grid-track-row').forEach(e => e.remove());
+    document.querySelectorAll('.track-resize-handle').forEach(e => e.remove());
 
+    // Rebuild
+    const addBtn = document.querySelector('.add-track-bar');
+    
     tracks.forEach(t => {
-      // 1. Create Header (Left)
+      // Header
       const header = document.createElement('div');
       header.className = 'track-header';
       header.style.height = t.height + 'px';
@@ -1378,130 +1390,168 @@
           <button class="track-btn">M</button>
           <button class="track-btn">S</button>
         </div>`;
-      trackListEl.insertBefore(header, trackListEl.lastChild);
+      trackListEl.insertBefore(header, addBtn);
 
-      // 2. Create Grid Row (Right)
+      // Resize Handle
+      const handle = document.createElement('div');
+      handle.className = 'track-resize-handle';
+      trackListEl.insertBefore(handle, addBtn);
+
+      // Grid Row
       const row = document.createElement('div');
       row.className = 'grid-track-row';
       row.dataset.trackId = t.id;
       row.style.height = t.height + 'px';
       gridInner.appendChild(row);
     });
-
-    renderClips(); // Re-render clips on top of new rows
+    
+    renderClips();
   }
 
-  function addPattern(name, color) {
-    patterns.push({ id: nextPatternId++, name, color });
-    const opt = document.createElement('option');
-    opt.value = patterns[patterns.length-1].id;
-    opt.textContent = name;
-    document.getElementById('pattern-select').appendChild(opt);
-    if (!currentPatternId) currentPatternId = patterns[0].id;
-  }
-
-  /* ========= 5. CLIP MANAGEMENT ========= */
-  function createClip(trackId, startBeat, lengthBeats, label, color) {
-    clips.push({
-      id: nextClipId++,
-      trackId,
-      startBeat,
-      lengthBeats,
-      label,
-      color
+  function renderMixer() {
+    mixerStripsEl.innerHTML = '';
+    tracks.forEach((t, index) => {
+      const strip = document.createElement('div');
+      strip.className = 'mixer-strip';
+      strip.innerHTML = `
+         <div class="mixer-strip-title">${t.name}</div>
+         <div class="mixer-type-tag">AUDIO</div>
+         <div class="mixer-main-block">
+           <div class="mixer-led-row"><div class="mixer-led"></div></div>
+           <div class="mixer-pan-row"><div class="mixer-pan-knob"></div></div>
+           <div class="mixer-fader-row">
+             <div class="mixer-fader"><div class="mixer-fader-knob" style="bottom: 70%;"></div></div>
+             <div class="mixer-meter"><div class="mixer-meter-inner" style="height: 40%;"></div></div>
+           </div>
+         </div>
+         <div class="mixer-bottom-label">CH ${index+1}</div>
+      `;
+      mixerStripsEl.appendChild(strip);
     });
+  }
+
+  /* ========= 5. PATTERNS ========= */
+  function addPattern(name, color) {
+    const id = nextPatternId++;
+    patterns.push({ id, name, color });
+    if (!currentPatternId) currentPatternId = id;
+  }
+
+  function renderPatterns() {
+    patternSelect.innerHTML = '';
+    patternListEl.innerHTML = '';
+    
+    patterns.forEach(p => {
+      // Dropdown
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      patternSelect.appendChild(opt);
+      
+      // Browser List
+      const item = document.createElement('div');
+      item.className = 'browser-item pattern-item';
+      item.innerHTML = `<span style="color:${p.color === 'blue' ? '#7cbeff' : '#7cffc7'}">${p.name}</span><span>PAT</span>`;
+      item.onclick = () => { currentPatternId = p.id; patternSelect.value = p.id; };
+      patternListEl.appendChild(item);
+    });
+  }
+  
+  document.getElementById('new-pattern-btn').onclick = () => {
+    const name = prompt("Pattern Name:", "New Pattern");
+    if(name) { addPattern(name, 'pink'); renderPatterns(); }
+  };
+
+  /* ========= 6. CLIP LOGIC ========= */
+  function createClip(trackId, startBeat, lengthBeats, label, color) {
+    clips.push({ id: nextClipId++, trackId, startBeat, lengthBeats, label, color });
     renderClips();
   }
 
   function renderClips() {
-    // Remove existing DOM clips to redraw
     document.querySelectorAll('.clip').forEach(e => e.remove());
 
     clips.forEach(clip => {
-      // Find the row to place this clip
       const row = document.querySelector(`.grid-track-row[data-track-id="${clip.trackId}"]`);
       if (!row) return;
 
       const el = document.createElement('div');
       el.className = 'clip';
-      el.dataset.clipId = clip.id;
       el.dataset.color = clip.color;
+      
+      // Calculate Pixels based on current beatWidth (Zoom)
+      el.style.left = (clip.startBeat * beatWidth) + 'px';
+      el.style.width = (clip.lengthBeats * beatWidth) + 'px';
+      el.style.top = (row.offsetTop + 6) + 'px'; 
+
       el.innerHTML = `
         <div class="clip-handle-left" data-action="resize-left"></div>
         <div class="clip-label">${clip.label}</div>
         <div class="clip-handle-right" data-action="resize-right"></div>
       `;
-      
-      // Positioning
-      el.style.left = (clip.startBeat * beatWidth) + 'px';
-      el.style.width = (clip.lengthBeats * beatWidth) + 'px';
-      el.style.top = (row.offsetTop + 6) + 'px'; // +6 padding
 
-      // Attach Logic
       attachClipEvents(el, clip);
       gridInner.appendChild(el);
     });
   }
 
-  /* ========= 6. DRAG, DROP, RESIZE LOGIC ========= */
+  /* ========= 7. INTERACTION ENGINE (Zoom/Drag/Snap) ========= */
   function attachClipEvents(el, clip) {
     el.addEventListener('mousedown', (e) => {
-      e.stopPropagation(); // Don't trigger grid scroll
+      e.stopPropagation();
       const startX = e.clientX;
-      const startLeft = parseFloat(el.style.left);
-      const startWidth = parseFloat(el.style.width);
       const action = e.target.dataset.action || 'move';
-      
+      const startLeftBeat = clip.startBeat;
+      const startLenBeat = clip.lengthBeats;
+
       const onMove = (mv) => {
-        const deltaX = mv.clientX - startX;
-        const deltaBeats = deltaX / beatWidth;
+        const deltaPx = mv.clientX - startX;
+        const deltaBeats = deltaPx / beatWidth; // Convert pixels to beats
 
         if (action === 'move') {
-          // Calculate new beat position
-          let newStart = clip.startBeat + deltaBeats;
-          // Snapping (Round to nearest 0.25 beat)
+          let newStart = startLeftBeat + deltaBeats;
+          // Snap to 1/4 beat unless Alt held
           if (!isAltHeld) newStart = Math.round(newStart * 4) / 4;
           if (newStart < 0) newStart = 0;
           
           el.style.left = (newStart * beatWidth) + 'px';
-          // (Track changing logic would go here)
+          // Temp update for visual smoothness
+          clip.tempStart = newStart; 
         } 
         else if (action === 'resize-right') {
-          let newLen = clip.lengthBeats + deltaBeats;
+          let newLen = startLenBeat + deltaBeats;
           if (!isAltHeld) newLen = Math.round(newLen * 4) / 4;
           if (newLen < 0.25) newLen = 0.25;
           el.style.width = (newLen * beatWidth) + 'px';
+          clip.tempLen = newLen;
         }
         else if (action === 'resize-left') {
-           // Complex logic: Start moves right, width gets smaller
-           const originalEnd = clip.startBeat + clip.lengthBeats;
-           let newStart = clip.startBeat + deltaBeats;
+           // Moving left edge means start moves right, length gets smaller
+           const endBeat = startLeftBeat + startLenBeat;
+           let newStart = startLeftBeat + deltaBeats;
            if (!isAltHeld) newStart = Math.round(newStart * 4) / 4;
-           
-           if (newStart >= originalEnd - 0.1) newStart = originalEnd - 0.1;
+           if (newStart >= endBeat - 0.1) newStart = endBeat - 0.1;
            if (newStart < 0) newStart = 0;
            
-           const newLen = originalEnd - newStart;
-           
+           const newLen = endBeat - newStart;
            el.style.left = (newStart * beatWidth) + 'px';
            el.style.width = (newLen * beatWidth) + 'px';
+           clip.tempStart = newStart;
+           clip.tempLen = newLen;
         }
       };
 
-      const onUp = (up) => {
+      const onUp = () => {
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('mouseup', onUp);
         
-        // Commit changes to data model
-        const finalLeft = parseFloat(el.style.left);
-        const finalWidth = parseFloat(el.style.width);
+        // Commit changes
+        if (clip.tempStart !== undefined) clip.startBeat = clip.tempStart;
+        if (clip.tempLen !== undefined) clip.lengthBeats = clip.tempLen;
+        delete clip.tempStart;
+        delete clip.tempLen;
         
-        clip.startBeat = finalLeft / beatWidth;
-        clip.lengthBeats = finalWidth / beatWidth;
-        
-        // Snap data model
-        clip.startBeat = Math.round(clip.startBeat * 100) / 100;
-        clip.lengthBeats = Math.round(clip.lengthBeats * 100) / 100;
+        renderClips(); // Re-render to snap perfectly
       };
 
       window.addEventListener('mousemove', onMove);
@@ -1509,65 +1559,30 @@
     });
   }
 
-  /* ========= 7. ZOOM & SCROLL LOGIC ========= */
-  
-  // Detect Key Modifiers
-  window.addEventListener('keydown', e => {
-    if(e.key === 'Alt') isAltHeld = true;
-    if(e.key === 'Shift') isShiftHeld = true;
-    if(e.key === 'Control') isCtrlHeld = true;
-    
-    // Spacebar Play/Pause
-    if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
-      e.preventDefault();
-      togglePlay();
-    }
-  });
-  window.addEventListener('keyup', e => {
-    if(e.key === 'Alt') isAltHeld = false;
-    if(e.key === 'Shift') isShiftHeld = false;
-    if(e.key === 'Control') isCtrlHeld = false;
-  });
-
-  // Wheel Event for Zooming
+  // ZOOM LOGIC
   timelineScroll.addEventListener('wheel', (e) => {
-    // Prevent default scroll if we are zooming
-    if (isAltHeld || isCtrlHeld) {
+    if (isAltHeld) {
       e.preventDefault();
+      const scale = e.deltaY > 0 ? 0.9 : 1.1;
       
-      const zoomSpeed = 0.05;
-      const zoomFactor = e.deltaY > 0 ? (1 - zoomSpeed) : (1 + zoomSpeed);
-      
-      // Calculate mouse position relative to timeline content
+      // Calculate time under mouse
       const rect = timelineScroll.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const timeAtMouse = (timelineScroll.scrollLeft + mouseX) / beatWidth;
       
-      // Apply Zoom
-      beatWidth *= zoomFactor;
-      
-      // Clamp Zoom
+      // Apply zoom
+      beatWidth *= scale;
       if (beatWidth < 10) beatWidth = 10;
       if (beatWidth > 200) beatWidth = 200;
-      
-      // Update UI Slider
       zoomRange.value = beatWidth;
       
-      // Re-calculate Scroll to keep time centered under mouse
-      // NewScroll = (Time * NewScale) - MouseScreenOffset
+      // Adjust scroll to keep mouse focused
       timelineScroll.scrollLeft = (timeAtMouse * beatWidth) - mouseX;
       
-      // Redraw
       updateGridSizes();
       renderClips();
       updatePlayhead();
-    } 
-    // Shift + Scroll = Horizontal Scroll (Native usually handles this, but forcing it)
-    else if (isShiftHeld) {
-      e.preventDefault();
-      timelineScroll.scrollLeft += e.deltaY;
     }
-    // Else: Standard Vertical Scroll (handled by browser)
   }, { passive: false });
 
   zoomRange.addEventListener('input', (e) => {
@@ -1577,73 +1592,107 @@
     updatePlayhead();
   });
 
-  // Sync Vertical Scroll (Track List <-> Grid)
+  // Scroll Sync (Vertical)
   timelineScroll.addEventListener('scroll', () => {
     trackListEl.scrollTop = timelineScroll.scrollTop;
   });
 
-  /* ========= 8. PLAYHEAD & TRANSPORT ========= */
+  /* ========= 8. PLAYHEAD ENGINE ========= */
+  document.getElementById('btn-play').onclick = togglePlay;
+  document.getElementById('btn-stop').onclick = stopPlay;
+
   function togglePlay() {
-    if (isPlaying) {
-      isPlaying = false;
-      document.getElementById('btn-play').classList.remove('active');
-    } else {
+    if (isPlaying) stopPlay();
+    else {
       isPlaying = true;
-      startTime = performance.now();
-      startBeat = playheadBeat;
+      lastFrameTime = performance.now();
       document.getElementById('btn-play').classList.add('active');
     }
   }
 
-  document.getElementById('btn-play').onclick = togglePlay;
-  document.getElementById('btn-stop').onclick = () => {
+  function stopPlay() {
     isPlaying = false;
-    playheadBeat = 0;
-    updatePlayhead();
     document.getElementById('btn-play').classList.remove('active');
-  };
-
-  function animationLoop() {
-    if (isPlaying) {
-      const now = performance.now();
-      const secondsElapsed = (now - startTime) / 1000;
-      const beatsElapsed = secondsElapsed * (tempo / 60);
-      playheadBeat = startBeat + beatsElapsed;
-      
-      updatePlayhead();
-      
-      // Auto-Scroll if playhead moves off screen
-      const playheadPx = playheadBeat * beatWidth;
-      if (playheadPx > timelineScroll.scrollLeft + timelineScroll.clientWidth) {
-         timelineScroll.scrollLeft = playheadPx; // Page flip
-      }
-    }
-    requestAnimationFrame(animationLoop);
   }
 
   function updatePlayhead() {
     playheadEl.style.left = (playheadBeat * beatWidth) + 'px';
     
-    // Update Time Display
-    const totalSeconds = playheadBeat / (tempo / 60);
-    const m = Math.floor(totalSeconds / 60).toString().padStart(2,'0');
-    const s = Math.floor(totalSeconds % 60).toString().padStart(2,'0');
-    const ms = Math.floor((totalSeconds % 1) * 1000).toString().padStart(3,'0');
+    // Update time text
+    const totalSec = playheadBeat / (tempo / 60);
+    const m = Math.floor(totalSec / 60).toString().padStart(2, '0');
+    const s = Math.floor(totalSec % 60).toString().padStart(2, '0');
+    const ms = Math.floor((totalSec % 1) * 1000).toString().padStart(3, '0');
     screenTimeEl.textContent = `${m}:${s}.${ms}`;
   }
 
-  // Allow clicking on timeline to set playhead
-  gridInner.addEventListener('mousedown', (e) => {
-    // Only if clicking on empty space (ruler area mostly, but here generalized)
-    if (e.target === gridInner || e.target.classList.contains('grid-track-row')) {
-      const rect = gridInner.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      playheadBeat = x / beatWidth;
-      if (!isPlaying) updatePlayhead();
+  function animationLoop() {
+    if (isPlaying) {
+      const now = performance.now();
+      const dt = (now - lastFrameTime) / 1000; // Seconds
+      lastFrameTime = now;
+      
+      // Advance beats
+      const beatsPerSec = tempo / 60;
+      playheadBeat += dt * beatsPerSec;
+      
+      updatePlayhead();
+      
+      // Auto-Scroll
+      const px = playheadBeat * beatWidth;
+      if (px > timelineScroll.scrollLeft + timelineScroll.clientWidth) {
+        timelineScroll.scrollLeft = px; // Page flip
+      }
+    } else {
+      lastFrameTime = performance.now();
     }
+    requestAnimationFrame(animationLoop);
+  }
+
+  // Click on timeline to jump playhead
+  gridInner.addEventListener('mousedown', (e) => {
+    // Ignore if clicking a clip
+    if (e.target.classList.contains('clip') || e.target.parentElement.classList.contains('clip')) return;
+    
+    const rect = gridInner.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    playheadBeat = x / beatWidth;
+    updatePlayhead();
   });
 
-  /* ========= START ========= */
+  // Keyboard Shortcuts
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Alt') isAltHeld = true;
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  });
+  window.addEventListener('keyup', e => {
+    if (e.key === 'Alt') isAltHeld = false;
+  });
+
+  /* ========= 9. UI PANEL TOGGLING (Legacy Support) ========= */
+  const dockIcons = document.querySelectorAll('.dock-icon');
+  const bottomDock = document.getElementById('bottom-dock');
+  
+  dockIcons.forEach(icon => {
+    icon.addEventListener('click', () => {
+      const panel = icon.dataset.panel;
+      // Simple logic for bottom dock toggles
+      if(['mixer','piano','rack'].includes(panel)) {
+        if(bottomDock.style.display === 'none') bottomDock.style.display = 'flex';
+        else bottomDock.style.display = 'none';
+      }
+      // Highlight icon
+      dockIcons.forEach(i => i.classList.remove('active'));
+      icon.classList.add('active');
+    });
+  });
+  
+  // Close plugin window
+  document.getElementById('plugin-close-btn').onclick = () => {
+    document.getElementById('plugin-overlay').style.display = 'none';
+  };
+
+  // Start
   init();
 
 </script>
