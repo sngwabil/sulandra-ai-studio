@@ -2,792 +2,669 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sulandra AI Studio 20 – Ultimate Edition</title>
+  <title>SOUND Studio – AI Production Environment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
-      --bg-deep: #222426;
-      --bg-dark: #2d3033;
-      --bg-panel: #36393e;
-      --bg-light: #45494f;
-      --fl-orange: #ff9000;
-      --fl-green: #95c840;
-      --fl-red: #ff4040;
-      --fl-blue: #5f8bc8;
-      --fl-purple: #a96cff;
-      --fl-yellow: #ffd700;
-      --text-main: #dcdcdc;
-      --text-muted: #888888;
-      --border-soft: #181818;
+      --bg-deep: #020419;
+      --bg-surface: #050b2a;
+      --bg-panel: #071134;
+      --bg-panel-soft: #091746;
+      --border-soft: rgba(129,166,255,0.25);
+      --border-strong: rgba(129,166,255,0.9);
+      --accent: #7cffc7;
+      --accent2: #ff7cf1;
+      --accent3: #ffd77c;
+      --accent4: #7cbeff;
+      --text-main: #f7fbff;
+      --text-muted: #9cb3ff;
+      --grid-line: rgba(167,194,255,0.18);
+      --clip-blue: #3d7cff;
+      --clip-purple: #a96cff;
+      --clip-pink: #ff6ca4;
+      --clip-green: #4dffbb;
+      --radius: 7px;
+      --shadow-soft: 0 0 32px rgba(0,0,0,0.85);
       --beat-width: 48px;
+      --track-height: 40px;
+      --beats-per-bar: 4;
     }
 
     * { box-sizing: border-box; user-select: none; }
 
     body {
       margin: 0;
-      height: 100vh;
-      font-family: "Segoe UI", "Roboto", sans-serif;
-      background-color: #1e1e1e;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+      background:
+        radial-gradient(circle at 0 0,#2744ff 0,transparent 45%),
+        radial-gradient(circle at 100% 0,#ff3ccf 0,transparent 45%),
+        radial-gradient(circle at 50% 100%,#00ffc8 0,transparent 50%),
+        #020419;
       color: var(--text-main);
       display: flex;
       flex-direction: column;
-      overflow: hidden;
     }
 
-    /* SCROLLBARS */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #1a1a1a; }
-    ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #555; }
+    a { color: inherit; text-decoration: none; }
 
     /* === HEADER === */
     header {
-      background: #2b2d31;
-      border-bottom: 1px solid #000;
-      padding: 2px 10px;
+      background: linear-gradient(to bottom,rgba(10,20,70,0.98),rgba(4,8,35,0.98));
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      box-shadow: 0 0 18px rgba(0,0,0,0.9);
+      z-index: 20;
+    }
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 4px 14px 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 42px;
-      z-index: 100;
+      gap: 10px;
     }
-    .logo-area { display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--fl-orange); }
-    .logo-icon { 
-      width: 24px; height: 24px; 
-      background: radial-gradient(circle at 30% 30%, var(--fl-orange), #8a4000);
-      border-radius: 6px; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    .brand-left { display: flex; align-items: center; gap: 10px; }
+    .brand-logo {
+      width: 30px; height: 30px; border-radius: 10px;
+      background: conic-gradient(from 120deg,#7cffc7,#7cbeff,#ff7cf1,#ffd77c,#7cffc7);
+      display: flex; align-items: center; justify-content: center;
+      color: #01030d; font-weight: 900; font-size: 16px;
+      box-shadow: 0 0 20px rgba(124,190,255,0.8);
     }
-    .menu-bar { font-size: 11px; color: #888; cursor: pointer; }
-    .menu-bar span:hover { color: #fff; }
+    .brand-text-main {
+      font-size: 13px; text-transform: uppercase; letter-spacing: .16em;
+      background: linear-gradient(to right,#7cffc7,#ffd77c,#ff7cf1,#7cbeff);
+      -webkit-background-clip: text; color: transparent;
+    }
+    .brand-text-sub { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--text-muted); }
+    .brand-sound-pill {
+      margin-left: 10px; padding: 3px 8px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: radial-gradient(circle at 0 0,#3f7cff,#050b2a);
+      font-size: 10px; text-transform: uppercase; letter-spacing: .18em;
+      color: var(--accent); box-shadow: 0 0 14px rgba(61,124,255,0.9);
+    }
+    .top-right { display: flex; align-items: center; gap: 10px; font-size: 10px; color: var(--text-muted); }
+    .session-pill {
+      padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.8);
+      background: radial-gradient(circle at 0 0,#2135ff,#050b1a);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .session-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px rgba(124,255,199,0.9); }
 
-    /* === TRANSPORT BAR === */
-    .transport-bar {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      background: #303336;
-      padding: 4px 15px;
-      border-bottom: 1px solid #000;
+    /* === MAIN LAYOUT === */
+    main {
+      flex: 1; max-width: 1440px; margin: 6px auto 12px; padding: 0 10px 12px;
+      display: flex; flex-direction: column; gap: 6px;
     }
-    .transport-group { display: flex; align-items: center; gap: 4px; }
+
+    /* === ICON DOCK === */
+    .icon-dock {
+      border-radius: var(--radius); border: 1px solid rgba(0,0,0,0.9);
+      background: linear-gradient(to right,rgba(7,17,52,0.96),rgba(7,11,45,0.98));
+      box-shadow: var(--shadow-soft); padding: 4px 10px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11px;
+    }
+    .icon-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .dock-icon {
+      width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.9);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      position: relative; box-shadow: 0 0 8px rgba(0,0,0,0.9); font-size: 14px;
+      color: #02041b; transition: transform .08s, box-shadow .08s, border-color .08s; font-weight: 700;
+    }
+    .dock-icon[data-panel="browser"] { background: radial-gradient(circle at 0 0,#4aa8ff,#071134); }
+    .dock-icon[data-panel="rack"]    { background: radial-gradient(circle at 0 0,#7cffc7,#071134); }
+    .dock-icon[data-panel="mixer"]   { background: radial-gradient(circle at 0 0,#ff7cf1,#071134); }
+    .dock-icon[data-panel="piano"]   { background: radial-gradient(circle at 0 0,#ffd77c,#071134); }
+    .dock-icon[data-panel="plugins"] { background: radial-gradient(circle at 0 0,#7cbeff,#071134); }
+    .dock-icon[data-panel="timeline"]{ background: radial-gradient(circle at 0 0,#ff8a7c,#071134); }
+    .dock-icon.active { transform: translateY(-2px); border-color: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.8); }
+    .dock-icon-labels { display: flex; gap: 10px; font-size: 10px; color: var(--text-muted); flex-wrap: wrap; }
+    .dock-icon-labels span { padding: 2px 6px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.8); background: rgba(7,15,66,0.9); }
+
+    /* === MAIN GRID === */
+    .main-grid {
+      margin-top: 4px; border-radius: 9px; border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#1a2aff,#050821 55%,#010313 100%);
+      box-shadow: var(--shadow-soft); display: grid;
+      grid-template-columns: 260px minmax(0,1fr) 220px; min-height: 450px; overflow: hidden;
+    }
+    @media (max-width: 1100px) { .main-grid { grid-template-columns: 220px minmax(0,1fr); } .right-placeholder { display: none; } }
+    @media (max-width: 800px) { .main-grid { grid-template-columns: minmax(0,1fr); } .left-browser { display: none; } }
+
+    /* Panels */
+    .left-browser { background: linear-gradient(to bottom,#050b2a,#020319); border-right: 1px solid #000; display: flex; flex-direction: column; min-height: 0; }
+    .center-timeline-wrap { background: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%); display: flex; flex-direction: column; min-height: 0; border-right: 1px solid #000; }
+    .right-placeholder { background: linear-gradient(to bottom,#050b2a,#020319); border-left: 1px solid #000; padding: 6px 8px; font-size: 11px; color: var(--text-muted); }
+
+    /* BROWSER STYLES */
+    .panel-header {
+      padding: 4px 8px; border-bottom: 1px solid rgba(0,0,0,0.9); background: linear-gradient(to bottom,#091650,#050a28);
+      display: flex; align-items: center; justify-content: space-between; font-size: 11px;
+    }
+    .panel-title { text-transform: uppercase; letter-spacing: .14em; font-size: 10px; color: var(--accent4); }
+    .browser-search { padding: 4px 8px; border-bottom: 1px solid rgba(0,0,0,0.9); display: flex; align-items: center; gap: 6px; background: #050b26; font-size: 10px; }
+    .browser-search input { flex: 1; border-radius: 999px; border: 1px solid rgba(0,0,0,0.8); background: #02041b; color: var(--text-main); font-size: 10px; padding: 3px 8px; }
+    .browser-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 6px 8px 10px; font-size: 11px; color: var(--text-muted); scrollbar-width: thin; }
+    .browser-section-title { font-size: 9px; text-transform: uppercase; letter-spacing: .14em; color: #7cbeff; margin: 6px 0 2px; }
+    .browser-item { padding: 3px 4px; border-radius: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .browser-item:hover { background: rgba(124,190,255,0.15); }
+    .browser-item span:last-child { font-size: 9px; color: #ffd77c; }
+
+    /* TIMELINE CONTROLS */
+    .timeline-header { padding: 4px 8px 2px; border-bottom: 1px solid rgba(0,0,0,0.9); background: linear-gradient(to bottom,#091650,#050a24); display: flex; flex-direction: column; gap: 4px; font-size: 11px; }
+    .timeline-screen { display: flex; justify-content: center; align-items: center; padding: 4px 0 6px; background: #02030f; }
+    .screen-grid { display: flex; gap: 6px; max-width: 720px; width: 100%; justify-content: center; padding: 4px 6px; border-radius: 8px; background: #02030f; }
+    .screen-box { flex: 1 1 0; min-width: 140px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.06); background: #02041b; padding: 4px 8px 5px; display: flex; flex-direction: column; justify-content: center; }
+    .screen-label { font-size: 9px; text-transform: uppercase; letter-spacing: .18em; color: var(--text-muted); margin-bottom: 2px; }
+    .screen-value { font-family: monospace; font-size: 12px; letter-spacing: .12em; color: #f7fbff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .fl-btn {
-      background: linear-gradient(to bottom, #4a4d52, #35383b);
-      border: 1px solid #111;
-      border-radius: 3px;
-      color: #bbb;
-      width: 32px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .fl-btn:hover { background: #555; color: #fff; }
-    .fl-btn.active { 
-      background: #d4d4d4; 
-      color: #000; 
-      box-shadow: 0 0 8px var(--fl-orange);
-      border-color: var(--fl-orange);
-    }
-    .fl-btn.rec.active { background: var(--fl-red); color: white; box-shadow: 0 0 8px var(--fl-red); border-color: var(--fl-red); }
-
-    .mode-switch {
-      display: flex;
-      background: #111;
-      border-radius: 3px;
-      border: 1px solid #444;
-      overflow: hidden;
-    }
-    .mode-opt {
-      padding: 2px 6px;
-      font-size: 10px;
-      cursor: pointer;
-      color: #666;
-    }
-    .mode-opt.selected { background: var(--fl-orange); color: #000; font-weight: bold; }
-
-    /* === WORKSPACE === */
-    .workspace {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      grid-template-rows: 1fr 320px;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    /* === BROWSER (Left) === */
-    .browser-panel {
-      grid-row: 1 / -1;
-      background: #232528;
-      border-right: 4px solid #111;
-      display: flex;
-      flex-direction: column;
-    }
-    .browser-header {
-      padding: 5px;
-      background: #2d3033;
-      border-bottom: 1px solid #000;
-      font-size: 12px;
-      font-weight: bold;
-      display: flex; justify-content: space-between;
-    }
-    .browser-search {
-      background: #111; border: none; color: #ccc; width: 100%; padding: 4px; border-bottom: 1px solid #333;
-    }
-    .browser-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 5px;
-      font-size: 11px;
-    }
-    .folder-item { padding: 4px; cursor: pointer; color: #aaa; display: flex; align-items: center; gap: 6px; }
-    .folder-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
-    .folder-icon { width: 12px; text-align: center; color: var(--fl-orange); }
-
-    /* === PLAYLIST (Top Right) === */
-    .playlist-panel {
-      grid-column: 2;
-      grid-row: 1;
-      background: #1e1e1e;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-    .playlist-toolbar {
-      height: 28px;
-      background: #2d3033;
-      border-bottom: 1px solid #000;
-      display: flex; align-items: center; padding: 0 10px; gap: 10px;
-    }
-    .perf-toggle { font-size: 10px; display: flex; align-items: center; gap: 5px; color: #aaa; cursor: pointer;}
+    .timeline-row-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .transport-buttons { display: flex; align-items: center; gap: 4px; }
+    .transport-btn { width: 26px; height: 24px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.9); background: radial-gradient(circle at 0 0,#4aa8ff,#050a24); color: #02041b; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.85); }
+    .transport-btn.rec { background: radial-gradient(circle at 0 0,#ff4a7a,#3a0210); color: #ffe9f0; }
+    .transport-btn.active { box-shadow: 0 0 14px rgba(255,255,255,0.85); border-color: #fff; }
     
-    .tracks-area {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 100px 1fr;
-      overflow-y: auto;
-    }
-    .track-headers { background: #232528; border-right: 1px solid #000; }
-    .track-header {
-      height: 40px;
-      border-bottom: 1px solid #111;
-      background: #2d3033;
-      padding: 4px;
-      font-size: 11px;
-      display: flex; align-items: center; color: #ccc;
-      position: relative;
-    }
-    .grid-canvas {
-      position: relative;
-      background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
-      background-size: 100% 40px, var(--beat-width) 100%;
-      background-color: #181818;
-    }
+    /* SCROLL & GRID */
+    .timeline-scrollbar { width: 100%; height: 6px; border-radius: 999px; background: #040825; border: 1px solid rgba(0,0,0,0.9); overflow: hidden; margin-top: 2px; position: relative; }
+    .timeline-scroll-thumb { position: absolute; top: 0; left: 0; height: 100%; border-radius: 999px; background: linear-gradient(to right,#4aa8ff,#7cffc7); box-shadow: 0 0 12px rgba(124,190,255,0.9); display: flex; justify-content: space-between; }
+    .timeline-main { flex: 1; min-height: 0; display: grid; grid-template-columns: 170px minmax(0,1fr) 16px; }
     
-    /* Clips */
-    .clip {
-      position: absolute; height: 38px; border-radius: 3px; top: 1px;
-      font-size: 10px; padding: 2px; overflow: hidden; cursor: move;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    .clip-pattern { background: rgba(149, 200, 64, 0.3); border-color: var(--fl-green); }
-    .clip-pattern::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--fl-green); opacity: 0.8; }
+    .track-list { background: linear-gradient(to bottom,#050a28,#020317); border-right: 1px solid #000; font-size: 11px; color: var(--text-muted); overflow-y: auto; }
+    .track-header { display: flex; align-items: center; padding: 4px 4px; border-bottom: 1px solid rgba(255,255,255,0.04); background: rgba(7,14,60,0.96); height: 40px; gap: 3px; cursor: grab; }
+    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
+    .track-name { flex: 1; padding: 2px 4px; color: #f7fbff; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .clip-audio { background: rgba(95, 139, 200, 0.3); border-color: var(--fl-blue); }
-    .clip-audio svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 20px; opacity: 0.6; fill: var(--fl-blue); }
-
-    .clip-automation { background: rgba(169, 108, 255, 0.2); border-color: var(--fl-purple); }
-    .clip-automation svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; stroke: var(--fl-purple); stroke-width: 2; fill: none; }
-
-    /* === BOTTOM DOCK === */
-    .bottom-dock {
-      grid-column: 2; grid-row: 2;
-      background: #232528; border-top: 4px solid #111;
-      display: flex; flex-direction: column;
-    }
-    .dock-tabs { display: flex; background: #111; }
-    .dock-tab {
-      padding: 4px 15px; font-size: 11px; background: #2d3033; color: #888;
-      cursor: pointer; border-right: 1px solid #111; border-top: 2px solid transparent;
-    }
-    .dock-tab.active { background: #36393e; color: #fff; border-top-color: var(--fl-orange); }
-    .dock-content { flex: 1; position: relative; display: none; }
-    .dock-content.active { display: block; }
-
-    /* === CHANNEL RACK === */
-    #view-rack { height: 100%; overflow-y: auto; background: #282b2e; padding: 10px; }
-    .rack-row {
-      display: flex; align-items: center; background: #33363a;
-      margin-bottom: 4px; padding: 2px; border-radius: 3px; border: 1px solid #1a1a1a;
-      position: relative;
-    }
-    .channel-led { width: 8px; height: 8px; background: #444; border: 1px solid #000; margin-right: 5px; cursor: pointer; }
-    .channel-led.on { background: var(--fl-green); box-shadow: 0 0 4px var(--fl-green); }
+    .timeline-grid-wrap { position: relative; background: #050822; overflow: auto; }
+    .timeline-ruler { position: sticky; top: 0; height: 22px; background: linear-gradient(to bottom,#091650,#050a24); border-bottom: 1px solid rgba(0,0,0,0.9); display: flex; align-items: flex-end; z-index: 2; font-size: 9px; color: var(--text-muted); user-select: none; }
+    .grid-inner { position: relative; padding: 0 8px 8px; background-image: linear-gradient(to right,var(--grid-line) 1px,transparent 1px), linear-gradient(to right,rgba(124,190,255,0.12) 1px,transparent 1px), linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px); background-size: var(--beat-width,48px) 1px, calc(var(--beat-width,48px) / 4) 1px, 1px var(--track-height,40px); }
     
-    .channel-btn {
-      width: 90px; height: 24px; background: #444; border: 1px solid #222;
-      color: #ddd; font-size: 11px; text-align: center; line-height: 22px;
-      border-radius: 2px; cursor: pointer; margin-right: 5px;
-    }
-    .channel-btn:hover { background: #555; color: #fff; }
+    .playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom,#ffd77c,#ff7cf1); box-shadow: 0 0 12px rgba(255,215,124,0.9); pointer-events: none; z-index: 10; }
+    .clip { position: absolute; top: 6px; height: 28px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 0 16px rgba(0,0,0,0.9); display: flex; align-items: center; padding: 0 6px; font-size: 10px; color: #02041b; cursor: move; white-space: nowrap; overflow: hidden; }
+    .clip[data-color="blue"] { background: linear-gradient(135deg,var(--clip-blue),#7cbeff); }
+    .clip[data-color="purple"] { background: linear-gradient(135deg,var(--clip-purple),#ffb4ff); }
     
-    /* Graph Editor (Hidden by default) */
-    .graph-editor {
-      height: 0; overflow: hidden; background: #222; transition: height 0.2s;
-      display: flex; gap: 2px; padding-left: 160px; /* Offset for controls */
-    }
-    .graph-editor.open { height: 40px; padding-top: 2px; border-bottom: 1px solid #444; }
-    .graph-bar { flex: 1; background: #444; align-self: flex-end; cursor: ns-resize; border: 1px solid #000; }
-    .graph-bar:hover { background: var(--fl-blue); }
+    /* Automation Clip SVG Styling */
+    .automation-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .automation-path { fill: none; stroke: rgba(255,255,255,0.7); stroke-width: 2; }
+    .clip-label { position: relative; z-index: 2; text-shadow: 0 0 4px rgba(255,255,255,0.8); font-weight: bold; }
 
-    /* Steps */
-    .step-grid { display: flex; gap: 2px; flex: 1; }
-    .step-btn {
-      flex: 1; height: 24px; background: #222; border: 1px solid #111; cursor: pointer;
-    }
-    .step-btn.active { background: #ddd; box-shadow: 0 0 2px #fff; }
-    .step-btn:nth-child(4n+1) { background: #2a2a2a; }
-    .step-btn.active:nth-child(4n+1) { background: #f08080; }
+    /* BOTTOM DOCK */
+    .bottom-dock { margin-top: 6px; border-radius: 9px; border: 1px solid rgba(0,0,0,0.9); background: radial-gradient(circle at 0 0,#2a3bff,#050a21 45%,#020419 100%); box-shadow: var(--shadow-soft); display: flex; flex-direction: column; min-height: 20px; max-height: 520px; position: relative; }
+    .bottom-tabs { display: flex; padding: 4px 8px; border-bottom: 1px solid rgba(0,0,0,0.9); background: linear-gradient(to bottom,#091650,#050a24); font-size: 10px; gap: 6px; flex-shrink: 0; }
+    .bottom-tab { padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.8); background: rgba(4,8,40,0.9); color: var(--text-muted); cursor: pointer; }
+    .bottom-tab.active { border-color: #fff; color: var(--accent3); box-shadow: 0 0 10px rgba(255,215,124,0.8); }
+    .bottom-panels { flex: 1; min-height: 0; display: grid; }
+    .bottom-panel { padding: 6px 8px; font-size: 11px; display: none; overflow: hidden; }
+    .bottom-panel.active { display: flex; flex-direction: column; min-height: 0; }
 
-    /* === MIXER === */
-    #view-mixer { display: flex; height: 100%; overflow-x: auto; background: #181818; padding: 5px; }
-    .mixer-channel {
-      width: 50px; background: #2d3033; border: 1px solid #000;
-      margin-right: 2px; display: flex; flex-direction: column; border-radius: 2px;
-      position: relative;
-    }
-    .mixer-channel.selected { border: 1px solid #aaa; background: #383b40; }
-    .mix-fader-area {
-      flex: 1; position: relative; background: #111; margin: 4px; border-radius: 2px;
-    }
-    .mix-fader {
-      width: 20px; height: 30px; background: #ccc; position: absolute; left: 10px; bottom: 20%;
-      border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.8); cursor: ns-resize;
-    }
-    .mix-meter { position: absolute; right: 4px; top: 2px; bottom: 2px; width: 6px; background: #222; }
+    /* MIXER STYLES */
+    .mixer-strips { flex: 1; min-height: 0; display: flex; align-items: flex-end; gap: 8px; overflow-x: auto; padding: 4px 4px 8px; background: radial-gradient(circle at 0 0,#1b2747,#050815 55%,#01020b 100%); border-radius: 6px; }
+    .mixer-strip { flex: 0 0 72px; height: 100%; border-radius: 6px; background: linear-gradient(to bottom,#071425,#040917); border: 1px solid rgba(255,255,255,0.03); box-shadow: 0 0 12px rgba(0,0,0,0.8); display: flex; flex-direction: column; padding: 3px; color: var(--text-muted); }
+    .mixer-fader-shell { width: 22px; height: 100%; border-radius: 999px; background: #030612; border: 1px solid rgba(255,255,255,0.05); position: relative; margin: 0 auto; }
+    .mixer-fader-knob { position: absolute; left: 3px; right: 3px; height: 12px; border-radius: 999px; background: #8f9bb0; cursor: ns-resize; }
+    .mixer-send-section { height: 30px; border-top: 1px solid #333; margin-top: 4px; display: flex; align-items: center; justify-content: space-around; }
+    .send-knob { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #666; cursor: pointer; }
+    .send-knob.active { background: var(--accent3); box-shadow: 0 0 6px var(--accent3); border-color: #fff; }
+
+    /* RACK & GRAPH EDITOR */
+    .rack-row { display: flex; flex-direction: column; background: rgba(255,255,255,0.03); margin-bottom: 2px; border-radius: 4px; border: 1px solid #000; }
+    .rack-main { display: flex; align-items: center; padding: 4px; }
+    .step-sequencer { display: flex; gap: 2px; margin-left: 10px; flex: 1; }
+    .step-btn { flex: 1; height: 24px; background: #1a1a1a; border: 1px solid #333; cursor: pointer; border-radius: 2px; }
+    .step-btn.active { background: #ddd; box-shadow: 0 0 5px #fff; }
+    .step-btn:nth-child(4n+1) { background: #252525; }
+    .graph-editor { height: 0; overflow: hidden; display: flex; gap: 2px; padding: 0 4px 4px 120px; transition: height 0.2s; }
+    .graph-editor.open { height: 40px; }
+    .graph-bar { flex: 1; background: #444; align-self: flex-end; border: 1px solid #000; cursor: ns-resize; }
+    .graph-bar:hover { background: var(--accent); }
+
+    /* POPUPS */
+    .context-menu { position: fixed; background: #050b24; border: 1px solid #444; color: #eee; padding: 5px 0; border-radius: 4px; display: none; z-index: 9999; box-shadow: 0 0 15px #000; }
+    .ctx-item { padding: 5px 15px; font-size: 11px; cursor: pointer; }
+    .ctx-item:hover { background: var(--accent); color: #000; }
     
-    /* Sidechain Cable */
-    .sidechain-area { height: 20px; background: #222; display: flex; justify-content: center; align-items: center; }
-    .sidechain-knob { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #666; cursor: pointer; }
-    .sidechain-knob.active { background: var(--fl-yellow); box-shadow: 0 0 5px var(--fl-yellow); }
-
-    /* Mixer Inspector */
-    .mixer-inspector {
-      width: 200px; background: #232528; border-left: 2px solid #000; padding: 5px;
-      display: flex; flex-direction: column; gap: 2px; flex-shrink: 0;
-    }
-    .fx-slot {
-      background: #2d3033; border: 1px solid #111; color: #ccc;
-      font-size: 10px; padding: 4px; cursor: pointer; display: flex; justify-content: space-between;
-    }
-    .fx-slot:hover { background: #383b40; color: #fff; }
-    .fx-led { width: 8px; height: 8px; background: var(--fl-green); border-radius: 50%; box-shadow: 0 0 4px var(--fl-green); }
-
-    /* === PIANO ROLL === */
-    #view-piano { display: grid; grid-template-columns: 60px 1fr; grid-template-rows: 1fr 60px; height: 100%; background: #222; }
-    .piano-keys { background: #eee; overflow: hidden; position: relative; border-right: 1px solid #000; grid-row: 1; }
-    .key-white { height: 16px; background: #fff; border-bottom: 1px solid #ccc; font-size: 9px; padding-left: 2px; color: #ccc;}
-    .key-black { height: 10px; background: #000; margin-bottom: 6px; border-bottom: 1px solid #333; }
-    
-    .piano-grid {
-      grid-row: 1;
-      background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
-      background-size: 100% 16px, var(--beat-width) 100%;
-      position: relative; overflow: auto;
-    }
-    .piano-note {
-      position: absolute; height: 14px; background: var(--fl-green);
-      border: 1px solid #fff; border-radius: 2px; opacity: 0.8; cursor: e-resize;
-    }
-    .piano-note.slide::after {
-      content: '▲'; font-size: 8px; position: absolute; right: 2px; top: 0; color: #000;
-    }
-    
-    .velocity-lane {
-      grid-row: 2; grid-column: 2;
-      background: #1a1a1a; border-top: 2px solid #000;
-      position: relative;
-    }
-    .vel-bar {
-      position: absolute; bottom: 0; width: 4px; background: var(--fl-purple); opacity: 0.6;
-      border-top: 2px solid #fff;
-    }
-
-    /* === CONTEXT MENU === */
-    .context-menu {
-      position: fixed; background: #eee; color: #000; border: 1px solid #999;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.5); padding: 5px 0; z-index: 9999; font-size: 12px; display: none;
-    }
-    .ctx-item { padding: 4px 15px; cursor: pointer; }
-    .ctx-item:hover { background: #3399ff; color: #fff; }
-    
-    .knob-simple {
-      width: 18px; height: 18px; border-radius: 50%;
-      background: conic-gradient(#999 0%, #999 70%, #222 70%, #222 100%);
-      border: 1px solid #111; transform: rotate(-135deg); cursor: ns-resize;
-    }
+    .plugin-window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; background: #111; border: 1px solid #444; border-radius: 8px; z-index: 1000; box-shadow: 0 0 30px #000; display: none; flex-direction: column; }
+    .plugin-header { padding: 8px; background: #222; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; }
+    .plugin-body { padding: 20px; color: #ccc; font-size: 12px; min-height: 200px; }
 
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo-area">
-      <div class="logo-icon"></div>
-      <span>SULANDRA STUDIO 20</span>
-    </div>
-    <div class="menu-bar">FILE EDIT ADD PATTERNS VIEW OPTIONS TOOLS ?</div>
-    <div style="display:flex; gap:10px; font-size:12px; color:#aaa;">
-      <div title="CPU Load">CPU: 4%</div>
-      <div title="Memory">RAM: 204MB</div>
-    </div>
-  </header>
-
-  <section class="transport-bar">
-    <div class="transport-group">
-      <div class="mode-switch">
-        <div class="mode-opt selected" id="mode-pat" onclick="setMode('pat')">PAT</div>
-        <div class="mode-opt" id="mode-song" onclick="setMode('song')">SONG</div>
+<header>
+  <div class="header-inner">
+    <div class="brand-left">
+      <div class="brand-logo">S</div>
+      <div>
+        <div class="brand-text-main">SOUND Studio</div>
+        <div class="brand-text-sub"><span style="color:var(--accent);">AI</span> · Mix · Master</div>
       </div>
     </div>
-    <div class="transport-group">
-      <div class="fl-btn" id="btn-play" onclick="togglePlay()">▶</div>
-      <div class="fl-btn" onclick="stopPlay()">■</div>
-      <div class="fl-btn rec" id="btn-rec" oncontextmenu="showRecOptions(event)">●</div>
+    <div class="top-right">
+      <div class="session-pill">
+        <div class="session-dot"></div>
+        <span>CPU: <span id="cpu-val" style="color:var(--accent3);">4%</span></span>
+      </div>
     </div>
-    <div class="transport-group">
-      <div style="font-family:monospace; color:var(--fl-green); font-size:16px;">130.00</div>
-      <div style="font-size:10px; color:#888;">BPM</div>
+  </div>
+</header>
+
+<main>
+  <section class="icon-dock">
+    <div class="icon-row">
+      <div class="dock-icon" data-panel="browser"><span>F</span></div>
+      <div class="dock-icon active" data-panel="timeline"><span>T</span></div>
+      <div class="dock-icon" data-panel="rack"><span>R</span></div>
+      <div class="dock-icon" data-panel="mixer"><span>M</span></div>
     </div>
-    <div class="transport-group">
-      <div class="fl-btn" title="Metronome" onclick="this.classList.toggle('active')">M</div>
-      <div class="fl-btn" title="Wait for Input" onclick="this.classList.toggle('active')">W</div>
-      <div class="fl-btn" title="Countdown before recording (3..2..1)" onclick="this.classList.toggle('active')">3.2.1</div>
+    <div class="dock-icon-labels">
+      <span style="color:#4aa8ff;">Browser</span>
+      <span style="color:#ff8a7c;">Timeline</span>
+      <span style="color:#7cffc7;">Rack</span>
+      <span style="color:#ff7cf1;">Mixer</span>
     </div>
-    <div style="flex:1"></div>
-    <div style="color:var(--fl-blue); font-family:monospace; font-size:18px;">00:01:04</div>
   </section>
 
-  <div class="workspace">
-    
-    <aside class="browser-panel">
-      <div class="browser-header">
-        <span>Browser</span>
-        <span style="cursor:pointer">🔍</span>
-      </div>
-      <input type="text" class="browser-search" placeholder="Find..." onkeyup="filterBrowser(this.value)">
-      <div class="browser-content" id="browser-list">
-        [cite_start]<div class="folder-item"><span class="folder-icon">📂</span> Current Project [cite: 166]</div>
-        <div class="folder-item"><span class="folder-icon">📂</span> Recent files</div>
-        [cite_start]<div class="folder-item"><span class="folder-icon">📂</span> Plugin database [cite: 1068]</div>
-        <div style="padding-left: 15px; font-size:10px;">
-          <div class="folder-item">Effects (VST)</div>
-          <div class="folder-item">Generators (Synths)</div>
-        </div>
-        [cite_start]<div class="folder-item"><span class="folder-icon">📂</span> Packs [cite: 382]</div>
-        <div style="padding-left: 15px; font-size:10px;">
-          <div class="folder-item">Drums</div>
-          <div class="folder-item">Instruments</div>
-          <div class="folder-item">Vocals</div>
-        </div>
-        [cite_start]<div class="folder-item"><span class="folder-icon">📂</span> Recorded [cite: 73]</div>
+  <section class="main-grid">
+    <aside class="left-browser">
+      <div class="panel-header"><div class="panel-title">Device Browser</div></div>
+      <div class="browser-search"><span>🔍</span><input type="text" placeholder="Find..."></div>
+      <div class="browser-scroll">
+        <div class="browser-section-title">Current Project</div>
+        <div class="browser-item"><span>History</span></div>
+        <div class="browser-item"><span>Patterns</span></div>
+        <div class="browser-section-title">Library</div>
+        <div class="browser-item"><span>Generators</span><span>GEN</span></div>
+        <div class="browser-item"><span>Effects</span><span>FX</span></div>
+        <div class="browser-item"><span>Packs</span><span>WAV</span></div>
       </div>
     </aside>
 
-    <section class="playlist-panel">
-      <div class="playlist-toolbar">
-        <span style="font-weight:bold; font-size:11px; color: #ccc;">Playlist - Arrangement</span>
-        <div class="fl-btn" style="width:20px; height:20px;" title="Draw (P)">✏️</div>
-        <div class="fl-btn" style="width:20px; height:20px;" title="Paint (B)">🖌️</div>
-        <div class="fl-btn" style="width:20px; height:20px;" title="Slice (C)">✂️</div>
-        <div class="perf-toggle" onclick="togglePerformanceMode()">
-          [cite_start]<input type="checkbox" id="perf-check"> Performance Mode [cite: 1016]
+    <section class="center-timeline-wrap">
+      <div class="timeline-header">
+        <div class="timeline-row-top">
+          <div class="timeline-title">Arrangement</div>
+          <div class="transport-buttons">
+            <button class="transport-btn" id="btn-play">▶</button>
+            <button class="transport-btn" id="btn-stop">⏹</button>
+            <button class="transport-btn rec" id="btn-rec">●</button>
+            <button class="transport-btn" onclick="togglePerfMode()" id="btn-perf" title="Performance Mode">⚡</button>
+          </div>
+          <div class="tempo-pill">
+            <span class="tempo-value">130.0</span> BPM
+          </div>
+        </div>
+        <div class="timeline-scrollbar">
+          <div class="timeline-scroll-thumb" style="width: 20%; left: 0;"></div>
         </div>
       </div>
-      <div class="timeline-ruler" id="pl-ruler"></div>
-      <div class="tracks-area">
-        <div class="track-headers" id="pl-track-headers">
-          </div>
-        <div class="grid-canvas" id="pl-grid">
-          <div id="playhead" style="position:absolute; left:0; top:0; height:100%; width:2px; background:var(--fl-red); z-index:10;"></div>
-          
-          <div class="clip clip-pattern" style="left:0px; width:192px; top:41px;">
-            Pattern 1 (Drums)
-          </div>
 
-          <div class="clip clip-audio" style="left:192px; width:192px; top:81px;">
-            Vocals_Take1.wav
-            <svg viewBox="0 0 100 20" preserveAspectRatio="none">
-              <path d="M0,10 Q25,0 50,10 T100,10" stroke="none" />
-            </svg>
+      <div class="timeline-main">
+        <div class="track-list" id="track-list">
           </div>
-
-          <div class="clip clip-automation" style="left:0px; width:384px; top:121px;">
-            Filter Cutoff (Auto)
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-              <path d="M0,80 C30,80 30,20 60,20 S100,80 100,80" />
-            </svg>
-          </div>
-
+        <div class="timeline-grid-wrap" id="grid-wrap">
+          <div class="timeline-ruler" id="ruler"></div>
+          <div class="grid-inner" id="grid-inner">
+            <div class="playhead" id="playhead"></div>
+            </div>
         </div>
       </div>
     </section>
 
-    <section class="bottom-dock">
-      <div class="dock-tabs">
-        <div class="dock-tab active" onclick="switchDock('mixer')">Mixer (F9)</div>
-        <div class="dock-tab" onclick="switchDock('rack')">Channel Rack (F6)</div>
-        <div class="dock-tab" onclick="switchDock('piano')">Piano Roll (F7)</div>
+    <aside class="right-placeholder">
+      <h3>Project Info</h3>
+      <p>Title: Untitled</p>
+      <p>Time: 00:00:00</p>
+      <p>Active Pattern: 1</p>
+    </aside>
+  </section>
+
+  <section class="bottom-dock" id="bottom-dock">
+    <div class="bottom-tabs">
+      <div class="bottom-tab active" onclick="switchTab('mixer')">Mixer</div>
+      <div class="bottom-tab" onclick="switchTab('rack')">Channel Rack</div>
+      <div class="bottom-tab" onclick="switchTab('piano')">Piano Roll</div>
+    </div>
+    
+    <div class="bottom-panel active" id="panel-mixer">
+      <div class="mixer-strips" id="mixer-strips">
+        </div>
+    </div>
+
+    <div class="bottom-panel" id="panel-rack" style="overflow-y:auto; display:none;">
+      <div style="margin-bottom:5px; display:flex; gap:10px;">
+        <button class="transport-btn" onclick="addChannel()">+ Add</button>
+        <button class="transport-btn" onclick="toggleGraphEditor()">Graph Editor</button>
       </div>
+      <div id="rack-container"></div>
+    </div>
 
-      <div class="dock-content active" id="view-mixer">
-        <div id="mixer-scroll-area" style="display:flex; overflow-x:auto; height:100%;">
-          <div class="mixer-channel master" onclick="selectMixerTrack(0)">
-            <div class="mix-fader-area">
-              <div class="mix-fader"></div>
-              <div class="mix-meter"></div>
-            </div>
-            <div class="mix-label">Master</div>
-            <div class="sidechain-area"></div>
-          </div>
-          
-          <div id="mixer-inserts" style="display:flex;"></div>
-        </div>
-
-        <div class="mixer-inspector">
-          [cite_start]<div class="slot-header">FX Slots (Insert 1) [cite: 2212]</div>
-          [cite_start]<div class="fx-slot" onclick="alert('Loading Edison...')"><span>Edison [cite: 2634]</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>Fruity Reverb 2</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>Fruity Parametric EQ 2</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
-          
-          <div style="margin-top:auto; border-top:1px solid #444; padding-top:4px;">
-            <div style="font-size:10px; color:#888; display:flex; justify-content:space-between;">
-              <span>EQ</span>
-              [cite_start]<span>Delay Comp [cite: 2193]</span>
-            </div>
-            <div style="height:40px; background:#111; border:1px solid #333; position:relative;">
-              <div style="position:absolute; bottom:0; left:20%; width:20%; height:60%; background:#444;"></div>
-              <div style="position:absolute; bottom:0; left:50%; width:20%; height:30%; background:#444;"></div>
-            </div>
-          </div>
-        </div>
+    <div class="bottom-panel" id="panel-piano" style="display:none; position:relative;">
+      <div style="position:absolute; top:5px; right:10px; z-index:10;">
+        <button class="transport-btn" title="Slide Note / Portamento">Slide</button>
       </div>
-
-      <div class="dock-content" id="view-rack">
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px; padding:0 10px;">
-          <div style="display:flex; gap:5px;">
-            <span style="font-size:11px; font-weight:bold;">Target Mixer Track:</span>
-            <div class="display-screen" style="width:30px; font-size:11px; padding:0 2px;">--</div>
-          </div>
-          <div style="display:flex; gap:5px;">
-            [cite_start]<div class="fl-btn" style="width:80px;" onclick="addChannel()">+ Add [cite: 1067]</div>
-            [cite_start]<div class="fl-btn" style="width:40px;" onclick="toggleGraphEditor()">Graph [cite: 648]</div>
-          </div>
-        </div>
-        <div id="rack-channels"></div>
+      <div style="display:grid; grid-template-columns: 50px 1fr; height:100%; background:#222;">
+        <div id="piano-keys" style="background:#eee; border-right:1px solid #000;"></div>
+        <div id="piano-grid" style="background-image:linear-gradient(#333 1px, transparent 1px); background-size:100% 16px; position:relative;"></div>
       </div>
+    </div>
+  </section>
 
-      <div class="dock-content" id="view-piano">
-        <div style="position:absolute; top:5px; right:20px; z-index:10; display:flex; gap:5px;">
-           [cite_start]<div class="fl-btn" title="Slide Note [cite: 857]">Slide</div>
-           [cite_start]<div class="fl-btn" title="Stamp Tool [cite: 851]">Chord</div>
-        </div>
-        <div class="piano-keys" id="piano-keys"></div>
-        <div class="piano-grid" id="piano-grid"></div>
-        <div class="velocity-lane" id="piano-velocity">
-          [cite_start]<div style="position:absolute; top:0; left:0; background:#222; color:#aaa; font-size:9px; padding:2px;">Control: Velocity [cite: 648]</div>
-        </div>
-      </div>
+  <section class="hint-bar">
+    <span id="hint-text">Welcome to SOUND Studio. Press F1 for Help.</span>
+  </section>
+</main>
 
-    </section>
+<div id="rec-menu" class="context-menu">
+  <div class="ctx-item"><b>Recording Filter</b></div>
+  <div class="ctx-item">✔ Audio</div>
+  <div class="ctx-item">✔ Automation</div>
+  <div class="ctx-item">✔ Notes (Score)</div>
+  <div class="ctx-item">✔ Clips</div>
+</div>
+
+<div class="plugin-window" id="plugin-window">
+  <div class="plugin-header">
+    <span id="plugin-title">Plugin</span>
+    <button onclick="closePlugin()" style="background:red; border:none; color:white; border-radius:50%; width:20px; height:20px; cursor:pointer;">×</button>
   </div>
-
-  <div id="rec-menu" class="context-menu">
-    <div class="ctx-item"><b>Recording Filter</b></div>
-    [cite_start]<div class="ctx-item">✔ Audio [cite: 2583]</div>
-    [cite_start]<div class="ctx-item">✔ Automation [cite: 2410]</div>
-    <div class="ctx-item">✔ Notes (Score)</div>
-    <div class="ctx-item">✔ Clips</div>
-    <div style="border-top:1px solid #ccc; margin:2px 0;"></div>
-    <div class="ctx-item">Loop Recording</div>
-  </div>
+  <div class="plugin-body" id="plugin-content"></div>
+</div>
 
 <script>
   /* === STATE === */
   let isPlaying = false;
-  let showGraphEditor = false;
-  let activeMixerTrack = 0;
-  
-  /* === DATA: CHANNELS === */
-  let channels = [
-    [cite_start]{ name: "Kick", vol: 80, pan: 50, steps: [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0], cut: true }, // Cut itself [cite: 695]
-    { name: "Clap", vol: 80, pan: 50, steps: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0], cut: false },
-    { name: "Hat",  vol: 70, pan: 30, steps: [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0], cut: true },
-    { name: "Snare",vol: 80, pan: 50, steps: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0], cut: false }
+  let currentBeat = 0;
+  let tempo = 130;
+  let showGraph = false;
+  let perfMode = false;
+  let animFrame;
+
+  /* === DATA === */
+  const tracks = [
+    { id: 1, name: "Drums", color: "blue" },
+    { id: 2, name: "Bass", color: "green" },
+    { id: 3, name: "Automation", color: "purple" },
+    { id: 4, name: "Vocals", color: "pink" }
   ];
 
-  /* === INIT === */
+  const clips = [
+    { track: 1, start: 0, len: 4, name: "Pattern 1", type: "pattern", color: "blue" },
+    { track: 2, start: 4, len: 4, name: "Bassline", type: "pattern", color: "green" },
+    { track: 3, start: 0, len: 8, name: "Vol Auto", type: "automation", color: "purple" },
+    { track: 4, start: 8, len: 4, name: "Vocal_Take1", type: "audio", color: "pink" }
+  ];
+
+  const channels = [
+    { name: "Kick", steps: [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0] },
+    { name: "Snare", steps: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0] },
+    { name: "Hat", steps: [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1] }
+  ];
+
+  /* === INITIALIZATION === */
   function init() {
-    renderChannelRack();
+    renderTracks();
+    renderClips();
     renderMixer();
-    renderPlaylistHeaders();
-    renderPianoRoll();
+    renderRack();
+    renderPianoKeys();
+    setupEventListeners();
   }
 
-  /* === DOCK LOGIC === */
-  function switchDock(view) {
-    document.querySelectorAll('.dock-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.dock-content').forEach(c => c.classList.remove('active'));
+  /* === RENDERERS === */
+  function renderTracks() {
+    const list = document.getElementById('track-list');
+    const inner = document.getElementById('grid-inner');
     
-    event.target.classList.add('active');
-    document.getElementById('view-'+view).classList.add('active');
+    tracks.forEach(t => {
+      // Header
+      const head = document.createElement('div');
+      head.className = 'track-header';
+      head.innerHTML = `<div style="width:10px; height:10px; background:var(--clip-${t.color}); border-radius:50%; margin-right:5px;"></div>
+                        <span class="track-name">${t.name}</span>`;
+      list.appendChild(head);
+
+      // Grid Row
+      const row = document.createElement('div');
+      row.className = 'grid-track-row';
+      row.style.height = '40px';
+      row.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
+      row.dataset.id = t.id;
+      inner.appendChild(row);
+    });
   }
 
-  /* === TRANSPORT LOGIC === */
-  function togglePlay() {
-    isPlaying = !isPlaying;
-    const btn = document.getElementById('btn-play');
-    const head = document.getElementById('playhead');
+  function renderClips() {
+    // Clear existing dynamic clips only (keep playhead)
+    document.querySelectorAll('.clip').forEach(e => e.remove());
+    const container = document.getElementById('grid-inner');
+
+    clips.forEach(c => {
+      const el = document.createElement('div');
+      el.className = `clip clip-${c.type}`;
+      el.style.left = (c.start * 48) + 'px';
+      el.style.width = (c.len * 48) + 'px';
+      el.style.top = ((c.track - 1) * 40 + 2) + 'px';
+      el.style.background = `var(--clip-${c.color})`;
+      el.style.opacity = perfMode ? '0.6' : '1'; // Dim clips in perf mode
+      
+      // Content based on type
+      let content = `<span class="clip-label">${c.name}</span>`;
+      
+      if(c.type === 'automation') {
+        // Draw SVG curve [cite: 2538]
+        content += `<svg class="automation-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path class="automation-path" d="M0,80 C30,80 40,20 70,20 S100,80 100,80" />
+        </svg>`;
+      } else if(c.type === 'audio') {
+        // Pseudo-waveform
+        content += `<div style="position:absolute; bottom:0; width:100%; height:50%; background:rgba(0,0,0,0.3); clip-path: polygon(0 50%, 10% 0, 20% 100%, 30% 20%, 40% 80%, 50% 50%, 60% 90%, 70% 10%, 80% 70%, 90% 30%, 100% 50%, 100% 100%, 0 100%);"></div>`;
+        el.ondblclick = () => openAudioEditor(c.name); // 
+      }
+
+      el.innerHTML = content;
+      container.appendChild(el);
+    });
+  }
+
+  function renderMixer() {
+    const container = document.getElementById('mixer-strips');
+    container.innerHTML = '';
     
-    if(isPlaying) {
-      btn.classList.add('active');
-      btn.style.color = 'var(--fl-orange)';
-      // Simple animation simulation
-      head.style.transition = "left 4s linear";
-      head.style.left = "100%";
-    } else {
-      btn.classList.remove('active');
-      btn.style.color = '#bbb';
-      head.style.transition = "none";
-      // Stop animation logic would go here
+    for(let i=0; i<=10; i++) {
+      const isMaster = i===0;
+      const strip = document.createElement('div');
+      strip.className = 'mixer-strip';
+      strip.style.border = isMaster ? '1px solid #666' : '';
+      
+      strip.innerHTML = `
+        <div style="text-align:center; font-size:9px; margin-bottom:5px;">${isMaster ? 'Master' : 'Ins '+i}</div>
+        <div class="mixer-fader-shell">
+          <div class="mixer-fader-knob" style="bottom: 75%;"></div>
+        </div>
+        <div class="mixer-send-section">
+           <div class="send-knob" title="Send Amount"></div>
+           <div style="font-size:8px;">⇋</div>
+        </div>
+      `;
+      container.appendChild(strip);
     }
   }
 
-  function stopPlay() {
-    isPlaying = false;
-    document.getElementById('btn-play').classList.remove('active');
-    document.getElementById('playhead').style.transition = "none";
-    document.getElementById('playhead').style.left = "0px";
-  }
-
-  function setMode(mode) {
-    document.getElementById('mode-pat').className = mode === 'pat' ? 'mode-opt selected' : 'mode-opt';
-    document.getElementById('mode-song').className = mode === 'song' ? 'mode-opt selected' : 'mode-opt';
-  }
-
-  [cite_start]/* === CHANNEL RACK [cite: 235] === */
-  function renderChannelRack() {
-    const container = document.getElementById('rack-channels');
+  function renderRack() {
+    const container = document.getElementById('rack-container');
     container.innerHTML = '';
-    
-    channels.forEach((ch, idx) => {
+
+    channels.forEach(ch => {
       const row = document.createElement('div');
-      row.style.display = 'flex';
-      row.style.flexDirection = 'column';
+      row.className = 'rack-row';
       
-      // Main Row
-      const mainRow = document.createElement('div');
-      mainRow.className = 'rack-row';
+      // Main Controls
+      let html = `
+      <div class="rack-main">
+        <div style="width:10px; height:10px; background:#ddd; margin-right:5px; border-radius:2px;"></div>
+        <button style="background:#444; color:#ddd; border:1px solid #222; width:80px; font-size:10px; cursor:pointer;">${ch.name}</button>
+        <div class="step-sequencer">`;
       
-      // LED + Knobs
-      const controls = `
-        <div class="channel-led on" title="Mute/Solo"></div>
-        <div style="display:flex; gap:2px; margin-right:5px;">
-          <div class="knob-simple" title="Volume"></div>
-          <div class="knob-simple" title="Pan"></div>
-        </div>
-        [cite_start]<div class="channel-btn" onclick="alert('Opening Plugin: ${ch.name} [cite: 1097]')">${ch.name}</div>
-      `;
-      
-      [cite_start]// Step Sequencer Buttons [cite: 300]
-      let stepsHtml = '<div class="step-grid">';
-      for(let i=0; i<16; i++) {
-        const active = ch.steps[i] ? 'active' : '';
-        stepsHtml += `<div class="step-btn ${active}" onclick="this.classList.toggle('active')"></div>`;
+      // Steps [cite: 624]
+      for(let s=0; s<16; s++) {
+        const active = ch.steps[s] ? 'active' : '';
+        const group = s % 4 === 0 ? 'border-left:1px solid #555;' : '';
+        html += `<div class="step-btn ${active}" style="${group}" onclick="this.classList.toggle('active')"></div>`;
       }
-      stepsHtml += '</div>';
+      html += `</div></div>`;
 
-      mainRow.innerHTML = controls + stepsHtml;
-      row.appendChild(mainRow);
-
-      [cite_start]// Graph Editor (Hidden by default) [cite: 648]
-      const graphRow = document.createElement('div');
-      graphRow.className = showGraphEditor ? 'graph-editor open' : 'graph-editor';
-      
-      // 16 bars for velocity
-      let graphHtml = '';
-      for(let i=0; i<16; i++) {
-        // Random heights for demo
-        let h = ch.steps[i] ? '80%' : '20%';
-        graphHtml += `<div class="graph-bar" style="height:${h}"></div>`;
+      // Graph Editor [cite: 624] - Per step parameters
+      const display = showGraph ? 'open' : '';
+      html += `<div class="graph-editor ${display}">`;
+      for(let s=0; s<16; s++) {
+        // Random height for demo
+        let h = Math.random() * 80 + 10; 
+        html += `<div class="graph-bar" style="height:${h}%;" title="Velocity/Pitch"></div>`;
       }
-      graphRow.innerHTML = graphHtml;
-      
-      row.appendChild(graphRow);
+      html += `</div>`;
+
+      row.innerHTML = html;
       container.appendChild(row);
     });
   }
 
-  function addChannel() {
-    const name = prompt("Add Generator (e.g. Sytrus, 3xOsc, FPC):", "Sytrus");
-    if(name) {
-      channels.push({ name: name, vol: 80, pan: 50, steps: new Array(16).fill(0), cut: false });
-      renderChannelRack();
-    }
-  }
-
-  function toggleGraphEditor() {
-    showGraphEditor = !showGraphEditor;
-    renderChannelRack(); // Re-render to show/hide graphs
-  }
-
-  [cite_start]/* === MIXER [cite: 2137] === */
-  function renderMixer() {
-    const container = document.getElementById('mixer-inserts');
-    container.innerHTML = '';
-    
-    // 20 Insert Tracks
-    for(let i=1; i<=20; i++) {
-      const ch = document.createElement('div');
-      ch.className = 'mixer-channel';
-      if(i === activeMixerTrack) ch.classList.add('selected');
-      
-      ch.innerHTML = `
-        <div class="mix-fader-area">
-          <div class="mix-fader"></div>
-          <div class="mix-meter"></div>
-        </div>
-        <div class="mix-label">Insert ${i}</div>
-        <div class="sidechain-area">
-           [cite_start]<div class="sidechain-knob" title="Sidechain Send [cite: 2252]" onclick="this.classList.toggle('active')"></div>
-        </div>
-      `;
-      
-      ch.onclick = function() {
-        activeMixerTrack = i;
-        renderMixer(); // Re-render to update selection styling
-        document.querySelector('.slot-header').innerText = `FX Slots (Insert ${i})`;
-      };
-      
-      container.appendChild(ch);
-    }
-  }
-
-  function selectMixerTrack(index) {
-    activeMixerTrack = index;
-    renderMixer();
-    document.querySelector('.slot-header').innerText = index === 0 ? "FX Slots (Master)" : `FX Slots (Insert ${index})`;
-  }
-
-  /* === PLAYLIST === */
-  function renderPlaylistHeaders() {
-    const h = document.getElementById('pl-track-headers');
-    for(let i=1; i<=15; i++) {
-      const div = document.createElement('div');
-      div.className = 'track-header';
-      div.innerText = `Track ${i}`;
-      // Right click menu simulation
-      [cite_start]div.oncontextmenu = (e) => { e.preventDefault(); alert('Track options: Rename, Color, Icon... [cite: 2198]'); };
-      h.appendChild(div);
-    }
-  }
-
-  function togglePerformanceMode() {
-    const check = document.getElementById('perf-check');
-    if(check.checked) {
-      [cite_start]alert("Performance Mode Activated! [cite: 1016]\nThe playlist is now divided into trigger zones.");
-    }
-  }
-
-  [cite_start]/* === PIANO ROLL [cite: 725] === */
-  function renderPianoRoll() {
-    const keys = document.getElementById('piano-keys');
-    const grid = document.getElementById('piano-grid');
-    const vel = document.getElementById('piano-velocity');
-    
-    // Generate keys (C3 to C5 approx)
-    const notes = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-    
-    for(let i=24; i>=0; i--) { // Reverse order for top-down
-      const noteName = notes[i % 12];
-      const isBlack = noteName.includes("#");
-      
+  function renderPianoKeys() {
+    const k = document.getElementById('piano-keys');
+    const keys = ['white','black','white','black','white','white','black','white','black','white','black','white'];
+    for(let i=0; i<24; i++) { // 2 octaves
+      const type = keys[i % 12];
       const key = document.createElement('div');
-      key.className = isBlack ? 'key-black' : 'key-white';
-      if(!isBlack && (i%12 === 0)) key.innerText = "C" + (Math.floor(i/12) + 3);
-      keys.appendChild(key);
-      
-      // Grid Row
-      const row = document.createElement('div');
-      row.style.height = isBlack ? '10px' : '16px';
-      row.style.borderBottom = '1px solid #333';
-      row.style.width = '1000px'; // Arbitrary width
-      grid.appendChild(row);
+      key.style.height = type==='white' ? '16px' : '10px';
+      key.style.background = type==='white' ? '#fff' : '#000';
+      key.style.borderBottom = '1px solid #ccc';
+      if(type==='black') key.style.marginBottom = '6px';
+      k.appendChild(key);
     }
-
-    [cite_start]// Add a demo note [cite: 828]
-    const note = document.createElement('div');
-    note.className = 'piano-note';
-    note.style.top = '50px';
-    note.style.left = '48px'; // Beat 1
-    note.style.width = '96px'; // 2 beats
-    grid.appendChild(note);
-
-    [cite_start]// Add a Slide note [cite: 857]
-    const slideNote = document.createElement('div');
-    slideNote.className = 'piano-note slide';
-    slideNote.style.top = '30px'; // Higher pitch
-    slideNote.style.left = '96px'; 
-    slideNote.style.width = '48px';
-    slideNote.title = "Slide Note";
-    grid.appendChild(slideNote);
-    
-    // Velocity bars
-    const velBar = document.createElement('div');
-    velBar.className = 'vel-bar';
-    velBar.style.left = '48px';
-    velBar.style.height = '80%';
-    vel.appendChild(velBar);
   }
 
-  [cite_start]/* === BROWSER FILTER [cite: 216] === */
-  function filterBrowser(text) {
-    const items = document.querySelectorAll('.folder-item');
-    items.forEach(item => {
-      if(item.innerText.toLowerCase().includes(text.toLowerCase())) {
-        item.style.display = 'flex';
-      } else {
-        item.style.display = 'none';
-      }
+  /* === LOGIC & INTERACTION === */
+  
+  // Tab Switching
+  window.switchTab = function(id) {
+    document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.bottom-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.bottom-panel').forEach(p => p.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    const panel = document.getElementById('panel-'+id);
+    panel.style.display = (id === 'mixer' ? 'flex' : 'block'); // Mixer needs flex
+    panel.classList.add('active');
+  }
+
+  // Transport
+  const playBtn = document.getElementById('btn-play');
+  const ph = document.getElementById('playhead');
+
+  playBtn.addEventListener('click', () => {
+    if(isPlaying) {
+      isPlaying = false;
+      playBtn.classList.remove('active');
+      playBtn.style.color = '#02041b';
+      cancelAnimationFrame(animFrame);
+    } else {
+      isPlaying = true;
+      playBtn.classList.add('active');
+      playBtn.style.color = '#fff';
+      animate();
+    }
+  });
+
+  function animate() {
+    let left = parseFloat(ph.style.left || 0);
+    left += (tempo / 60) * 0.5; // Speed sim
+    if(left > 800) left = 0;
+    ph.style.left = left + 'px';
+    if(isPlaying) animFrame = requestAnimationFrame(animate);
+  }
+
+  document.getElementById('btn-stop').addEventListener('click', () => {
+    isPlaying = false;
+    playBtn.classList.remove('active');
+    ph.style.left = '0px';
+    cancelAnimationFrame(animFrame);
+  });
+
+  // Rec Context Menu 
+  const recBtn = document.getElementById('btn-rec');
+  const recMenu = document.getElementById('rec-menu');
+  
+  recBtn.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    recMenu.style.display = 'block';
+    recMenu.style.left = e.pageX + 'px';
+    recMenu.style.top = e.pageY + 'px';
+  });
+
+  window.addEventListener('click', (e) => {
+    if(!e.target.closest('#btn-rec')) recMenu.style.display = 'none';
+  });
+
+  // Graph Editor Toggle
+  window.toggleGraphEditor = function() {
+    showGraph = !showGraph;
+    renderRack();
+  }
+
+  // Performance Mode Toggle 
+  window.togglePerfMode = function() {
+    perfMode = !perfMode;
+    const btn = document.getElementById('btn-perf');
+    if(perfMode) {
+      btn.classList.add('active');
+      btn.style.color = 'white';
+      document.getElementById('hint-text').innerText = "Performance Mode: Trigger clips live!";
+    } else {
+      btn.classList.remove('active');
+      btn.style.color = '#02041b';
+      document.getElementById('hint-text').innerText = "";
+    }
+    renderClips();
+  }
+
+  // Audio Editor (Pseudo-Edison) 
+  window.openAudioEditor = function(name) {
+    const win = document.getElementById('plugin-window');
+    const title = document.getElementById('plugin-title');
+    const body = document.getElementById('plugin-content');
+    
+    title.innerText = "Wave Doctor - " + name;
+    body.innerHTML = `
+      <div style="background:#333; height:100px; width:100%; position:relative; border:1px solid #555;">
+        <svg viewBox="0 0 100 20" preserveAspectRatio="none" style="width:100%; height:100%; fill:var(--accent);">
+           <path d="M0,10 L10,2 L20,18 L30,5 L40,15 L50,10 L60,2 L70,18 L80,5 L90,15 L100,10 V20 H0 Z" />
+        </svg>
+      </div>
+      <div style="margin-top:10px; display:flex; gap:5px;">
+        <button class="transport-btn">Trim</button>
+        <button class="transport-btn">Fade In</button>
+        <button class="transport-btn">Fade Out</button>
+        <button class="transport-btn">Normalize</button>
+      </div>
+    `;
+    win.style.display = 'flex';
+  }
+
+  window.closePlugin = function() {
+    document.getElementById('plugin-window').style.display = 'none';
+  }
+
+  function setupEventListeners() {
+    // Hover hints
+    document.querySelectorAll('[data-panel]').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        document.getElementById('hint-text').innerText = "Open " + el.nextElementSibling.innerText + " Panel";
+      });
     });
   }
 
-  [cite_start]/* === RECORDING MENU [cite: 2418] === */
-  function showRecOptions(e) {
-    e.preventDefault();
-    const menu = document.getElementById('rec-menu');
-    menu.style.display = 'block';
-    menu.style.left = e.pageX + 'px';
-    menu.style.top = e.pageY + 'px';
-  }
-  
-  window.onclick = function(e) {
-    if (!e.target.matches('#btn-rec')) {
-      document.getElementById('rec-menu').style.display = 'none';
-    }
-  }
-
-  // Start
   init();
 
 </script>
