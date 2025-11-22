@@ -29,6 +29,17 @@
       --beat-width: 48px;
       --track-height: 40px;
       --beats-per-bar: 4;
+
+      /* Timeline-specific base colors (overridden by themes + custom designer) */
+      --timeline-bg: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%);
+      --timeline-grid-bg: #050822;
+      --timeline-header-bg: linear-gradient(to bottom,#091650,#050a24);
+      --timeline-ruler-bg: linear-gradient(to bottom,#091650,#050a24);
+
+      --header-bg: linear-gradient(to bottom,rgba(10,20,70,0.98),rgba(4,8,35,0.98));
+      --icon-dock-bg: linear-gradient(to right,rgba(7,17,52,0.96),rgba(7,11,45,0.98));
+      --main-grid-bg: radial-gradient(circle at 0 0,#1a2aff,#050821 55%,#010313 100%);
+      --bottom-dock-bg: radial-gradient(circle at 0 0,#2a3bff,#050a21 45%,#020419 100%);
     }
 
     * { box-sizing: border-box; }
@@ -50,7 +61,7 @@
     a { color: inherit; text-decoration: none; }
 
     header {
-      background: linear-gradient(to bottom,rgba(10,20,70,0.98),rgba(4,8,35,0.98));
+      background: var(--header-bg);
       border-bottom: 1px solid rgba(0,0,0,0.9);
       box-shadow: 0 0 18px rgba(0,0,0,0.9);
       z-index: 20;
@@ -115,6 +126,8 @@
       gap: 10px;
       font-size: 10px;
       color: var(--text-muted);
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     /* THEME SELECTOR IN HEADER */
@@ -143,6 +156,17 @@
       padding: 2px 6px;
       outline: none;
       cursor: pointer;
+    }
+    .theme-custom-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#ffd77c,#3a2605);
+      color: #02041b;
+      font-size: 10px;
+      padding: 2px 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
     }
 
     .session-pill {
@@ -176,7 +200,7 @@
     .icon-dock {
       border-radius: var(--radius);
       border: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to right,rgba(7,17,52,0.96),rgba(7,11,45,0.98));
+      background: var(--icon-dock-bg);
       box-shadow: var(--shadow-soft);
       padding: 4px 10px;
       display: flex;
@@ -239,7 +263,7 @@
       margin-top: 4px;
       border-radius: 9px;
       border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#1a2aff,#050821 55%,#010313 100%);
+      background: var(--main-grid-bg);
       box-shadow: var(--shadow-soft);
       display: grid;
       grid-template-columns: 260px minmax(0,1fr) 220px;
@@ -263,7 +287,7 @@
       min-height: 0;
     }
     .center-timeline-wrap {
-      background: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%);
+      background: var(--timeline-bg);
       display: flex;
       flex-direction: column;
       min-height: 0;
@@ -372,7 +396,7 @@
     .timeline-header {
       padding: 4px 8px 2px;
       border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to bottom,#091650,#050a24);
+      background: var(--timeline-header-bg);
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -452,6 +476,34 @@
       letter-spacing: .16em;
       font-size: 10px;
     }
+    .transport-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .mode-toggles {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      overflow: hidden;
+      background: rgba(4,8,40,0.9);
+    }
+    .mode-btn {
+      border: none;
+      padding: 2px 8px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+    }
+    .mode-btn.active {
+      background: radial-gradient(circle at 0 0,var(--accent),#050a20);
+      color: #02041b;
+    }
+
     .transport-buttons {
       display: flex;
       align-items: center;
@@ -492,7 +544,7 @@
       color: var(--text-muted);
       flex-wrap: wrap;
     }
-    .tempo-pill, .zoom-pill, .pattern-pill {
+    .tempo-pill, .zoom-pill, .pattern-pill, .record-pill {
       padding: 2px 6px;
       border-radius: 999px;
       border: 1px solid rgba(0,0,0,0.8);
@@ -524,6 +576,26 @@
       font-size: 10px;
       padding: 2px 8px;
       cursor: pointer;
+    }
+    .record-mode-label {
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 9px;
+    }
+    .rec-mode-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-muted);
+      font-size: 9px;
+      padding: 2px 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .rec-mode-btn.active {
+      background: radial-gradient(circle at 0 0,var(--accent2),#050018);
+      color: #02041b;
     }
 
     /* HORIZONTAL TIMELINE SCROLL + ZOOM BAR */
@@ -709,7 +781,7 @@
 
     .timeline-grid-wrap {
       position: relative;
-      background: #050822;
+      background: var(--timeline-grid-bg);
       overflow: auto;
     }
 
@@ -717,7 +789,7 @@
       position: sticky;
       top: 0;
       height: 22px;
-      background: linear-gradient(to bottom,#091650,#050a24);
+      background: var(--timeline-ruler-bg);
       border-bottom: 1px solid rgba(0,0,0,0.9);
       display: flex;
       align-items: flex-end;
@@ -838,7 +910,7 @@
       margin-top: 6px;
       border-radius: 9px;
       border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#2a3bff,#050a21 45%,#020419 100%);
+      background: var(--bottom-dock-bg);
       box-shadow: var(--shadow-soft);
       display: flex;
       flex-direction: column;
@@ -912,7 +984,7 @@
       flex-shrink: 0;
     }
 
-    /* ===== MIXER (FL-STUDIO STYLE) ===== */
+    /* ===== MIXER (SL SOUND LAB STYLE) ===== */
     .mixer-strips {
       flex: 1;
       min-height: 0;
@@ -1204,10 +1276,143 @@
       font-size: 11px;
     }
 
-    /* ===== THEME VARIANTS (OVERRIDE VARIABLES + SOME SURFACES) ===== */
+    /* ===== THEME DESIGNER OVERLAY ===== */
+    .theme-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,20,0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+    }
+    .theme-window {
+      width: min(720px, 95vw);
+      max-height: min(520px, 95vh);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: radial-gradient(circle at 0 0,#4152ff,#050828 40%,#020419 100%);
+      box-shadow: 0 0 40px rgba(0,0,0,0.95);
+      padding: 10px 12px 10px;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+    }
+    .theme-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .theme-window-title {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 11px;
+      color: var(--accent3);
+    }
+    .theme-window-body {
+      flex: 1;
+      min-height: 0;
+      background: rgba(4,8,40,0.95);
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.9);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .theme-form {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .theme-row {
+      display: grid;
+      grid-template-columns: 170px minmax(0,1fr);
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      font-size: 11px;
+    }
+    .theme-row label {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-muted);
+    }
+    .theme-color-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .theme-color-controls select {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+    .theme-color-controls input[type="color"] {
+      width: 32px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: transparent;
+      padding: 0;
+    }
+    .theme-color-controls input[type="text"] {
+      min-width: 70px;
+      max-width: 90px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 2px 4px;
+    }
+    .theme-window-actions {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .theme-actions-left,
+    .theme-actions-right {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .theme-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-main);
+      font-size: 11px;
+      padding: 3px 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .theme-btn.primary {
+      background: radial-gradient(circle at 0 0,#7cffc7,#041a12);
+      color: #02041b;
+    }
+    .theme-btn.save {
+      background: radial-gradient(circle at 0 0,#ffd77c,#3a2605);
+      color: #02041b;
+    }
 
-    /* FL Studio Dark style */
-    body.theme-fl-dark {
+    /* ===== THEME VARIANTS (SL SOUND LAB THEMES) ===== */
+
+    /* 1) SL Dark Lab (deep studio dark) */
+    body.theme-sl-dark-lab {
       --bg-deep: #050608;
       --bg-surface: #12151c;
       --bg-panel: #181c26;
@@ -1225,63 +1430,51 @@
       --clip-purple: #c074ff;
       --clip-pink: #ff769e;
       --clip-green: #63ff9c;
-    }
-    body.theme-fl-dark {
-      background: #101319;
-    }
-    body.theme-fl-dark header {
-      background: linear-gradient(to bottom,#252933,#181b23);
-    }
-    body.theme-fl-dark .icon-dock {
-      background: linear-gradient(to right,#1c202b,#141821);
-    }
-    body.theme-fl-dark .main-grid {
-      background: radial-gradient(circle at 0 0,#262b38,#10131c 60%,#05060a 100%);
-    }
-    body.theme-fl-dark .bottom-dock {
-      background: linear-gradient(to bottom,#262b38,#10131c);
+
+      --header-bg: linear-gradient(to bottom,#252933,#181b23);
+      --icon-dock-bg: linear-gradient(to right,#1c202b,#141821);
+      --main-grid-bg: radial-gradient(circle at 0 0,#262b38,#10131c 60%,#05060a 100%);
+      --bottom-dock-bg: linear-gradient(to bottom,#262b38,#10131c);
+
+      --timeline-bg: linear-gradient(to bottom,#151821,#0a0d15);
+      --timeline-grid-bg: #10131b;
+      --timeline-header-bg: linear-gradient(to bottom,#202534,#141821);
+      --timeline-ruler-bg: linear-gradient(to bottom,#202534,#141821);
     }
 
-    /* FL Studio Light style */
-    body.theme-fl-light {
-      --bg-deep: #d5d8e0;
-      --bg-surface: #e5e8f0;
-      --bg-panel: #f0f2f8;
-      --bg-panel-soft: #f5f7fc;
-      --border-soft: rgba(0,0,0,0.12);
-      --border-strong: rgba(60,120,220,0.9);
-      --accent: #ff9f1a;
-      --accent2: #0066ff;
-      --accent3: #ffcc33;
-      --accent4: #009688;
-      --text-main: #1d2129;
-      --text-muted: #5f6571;
-      --grid-line: rgba(90,100,120,0.22);
-      --clip-blue: #2b7cff;
-      --clip-purple: #a24bff;
-      --clip-pink: #ff4f88;
-      --clip-green: #1fbd7a;
-    }
-    body.theme-fl-light {
-      background: #e0e3ec;
-    }
-    body.theme-fl-light header {
-      background: linear-gradient(to bottom,#f0f2f8,#dde1ee);
-      box-shadow: 0 0 12px rgba(0,0,0,0.2);
-    }
-    body.theme-fl-light .icon-dock {
-      background: linear-gradient(to right,#f4f6fb,#e0e3ef);
-      box-shadow: 0 0 10px rgba(0,0,0,0.15);
-    }
-    body.theme-fl-light .main-grid {
-      background: #f2f4fb;
-    }
-    body.theme-fl-light .bottom-dock {
-      background: #eef1f9;
+    /* 2) SL Dark Gray (modern gray console, requested) */
+    body.theme-sl-dark-gray {
+      --bg-deep: #151618;
+      --bg-surface: #202326;
+      --bg-panel: #26292d;
+      --bg-panel-soft: #2c3035;
+      --border-soft: rgba(0,0,0,0.35);
+      --border-strong: rgba(140,140,160,0.9);
+      --accent: #f0b24a;
+      --accent2: #4dbfe8;
+      --accent3: #e8d47c;
+      --accent4: #9fc5ff;
+      --text-main: #f1f2f4;
+      --text-muted: #9ba0aa;
+      --grid-line: rgba(255,255,255,0.08);
+      --clip-blue: #3f7ad8;
+      --clip-purple: #a566ff;
+      --clip-pink: #f26a9e;
+      --clip-green: #4ecf98;
+
+      --header-bg: linear-gradient(to bottom,#2a2d32,#1b1d22);
+      --icon-dock-bg: linear-gradient(to right,#2a2e34,#1c1f26);
+      --main-grid-bg: linear-gradient(to bottom,#2b2f35,#17191e);
+      --bottom-dock-bg: linear-gradient(to bottom,#292d33,#181a20);
+
+      --timeline-bg: linear-gradient(to bottom,#2a2e34,#181b20);
+      --timeline-grid-bg: #22252b;
+      --timeline-header-bg: linear-gradient(to bottom,#333740,#23262c);
+      --timeline-ruler-bg: linear-gradient(to bottom,#333740,#23262c);
     }
 
-    /* Midnight Neon variation */
-    body.theme-neon {
+    /* 3) SL Midnight Neon */
+    body.theme-sl-midnight {
       --bg-deep: #020013;
       --bg-surface: #050021;
       --bg-panel: #070235;
@@ -1299,26 +1492,142 @@
       --clip-purple: #c56cff;
       --clip-pink: #ff5aa8;
       --clip-green: #2cffb2;
+
+      --header-bg: linear-gradient(to bottom,#120848,#050020);
+      --icon-dock-bg: linear-gradient(to right,#14084a,#050020);
+      --main-grid-bg: radial-gradient(circle at 0 0,#3b44ff,#050028 55%,#010012 100%);
+      --bottom-dock-bg: radial-gradient(circle at 0 0,#3b44ff,#050028 55%,#010012 100%);
+
+      --timeline-bg: radial-gradient(circle at 0 0,#3940ff,#050028 55%,#010012 100%);
+      --timeline-grid-bg: #050026;
+      --timeline-header-bg: linear-gradient(to bottom,#1b0e60,#080030);
+      --timeline-ruler-bg: linear-gradient(to bottom,#1b0e60,#080030);
     }
-    body.theme-neon {
-      background:
-        radial-gradient(circle at 0 0,#3b44ff 0,transparent 45%),
-        radial-gradient(circle at 100% 0,#ff3ccf 0,transparent 45%),
-        radial-gradient(circle at 50% 110%,#00ffc8 0,transparent 55%),
-        #020013;
+
+    /* 4) SL Aurora Sky */
+    body.theme-sl-aurora {
+      --bg-deep: #021418;
+      --bg-surface: #04242a;
+      --bg-panel: #052f37;
+      --bg-panel-soft: #073942;
+      --border-soft: rgba(144,255,226,0.25);
+      --border-strong: rgba(144,255,226,0.9);
+      --accent: #9effd8;
+      --accent2: #55f0ff;
+      --accent3: #ffe39a;
+      --accent4: #7dd3ff;
+      --text-main: #f4fffd;
+      --text-muted: #98bfc4;
+      --grid-line: rgba(144,255,226,0.24);
+      --clip-blue: #55c9ff;
+      --clip-purple: #a9a9ff;
+      --clip-pink: #ff8ab9;
+      --clip-green: #71ffc3;
+
+      --header-bg: linear-gradient(to bottom,#06373f,#02181d);
+      --icon-dock-bg: linear-gradient(to right,#053137,#021418);
+      --main-grid-bg: radial-gradient(circle at 0 0,#148ea2,#021418 55%,#010708 100%);
+      --bottom-dock-bg: linear-gradient(to bottom,#05373f,#02181d);
+
+      --timeline-bg: linear-gradient(to bottom,#063941,#02181c);
+      --timeline-grid-bg: #032227;
+      --timeline-header-bg: linear-gradient(to bottom,#084952,#03252b);
+      --timeline-ruler-bg: linear-gradient(to bottom,#084952,#03252b);
     }
-    body.theme-neon header {
-      background: linear-gradient(to bottom,#120848,#050020);
+
+    /* 5) SL Sunset Glow */
+    body.theme-sl-sunset {
+      --bg-deep: #14060c;
+      --bg-surface: #2a1320;
+      --bg-panel: #351824;
+      --bg-panel-soft: #401c29;
+      --border-soft: rgba(255,180,140,0.25);
+      --border-strong: rgba(255,162,120,0.95);
+      --accent: #ff9e64;
+      --accent2: #ff5dac;
+      --accent3: #ffd27a;
+      --accent4: #ff8bb8;
+      --text-main: #fff7f2;
+      --text-muted: #c9a3a6;
+      --grid-line: rgba(255,160,120,0.22);
+      --clip-blue: #ff9e64;
+      --clip-purple: #ff7cd2;
+      --clip-pink: #ff6c9f;
+      --clip-green: #ffc67e;
+
+      --header-bg: linear-gradient(to bottom,#3a1823,#210c14);
+      --icon-dock-bg: linear-gradient(to right,#3a1c26,#220c16);
+      --main-grid-bg: radial-gradient(circle at 0 0,#ff8354,#2a1320 60%,#130509 100%);
+      --bottom-dock-bg: linear-gradient(to bottom,#3d1b26,#200b14);
+
+      --timeline-bg: linear-gradient(to bottom,#3b1c29,#1b0b12);
+      --timeline-grid-bg: #271119;
+      --timeline-header-bg: linear-gradient(to bottom,#492131,#2a101d);
+      --timeline-ruler-bg: linear-gradient(to bottom,#492131,#2a101d);
     }
-    body.theme-neon .icon-dock {
-      background: linear-gradient(to right,#14084a,#050020);
+
+    /* 6) SL Cyber Grid */
+    body.theme-sl-cyber {
+      --bg-deep: #030812;
+      --bg-surface: #050b1c;
+      --bg-panel: #071024;
+      --bg-panel-soft: #09142c;
+      --border-soft: rgba(0,255,255,0.24);
+      --border-strong: rgba(0,255,240,0.95);
+      --accent: #00ffe6;
+      --accent2: #ff3df2;
+      --accent3: #ffef80;
+      --accent4: #79c1ff;
+      --text-main: #f4feff;
+      --text-muted: #9fd1d4;
+      --grid-line: rgba(0,255,240,0.28);
+      --clip-blue: #48c8ff;
+      --clip-purple: #d36cff;
+      --clip-pink: #ff66d6;
+      --clip-green: #5dffd6;
+
+      --header-bg: linear-gradient(to bottom,#071630,#040715);
+      --icon-dock-bg: linear-gradient(to right,#071932,#030714);
+      --main-grid-bg: radial-gradient(circle at 0 0,#193c66,#030812 60%,#010309 100%);
+      --bottom-dock-bg: radial-gradient(circle at 0 0,#193c66,#030812 60%,#010309 100%);
+
+      --timeline-bg: linear-gradient(to bottom,#091734,#040712);
+      --timeline-grid-bg: #050b1c;
+      --timeline-header-bg: linear-gradient(to bottom,#0c2142,#050a1a);
+      --timeline-ruler-bg: linear-gradient(to bottom,#0c2142,#050a1a);
     }
-    body.theme-neon .main-grid {
-      background: radial-gradient(circle at 0 0,#3b44ff,#050028 55%,#010012 100%);
+
+    /* 7) SL Vintage Console */
+    body.theme-sl-console {
+      --bg-deep: #111311;
+      --bg-surface: #191b19;
+      --bg-panel: #202221;
+      --bg-panel-soft: #242726;
+      --border-soft: rgba(180,210,180,0.18);
+      --border-strong: rgba(180,230,180,0.9);
+      --accent: #a6d47b;
+      --accent2: #ffcf64;
+      --accent3: #ffec9e;
+      --accent4: #b5e08a;
+      --text-main: #f2f5f0;
+      --text-muted: #9ca79a;
+      --grid-line: rgba(190,220,190,0.18);
+      --clip-blue: #8bd0ff;
+      --clip-purple: #c5a4ff;
+      --clip-pink: #ff92b5;
+      --clip-green: #a6e67c;
+
+      --header-bg: linear-gradient(to bottom,#242724,#171917);
+      --icon-dock-bg: linear-gradient(to right,#262925,#181b17);
+      --main-grid-bg: linear-gradient(to bottom,#252823,#151814);
+      --bottom-dock-bg: linear-gradient(to bottom,#252823,#151814);
+
+      --timeline-bg: linear-gradient(to bottom,#252924,#171a16);
+      --timeline-grid-bg: #202320;
+      --timeline-header-bg: linear-gradient(to bottom,#2f332d,#1f221e);
+      --timeline-ruler-bg: linear-gradient(to bottom,#2f332d,#1f221e);
     }
-    body.theme-neon .bottom-dock {
-      background: radial-gradient(circle at 0 0,#3b44ff,#050028 55%,#010012 100%);
-    }
+
   </style>
 </head>
 <body>
@@ -1341,10 +1650,16 @@
         <span>Theme</span>
         <select id="theme-select">
           <option value="default">Sulandra Neon (Default)</option>
-          <option value="theme-fl-dark">FL Studio Dark</option>
-          <option value="theme-fl-light">FL Studio Light</option>
-          <option value="theme-neon">Midnight Neon</option>
+          <option value="theme-sl-dark-lab">SL Dark Lab</option>
+          <option value="theme-sl-dark-gray">SL Dark Gray</option>
+          <option value="theme-sl-midnight">SL Midnight Neon</option>
+          <option value="theme-sl-aurora">SL Aurora Sky</option>
+          <option value="theme-sl-sunset">SL Sunset Glow</option>
+          <option value="theme-sl-cyber">SL Cyber Grid</option>
+          <option value="theme-sl-console">SL Vintage Console</option>
+          <option value="custom">Custom Theme (Saved)</option>
         </select>
+        <button class="theme-custom-btn" id="theme-custom-btn">Customize</button>
       </div>
       <div class="session-pill">
         <div class="session-dot"></div>
@@ -1358,22 +1673,22 @@
   <!-- TOP ICON BAR -->
   <section class="icon-dock">
     <div class="icon-row">
-      <div class="dock-icon active" data-panel="browser" title="File / Samples (browser.html later)">
+      <div class="dock-icon active" data-panel="browser" title="File / Samples Browser">
         <span>F</span>
       </div>
-      <div class="dock-icon" data-panel="rack" title="Channel Rack (rack.html later)">
+      <div class="dock-icon" data-panel="rack" title="Channel Rack">
         <span>R</span>
       </div>
-      <div class="dock-icon" data-panel="mixer" title="Mixer (mixer.html later)">
+      <div class="dock-icon" data-panel="mixer" title="Mixer">
         <span>M</span>
       </div>
-      <div class="dock-icon" data-panel="piano" title="Piano Roll (piano.html later)">
+      <div class="dock-icon" data-panel="piano" title="Piano Roll">
         <span>P</span>
       </div>
-      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX (plugins.html later)">
+      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX Panel">
         <span>X</span>
       </div>
-      <div class="dock-icon active" data-panel="timeline" title="Timeline View (timeline.html later)">
+      <div class="dock-icon active" data-panel="timeline" title="Timeline View">
         <span>T</span>
       </div>
     </div>
@@ -1404,20 +1719,20 @@
       </div>
       <div class="browser-scroll" id="browser-scroll">
         <div class="browser-section-title">Project</div>
-        <div class="browser-item"><span>Current project</span><span>.flp</span></div>
+        <div class="browser-item"><span>Current project</span><span>.slp</span></div>
         <div class="browser-item"><span>Recent files</span><span>5</span></div>
 
         <div class="browser-section-title">Generators & Instruments</div>
-        <div class="browser-item"><span>FLEX – Pads & Keys</span><span>GEN</span></div>
-        <div class="browser-item"><span>Sytrus – Leads</span><span>FM</span></div>
-        <div class="browser-item"><span>Drumaxx – Kits</span><span>DRM</span></div>
+        <div class="browser-item"><span>NebulaKeys – Pads & Keys</span><span>GEN</span></div>
+        <div class="browser-item"><span>QuantumLead – Hyper Synth</span><span>SYN</span></div>
+        <div class="browser-item"><span>PulseDrive – Drum Engine</span><span>DRM</span></div>
 
         <div class="browser-section-title">Patterns</div>
         <div id="pattern-list"></div>
 
         <div class="browser-section-title">Effect Chains</div>
-        <div class="browser-item"><span>Vocal Polished Chain</span><span>FX</span></div>
-        <div class="browser-item"><span>Mastering Glue Chain</span><span>FX</span></div>
+        <div class="browser-item"><span>Vocal Polaris Chain</span><span>FX</span></div>
+        <div class="browser-item"><span>Master Halo Chain</span><span>FX</span></div>
       </div>
     </aside>
 
@@ -1447,7 +1762,15 @@
         </div>
 
         <div class="timeline-row-top">
-          <div class="timeline-title">Playlist · Arrangement A (Main)</div>
+          <div class="transport-left">
+            <div class="timeline-title" id="timeline-title">
+              Playlist · Arrangement A (Song Mode)
+            </div>
+            <div class="mode-toggles">
+              <button class="mode-btn active" id="mode-song">Song</button>
+              <button class="mode-btn" id="mode-pattern">Pattern</button>
+            </div>
+          </div>
           <div class="transport-buttons">
             <button class="transport-btn" id="btn-back">⏮</button>
             <button class="transport-btn" id="btn-play">▶</button>
@@ -1471,7 +1794,12 @@
             <select id="pattern-select" class="pattern-select"></select>
             <button id="new-pattern-btn">+ New</button>
           </div>
-          <div>Double-click empty grid to place active pattern · drag clips to move / resize.</div>
+          <div class="record-pill">
+            <span class="record-mode-label">Record</span>
+            <button class="rec-mode-btn active" data-mode="playlist" id="rec-mode-playlist">Playlist</button>
+            <button class="rec-mode-btn" data-mode="step" id="rec-mode-step">Step</button>
+          </div>
+          <div>Double-click empty grid to place active pattern · Pattern mode loops inside one pattern, Song mode plays the full timeline.</div>
         </div>
         <div class="timeline-scrollbar">
           <div class="timeline-scroll-thumb" id="timeline-thumb">
@@ -1517,15 +1845,15 @@
     <!-- RIGHT PLACEHOLDER / PLUGINS -->
     <aside class="right-placeholder dock-panel" data-panel-id="plugins">
       <h3>Plugin Slots</h3>
-      <p>Each slot below can later be a dedicated <b>plugin.html</b> or similar:</p>
+      <p>Each slot below can later be a dedicated plugin window or an embedded HTML panel:</p>
       <div class="colored-list">
-        <span>Slot 1 – Vocal Chain</span>
-        <span>Slot 2 – Drum Bus</span>
-        <span>Slot 3 – Master FX</span>
-        <span>Slot 4 – Creative FX</span>
+        <span>Slot 1 – Vocal Orbit Chain</span>
+        <span>Slot 2 – Drum Gravity Bus</span>
+        <span>Slot 3 – Master Halo FX</span>
+        <span>Slot 4 – Creative Warp FX</span>
       </div>
-      <p style="margin-top:8px;">Click the <span style="color:#ff7cf1;">X</span> icon at the top row to hide/show this panel.</p>
-      <p class="panel-note">Later you can replace this block with an &lt;iframe src="plugins.html"&gt; or inject content from your AI engine.</p>
+      <p style="margin-top:8px;">Click the colored dots on each track to open track-level plugin windows.</p>
+      <p class="panel-note">Later you can replace this block with an &lt;iframe&gt; or dynamically injected content from your AI engine.</p>
     </aside>
   </section>
 
@@ -1541,24 +1869,24 @@
       <div class="bottom-panel active" id="bottom-mixer">
         <h4>Mixer</h4>
         <div id="mixer-strips" class="mixer-strips"></div>
-        <p class="panel-note">Tracks above are mirrored as mixer channels here · resize this panel and the strips stretch like FL Studio.</p>
+        <p class="panel-note">Tracks above are mirrored as mixer channels here · resize this panel and the strips stretch like a real console.</p>
       </div>
       <div class="bottom-panel" id="bottom-piano">
-        <h4>Piano Roll (piano.html placeholder)</h4>
+        <h4>Piano Roll</h4>
         <p>Design a full piano roll editor in a separate <code>piano.html</code> and plug it in here.</p>
-        <p class="panel-note">For now this is only a layout slot to make sure your DAW navigation feels complete.</p>
+        <p class="panel-note">For now this is only a layout slot to keep your DAW navigation feeling complete.</p>
       </div>
       <div class="bottom-panel" id="bottom-rack">
-        <h4>Channel Rack Details (rack.html placeholder)</h4>
-        <p>Use this area for deeper rack controls, generator previews, AI preset suggestions, etc.</p>
-        <p class="panel-note">The top <span style="color:#7cffc7;">R</span> icon can also be wired to jump into a dedicated rack page.</p>
+        <h4>Channel Rack Details</h4>
+        <p>Use this area for deeper rack controls, generator previews, AI preset suggestions, step sequencing tools, etc.</p>
+        <p class="panel-note">Record mode <b>Step</b> is intended for channel rack style step-input, while <b>Playlist</b> mode is for live timeline recording.</p>
       </div>
     </div>
   </section>
 
   <section class="hint-bar">
-    <span>Tip: Spacebar toggles play / pause without resetting the playhead · right-click + drag on the bar numbers to set a loop region.</span>
-    <span>Use + / – keys or the slider handles to zoom the timeline · use the right-side arrows or wheel to scroll tracks up / down.</span>
+    <span>Tip: Spacebar toggles play / pause without resetting the playhead · right-click + drag on the bar numbers to set a loop region in Song mode.</span>
+    <span>Use + / – keys or the slider handles to zoom the timeline · Pattern mode loops around the active pattern for quick step-sequencer style preview.</span>
   </section>
 </main>
 
@@ -1594,6 +1922,31 @@
   </div>
 </div>
 
+<!-- THEME DESIGNER POPUP -->
+<div class="theme-overlay" id="theme-overlay">
+  <div class="theme-window">
+    <div class="theme-window-header">
+      <div class="theme-window-title">Sound LAB Theme Designer</div>
+      <button class="theme-btn" id="theme-close-btn">Close</button>
+    </div>
+    <div class="theme-window-body">
+      <div class="theme-form" id="theme-form">
+        <!-- rows injected by JS -->
+      </div>
+      <div class="theme-window-actions">
+        <div class="theme-actions-left">
+          <button class="theme-btn" id="theme-reset-btn">Reset Preview</button>
+          <span style="font-size:10px;color:var(--text-muted);">Pick quick colors from the dropdown or use the full spectrum picker for custom shades.</span>
+        </div>
+        <div class="theme-actions-right">
+          <button class="theme-btn primary" id="theme-preview-btn">Apply (Preview)</button>
+          <button class="theme-btn save" id="theme-save-btn">Save & Use</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   /* ========= BASIC DATA ========= */
   const BEATS_PER_BAR = 4;
@@ -1612,7 +1965,6 @@
 
   // playback
   let tempo = 130;
-  let baseSongBpm = tempo;
   let isPlaying = false;
   let playheadBeat = 0;
   let playStartTime = 0;
@@ -1639,30 +1991,117 @@
   let bottomVisible = false;
   let currentBottomPanelKey = 'mixer';
 
+  // mode: 'song' or 'pattern'
+  let playMode = 'song';
+
+  // record mode: 'playlist' or 'step'
+  let recordMode = 'playlist';
+
   // THEME HANDLING
-  const THEME_CLASS_LIST = ['theme-fl-dark','theme-fl-light','theme-neon'];
+  const THEME_CLASS_LIST = [
+    'theme-sl-dark-lab',
+    'theme-sl-dark-gray',
+    'theme-sl-midnight',
+    'theme-sl-aurora',
+    'theme-sl-sunset',
+    'theme-sl-cyber',
+    'theme-sl-console'
+  ];
   const THEME_STORAGE_KEY = 'sulandra_sound_theme';
+  const CUSTOM_THEME_KEY = 'sulandra_sound_custom_theme';
+
+  const CSS_VAR_KEYS = [
+    '--bg-deep','--bg-surface','--bg-panel','--bg-panel-soft',
+    '--border-soft','--border-strong',
+    '--accent','--accent2','--accent3','--accent4',
+    '--text-main','--text-muted',
+    '--grid-line',
+    '--clip-blue','--clip-purple','--clip-pink','--clip-green',
+    '--timeline-bg','--timeline-grid-bg','--timeline-header-bg','--timeline-ruler-bg',
+    '--header-bg','--icon-dock-bg','--main-grid-bg','--bottom-dock-bg'
+  ];
+
   const themeSelect = document.getElementById('theme-select');
+  const themeCustomBtn = document.getElementById('theme-custom-btn');
+
+  let activeThemeName = 'default';
+
+  function resetCustomVariables() {
+    CSS_VAR_KEYS.forEach(v => document.documentElement.style.removeProperty(v));
+  }
+
+  function applyCustomTheme(vars) {
+    resetCustomVariables();
+    document.body.classList.remove(...THEME_CLASS_LIST);
+    Object.keys(vars).forEach(k => {
+      if (CSS_VAR_KEYS.includes(k)) {
+        document.documentElement.style.setProperty(k, vars[k]);
+      }
+    });
+    activeThemeName = 'custom';
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, 'custom');
+      localStorage.setItem(CUSTOM_THEME_KEY, JSON.stringify(vars));
+    } catch (e) {}
+    if (themeSelect && themeSelect.value !== 'custom') {
+      themeSelect.value = 'custom';
+    }
+  }
+
+  function loadCustomTheme() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_THEME_KEY);
+      if (!raw) return false;
+      const vars = JSON.parse(raw);
+      applyCustomTheme(vars);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   function setTheme(themeName) {
-    const theme = themeName || 'default';
+    if (!themeName) themeName = 'default';
+
+    if (themeName === 'custom') {
+      if (!loadCustomTheme()) {
+        openThemeDesigner();
+      }
+      return;
+    }
+
+    resetCustomVariables();
     document.body.classList.remove(...THEME_CLASS_LIST);
-    if (theme !== 'default') {
-      document.body.classList.add(theme);
+
+    if (themeName !== 'default' && THEME_CLASS_LIST.includes(themeName)) {
+      document.body.classList.add(themeName);
     }
-    if (themeSelect && themeSelect.value !== theme) {
-      themeSelect.value = theme;
-    }
+
+    activeThemeName = themeName;
     try {
-      localStorage.setItem( THEME_STORAGE_KEY, theme );
-    } catch (e) {
-      // ignore storage errors
+      localStorage.setItem(THEME_STORAGE_KEY, themeName);
+    } catch (e) {}
+
+    if (themeSelect) {
+      if (themeName === 'default') themeSelect.value = 'default';
+      else if (THEME_CLASS_LIST.includes(themeName)) themeSelect.value = themeName;
     }
   }
 
   if (themeSelect) {
     themeSelect.addEventListener('change', () => {
-      setTheme(themeSelect.value);
+      const val = themeSelect.value;
+      if (val === 'custom') {
+        setTheme('custom');
+      } else {
+        setTheme(val);
+      }
+    });
+  }
+
+  if (themeCustomBtn) {
+    themeCustomBtn.addEventListener('click', () => {
+      openThemeDesigner();
     });
   }
 
@@ -1695,6 +2134,13 @@
   const metronomeBtn = document.getElementById('btn-metronome');
   const tempoDisplay = document.getElementById('tempo-value');
 
+  const modeSongBtn = document.getElementById('mode-song');
+  const modePatternBtn = document.getElementById('mode-pattern');
+  const timelineTitleEl = document.getElementById('timeline-title');
+
+  const recModePlaylistBtn = document.getElementById('rec-mode-playlist');
+  const recModeStepBtn = document.getElementById('rec-mode-step');
+
   const bottomDock = document.getElementById('bottom-dock');
   const bottomHandle = document.getElementById('bottom-resize');
   const DEFAULT_BOTTOM_HEIGHT = 220;
@@ -1725,6 +2171,44 @@
   const trackTypeMenu = document.getElementById('track-type-menu');
   let activeTypeTrackId = null;
 
+  const themeOverlay = document.getElementById('theme-overlay');
+  const themeFormEl = document.getElementById('theme-form');
+  const themeCloseBtn = document.getElementById('theme-close-btn');
+  const themeResetBtn = document.getElementById('theme-reset-btn');
+  const themePreviewBtn = document.getElementById('theme-preview-btn');
+  const themeSaveBtn = document.getElementById('theme-save-btn');
+
+  const THEME_FIELDS = [
+    { var: '--bg-deep', label: 'Global Background' },
+    { var: '--bg-panel', label: 'Panels / Sidebars' },
+    { var: '--timeline-bg', label: 'Timeline Background' },
+    { var: '--timeline-grid-bg', label: 'Timeline Grid' },
+    { var: '--timeline-header-bg', label: 'Timeline Header' },
+    { var: '--timeline-ruler-bg', label: 'Timeline Ruler' },
+    { var: '--accent', label: 'Primary Accent' },
+    { var: '--accent2', label: 'Secondary Accent' },
+    { var: '--accent3', label: 'Highlight Accent' },
+    { var: '--accent4', label: 'Header Accent' },
+    { var: '--text-main', label: 'Main Text' },
+    { var: '--text-muted', label: 'Muted Text' },
+    { var: '--grid-line', label: 'Grid Lines' },
+    { var: '--clip-blue', label: 'Clip Color A' },
+    { var: '--clip-purple', label: 'Clip Color B' },
+    { var: '--clip-pink', label: 'Clip Color C' },
+    { var: '--clip-green', label: 'Clip Color D' }
+  ];
+  const QUICK_COLORS = [
+    { name: 'Mint Neon', value: '#7cffc7' },
+    { name: 'Electric Blue', value: '#4aa8ff' },
+    { name: 'Hot Pink', value: '#ff5aa8' },
+    { name: 'Sunset Gold', value: '#ffd77c' },
+    { name: 'Deep Violet', value: '#5a2dff' },
+    { name: 'Aqua Cyan', value: '#00e0ff' },
+    { name: 'Soft Gray', value: '#808080' },
+    { name: 'Custom…', value: 'custom' }
+  ];
+  const themeFieldControls = {}; // varName -> { colorInput, textInput }
+
   /* ========= PLUGIN POPUP ========= */
   function openPluginWindow(title, descriptionHtml) {
     pluginTitleEl.textContent = title;
@@ -1737,6 +2221,147 @@
   pluginCloseBtn.addEventListener('click', closePluginWindow);
   pluginOverlay.addEventListener('click', (e) => {
     if (e.target === pluginOverlay) closePluginWindow();
+  });
+
+  /* ========= THEME DESIGNER ========= */
+  function ensureThemeFormBuilt() {
+    if (!themeFormEl || themeFormEl.children.length > 0) return;
+    const cs = getComputedStyle(document.documentElement);
+
+    THEME_FIELDS.forEach(field => {
+      const row = document.createElement('div');
+      row.className = 'theme-row';
+
+      const label = document.createElement('label');
+      label.textContent = field.label;
+
+      const controls = document.createElement('div');
+      controls.className = 'theme-color-controls';
+
+      const select = document.createElement('select');
+      QUICK_COLORS.forEach(q => {
+        const opt = document.createElement('option');
+        opt.value = q.value;
+        opt.textContent = q.name;
+        select.appendChild(opt);
+      });
+      select.value = 'custom';
+
+      const colorInput = document.createElement('input');
+      colorInput.type = 'color';
+
+      const textInput = document.createElement('input');
+      textInput.type = 'text';
+      textInput.maxLength = 9;
+
+      let currentValue = cs.getPropertyValue(field.var).trim();
+      if (!currentValue || !currentValue.startsWith('#')) {
+        currentValue = '#ffffff';
+      }
+      colorInput.value = currentValue;
+      textInput.value = currentValue;
+
+      function applyColor(value) {
+        if (!value) return;
+        if (!value.startsWith('#')) {
+          if (/^[0-9a-fA-F]{6}$/.test(value)) value = '#' + value;
+          else return;
+        }
+        colorInput.value = value;
+        textInput.value = value;
+        document.documentElement.style.setProperty(field.var, value);
+      }
+
+      select.addEventListener('change', () => {
+        const v = select.value;
+        if (v === 'custom') {
+          colorInput.focus();
+        } else {
+          applyColor(v);
+        }
+      });
+
+      colorInput.addEventListener('input', () => {
+        applyColor(colorInput.value);
+      });
+
+      textInput.addEventListener('change', () => {
+        applyColor(textInput.value.trim());
+      });
+
+      controls.appendChild(select);
+      controls.appendChild(colorInput);
+      controls.appendChild(textInput);
+
+      row.appendChild(label);
+      row.appendChild(controls);
+      themeFormEl.appendChild(row);
+
+      themeFieldControls[field.var] = { colorInput, textInput };
+    });
+  }
+
+  function collectCurrentThemeVarsFromDesigner() {
+    const vars = {};
+    THEME_FIELDS.forEach(field => {
+      const controls = themeFieldControls[field.var];
+      if (!controls) return;
+      let val = controls.colorInput.value || controls.textInput.value;
+      if (!val) return;
+      if (!val.startsWith('#') && /^[0-9a-fA-F]{6}$/.test(val)) {
+        val = '#' + val;
+      }
+      vars[field.var] = val;
+    });
+    return vars;
+  }
+
+  function openThemeDesigner() {
+    ensureThemeFormBuilt();
+
+    const cs = getComputedStyle(document.documentElement);
+    THEME_FIELDS.forEach(field => {
+      const controls = themeFieldControls[field.var];
+      if (!controls) return;
+      let currentValue = cs.getPropertyValue(field.var).trim();
+      if (!currentValue || !currentValue.startsWith('#')) {
+        currentValue = '#ffffff';
+      }
+      controls.colorInput.value = currentValue;
+      controls.textInput.value = currentValue;
+    });
+
+    themeOverlay.style.display = 'flex';
+  }
+
+  function closeThemeDesigner() {
+    themeOverlay.style.display = 'none';
+  }
+
+  themeOverlay.addEventListener('click', (e) => {
+    if (e.target === themeOverlay) closeThemeDesigner();
+  });
+  themeCloseBtn.addEventListener('click', closeThemeDesigner);
+
+  themeResetBtn.addEventListener('click', () => {
+    if (activeThemeName === 'custom') {
+      loadCustomTheme();
+    } else {
+      setTheme(activeThemeName || 'default');
+    }
+  });
+
+  themePreviewBtn.addEventListener('click', () => {
+    const vars = collectCurrentThemeVarsFromDesigner();
+    Object.keys(vars).forEach(k => {
+      document.documentElement.style.setProperty(k, vars[k]);
+    });
+  });
+
+  themeSaveBtn.addEventListener('click', () => {
+    const vars = collectCurrentThemeVarsFromDesigner();
+    applyCustomTheme(vars);
+    closeThemeDesigner();
   });
 
   /* ========= RULER & GRID ========= */
@@ -1770,7 +2395,7 @@
   /* ========= PATTERNS ========= */
   function addPattern(name, color) {
     const id = nextPatternId++;
-    patterns.push({ id, name, color });
+    patterns.push({ id, name, color, lengthBeats: 4 });
     if (!currentPatternId) currentPatternId = id;
     renderPatterns();
     return id;
@@ -1806,6 +2431,7 @@
       item.appendChild(right);
       item.addEventListener('click', () => {
         currentPatternId = p.id;
+        patternSelect.value = currentPatternId;
         renderPatterns();
       });
       patternListEl.appendChild(item);
@@ -1822,7 +2448,10 @@
     if (!name) return;
     const colors = ['blue','green','purple','pink'];
     const color = colors[patterns.length % colors.length];
-    addPattern(name, color);
+    const pId = addPattern(name, color);
+    currentPatternId = pId;
+    patternSelect.value = pId;
+    renderPatterns();
   });
 
   /* ========= TRACKS ========= */
@@ -1864,13 +2493,12 @@
       dot.addEventListener('dblclick', () => {
         openPluginWindow(
           `Track Plugin – ${t.name}`,
-          `<p>This is the future plugin window for <b>${t.name}</b>.</p>
-           <p>Later you can load <code>track-${t.id}-plugin.html</code> or a dynamic UI here.</p>
+          `<p>Future plugin window for <b>${t.name}</b>.</p>
+           <p>Later you can load a track plugin UI here (EQ, compressor, reverb, sends).</p>
            <p>Ideas:</p>
            <ul>
-             <li>Track EQ, compressor, reverb chain</li>
-             <li>AI suggestions for presets per genre</li>
-             <li>Routing &amp; send controls</li>
+             <li>AI-assisted EQ suggestions per track</li>
+             <li>Preset browser tied to genre &amp; tempo</li>
            </ul>`
         );
       });
@@ -2163,7 +2791,7 @@
 
       el.addEventListener('dblclick', () => {
         const patternDesc = c.patternId
-          ? `<p>This clip references <b>Pattern ${c.patternId}</b>. Later you can open a pattern-specific editor here.</p>`
+          ? `<p>This clip references <b>Pattern ${c.patternId}</b>. In Pattern mode, playback loops within this pattern range.</p>`
           : `<p>This is a free audio / MIDI clip (no specific pattern bound yet).</p>`;
         openPluginWindow(
           `Clip Plugin – ${c.label}`,
@@ -2295,7 +2923,7 @@
     let beatFromZero = (x - GRID_LEFT_OFFSET) / beatWidth;
     if (beatFromZero < 0) beatFromZero = 0;
     const snappedBeat = Math.round(beatFromZero);
-    const lengthBeats = 4;
+    const lengthBeats = pattern.lengthBeats || 4;
     createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
   });
 
@@ -2438,7 +3066,7 @@
 
   window.addEventListener('mouseup', () => { thumbResizeMode = null; });
 
-  /* ========= PLAYBACK ========= */
+  /* ========= PLAYBACK & MODES ========= */
   function bpmToSecPerBeat(bpm) { return 60 / bpm; }
 
   function formatTimeFromBeats(beats, bpm) {
@@ -2478,7 +3106,7 @@
     const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
     playheadEl.style.left = x + 'px';
 
-    if (autoScroll) {
+    if (autoScroll && playMode === 'song') {
       const marginLeft = 50;
       const marginRight = 100;
       const viewLeft = timelineScroll.scrollLeft;
@@ -2499,17 +3127,25 @@
     const elapsedSec = (ts - playStartTime) / 1000;
     const secPerBeat = bpmToSecPerBeat(tempo);
     const elapsedBeats = elapsedSec / secPerBeat;
-    let currentBeat = playheadBeatAtStart + elapsedBeats;
 
-    if (loopActive && loopEndBeat > loopStartBeat) {
-      if (currentBeat >= loopEndBeat) {
-        currentBeat = loopStartBeat;
-        playheadBeatAtStart = loopStartBeat;
-        playStartTime = ts;
+    if (playMode === 'pattern' && currentPatternId) {
+      const pattern = patterns.find(p => p.id === currentPatternId);
+      const patternLength = pattern ? (pattern.lengthBeats || 4) : 4;
+      let localBeat = (playheadBeatAtStart + elapsedBeats) % patternLength;
+      if (localBeat < 0) localBeat += patternLength;
+      playheadBeat = localBeat;
+    } else {
+      let currentBeat = playheadBeatAtStart + elapsedBeats;
+      if (loopActive && loopEndBeat > loopStartBeat) {
+        if (currentBeat >= loopEndBeat) {
+          currentBeat = loopStartBeat;
+          playheadBeatAtStart = loopStartBeat;
+          playStartTime = ts;
+        }
       }
+      playheadBeat = Math.max(0, currentBeat);
     }
 
-    playheadBeat = Math.max(0, currentBeat);
     updatePlayheadPosition(true);
     updateScreenDisplay(ts);
     requestAnimationFrame(playLoop);
@@ -2548,7 +3184,7 @@
 
   recBtn.addEventListener('click', () => {
     recBtn.classList.toggle('active');
-    alert('Later you can connect this to Web Audio + getUserMedia to record into tracks.');
+    alert(`Record mode is set to "${recordMode.toUpperCase()}". Later this will control whether we capture into the Playlist or into a step-style rack.`);
   });
 
   metronomeBtn.addEventListener('click', () => {
@@ -2585,6 +3221,41 @@
     }
   });
 
+  /* ========= MODE TOGGLES ========= */
+  function updateModeUI() {
+    if (playMode === 'song') {
+      modeSongBtn.classList.add('active');
+      modePatternBtn.classList.remove('active');
+      timelineTitleEl.textContent = 'Playlist · Arrangement A (Song Mode)';
+    } else {
+      modeSongBtn.classList.remove('active');
+      modePatternBtn.classList.add('active');
+      const pattern = patterns.find(p => p.id === currentPatternId);
+      const pName = pattern ? pattern.name : 'No Pattern Selected';
+      timelineTitleEl.textContent = `Pattern Mode · ${pName}`;
+    }
+  }
+
+  modeSongBtn.addEventListener('click', () => {
+    playMode = 'song';
+    updateModeUI();
+  });
+  modePatternBtn.addEventListener('click', () => {
+    playMode = 'pattern';
+    updateModeUI();
+  });
+
+  recModePlaylistBtn.addEventListener('click', () => {
+    recordMode = 'playlist';
+    recModePlaylistBtn.classList.add('active');
+    recModeStepBtn.classList.remove('active');
+  });
+  recModeStepBtn.addEventListener('click', () => {
+    recordMode = 'step';
+    recModeStepBtn.classList.add('active');
+    recModePlaylistBtn.classList.remove('active');
+  });
+
   /* ========= LOOP SELECTION ========= */
   function clientXToBeat(clientX) {
     const rect = timelineScroll.getBoundingClientRect();
@@ -2595,7 +3266,7 @@
   }
 
   function updateLoopRegion() {
-    if (!loopActive && !loopSelecting) {
+    if ((!loopActive && !loopSelecting) || playMode === 'pattern') {
       loopRegionEl.style.display = 'none';
       return;
     }
@@ -2615,6 +3286,7 @@
 
   rulerEl.addEventListener('mousedown', (e) => {
     if (e.button !== 2) return;
+    if (playMode === 'pattern') return; // loop region not used in pattern mode
     e.preventDefault();
     const beat = clientXToBeat(e.clientX);
     loopSelecting = true;
@@ -2916,13 +3588,16 @@
     updateGridSizes();
     refreshMainGridLayout();
 
-    // Apply stored theme (or default)
     let savedTheme = 'default';
     try {
-      const fromStorage = localStorage.getItem( THEME_STORAGE_KEY );
+      const fromStorage = localStorage.getItem(THEME_STORAGE_KEY);
       if (fromStorage) savedTheme = fromStorage;
     } catch (e) {}
-    setTheme(savedTheme);
+    if (savedTheme === 'custom') {
+      setTheme('custom');
+    } else {
+      setTheme(savedTheme);
+    }
 
     bottomDock.style.display = 'none';
     bottomVisible = false;
@@ -2950,6 +3625,7 @@
     playheadBeat = 0;
     tempoDisplay.textContent = tempo.toFixed(1);
     screenKeyEl.textContent = songKey;
+    updateModeUI();
     updatePlayheadPosition(false);
     updateVerticalThumb();
     updateHorizontalThumb();
