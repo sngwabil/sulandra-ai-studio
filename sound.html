@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     /* =========================================
-       CSS STYLING (UNCHANGED)
+       CORE VARIABLES & BASICS (UNCHANGED)
        ========================================= */
     :root {
       --bg-deep: #020419;
@@ -22,12 +22,6 @@
       --text-main: #f7fbff;
       --text-muted: #9cb3ff;
       --grid-line: rgba(167,194,255,0.18);
-      --clip-blue: #3d7cff;
-      --clip-purple: #a96cff;
-      --clip-pink: #ff6ca4;
-      --clip-green: #4dffbb;
-      --radius: 7px;
-      --shadow-soft: 0 0 32px rgba(0,0,0,0.85);
       --beat-width: 48px;
       --track-height: 40px;
       --beats-per-bar: 4;
@@ -52,6 +46,9 @@
 
     a { color: inherit; text-decoration: none; }
 
+    /* =========================================
+       HEADER & NAV
+       ========================================= */
     header {
       background: linear-gradient(to bottom,rgba(10,20,70,0.98),rgba(4,8,35,0.98));
       border-bottom: 1px solid rgba(0,0,0,0.9);
@@ -227,6 +224,7 @@
       .left-browser { display: none; }
     }
 
+    /* ===== LEFT BROWSER ===== */
     .left-browser {
       background: linear-gradient(to bottom,#050b2a,#020319);
       border-right: 1px solid #000;
@@ -234,22 +232,6 @@
       flex-direction: column;
       min-height: 0;
     }
-    .center-timeline-wrap {
-      background: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%);
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      border-right: 1px solid #000;
-    }
-    .right-placeholder {
-      background: linear-gradient(to bottom,#050b2a,#020319);
-      border-left: 1px solid #000;
-      padding: 6px 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    /* ===== LEFT BROWSER ===== */
     .panel-header {
       padding: 4px 8px;
       border-bottom: 1px solid rgba(0,0,0,0.9);
@@ -265,851 +247,249 @@
       font-size: 10px;
       color: var(--accent4);
     }
-    .panel-tabs {
-      display: flex;
-      gap: 4px;
-      font-size: 10px;
-    }
+    .panel-tabs { display: flex; gap: 4px; font-size: 10px; }
     .panel-tab {
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: #050b2a;
-      color: var(--text-muted);
-      cursor: pointer;
+      padding: 2px 6px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.8);
+      background: #050b2a; color: var(--text-muted); cursor: pointer;
     }
-    .panel-tab.active {
-      border-color: var(--border-strong);
-      color: var(--accent);
-    }
+    .panel-tab.active { border-color: var(--border-strong); color: var(--accent); }
 
     .browser-search {
-      padding: 4px 8px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #050b26;
-      font-size: 10px;
+      padding: 4px 8px; border-bottom: 1px solid rgba(0,0,0,0.9);
+      display: flex; align-items: center; gap: 6px; background: #050b26; font-size: 10px;
     }
     .browser-search input {
-      flex: 1;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: #02041b;
-      color: var(--text-main);
-      font-size: 10px;
-      padding: 3px 8px;
+      flex: 1; border-radius: 999px; border: 1px solid rgba(0,0,0,0.8);
+      background: #02041b; color: var(--text-main); font-size: 10px; padding: 3px 8px;
     }
     .browser-scroll {
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      padding: 6px 8px 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-      scrollbar-width: thin;
+      flex: 1; min-height: 0; overflow-y: auto; padding: 6px 8px 10px;
+      font-size: 11px; color: var(--text-muted); scrollbar-width: thin;
     }
     .browser-section-title {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: .14em;
-      color: #7cbeff;
-      margin: 6px 0 2px;
+      font-size: 9px; text-transform: uppercase; letter-spacing: .14em;
+      color: #7cbeff; margin: 6px 0 2px;
     }
     .browser-item {
-      padding: 3px 4px;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 3px 4px; border-radius: 4px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .browser-item:hover {
-      background: rgba(124,190,255,0.15);
-    }
-    .browser-item span:last-child {
-      font-size: 9px;
-      color: #ffd77c;
-    }
-    .pattern-item {
-      border-left: 3px solid transparent;
-    }
-    .pattern-item.active {
-      border-left-color: var(--accent3);
-      background: rgba(255,215,124,0.1);
-    }
+    .browser-item:hover { background: rgba(124,190,255,0.15); }
+    .browser-item span:last-child { font-size: 9px; color: #ffd77c; }
 
-    /* ===== TIMELINE HEADER + DISPLAY ===== */
+    /* ===== TIMELINE AREA ===== */
+    .center-timeline-wrap {
+      background: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%);
+      display: flex; flex-direction: column; min-height: 0; border-right: 1px solid #000;
+    }
     .timeline-header {
-      padding: 4px 8px 2px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
+      padding: 4px 8px 2px; border-bottom: 1px solid rgba(0,0,0,0.9);
       background: linear-gradient(to bottom,#091650,#050a24);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 11px;
+      display: flex; flex-direction: column; gap: 4px; font-size: 11px;
     }
-
     .timeline-screen {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 4px 0 6px;
-      background: #02030f;
+      display: flex; justify-content: center; align-items: center; padding: 4px 0 6px; background: #02030f;
     }
     .screen-grid {
-      display: flex;
-      gap: 6px;
-      max-width: 720px;
-      width: 100%;
-      justify-content: center;
-      padding: 4px 6px;
-      border-radius: 8px;
-      background: #02030f;
+      display: flex; gap: 6px; max-width: 720px; width: 100%; justify-content: center;
+      padding: 4px 6px; border-radius: 8px; background: #02030f;
     }
     .screen-box {
-      flex: 1 1 0;
-      min-width: 140px;
-      border-radius: 5px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: #02041b;
-      padding: 4px 8px 5px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      flex: 1 1 0; min-width: 140px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.06);
+      background: #02041b; padding: 4px 8px 5px; display: flex; flex-direction: column; justify-content: center;
     }
-    .screen-label {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: .18em;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-    .screen-value {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 12px;
-      letter-spacing: .12em;
-      color: #f7fbff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .screen-box.mix {
-      transition: box-shadow .12s, border-color .12s, background .12s;
-    }
-    .screen-box.mix.low {
-      border-color: #4aa8ff;
-      box-shadow: 0 0 10px rgba(74,168,255,0.45);
-    }
-    .screen-box.mix.normal {
-      border-color: #7cffc7;
-      box-shadow: 0 0 10px rgba(124,255,199,0.45);
-    }
-    .screen-box.mix.clip {
-      border-color: #ff6c8a;
-      box-shadow: 0 0 12px rgba(255,108,138,0.7);
-    }
-
+    .screen-label { font-size: 9px; text-transform: uppercase; letter-spacing: .18em; color: var(--text-muted); margin-bottom: 2px; }
+    .screen-value { font-family: monospace; font-size: 12px; letter-spacing: .12em; color: #f7fbff; }
+    
     .timeline-row-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
     }
-    .timeline-title {
-      color: var(--accent3);
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: 10px;
-    }
-    .transport-buttons {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+    .timeline-title { color: var(--accent3); text-transform: uppercase; letter-spacing: .16em; font-size: 10px; }
+    .transport-buttons { display: flex; align-items: center; gap: 4px; }
     .transport-btn {
-      width: 26px;
-      height: 24px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#4aa8ff,#050a24);
-      color: #02041b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.85);
+      width: 26px; height: 24px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#4aa8ff,#050a24); color: #02041b;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      font-size: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.85);
     }
-    .transport-btn.rec {
-      background: radial-gradient(circle at 0 0,#ff4a7a,#3a0210);
-      color: #ffe9f0;
-    }
-    .transport-btn.metro {
-      width: 30px;
-      font-size: 13px;
-    }
-    .transport-btn.active {
-      box-shadow: 0 0 14px rgba(255,255,255,0.85);
-      border-color: #fff;
-    }
+    .transport-btn.active { box-shadow: 0 0 14px rgba(255,255,255,0.85); border-color: #fff; }
 
-    .tempo-zoom-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10px;
-      color: var(--text-muted);
-      flex-wrap: wrap;
-    }
-    .tempo-pill, .zoom-pill, .pattern-pill {
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: rgba(4,8,40,0.9);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .tempo-value {
-      color: #ffd77c;
-      font-weight: 600;
-    }
-    .zoom-pill input[type="range"] {
-      width: 120px;
-    }
-    .pattern-select {
-      background: #02041b;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      color: var(--text-main);
-      font-size: 10px;
-      padding: 2px 6px;
-    }
-    .pattern-pill button {
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#ff7cf1,#050a24);
-      color: #02041b;
-      font-size: 10px;
-      padding: 2px 8px;
-      cursor: pointer;
-    }
-
-    /* HORIZONTAL TIMELINE SCROLL + ZOOM BAR */
-    .timeline-scrollbar {
-      width: 100%;
-      height: 6px;
-      border-radius: 999px;
-      background: #040825;
-      border: 1px solid rgba(0,0,0,0.9);
-      overflow: hidden;
-      margin-top: 2px;
-      position: relative;
-    }
-    .timeline-scroll-thumb {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(to right,#4aa8ff,#7cffc7);
-      box-shadow: 0 0 12px rgba(124,190,255,0.9);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .timeline-scroll-handle {
-      width: 8px;
-      height: 100%;
-      background: rgba(0,0,0,0.22);
-      cursor: ew-resize;
-    }
-    .timeline-scroll-center {
-      flex: 1;
-      height: 100%;
-      cursor: pointer;
-    }
-
-    /* ===== TIMELINE GRID ===== */
+    /* ===== TIMELINE MAIN GRID ===== */
     .timeline-main {
-      flex: 1;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: 170px minmax(0,1fr) 14px;
+      flex: 1; min-height: 0; display: grid; grid-template-columns: 180px minmax(0,1fr) 14px;
     }
-
-    /* RIGHT VERTICAL SCROLLBAR */
-    .timeline-vscroll-right {
-      background: linear-gradient(to bottom,#050a27,#020318);
-      border-left: 1px solid #000;
-      position: relative;
-    }
-    .timeline-vscroll-thumb {
-      position: absolute;
-      left: 2px;
-      right: 2px;
-      height: 40px;
-      border-radius: 999px;
-      background: linear-gradient(to bottom,#4aa8ff,#7cffc7);
-      box-shadow: 0 0 10px rgba(124,190,255,0.8);
-      cursor: pointer;
-    }
-
+    
+    /* Track List */
     .track-list {
-      background: linear-gradient(to bottom,#050a28,#020317);
-      border-right: 1px solid #000;
-      font-size: 11px;
-      color: var(--text-muted);
-      position: relative;
-      overflow-y: hidden; /* synced via JS, no own scrollbar */
+      background: linear-gradient(to bottom,#050a28,#020317); border-right: 1px solid #000;
+      font-size: 11px; color: var(--text-muted); position: relative; overflow-y: hidden;
     }
     .track-header {
-      display: flex;
-      align-items: center;
-      padding: 4px 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      background: rgba(7,14,60,0.96);
-      height: 40px;
-      gap: 4px;
-      cursor: grab;
+      display: flex; align-items: center; justify-content: space-between; padding: 0 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.04); background: rgba(7,14,60,0.96);
+      height: 40px; cursor: default; position: relative;
     }
-    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
-    .track-header.dragging {
-      opacity: 0.7;
+    .track-rec-icon {
+      width: 10px; height: 10px; border-radius: 50%; background: #330000; border: 1px solid #550000;
+      margin-right: 6px; cursor: pointer; transition: all 0.2s;
     }
-    .track-color-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg,#4aa8ff,#ffd77c);
-      box-shadow: 0 0 8px rgba(124,190,255,0.9);
-      cursor: pointer;
+    .track-rec-icon.armed {
+      background: #ff0000; box-shadow: 0 0 8px #ff0000; border-color: #ffaaaa;
+      animation: pulseRec 1s infinite alternate;
     }
-    .track-name {
-      flex: 1;
-      padding: 2px 4px;
-      border-radius: 4px;
-      color: #f7fbff;
-      font-size: 11px;
-    }
-    .track-name[contenteditable="true"] {
-      outline: 1px solid var(--accent);
-      background: #02041b;
-    }
-    .track-controls {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-    .track-btn {
-      width: 20px;
-      height: 18px;
-      border-radius: 4px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #050a27;
-      color: var(--text-muted);
-      font-size: 9px;
-      cursor: pointer;
-    }
-    .track-btn.active {
-      background: var(--accent);
-      color: #02041b;
-      border-color: #fff;
-    }
+    @keyframes pulseRec { from { opacity: 1; } to { opacity: 0.7; } }
+    
     .track-menu-btn {
-      font-size: 11px;
-      padding: 0;
+      padding: 2px 6px; cursor: pointer; color: #9cb3ff; font-weight: bold; font-size: 14px;
     }
-    .track-resize-handle {
-      height: 4px;
-      cursor: row-resize;
-      background: linear-gradient(to right,transparent,var(--grid-line),transparent);
-    }
-    .add-track-bar {
-      padding: 4px 6px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      background: rgba(4,8,40,0.96);
-      display: flex;
-      justify-content: center;
-    }
-    .add-track-btn {
-      padding: 2px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#7cffc7,#050a24);
-      font-size: 11px;
-      cursor: pointer;
-      color: #02041b;
-    }
+    .track-menu-btn:hover { color: #fff; }
 
-    .timeline-grid-wrap {
-      position: relative;
-      background: #050822;
-      overflow: auto;
-    }
-
-    .timeline-ruler {
-      position: sticky;
-      top: 0;
-      height: 22px;
-      background: linear-gradient(to bottom,#091650,#050a24);
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      display: flex;
-      align-items: flex-end;
-      z-index: 2;
-      font-size: 9px;
-      color: var(--text-muted);
-      user-select: none;
-    }
-    .timeline-ruler-inner {
-      display: flex;
-      padding: 3px 8px;
-      white-space: nowrap;
-      gap: 0;
-    }
-    .timeline-ruler-inner span {
-      display: inline-block;
-      min-width: calc(var(--beat-width,48px) * var(--beats-per-bar,4));
-      text-align: left;
-    }
-
+    /* Grid Inner */
+    .timeline-grid-wrap { position: relative; background: #050822; overflow: auto; }
     .grid-inner {
-      position: relative;
-      padding: 0 8px 8px;
-      background-image:
-        linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
-        linear-gradient(to right,rgba(124,190,255,0.12) 1px,transparent 1px),
-        linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
-      background-size:
-        var(--beat-width,48px) 1px,
-        calc(var(--beat-width,48px) / 4) 1px,
-        1px var(--track-height,40px);
-      background-repeat: repeat;
+      position: relative; padding: 0 8px 8px;
+      background-image: linear-gradient(to right,var(--grid-line) 1px,transparent 1px);
+      background-size: var(--beat-width) 100%;
     }
-    .grid-track-row {
-      height: 40px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      position: relative;
-    }
-
-    .playhead {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom,#ffd77c,#ff7cf1);
-      box-shadow: 0 0 12px rgba(255,215,124,0.9);
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    .loop-region {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      background: rgba(255,215,124,0.14);
-      border-top: 1px solid #ffd77c;
-      border-bottom: 1px solid #ffd77c;
-      pointer-events: none;
-      display: none;
-    }
-
-    /* ===== CLIPS ===== */
+    .grid-track-row { height: 40px; border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; }
+    
     .clip {
-      position: absolute;
-      top: 6px;
-      height: 28px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.6);
-      box-shadow: 0 0 16px rgba(0,0,0,0.9);
-      display: flex;
-      align-items: center;
-      padding: 0 6px;
-      font-size: 10px;
-      color: #02041b;
-      cursor: move;
-      user-select: none;
-      white-space: nowrap;
-      overflow: hidden;
+      position: absolute; top: 4px; height: 32px; border-radius: 4px;
+      background: linear-gradient(135deg,var(--clip-blue),#7cbeff);
+      border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 0 16px rgba(0,0,0,0.9);
+      display: flex; align-items: center; padding: 0 6px; font-size: 10px;
+      color: #02041b; cursor: move; user-select: none; overflow: hidden;
     }
-    .clip canvas {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    .clip[data-color="blue"]   { background: linear-gradient(135deg,var(--clip-blue),#7cbeff); }
-    .clip[data-color="purple"] { background: linear-gradient(135deg,var(--clip-purple),#ffb4ff); }
-    .clip[data-color="pink"]   { background: linear-gradient(135deg,var(--clip-pink),#ffd7f0); }
-    .clip[data-color="green"]  { background: linear-gradient(135deg,var(--clip-green),#b5ffd8); }
-
-    .clip-label {
-      flex: 1;
-      z-index: 2;
-      text-shadow: 0 1px 2px black;
-    }
-    .clip-handle-left,
-    .clip-handle-right {
-      width: 5px;
-      height: 80%;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.5);
-      margin: 0 3px;
-      cursor: ew-resize;
-      z-index: 3;
+    .playhead {
+      position: absolute; top: 0; bottom: 0; width: 2px;
+      background: linear-gradient(to bottom,#ffd77c,#ff7cf1); z-index: 10; pointer-events: none;
     }
 
-    /* ===== RIGHT PLACEHOLDER ===== */
-    .right-placeholder h3 {
-      margin: 2px 0 6px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--accent2);
+    /* ===== CONTEXT MENUS ===== */
+    .ctx-menu {
+      position: fixed; z-index: 1000; background: #0c101f; border: 1px solid #333;
+      border-radius: 6px; padding: 4px 0; width: 180px; display: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
-    .colored-list span {
-      display: inline-block;
-      margin: 2px 0;
-      padding: 2px 6px;
-      border-radius: 999px;
-      font-size: 10px;
+    .ctx-item {
+      padding: 8px 14px; font-size: 11px; color: #ddd; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center; position: relative;
     }
-    .colored-list span:nth-child(1){ background: rgba(61,124,255,0.3); }
-    .colored-list span:nth-child(2){ background: rgba(255,124,241,0.3); }
-    .colored-list span:nth-child(3){ background: rgba(124,255,199,0.3); }
-    .colored-list span:nth-child(4){ background: rgba(255,215,124,0.3); }
+    .ctx-item:hover { background: #3d7cff; color: #fff; }
+    .ctx-separator { height: 1px; background: #333; margin: 4px 0; }
+    .ctx-arrow { font-size: 9px; opacity: 0.7; }
+    
+    .ctx-submenu {
+      position: absolute; left: 100%; top: -4px; width: 140px;
+      background: #0c101f; border: 1px solid #333; border-radius: 6px;
+      display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .ctx-item:hover > .ctx-submenu { display: block; }
 
-    /* ===== BOTTOM DOCK ===== */
-    .bottom-dock {
-      margin-top: 6px;
-      border-radius: 9px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#2a3bff,#050a21 45%,#020419 100%);
-      box-shadow: var(--shadow-soft);
-      display: flex;
-      flex-direction: column;
-      min-height: 20px;
-      max-height: 520px;
-      position: relative;
+    /* ===== AI MODAL ===== */
+    .ai-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000;
+      display: none; align-items: center; justify-content: center;
     }
-    .bottom-resize-handle {
-      position: absolute;
-      top: -5px;
-      left: 0;
-      right: 0;
-      height: 6px;
-      cursor: row-resize;
-      background: linear-gradient(to right,transparent,var(--grid-line),transparent);
+    .ai-modal {
+      width: 550px; background: #101526; border: 1px solid #333; border-radius: 14px;
+      padding: 24px; color: #fff; box-shadow: 0 0 60px rgba(124, 190, 255, 0.15);
     }
-    .bottom-tabs {
-      display: flex;
-      padding: 4px 8px;
-      border-bottom: 1px solid rgba(0,0,0,0.9);
-      background: linear-gradient(to bottom,#091650,#050a24);
-      font-size: 10px;
-      gap: 6px;
+    .ai-field { margin-bottom: 16px; }
+    .ai-field label { display: block; font-size: 11px; color: #9cb3ff; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ai-input, .ai-select { width: 100%; background: #050712; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 12px; outline: none; }
+    .ai-btn {
+      width: 100%; padding: 12px; background: linear-gradient(120deg, #ff5af1, #45f1ff);
+      border: none; border-radius: 999px; color: #050712; font-weight: 700; cursor: pointer;
+      margin-top: 12px; text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em;
     }
-    .bottom-tab {
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.8);
-      background: rgba(4,8,40,0.9);
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-    .bottom-tab.active {
-      border-color: #fff;
-      color: var(--accent3);
-      box-shadow: 0 0 10px rgba(255,215,124,0.8);
-    }
-    .bottom-panels {
-      flex: 1;
-      min-height: 0;
-      display: grid;
-    }
-    .bottom-panel {
-      padding: 6px 8px;
-      font-size: 11px;
-      display: none;
-      overflow: auto;
-    }
-    .bottom-panel.active {
-      display: block;
-    }
-    .bottom-panel h4 {
-      margin: 0 0 4px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: var(--accent4);
-    }
-    .bottom-panel p {
-      margin: 2px 0;
-      color: var(--text-muted);
-    }
-    .panel-note {
-      font-size: 10px;
-      color: var(--accent2);
-      margin-top: 4px;
-    }
+    .ai-btn:hover { filter: brightness(1.1); box-shadow: 0 0 20px rgba(255, 90, 241, 0.4); }
+    .ai-close { float: right; cursor: pointer; color: #666; font-size: 20px; margin-top: -10px; }
+    .ai-close:hover { color: #fff; }
 
-    /* ===== MIXER (FL-style) ===== */
-    .mixer-strips {
-      display: flex;
-      align-items: stretch;
-      gap: 8px;
-      height: 100%;
-      overflow-x: auto;
-      padding: 6px 4px 8px;
-    }
-    .mixer-strip {
-      flex: 0 0 56px;
-      border-radius: 6px;
-      background: linear-gradient(to bottom,#050b2a,#020316);
-      border: 1px solid rgba(0,0,0,0.9);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 4px 2px 6px;
-      font-size: 9px;
-      color: var(--text-muted);
-      box-shadow: 0 0 8px rgba(0,0,0,0.7);
-    }
-    .mixer-strip-title {
-      font-size: 9px;
-      color: #f7fbff;
-      text-align: center;
-      margin-bottom: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
-    }
-    .mixer-type-tag {
-      font-size: 8px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      margin-bottom: 3px;
-      color: var(--accent4);
-      text-align: center;
-    }
-    .mixer-main-block {
-      flex: 1;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 4px;
-    }
-    .mixer-led-row {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-    }
-    .mixer-led {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #52ff7c;
-      box-shadow: 0 0 6px rgba(82,255,124,0.9);
-    }
-    .mixer-pan-row {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-    }
-    .mixer-pan-knob {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%,#7cffc7,#02041b);
-      border: 1px solid rgba(0,0,0,0.9);
-      box-shadow: 0 0 6px rgba(124,190,255,0.7);
-      position: relative;
-    }
-    .mixer-pan-knob::after {
-      content: "";
-      position: absolute;
-      width: 3px;
-      height: 7px;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.8);
-      left: 50%;
-      top: 3px;
-      transform: translateX(-50%);
-    }
-    .mixer-fader-row {
-      flex: 1;
-      width: 100%;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 4px;
-    }
-    .mixer-fader {
-      position: relative;
-      width: 18px;
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(to bottom,#02041b,#050a27);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .mixer-fader-knob {
-      position: absolute;
-      left: 2px;
-      width: 14px;
-      height: 10px;
-      border-radius: 999px;
-      background: linear-gradient(to right,#7cffc7,#4aa8ff);
-      box-shadow: 0 0 6px rgba(124,190,255,0.7);
-      cursor: pointer;
-    }
-    .mixer-meter {
-      width: 8px;
-      height: 100%;
-      border-radius: 999px;
-      background: #02041b;
-      border: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      align-items: flex-end;
-    }
-    .mixer-meter-inner {
-      width: 100%;
-      border-radius: 999px;
-      background: linear-gradient(to top,#ff6c8a,#ffd77c,#7cffc7);
-      height: 30%;
-    }
-    .mixer-bottom-row {
-      display: flex; 
-      width: 100%; 
-      justify-content: space-between; 
-      margin-top: 2px;
-    }
-    .mixer-bottom-btns {
-      display: flex; 
-      gap: 2px;
-    }
-    .mixer-btn {
-      width: 10px; 
-      height: 10px; 
-      border-radius: 2px; 
-      background: #333; 
-      cursor: pointer;
-    }
-    .mixer-btn.active {
-      background: #7cffc7;
-    }
-    .mixer-bottom-label {
-      font-size: 8px;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: 3px;
-    }
-
-    /* ===== HINT BAR ===== */
-    .hint-bar {
-      margin-top: 4px;
-      border-radius: 7px;
-      border: 1px solid rgba(0,0,0,0.85);
-      background: linear-gradient(to right,#050b2b,#020419);
-      font-size: 10px;
-      padding: 4px 8px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    /* ===== PLUGIN POPUP ===== */
-    .plugin-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,15,0.75);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-    .plugin-window {
-      width: min(520px, 95vw);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: radial-gradient(circle at 0 0,#3246ff,#050822 40%,#020419 100%);
-      box-shadow: 0 0 40px rgba(0,0,0,0.95);
-      padding: 10px 12px 12px;
-      color: var(--text-main);
-      font-size: 12px;
-    }
-    .plugin-window-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    .plugin-window-title {
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: 11px;
-      color: var(--accent3);
-    }
-    .plugin-close-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
-      color: #02041b;
-      font-size: 11px;
-      padding: 2px 8px;
-      cursor: pointer;
-    }
-    .plugin-window-body {
-      background: rgba(4,8,40,0.9);
-      border-radius: 8px;
-      border: 1px solid rgba(0,0,0,0.9);
-      padding: 8px;
-      max-height: 260px;
-      overflow: auto;
-    }
-    .plugin-window-body p {
-      margin: 4px 0;
-      color: var(--text-muted);
-    }
-    .plugin-window-body code {
-      background: rgba(0,0,0,0.5);
-      padding: 1px 4px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
+    /* Helper */
+    .right-placeholder { background: linear-gradient(to bottom,#050b2a,#020319); border-left: 1px solid #000; padding: 6px; font-size: 11px; color: var(--text-muted); }
+    .bottom-dock { margin-top: 6px; border-radius: 9px; border: 1px solid rgba(0,0,0,0.9); background: radial-gradient(circle at 0 0,#2a3bff,#050a21 45%,#020419 100%); display: none; flex-direction: column; min-height: 220px; }
+    .hint-bar { margin-top: 4px; border-radius: 7px; border: 1px solid rgba(0,0,0,0.85); background: linear-gradient(to right,#050b2b,#020419); font-size: 10px; padding: 4px 8px; color: var(--text-muted); display: flex; justify-content: space-between; }
   </style>
 </head>
 <body>
-<input type="file" id="file-import-input" accept="audio/*" multiple hidden />
+
+<input type="file" id="file-import-input" accept="audio/*,.mid" multiple hidden />
+
+<div id="trackCtxMenu" class="ctx-menu">
+  <div class="ctx-item" onclick="renameActiveTrack()">Rename Track</div>
+  
+  <div class="ctx-item">
+    <span>Select Type</span> <span class="ctx-arrow">▶</span>
+    <div class="ctx-submenu">
+      <div class="ctx-item" onclick="setTrackType('Audio')">Audio</div>
+      <div class="ctx-item" onclick="setTrackType('Instrument')">Instrument</div>
+      <div class="ctx-item" onclick="setTrackType('FX')">FX Channel</div>
+    </div>
+  </div>
+
+  <div class="ctx-item" onclick="uploadToActiveTrack()">Upload Clip...</div>
+  
+  <div class="ctx-item">
+    <span>Record Input</span> <span class="ctx-arrow">▶</span>
+    <div class="ctx-submenu">
+      <div class="ctx-item" onclick="armTrack('Mic')">Microphone</div>
+      <div class="ctx-item" onclick="armTrack('MIDI')">MIDI Keyboard</div>
+      <div class="ctx-item" onclick="armTrack('None')">Disarm</div>
+    </div>
+  </div>
+
+  <div class="ctx-separator"></div>
+  <div class="ctx-item" onclick="openAiModal()" style="color: #ff5af1;">✨ Create with AI</div>
+</div>
+
+<div id="aiModalOverlay" class="ai-modal-overlay">
+  <div class="ai-modal">
+    <div class="ai-close" onclick="closeAiModal()">✕</div>
+    <h2 style="margin-top:0; font-size: 16px; color: #ff5af1; text-transform: uppercase; letter-spacing: 0.1em;">
+      <span style="background: -webkit-linear-gradient(0deg, #ff5af1, #45f1ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Sulandra AI</span> Music Lab
+    </h2>
+    <p style="font-size: 12px; color: #9cb3ff; margin-bottom: 20px; line-height: 1.5;">
+      Describe the sound you want. Sulandra will generate audio matched to your project's key and BPM, then import it directly to the selected track.
+    </p>
+
+    <div class="ai-field">
+      <label>Prompt Description</label>
+      <input type="text" id="aiPrompt" class="ai-input" placeholder="e.g. Lofi hip hop drums, Cinematic violin swell, Female vocal hook...">
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <div class="ai-field" style="flex:1;">
+        <label>Type</label>
+        <select id="aiType" class="ai-select">
+          <option value="loop">Loop (4 Bars)</option>
+          <option value="one-shot">One Shot / Hit</option>
+          <option value="vocal">Vocal Phrase</option>
+          <option value="fx">Sound Effect</option>
+        </select>
+      </div>
+      <div class="ai-field" style="flex:1;">
+        <label>Sync</label>
+        <input type="text" id="aiMeta" class="ai-input" value="Sync (130 BPM)" disabled style="opacity: 0.7;">
+      </div>
+    </div>
+
+    <button class="ai-btn" id="aiGenerateBtn" onclick="generateAiClip()">Generate & Import</button>
+  </div>
+</div>
+
 <header>
   <div class="header-inner">
     <div class="brand-left">
       <div class="brand-logo">S</div>
-      <div>
-        <div class="brand-text-main">Sulandra Creative Studio</div>
-        <div class="brand-text-sub">
-          <span style="color:#7cffc7;">AI</span> ·
-          <span style="color:#ff7cf1;">Mix</span> ·
-          <span style="color:#ffd77c;">Master</span>
-        </div>
-      </div>
+      <div class="brand-text-main">Sulandra Creative Studio</div>
       <div class="brand-sound-pill">Sound</div>
     </div>
     <div class="top-right">
       <div class="session-pill">
         <div class="session-dot"></div>
-        <span>Session: <span style="color:#ffd77c;">Untitled Track 01</span></span>
+        <span>Untitled Track 01</span>
       </div>
     </div>
   </div>
@@ -1118,878 +498,420 @@
 <main>
   <section class="icon-dock">
     <div class="icon-row">
-      <div class="dock-icon active" data-panel="browser" title="File / Samples">
-        <span>F</span>
-      </div>
-      <div class="dock-icon" data-panel="rack" title="Channel Rack">
-        <span>R</span>
-      </div>
-      <div class="dock-icon" data-panel="mixer" title="Mixer">
-        <span>M</span>
-      </div>
-      <div class="dock-icon" data-panel="piano" title="Piano Roll">
-        <span>P</span>
-      </div>
-      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX">
-        <span>X</span>
-      </div>
-      <div class="dock-icon active" data-panel="timeline" title="Timeline View">
-        <span>T</span>
-      </div>
-    </div>
-    <div class="dock-icon-labels">
-      <span style="color:#4aa8ff;">File & Samples</span>
-      <span style="color:#7cffc7;">Rack & Patterns</span>
-      <span style="color:#ff7cf1;">Mixer</span>
-      <span style="color:#ffd77c;">Piano Roll</span>
-      <span style="color:#7cbeff;">Plugins</span>
-      <span style="color:#ff8a7c;">Timeline</span>
+      <div class="dock-icon active" data-panel="browser"><span>F</span></div>
+      <div class="dock-icon" data-panel="rack"><span>R</span></div>
+      <div class="dock-icon" data-panel="mixer"><span>M</span></div>
+      <div class="dock-icon" data-panel="piano"><span>P</span></div>
+      <div class="dock-icon active" data-panel="timeline"><span>T</span></div>
     </div>
   </section>
 
   <section class="main-grid">
-    <aside class="left-browser dock-panel" data-panel-id="browser">
+    <aside class="left-browser dock-panel" id="browserPanel">
       <div class="panel-header">
         <div class="panel-title">Browser</div>
-        <div class="panel-tabs">
-          <div class="panel-tab active">Project</div>
-          <div class="panel-tab">Samples</div>
-        </div>
       </div>
-      <div class="browser-search">
-        <span>🔍</span>
-        <input type="text" placeholder="Search in project / samples…" />
-      </div>
-      <div class="browser-scroll" id="browser-scroll">
+      <div class="browser-scroll">
         <div class="browser-section-title">Project</div>
-        <div class="browser-item"><span>Current project</span><span>.flp</span></div>
-        <div class="browser-item"><span>Recent files</span><span>5</span></div>
-
-        <div class="browser-section-title">Generators & Instruments</div>
-        <div class="browser-item"><span>FLEX – Pads & Keys</span><span>GEN</span></div>
-        <div class="browser-item"><span>Sytrus – Leads</span><span>FM</span></div>
-        <div class="browser-item"><span>Drumaxx – Kits</span><span>DRM</span></div>
-
-        <div class="browser-section-title">Patterns</div>
-        <div id="pattern-list"></div>
-
-        <div class="browser-section-title">Effect Chains</div>
-        <div class="browser-item"><span>Vocal Polished Chain</span><span>FX</span></div>
-        <div class="browser-item"><span>Mastering Glue Chain</span><span>FX</span></div>
-
+        <div class="browser-item"><span>Current project</span></div>
+        <div class="browser-section-title">Library</div>
+        <div class="browser-item"><span>Drums</span></div>
+        <div class="browser-item"><span>Instruments</span></div>
         <div class="browser-section-title">User</div>
-        <div class="browser-item" id="btn-upload-device">
-            <span>Upload from Device</span>
-            <span>📂</span>
+        <div class="browser-item" onclick="document.getElementById('file-import-input').click()">
+            <span>Upload File...</span><span>📂</span>
         </div>
       </div>
     </aside>
 
-    <section class="center-timeline-wrap dock-panel" data-panel-id="timeline">
+    <section class="center-timeline-wrap dock-panel">
       <div class="timeline-header">
         <div class="timeline-screen">
           <div class="screen-grid">
-            <div class="screen-box">
-              <div class="screen-label">Time</div>
-              <div class="screen-value" id="screen-time">00:00.000</div>
-            </div>
-            <div class="screen-box" id="screen-key-box" title="Click to set song key">
-              <div class="screen-label">Key</div>
-              <div class="screen-value" id="screen-key">C# MINOR</div>
-            </div>
-            <div class="screen-box">
-              <div class="screen-label">BPM</div>
-              <div class="screen-value" id="screen-bpm">130.0</div>
-            </div>
-            <div class="screen-box mix low" id="screen-mix-box">
-              <div class="screen-label">Mix Level</div>
-              <div class="screen-value" id="screen-mix">-24.0 dB · LOW</div>
-            </div>
+            <div class="screen-box"><div class="screen-label">Time</div><div class="screen-value" id="screen-time">00:00.000</div></div>
+            <div class="screen-box"><div class="screen-label">BPM</div><div class="screen-value">130.0</div></div>
           </div>
         </div>
-
         <div class="timeline-row-top">
-          <div class="timeline-title">Playlist · Arrangement A (Main)</div>
+          <div class="timeline-title">Playlist</div>
           <div class="transport-buttons">
-            <button class="transport-btn" id="btn-back">⏮</button>
-            <button class="transport-btn" id="btn-play">▶</button>
-            <button class="transport-btn" id="btn-stop">⏹</button>
-            <button class="transport-btn rec" id="btn-rec">●</button>
-            <button class="transport-btn metro" id="btn-metronome" title="Metronome">♩</button>
+            <button class="transport-btn" onclick="togglePlay()">▶</button>
+            <button class="transport-btn" onclick="stopPlay()">⏹</button>
+            <button class="transport-btn rec" onclick="alert('Master Record Enabled')">●</button>
           </div>
         </div>
         <div class="tempo-zoom-row">
-          <div class="tempo-pill">
-            <span>Tempo</span>
-            <span class="tempo-value" id="tempo-value">130.0</span>
-            <span>BPM</span>
-          </div>
-          <div class="zoom-pill">
-            <span>Timeline zoom</span>
-            <input type="range" id="zoom-range" min="32" max="140" value="48">
-          </div>
-          <div class="pattern-pill">
-            <span>Active pattern</span>
-            <select id="pattern-select" class="pattern-select"></select>
-            <button id="new-pattern-btn">+ New</button>
-          </div>
-          <div>Double-click empty grid to place active pattern · Alt+Scroll to zoom</div>
-        </div>
-        <div class="timeline-scrollbar">
-          <div class="timeline-scroll-thumb" id="timeline-thumb">
-            <div class="timeline-scroll-handle" id="thumb-left"></div>
-            <div class="timeline-scroll-center" id="thumb-center"></div>
-            <div class="timeline-scroll-handle" id="thumb-right"></div>
-          </div>
+            <div class="zoom-pill"><span>Zoom</span><input type="range" id="zoom-range" min="20" max="100" value="48"></div>
         </div>
       </div>
 
       <div class="timeline-main">
-        <div class="track-list" id="track-list">
-          <div class="add-track-bar">
-            <button class="add-track-btn" id="add-track-btn">+ Add Track</button>
-          </div>
-        </div>
-
-        <div class="timeline-grid-wrap" id="timeline-scroll">
-          <div class="timeline-ruler">
-            <div class="timeline-ruler-inner" id="ruler-inner"></div>
-          </div>
+        <div class="track-list" id="track-list"></div>
+        <div class="timeline-grid-wrap">
+          <div class="timeline-ruler"><div class="timeline-ruler-inner" id="ruler-inner"></div></div>
           <div class="grid-inner" id="grid-inner">
-            <div class="loop-region" id="loop-region"></div>
             <div class="playhead" id="playhead"></div>
-            </div>
+          </div>
         </div>
-
-        <div class="timeline-vscroll-right" id="vscroll-right">
-          <div class="timeline-vscroll-thumb" id="vscroll-thumb"></div>
-        </div>
+        <div class="timeline-vscroll-right"></div>
       </div>
     </section>
 
-    <aside class="right-placeholder dock-panel" data-panel-id="plugins">
-      <h3>Plugin Slots</h3>
-      <p>Each slot below can later be a dedicated plugin interface:</p>
-      <div class="colored-list">
-        <span>Slot 1 – Vocal Chain</span>
-        <span>Slot 2 – Drum Bus</span>
-        <span>Slot 3 – Master FX</span>
-        <span>Slot 4 – Creative FX</span>
-      </div>
-      <p style="margin-top:8px;">Click the <span style="color:#ff7cf1;">X</span> icon at the top row to hide/show this panel.</p>
-      <p class="panel-note">Later you can replace this block with an &lt;iframe src="plugins.html"&gt; or inject content from your AI engine.</p>
+    <aside class="right-placeholder dock-panel">
+      <h3>Mixer Slots</h3>
+      <div class="colored-list"><span>Slot 1 - EQ</span><span>Slot 2 - Comp</span></div>
     </aside>
   </section>
 
   <section class="bottom-dock" id="bottom-dock">
-    <div class="bottom-resize-handle" id="bottom-resize"></div>
-    <div class="bottom-tabs">
-      <div class="bottom-tab active" data-bottom-panel="mixer">Mixer</div>
-      <div class="bottom-tab" data-bottom-panel="piano">Piano Roll</div>
-      <div class="bottom-tab" data-bottom-panel="rack">Channel Rack</div>
-    </div>
+    <div class="bottom-resize-handle"></div>
     <div class="bottom-panels">
-      <div class="bottom-panel active" id="bottom-mixer">
-        <h4>Mixer</h4>
-        <div id="mixer-strips" class="mixer-strips"></div>
-        <p class="panel-note">Tracks above are mirrored as mixer channels here · resize the dock to see strips stretch like a real mixer.</p>
-      </div>
-      <div class="bottom-panel" id="bottom-piano">
-        <h4>Piano Roll (piano.html placeholder)</h4>
-        <p>Design a full piano roll editor in a separate <code>piano.html</code> and plug it in here.</p>
-      </div>
-      <div class="bottom-panel" id="bottom-rack">
-        <h4>Channel Rack Details (rack.html placeholder)</h4>
-        <p>Use this area for deeper rack controls, generator previews, AI preset suggestions, etc.</p>
-      </div>
+      <div class="bottom-panel active" id="mixer-strips" style="display:flex; padding:10px; gap:10px; overflow-x:auto;">
+        </div>
     </div>
   </section>
 
   <section class="hint-bar">
-    <span>Tip: Spacebar toggles play / pause · Alt + Scroll to Zoom · Shift + Scroll to Pan · Drag edges to resize clips.</span>
+    <span>Right-click track headers for options · 3-dots menu for upload/AI · Drag clips to move.</span>
   </section>
 </main>
-
-<div class="plugin-overlay" id="plugin-overlay">
-  <div class="plugin-window">
-    <div class="plugin-window-header">
-      <div class="plugin-window-title" id="plugin-title">Plugin Window</div>
-      <button class="plugin-close-btn" id="plugin-close-btn">Close</button>
-    </div>
-    <div class="plugin-window-body" id="plugin-body">
-      <p>This is a placeholder for a plugin or track window.</p>
-    </div>
-  </div>
-</div>
 
 <script>
 /**
  * ============================================================
- * SULANDRA DAW ENGINE - CORE ARCHITECTURE (PART 1)
+ * SULANDRA DAW ENGINE - PHASE 2 (TRACK WORKFLOW & AI)
  * ============================================================
  */
 
-// --- GLOBAL AUDIO CONTEXT ---
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const ctx = new AudioContext();
 
-// --- CONSTANTS & CONFIG ---
-const CONFIG = {
-  ppq: 96, // Pulses per quarter note (MIDI standard)
-  baseBeatWidth: 48,
-  trackHeight: 40,
-  colors: {
-    blue:   { bg: 'linear-gradient(135deg, #3d7cff, #7cbeff)', border: '#7cbeff' },
-    purple: { bg: 'linear-gradient(135deg, #a96cff, #ffb4ff)', border: '#ffb4ff' },
-    pink:   { bg: 'linear-gradient(135deg, #ff6ca4, #ffd7f0)', border: '#ffd7f0' },
-    green:  { bg: 'linear-gradient(135deg, #4dffbb, #b5ffd8)', border: '#b5ffd8' }
-  }
-};
-
-// --- STATE MANAGEMENT ---
 const STATE = {
   bpm: 130.0,
+  zoom: 48,
+  tracks: [],
+  clips: [],
+  nextTrackId: 1,
+  nextClipId: 1,
+  activeTrackId: null, // Currently selected track for menu actions
   isPlaying: false,
-  playhead: {
-    beat: 0,      // Current position in beats
-    startTime: 0, // System time when play started
-    startBeat: 0  // Beat position when play started
-  },
-  ui: {
-    zoom: 48,
-    scrollX: 0,
-    scrollY: 0
-  }
+  playhead: { beat: 0, startTime: 0, startBeat: 0 }
 };
 
-/**
- * ============================================================
- * AUDIO NODE SYSTEM (THE MIXER BACKEND)
- * ============================================================
- */
-
-class MixerChannel {
-  constructor(id, name, type = 'audio') {
-    this.id = id;
-    this.name = name;
-    this.type = type; // 'master', 'audio', 'midi'
-    
-    // Web Audio Nodes
-    this.input = ctx.createGain();
-    this.panner = ctx.createStereoPanner();
-    this.fader = ctx.createGain();
-    this.meterNode = ctx.createAnalyser();
-    
-    // Wiring: Input -> Panner -> Fader -> Meter -> Master/Destination
-    this.input.connect(this.panner);
-    this.panner.connect(this.fader);
-    this.fader.connect(this.meterNode);
-    
-    // State
-    this.volume = 0.8;
-    this.pan = 0.0;
-    this.muted = false;
-    this.soloed = false;
-    
-    // Metering
-    this.meterNode.fftSize = 32;
-    this.meterData = new Uint8Array(this.meterNode.frequencyBinCount);
-  }
-
-  connectTo(destinationNode) {
-    this.fader.disconnect();
-    this.fader.connect(this.meterNode); // Always keep meter connected
-    this.meterNode.connect(destinationNode);
-  }
-
-  setVolume(val) {
-    this.volume = Math.max(0, Math.min(1, val));
-    // Use exponential ramp for natural sounding fades
-    this.fader.gain.setTargetAtTime(this.muted ? 0 : this.volume, ctx.currentTime, 0.01);
-  }
-
-  setPan(val) {
-    this.pan = Math.max(-1, Math.min(1, val));
-    this.panner.pan.setTargetAtTime(this.pan, ctx.currentTime, 0.01);
-  }
-
-  toggleMute() {
-    this.muted = !this.muted;
-    this.setVolume(this.volume); // Re-trigger gain set
-  }
-
-  getPeakLevel() {
-    this.meterNode.getByteFrequencyData(this.meterData);
-    // Simple RMS-like approximation for UI meter
-    let sum = 0;
-    for(let i=0; i<this.meterData.length; i++) sum += this.meterData[i];
-    return sum / this.meterData.length / 255; 
-  }
-}
-
-// --- PROJECT DATA STRUCTURES ---
-const PROJECT = {
-  tracks: [], // Array of Track objects
-  mixer: [],  // Array of MixerChannel objects
-  clips: [],  // Array of Clip objects
-  patterns: []
-};
-
-// Master Channel (Index 0)
-const masterChannel = new MixerChannel(0, 'Master', 'master');
-masterChannel.connectTo(ctx.destination);
-PROJECT.mixer.push(masterChannel);
-
-/**
- * ============================================================
- * TRACK & CLIP LOGIC
- * ============================================================
- */
-
-class Track {
-  constructor(id, name) {
-    this.id = id;
-    this.name = name;
-    this.height = CONFIG.trackHeight;
-    this.mixerChannelId = null; // Will assign a new mixer channel
-    
-    // Create a dedicated mixer channel for this track
-    const mixId = PROJECT.mixer.length;
-    const channel = new MixerChannel(mixId, name);
-    channel.connectTo(masterChannel.input);
-    PROJECT.mixer.push(channel);
-    this.mixerChannelId = mixId;
-  }
-}
-
-class AudioClip {
-  constructor(trackId, startBeat, buffer, name) {
-    this.id = Date.now() + Math.random();
-    this.trackId = trackId;
-    this.startBeat = startBeat;
-    this.buffer = buffer; // The AudioBuffer source
-    this.name = name;
-    
-    // Calculate length in beats based on sample rate and current BPM
-    // Length = (Samples / SampleRate) / (60 / BPM)
-    const durationSec = buffer.duration;
-    const secPerBeat = 60 / STATE.bpm;
-    this.lengthBeats = durationSec / secPerBeat;
-    
-    this.sourceNode = null;
-    this.gainNode = null;
-    this.playing = false;
-    this.offset = 0; // Start offset in source file
-    this.selected = false;
-  }
-
-  play(when, startOffset = 0) {
-    if (this.playing) this.stop();
-    
-    // 1. Create Source
-    this.sourceNode = ctx.createBufferSource();
-    this.sourceNode.buffer = this.buffer;
-    
-    // 2. Create Envelope/Gain
-    this.gainNode = ctx.createGain();
-    
-    // 3. Route: Source -> Gain -> Track Mixer Channel
-    this.sourceNode.connect(this.gainNode);
-    
-    const track = PROJECT.tracks.find(t => t.id === this.trackId);
-    if (track) {
-      const channel = PROJECT.mixer[track.mixerChannelId];
-      if (channel) this.gainNode.connect(channel.input);
-    } else {
-      this.gainNode.connect(ctx.destination); // Fallback
-    }
-
-    // 4. Schedule
-    // 'when' is the AudioContext time to start playing
-    // 'startOffset' is where in the file (seconds) to start
-    this.sourceNode.start(when, startOffset);
-    this.playing = true;
-    
-    this.sourceNode.onended = () => {
-      this.playing = false;
-    };
-  }
-
-  stop() {
-    if (this.sourceNode) {
-      try { this.sourceNode.stop(); } catch(e) {}
-      this.sourceNode.disconnect();
-      this.gainNode.disconnect();
-      this.sourceNode = null;
-      this.gainNode = null;
-      this.playing = false;
-    }
-  }
-  
-  // Render a waveform to a canvas
-  renderWaveform(canvas) {
-    const w = canvas.width;
-    const h = canvas.height;
-    const c = canvas.getContext('2d');
-    const data = this.buffer.getChannelData(0); // Left channel
-    const step = Math.ceil(data.length / w);
-    const amp = h / 2;
-    
-    c.clearRect(0,0,w,h);
-    c.fillStyle = 'rgba(0, 20, 50, 0.3)'; // Background
-    c.fillRect(0,0,w,h);
-    
-    c.beginPath();
-    c.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-    c.lineWidth = 1;
-    
-    for(let i=0; i < w; i++) {
-      let min = 1.0;
-      let max = -1.0;
-      for (let j=0; j<step; j++) {
-        const datum = data[(i*step)+j];
-        if (datum < min) min = datum;
-        if (datum > max) max = datum;
-      }
-      c.moveTo(i, (1+min)*amp);
-      c.lineTo(i, (1+max)*amp);
-    }
-    c.stroke();
-  }
-}
-
-/**
- * ============================================================
- * FILE IMPORT & MANAGEMENT
- * ============================================================
- */
-
-const fileInput = document.getElementById('file-import-input');
-
-function triggerImport() {
-  fileInput.click();
-}
-
-fileInput.addEventListener('change', async (e) => {
-  if (e.target.files.length > 0) {
-    // Suspend UI updates while loading
-    for (let i = 0; i < e.target.files.length; i++) {
-      const file = e.target.files[i];
-      await loadAudioFile(file);
-    }
-    renderAll(); // Refresh UI
-  }
-});
-
-async function loadAudioFile(file) {
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-    
-    // Logic: Add to currently selected track, or create new
-    let targetTrack = PROJECT.tracks[0]; 
-    if (!targetTrack) {
-      targetTrack = addTrack(file.name.split('.')[0]); // Create track if empty
-    }
-    
-    // Place clip at playhead
-    const newClip = new AudioClip(targetTrack.id, STATE.playhead.beat, audioBuffer, file.name);
-    PROJECT.clips.push(newClip);
-    console.log("Loaded:", file.name);
-    
-  } catch (err) {
-    console.error("Error decoding audio:", err);
-    alert("Could not load audio file. Format might not be supported.");
-  }
-}
-
-/**
- * ============================================================
- * PLAYBACK ENGINE (SCHEDULER)
- * ============================================================
- */
-
-function bpmToSeconds(beats) {
-  return beats * (60 / STATE.bpm);
-}
-
-function startPlayback() {
-  if (ctx.state === 'suspended') ctx.resume();
-  
-  STATE.isPlaying = true;
-  STATE.playhead.startTime = ctx.currentTime;
-  STATE.playhead.startBeat = STATE.playhead.beat;
-  
-  // Schedule all clips that are in the future
-  PROJECT.clips.forEach(clip => {
-    const clipStartSec = bpmToSeconds(clip.startBeat);
-    const clipEndSec = clipStartSec + clip.buffer.duration;
-    const currentPosSec = bpmToSeconds(STATE.playhead.beat);
-    
-    // Case 1: Playhead is BEFORE clip
-    if (currentPosSec < clipStartSec) {
-      const waitTime = clipStartSec - currentPosSec;
-      clip.play(ctx.currentTime + waitTime, 0);
-    }
-    // Case 2: Playhead is INSIDE clip
-    else if (currentPosSec >= clipStartSec && currentPosSec < clipEndSec) {
-      const offset = currentPosSec - clipStartSec;
-      clip.play(ctx.currentTime, offset);
-    }
-  });
-  
-  requestAnimationFrame(uiLoop);
-}
-
-function stopPlayback() {
-  STATE.isPlaying = false;
-  PROJECT.clips.forEach(c => c.stop());
-}
-
-function uiLoop() {
-  if (!STATE.isPlaying) return;
-  
-  // Calculate current visual position
-  const elapsed = ctx.currentTime - STATE.playhead.startTime;
-  const beatDist = elapsed * (STATE.bpm / 60);
-  STATE.playhead.beat = STATE.playhead.startBeat + beatDist;
-  
-  // Visual Update
-  updatePlayheadDOM();
-  updateMixerMeters();
-  
-  requestAnimationFrame(uiLoop);
-}
-
-/**
- * ============================================================
- * UI RENDERING (DOM MANIPULATION)
- * ============================================================
- */
-
-// DOM Cache
 const dom = {
   trackList: document.getElementById('track-list'),
   gridInner: document.getElementById('grid-inner'),
+  rulerInner: document.getElementById('ruler-inner'),
+  fileInput: document.getElementById('file-import-input'),
+  ctxMenu: document.getElementById('trackCtxMenu'),
+  aiModal: document.getElementById('aiModalOverlay'),
   playhead: document.getElementById('playhead'),
-  ruler: document.getElementById('ruler-inner'),
-  mixer: document.getElementById('mixer-strips'),
   screenTime: document.getElementById('screen-time'),
-  zoomInput: document.getElementById('zoom-range'),
-  scrollContainer: document.getElementById('timeline-scroll')
+  mixer: document.getElementById('mixer-strips')
 };
 
-// --- MAIN RENDER FUNCTION ---
-function renderAll() {
-  updateGridMetrics();
-  renderTracks();
-  renderClips();
-  renderMixer();
-  updatePlayheadDOM();
-}
-
-function updateGridMetrics() {
-  document.documentElement.style.setProperty('--beat-width', STATE.ui.zoom + 'px');
-  const totalWidth = 200 * 4 * STATE.ui.zoom; // 200 bars
-  dom.gridInner.style.width = totalWidth + 'px';
-  dom.ruler.style.width = totalWidth + 'px';
+/* ============================================================
+   1. INITIALIZATION
+   ============================================================ */
+function initDAW() {
+  // Create 5 Default Tracks
+  for(let i=0; i<5; i++) addTrack(`Track ${i+1}`);
   
-  // Rebuild Ruler
-  dom.ruler.innerHTML = '';
-  for(let i=1; i<=200; i++) {
-    const s = document.createElement('span');
-    s.textContent = i;
-    dom.ruler.appendChild(s);
-  }
+  updateGrid();
+  
+  // Global Click Listener (Close Menus)
+  window.addEventListener('click', (e) => {
+    if (!e.target.closest('.track-menu-btn') && !e.target.closest('.ctx-menu')) {
+      dom.ctxMenu.style.display = 'none';
+    }
+  });
+
+  // Handle File Selection
+  dom.fileInput.addEventListener('change', handleFileUpload);
 }
 
-function addTrack(name = "New Track") {
-  const id = PROJECT.tracks.length + 1;
-  const t = new Track(id, name);
-  PROJECT.tracks.push(t);
+/* ============================================================
+   2. TRACK MANAGEMENT
+   ============================================================ */
+function addTrack(name) {
+  const track = {
+    id: STATE.nextTrackId++,
+    name: name,
+    type: 'Audio', 
+    armed: false,
+    color: getRandomColor()
+  };
+  STATE.tracks.push(track);
   renderTracks();
   renderMixer();
-  return t;
+  return track;
 }
 
 function renderTracks() {
-  // Clear Grid Rows and Headers
-  const headers = document.querySelectorAll('.track-header, .track-resize-handle');
-  headers.forEach(h => h.remove());
-  const rows = document.querySelectorAll('.grid-track-row');
-  rows.forEach(r => r.remove());
+  dom.trackList.innerHTML = `
+    <div class="add-track-bar" style="padding:6px; text-align:center; border-bottom:1px solid #333;">
+        <button class="add-track-btn" onclick="addTrack('New Track')" style="cursor:pointer;">+ Add Track</button>
+    </div>`;
   
-  const addBtn = document.querySelector('.add-track-bar');
+  // Remove old grid rows (keep playhead/clips)
+  const oldRows = document.querySelectorAll('.grid-track-row');
+  oldRows.forEach(r => r.remove());
 
-  PROJECT.tracks.forEach(t => {
-    // 1. Header
+  STATE.tracks.forEach(t => {
+    // Header
     const h = document.createElement('div');
     h.className = 'track-header';
-    h.style.height = t.height + 'px';
     h.innerHTML = `
-      <div class="track-color-dot"></div>
-      <div class="track-name" contenteditable="true">${t.name}</div>
-      <div class="track-controls">
-        <div class="track-btn" onclick="toggleTrackMute(${t.id})">M</div>
-        <div class="track-btn" onclick="toggleTrackSolo(${t.id})">S</div>
+      <div style="display:flex; align-items:center;">
+        <div class="track-rec-icon ${t.armed ? 'armed' : ''}" title="Arm Record" onclick="toggleArm(${t.id})"></div>
+        <div class="track-color-dot" style="background:${t.color}"></div>
+        <div class="track-name" ondblclick="promptRename(${t.id})" title="Double-click to rename">
+            ${t.name} <span style="opacity:0.5; font-size:9px; margin-left:4px;">${t.type}</span>
+        </div>
       </div>
+      <div class="track-menu-btn" onclick="openTrackMenu(event, ${t.id})">⋮</div>
     `;
-    // Hook up name change
-    h.querySelector('.track-name').addEventListener('blur', (e) => {
-      t.name = e.target.textContent;
-      renderMixer(); // Update mixer name
-    });
-    dom.trackList.insertBefore(h, addBtn);
-    
-    // 2. Grid Row
+    dom.trackList.insertBefore(h, dom.trackList.lastElementChild);
+
+    // Grid Row
     const r = document.createElement('div');
     r.className = 'grid-track-row';
+    r.style.height = '40px';
     r.dataset.trackId = t.id;
-    r.style.height = t.height + 'px';
-    // Allow drop (for later)
-    r.addEventListener('dragover', e => e.preventDefault());
     dom.gridInner.appendChild(r);
   });
+
+  renderClips();
+}
+
+function getRandomColor() {
+  const c = ['#7cffc7', '#ff7cf1', '#ffd77c', '#7cbeff', '#ff6ca4'];
+  return c[Math.floor(Math.random() * c.length)];
+}
+
+/* ============================================================
+   3. MENU ACTIONS
+   ============================================================ */
+function openTrackMenu(e, trackId) {
+  e.stopPropagation();
+  STATE.activeTrackId = trackId;
+  const menu = dom.ctxMenu;
+  menu.style.display = 'block';
+  const rect = e.target.getBoundingClientRect();
+  menu.style.top = rect.top + 'px';
+  menu.style.left = (rect.right + 5) + 'px';
+}
+
+function renameActiveTrack() {
+  const t = STATE.tracks.find(x => x.id === STATE.activeTrackId);
+  const newName = prompt("Rename Track:", t.name);
+  if(newName) { t.name = newName; renderTracks(); renderMixer(); }
+  dom.ctxMenu.style.display = 'none';
+}
+
+function setTrackType(type) {
+  const t = STATE.tracks.find(x => x.id === STATE.activeTrackId);
+  t.type = type;
+  if(type === 'Instrument') alert("Instrument Mode: MIDI Piano Roll enabled for this track.");
+  renderTracks();
+  dom.ctxMenu.style.display = 'none';
+}
+
+function armTrack(source) {
+  const t = STATE.tracks.find(x => x.id === STATE.activeTrackId);
+  t.armed = source !== 'None';
+  if(t.armed) alert(`Track armed for ${source}.`);
+  renderTracks();
+  dom.ctxMenu.style.display = 'none';
+}
+
+function toggleArm(id) {
+  const t = STATE.tracks.find(x => x.id === id);
+  t.armed = !t.armed;
+  renderTracks();
+}
+
+/* ============================================================
+   4. UPLOAD & CLIPS
+   ============================================================ */
+function uploadToActiveTrack() {
+  dom.fileInput.click();
+  dom.ctxMenu.style.display = 'none';
+}
+
+function handleFileUpload(e) {
+  if(e.target.files.length > 0) {
+    const file = e.target.files[0];
+    // MIDI Check
+    if(file.name.toLowerCase().endsWith('.mid')) {
+      alert("MIDI File Detected. Opening Piano Roll...");
+      return;
+    }
+    // Audio Decode
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      ctx.decodeAudioData(ev.target.result).then(buffer => {
+        createClip(STATE.activeTrackId, buffer, file.name);
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+function createClip(trackId, buffer, name) {
+  const newClip = {
+    id: STATE.nextClipId++,
+    trackId: trackId,
+    name: name,
+    startBeat: 0,
+    lengthBeats: buffer.duration / (60/STATE.bpm),
+    buffer: buffer,
+    color: STATE.tracks.find(t => t.id === trackId).color
+  };
+  STATE.clips.push(newClip);
+  renderClips();
 }
 
 function renderClips() {
-  // Remove old clips
-  document.querySelectorAll('.clip').forEach(c => c.remove());
-  
-  PROJECT.clips.forEach(clip => {
-    // Find row
-    const row = document.querySelector(`.grid-track-row[data-track-id="${clip.trackId}"]`);
-    if (!row) return;
-    
-    const el = document.createElement('div');
-    el.className = 'clip';
-    el.style.left = (clip.startBeat * STATE.ui.zoom) + 'px';
-    el.style.width = (clip.lengthBeats * STATE.ui.zoom) + 'px';
-    el.style.top = (row.offsetTop + 4) + 'px';
-    el.style.overflow = 'hidden'; // Important for canvas
-    
-    // Internal HTML (Canvas for waveform + Handles)
-    el.innerHTML = `
-      <div class="clip-handle-left" data-action="resize-left"></div>
-      <canvas width="${clip.lengthBeats * STATE.ui.zoom}" height="28"></canvas>
-      <div class="clip-label">${clip.name}</div>
-      <div class="clip-handle-right" data-action="resize-right"></div>
-    `;
-    
-    // Draw Waveform
-    const cvs = el.querySelector('canvas');
-    clip.renderWaveform(cvs);
-    
-    // Interaction
-    attachClipInteraction(el, clip);
-    
-    dom.gridInner.appendChild(el);
+  document.querySelectorAll('.clip').forEach(e => e.remove());
+  STATE.clips.forEach(c => {
+    const row = document.querySelector(`.grid-track-row[data-track-id="${c.trackId}"]`);
+    if(row) {
+      const el = document.createElement('div');
+      el.className = 'clip';
+      el.innerText = c.name;
+      el.style.background = c.color;
+      el.style.left = (c.startBeat * STATE.zoom) + 'px';
+      el.style.width = (c.lengthBeats * STATE.zoom) + 'px';
+      
+      // Add Canvas Waveform (Visual Mock)
+      const cvs = document.createElement('canvas');
+      cvs.width = 100; cvs.height = 32; 
+      cvs.style.position = 'absolute'; cvs.style.opacity = '0.3'; cvs.style.left = 0;
+      el.appendChild(cvs);
+
+      // Dbl Click
+      el.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        alert(`Editing ${c.name}...`);
+      });
+
+      dom.gridInner.appendChild(el);
+    }
   });
 }
 
+/* ============================================================
+   5. AI MODAL
+   ============================================================ */
+function openAiModal() {
+  dom.ctxMenu.style.display = 'none';
+  dom.aiModal.style.display = 'flex';
+  document.getElementById('aiMeta').value = `Sync (${STATE.bpm} BPM)`;
+}
+function closeAiModal() { dom.aiModal.style.display = 'none'; }
+
+function generateAiClip() {
+  const btn = document.getElementById('aiGenerateBtn');
+  btn.innerText = "Generating...";
+  btn.disabled = true;
+  
+  setTimeout(() => {
+    // Mock Buffer
+    const duration = 4 * (60/STATE.bpm); // 1 bar
+    const buffer = ctx.createBuffer(2, ctx.sampleRate * duration, ctx.sampleRate);
+    
+    const t = STATE.tracks.find(x => x.id === STATE.activeTrackId);
+    t.name = "AI Generated Loop";
+    t.type = "AI";
+    
+    createClip(STATE.activeTrackId, buffer, "AI Loop (Generated)");
+    
+    renderTracks();
+    closeAiModal();
+    btn.innerText = "Generate & Import";
+    btn.disabled = false;
+  }, 1500);
+}
+
+/* ============================================================
+   6. MIXER & GRID HELPER
+   ============================================================ */
 function renderMixer() {
   dom.mixer.innerHTML = '';
-  PROJECT.mixer.forEach(ch => {
-    const el = document.createElement('div');
-    el.className = 'mixer-strip';
-    el.id = `mixer-ch-${ch.id}`;
-    el.innerHTML = `
-      <div class="mixer-strip-header">
-        <div class="mixer-strip-num">${ch.id}</div>
-        <div class="mixer-strip-name">${ch.name}</div>
+  STATE.tracks.forEach((t, idx) => {
+    const div = document.createElement('div');
+    div.style.cssText = "min-width:60px; background:#050b2a; border:1px solid #333; border-radius:4px; display:flex; flex-direction:column; align-items:center; padding:4px;";
+    div.innerHTML = `
+      <div style="font-size:9px; color:#fff; margin-bottom:4px;">${t.name}</div>
+      <div style="width:4px; height:80px; background:#111; border-radius:2px; position:relative;">
+        <div style="position:absolute; bottom:0; width:100%; height:60%; background:#7cffc7;"></div>
       </div>
-      <div class="mixer-knob-row">
-        <div class="mixer-knob" title="Pan"></div>
-      </div>
-      <div class="mixer-center">
-        <div class="mixer-meter"><div class="mixer-meter-inner" id="meter-inner-${ch.id}"></div></div>
-        <div class="mixer-fader-shell">
-          <div class="mixer-fader-slot"></div>
-          <div class="mixer-fader-knob" style="bottom: ${ch.volume * 100}%"></div>
-        </div>
-      </div>
-      <div class="mixer-bottom-row">
-        <div class="mixer-bottom-btns">
-          <div class="mixer-btn mute ${ch.muted?'active':''}" onclick="toggleMute(${ch.id})"></div>
-          <div class="mixer-btn solo ${ch.soloed?'active':''}"></div>
-        </div>
-        <div class="mixer-bottom-label">${ch.name}</div>
-      </div>
+      <div style="font-size:8px; color:#777; margin-top:4px;">${idx+1}</div>
     `;
-    
-    // Attach Fader Logic
-    const fader = el.querySelector('.mixer-fader-knob');
-    attachFaderDrag(fader, ch);
-    
-    dom.mixer.appendChild(el);
+    dom.mixer.appendChild(div);
   });
 }
 
-/**
- * ============================================================
- * INTERACTION LOGIC (DRAG, ZOOM, MIX)
- * ============================================================
- */
-
-// 1. Clip Interaction
-function attachClipInteraction(el, clip) {
-  let startX, startLeft, startWidth, startBeat;
-  
-  el.addEventListener('mousedown', (e) => {
-    e.stopPropagation(); // Stop grid scroll
-    const action = e.target.dataset.action || 'move';
-    startX = e.clientX;
-    startLeft = parseFloat(el.style.left);
-    startWidth = parseFloat(el.style.width);
-    startBeat = clip.startBeat;
-    
-    const onMove = (ev) => {
-      const dx = ev.clientX - startX;
-      const dBeats = dx / STATE.ui.zoom;
-      
-      if (action === 'move') {
-        let newBeat = startBeat + dBeats;
-        // Snap
-        if (!ev.altKey) newBeat = Math.round(newBeat * 4) / 4;
-        if (newBeat < 0) newBeat = 0;
-        
-        el.style.left = (newBeat * STATE.ui.zoom) + 'px';
-        clip.startBeat = newBeat;
-      }
-      // Add resize logic here in next chunk (simplified for now)
-    };
-    
-    const onUp = () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      // Re-render to clean up visuals
-      renderClips();
-    };
-    
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-  });
+function updateGrid() {
+  document.documentElement.style.setProperty('--beat-width', STATE.zoom + 'px');
+  dom.gridInner.style.width = (200 * 4 * STATE.zoom) + 'px'; // 200 bars
+  dom.rulerInner.innerHTML = '';
+  for(let i=1; i<=200; i++) {
+    const s = document.createElement('span');
+    s.innerText = i; s.style.display = 'inline-block'; s.style.width = (4 * STATE.zoom) + 'px';
+    dom.rulerInner.appendChild(s);
+  }
 }
 
-// 2. Mixer Fader Interaction
-function attachFaderDrag(el, channel) {
-  el.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    const startY = e.clientY;
-    const startVol = channel.volume;
-    
-    const onMove = (ev) => {
-      const dy = startY - ev.clientY; // Up is positive
-      const dVol = dy / 100; // Sensitivity
-      let newVol = startVol + dVol;
-      newVol = Math.max(0, Math.min(1, newVol));
-      
-      channel.setVolume(newVol);
-      el.style.bottom = (newVol * 100) + '%';
-    };
-    
-    const onUp = () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-    
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-  });
-}
-
-// 3. Visual Updates
-function updatePlayheadDOM() {
-  const x = STATE.playhead.beat * STATE.ui.zoom;
-  dom.playhead.style.left = x + 'px';
-  
-  // Time String
-  const totalSec = bpmToSeconds(STATE.playhead.beat);
-  const m = Math.floor(totalSec / 60).toString().padStart(2,'0');
-  const s = Math.floor(totalSec % 60).toString().padStart(2,'0');
-  const ms = Math.floor((totalSec % 1)*100).toString().padStart(2,'0');
-  dom.screenTime.textContent = `${m}:${s}.${ms}`;
-}
-
-function updateMixerMeters() {
-  if (!STATE.isPlaying) return; // Save CPU
-  PROJECT.mixer.forEach(ch => {
-    const peak = ch.getPeakLevel(); // 0 to 1
-    const el = document.getElementById(`meter-inner-${ch.id}`);
-    if (el) el.style.height = (peak * 100) + '%';
-  });
-}
-
-// 4. Controls binding
-document.getElementById('btn-play').onclick = () => {
-  if (STATE.isPlaying) stopPlayback();
-  else startPlayback();
-  document.getElementById('btn-play').classList.toggle('active', STATE.isPlaying);
-};
-
-document.getElementById('btn-stop').onclick = () => {
-  stopPlayback();
-  STATE.playhead.beat = 0;
-  updatePlayheadDOM();
-  document.getElementById('btn-play').classList.remove('active');
-};
-
-document.getElementById('add-track-btn').onclick = () => addTrack();
-
-// Upload Button Listener (New)
-document.getElementById('btn-upload-device').onclick = triggerImport;
-
-// Toggle Browser Panel
-const browserPanel = document.querySelector('.left-browser');
-const browserIcon = document.querySelector('.dock-icon[data-panel="browser"]');
-
-browserIcon.onclick = () => {
-    const isHidden = browserPanel.style.display === 'none';
-    browserPanel.style.display = isHidden ? 'flex' : 'none';
-    browserIcon.classList.toggle('active', isHidden);
-    refreshMainGridLayout(); 
-};
-
-// Zoom
-dom.zoomInput.addEventListener('input', (e) => {
-  STATE.ui.zoom = parseInt(e.target.value);
-  renderAll();
+document.getElementById('zoom-range').addEventListener('input', (e) => {
+  STATE.zoom = parseInt(e.target.value);
+  updateGrid();
+  renderClips();
 });
 
-function refreshMainGridLayout() {
-    const leftVisible = document.querySelector('.left-browser').style.display !== 'none';
-    const rightVisible = document.querySelector('.right-placeholder').style.display !== 'none';
-    const mainGrid = document.querySelector('.main-grid');
-
-    if (leftVisible && rightVisible) {
-      mainGrid.style.gridTemplateColumns = '260px minmax(0,1fr) 220px';
-    } else if (leftVisible && !rightVisible) {
-      mainGrid.style.gridTemplateColumns = '260px minmax(0,1fr)';
-    } else if (!leftVisible && rightVisible) {
-      mainGrid.style.gridTemplateColumns = 'minmax(0,1fr) 220px';
-    } else {
-      mainGrid.style.gridTemplateColumns = 'minmax(0,1fr)';
-    }
+/* ============================================================
+   7. PLAYBACK
+   ============================================================ */
+function togglePlay() {
+  if(STATE.isPlaying) stopPlay();
+  else {
+    if(ctx.state === 'suspended') ctx.resume();
+    STATE.isPlaying = true;
+    STATE.playhead.startTime = ctx.currentTime;
+    STATE.playhead.startBeat = STATE.playhead.beat;
+    requestAnimationFrame(loop);
+  }
 }
+function stopPlay() { STATE.isPlaying = false; }
 
-/**
- * ============================================================
- * INITIALIZATION
- * ============================================================
- */
-function initDAW() {
-  // Init default tracks
-  addTrack("Kick");
-  addTrack("Snare");
-  addTrack("Hat");
-  addTrack("Bass");
+function loop() {
+  if(!STATE.isPlaying) return;
+  const elapsed = ctx.currentTime - STATE.playhead.startTime;
+  STATE.playhead.beat = STATE.playhead.startBeat + (elapsed * (STATE.bpm/60));
   
-  renderAll();
-  console.log("Sulandra Audio Engine Initialized.");
+  dom.playhead.style.left = (STATE.playhead.beat * STATE.zoom) + 'px';
+  
+  const s = Math.floor(elapsed % 60).toString().padStart(2,'0');
+  const m = Math.floor(elapsed / 60).toString().padStart(2,'0');
+  dom.screenTime.innerText = `${m}:${s}`;
+  
+  requestAnimationFrame(loop);
 }
+
+// Toggle Browser
+const browser = document.getElementById('browserPanel');
+document.querySelector('.dock-icon[data-panel="browser"]').onclick = () => {
+  browser.style.display = browser.style.display === 'none' ? 'flex' : 'none';
+};
+
+// Toggle Mixer
+const mixer = document.getElementById('bottom-dock');
+document.querySelector('.dock-icon[data-panel="mixer"]').onclick = () => {
+  mixer.style.display = mixer.style.display === 'none' ? 'flex' : 'none';
+};
 
 initDAW();
-
 </script>
 </body>
 </html>
