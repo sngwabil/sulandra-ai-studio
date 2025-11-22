@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JS DAW Engine – Sulandra SOUND Core</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ccc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            user-select: none; /* Prevent text selection while dragging */
+        }
+
+        #toolbar {
+            height: 40px;
+            background-color: #2d2d2d;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid #444;
+        }
+
+        button {
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            margin-right: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        button:hover { background-color: #555; }
+        button.active { background-color: #d9534f; }
+
+        #canvas-container {
+            position: relative;
+            width: 100vw;
+            height: calc(100vh - 40px);
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            font-size: 11px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="toolbar">
+    <button id="btnPlay">Play</button>
+    <button id="btnStop">Stop</button>
+    <button id="btnExport">Export WAV</button>
+    <span style="margin-left: auto; font-size: 12px;">BPM: <span id="bpmLabel">120</span></span>
+</div>
+
+<div id="canvas-container">
+    <canvas id="dawCanvas"></canvas>
+    <div id="instructions">
+        <b>Controls:</b><br>
+        Scroll Wheel: Zoom (to mouse)<br>
+        Shift + Scroll: Pan Timeline<br>
+        Drag Clip Body: Move Clip (snaps to beats)<br>
+        Drag Clip Edge: Resize Clip (snaps to beats)<br>
+        Drag White Dots: Move Automation Points
+    </div>
+</div>
+
+<script>
+/**
+ * ============================================================
+ * 1. DATA STRUCTURES & STATE  (JS translation of your C++ core)
+ * ============================================================
+ */
+
+// Global Configuration
+const CONFIG = {
+    bpm: 120,
+    sampleRate: 44100,
+    trackHeight: 100,
+    handleWidth: 10
+};
+
+// Viewport / Camera
+const VIEW = {
+    scrollX: 0,          // time in seconds
+    zoomX: 100,          // pixels per second
+    width: window.innerWidth,
+    height: window.innerHeight - 40
+};
+
+// Application State
+const STATE = {
+    isPlaying: false,
+    playheadTime: 0.0,
+    lastFrameTime: 0,
+    dragMode: 'NONE', // NONE, MOVE_CLIP, RESIZE_L, RESIZE_R, MOVE_AUTO
+    activeClip: null,
+    activePointIndex: -1,
+    dragStartMouseX: 0,
+    dragStartMouseY: 0,
+    originalTime: 0,
+    originalDuration: 0,
+    cursor: 'default'
+};
+
+// Project Data (similar to ProjectData in C++)
+const PROJECT = {
+    clips: [],
+    bpm: CONFIG.bpm,
+    sampleRate: CONFIG.sampleRate,
+    totalLength: 16.0 // seconds (will be recomputed from clips)
+};
+
+// Simple helper to recompute project length from clips
+function updateProjectLength() {
+    let maxEnd = 0;
+    PROJECT.clips.forEach(c => {
+        const end = c.startTime + c.duration;
+        if (end > maxEnd) maxEnd = end;
+    });
+    PROJECT.totalLength = Math.max(maxEnd, 4);
+}
+
+// Create a dummy clip with procedural sine audio (like your C++ example)
+function createDummyClip(start, duration, track, freq) {
+    const totalSamples = Math.floor(duration * CONFIG.sampleRate);
+    const buffer = new Float32Array(totalSamples);
+
+    for (let i = 0; i < totalSamples; i++) {
+        const t = i / CONFIG.sampleRate;
+        buffer[i] = Math.sin(2 * Math.PI * freq * t) * 0.5; // amplitude 0.5
+    }
+
+    return {
+        startTime: start,
+        duration: duration,
+        offset: 0.0,                 // for future use
+        trackIndex: track,
+        buffer: buffer,              // raw audio data
+        sampleRate: CONFIG.sampleRate,
+        name: `Sine ${freq}Hz`,
+        isSelected: false,
+        automation: [
+            { time: start, value: 0.5 },
+            { time: start + duration, value: 0.5 }
+        ]
+    };
+}
+
+// Two test clips
+PROJECT.clips.push(createDummyClip(0.0, 4.0, 0, 440));   // A4
+PROJECT.clips.push(createDummyClip(4.0, 4.0, 1, 261.6)); // C4
+updateProjectLength();
+
+/**
+ * ============================================================
+ * 2. AUDIO ENGINE  (JS version of AudioEngine + WAVExporter)
+ * ============================================================
+ */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let activeNodes = [];
+
+// --- Automation interpolation (GetVolumeAtTime) ---
+function getAutomationValueAtTime(clip, time) {
+    const pts = clip.automation;
+    if (!pts || pts.length === 0) return 1.0;
+    if (time <= pts[0].time) return pts[0].value;
+    if (time >= pts[pts.length - 1].time) return pts[pts.length - 1].value;
+
+    for (let i = 0; i < pts.length - 1; i++) {
+        const a = pts[i];
+        const b = pts[i + 1];
+        if (time >= a.time && time < b.time) {
+            const range = b.time - a.time;
+            const dist = time - a.time;
+            const t = dist / range;
+            return a.value + t * (b.value - a.value);
+        }
+    }
+    return 1.0;
+}
+
+// --- AudioEngine.processBlock (mixing engine) ---
+const AudioEngine = {
+    processBlock(project, outBuffer, numSamples, startTime) {
+        const sr = project.sampleRate;
+        const secondsPerSample = 1.0 / sr;
+
+        // clear buffer
+        for (let i = 0; i < numSamples; i++) outBuffer[i] = 0.0;
+
+        for (let i = 0; i < numSamples; i++) {
+            const currentTime = startTime + i * secondsPerSample;
+            let mixedSample = 0.0;
+
+            for (const clip of project.clips) {
+                if (
+                    currentTime >= clip.startTime &&
+                    currentTime < clip.startTime + clip.duration
+                ) {
+                    const localTime = (currentTime - clip.startTime) + (clip.offset || 0);
+                    const sampleIdx = Math.floor(localTime * clip.sampleRate);
+
+                    if (sampleIdx >= 0 && sampleIdx < clip.buffer.length) {
+                        const vol = getAutomationValueAtTime(clip, currentTime);
+                        mixedSample += clip.buffer[sampleIdx] * vol;
+                    }
+                }
+            }
+
+            // soft clamp
+            if (mixedSample > 1.0) mixedSample = 1.0;
+            if (mixedSample < -1.0) mixedSample = -1.0;
+
+            outBuffer[i] = mixedSample;
+        }
+    }
+};
+
+// --- Real-time preview playback (simple scheduling) ---
+function playAudio() {
+    if (STATE.isPlaying) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    STATE.isPlaying = true;
+    STATE.lastFrameTime = performance.now();
+    activeNodes = [];
+
+    PROJECT.clips.forEach(clip => {
+        if (clip.startTime + clip.duration > STATE.playheadTime) {
+            const source = audioCtx.createBufferSource();
+            const buffer = audioCtx.createBuffer(1, clip.buffer.length, CONFIG.sampleRate);
+            buffer.copyToChannel(clip.buffer, 0);
+            source.buffer = buffer;
+
+            // automation: just take volume at clip start for preview (simple)
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = getAutomationValueAtTime(
+                clip,
+                Math.max(STATE.playheadTime, clip.startTime)
+            );
+
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            let when = audioCtx.currentTime + (clip.startTime - STATE.playheadTime);
+            let offset = 0;
+
+            if (STATE.playheadTime > clip.startTime) {
+                when = audioCtx.currentTime;
+                offset = STATE.playheadTime - clip.startTime;
+            }
+
+            if (when >= audioCtx.currentTime) {
+                source.start(when, offset);
+                activeNodes.push(source);
+            }
+        }
+    });
+}
+
+function stopAudio() {
+    STATE.isPlaying = false;
+    activeNodes.forEach(node => node.stop());
+    activeNodes = [];
+}
+
+// --- WAV export using processBlock (like WAVExporter::RenderToFile) ---
+function exportWAV() {
+    updateProjectLength();
+
+    const sr = PROJECT.sampleRate;
+    const duration = PROJECT.totalLength;
+    const totalSamples = Math.floor(duration * sr);
+    const blockSize = 1024;
+
+    const floatBlock = new Float32Array(blockSize);
+    const int16Block = new Int16Array(blockSize);
+
+    // build WAV header
+    const buffer = new ArrayBuffer(44 + totalSamples * 2);
+    const view = new DataView(buffer);
+
+    const writeString = (offset, str) => {
+        for (let i = 0; i < str.length; i++) {
+            view.setUint8(offset + i, str.charCodeAt(i));
+        }
+    };
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + totalSamples * 2, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true); // fmt chunk size
+    view.setUint16(20, 1, true);  // PCM
+    view.setUint16(22, 1, true);  // mono
+    view.setUint32(24, sr, true);
+    view.setUint32(28, sr * 2, true); // byteRate
+    view.setUint16(32, 2, true);      // blockAlign
+    view.setUint16(34, 16, true);     // bitsPerSample
+    writeString(36, 'data');
+    view.setUint32(40, totalSamples * 2, true);
+
+    // render in blocks
+    let renderHead = 0;
+    let offsetBytes = 44;
+
+    while (renderHead < duration) {
+        const remainingSamples = totalSamples - Math.floor(renderHead * sr);
+        const thisBlockSize = Math.min(blockSize, remainingSamples);
+
+        AudioEngine.processBlock(PROJECT, floatBlock, thisBlockSize, renderHead);
+
+        for (let i = 0; i < thisBlockSize; i++) {
+            let s = floatBlock[i];
+            if (s > 1.0) s = 1.0;
+            if (s < -1.0) s = -1.0;
+            int16Block[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            view.setInt16(offsetBytes + i * 2, int16Block[i], true);
+        }
+
+        offsetBytes += thisBlockSize * 2;
+        renderHead += thisBlockSize / sr;
+    }
+
+    const blob = new Blob([buffer], { type: 'audio/wav' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Sulandra_Track.wav';
+    a.click();
+}
+
+/**
+ * ============================================================
+ * 3. VIEW ENGINE (Canvas Rendering)
+ * ============================================================
+ */
+const canvas = document.getElementById('dawCanvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - 40;
+    VIEW.width = canvas.width;
+    VIEW.height = canvas.height;
+    draw();
+}
+window.addEventListener('resize', resize);
+
+// Coordinate helpers
+const timeToPx = (t) => (t - VIEW.scrollX) * VIEW.zoomX;
+const pxToTime = (p) => (p / VIEW.zoomX) + VIEW.scrollX;
+const trackToPy = (idx) => (idx * CONFIG.trackHeight) + 30; // +30 ruler
+const valToPy = (val, trackIdx) =>
+    trackToPy(trackIdx) + CONFIG.trackHeight - (val * CONFIG.trackHeight);
+const pyToVal = (y, trackIdx) =>
+    1.0 - ((y - trackToPy(trackIdx)) / CONFIG.trackHeight);
+
+// Main draw
+function draw() {
+    ctx.fillStyle = '#1e1e1e';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Ruler background
+    ctx.fillStyle = '#2d2d2d';
+    ctx.fillRect(0, 0, canvas.width, 30);
+    ctx.fillStyle = '#fff';
+    ctx.font = '11px Arial';
+    ctx.fillText('Timeline', 10, 18);
+
+    // Grid + bar numbers (canvas-based rendering)
+    const beatInterval = 60 / PROJECT.bpm;
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#aaa';
+    ctx.font = '10px Arial';
+
+    const startBeat = Math.floor(VIEW.scrollX / beatInterval);
+    const endBeat = Math.ceil(pxToTime(VIEW.width) / beatInterval);
+
+    for (let i = startBeat; i <= endBeat; i++) {
+        const time = i * beatInterval;
+        const x = timeToPx(time);
+
+        ctx.beginPath();
+        ctx.moveTo(x, 30);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+
+        if (x >= 0 && x <= canvas.width) {
+            ctx.fillText((i + 1).toString(), x + 2, 20);
+        }
+    }
+
+    // Tracks & clips
+    PROJECT.clips.forEach(clip => {
+        const x = timeToPx(clip.startTime);
+        const w = clip.duration * VIEW.zoomX;
+        const y = trackToPy(clip.trackIndex);
+        const h = CONFIG.trackHeight;
+
+        if (x + w < 0 || x > canvas.width) return;
+
+        ctx.fillStyle = clip.isSelected ? '#d9534f' : '#f0ad4e';
+        ctx.fillRect(x, y + 2, w, h - 4);
+
+        ctx.fillStyle = '#000';
+        ctx.font = '11px Arial';
+        ctx.fillText(clip.name, x + 5, y + 15);
+
+        // Automation line
+        if (clip.automation && clip.automation.length > 0) {
+            ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            clip.automation.forEach((pt, idx) => {
+                const px = timeToPx(pt.time);
+                const py = valToPy(pt.value, clip.trackIndex);
+                if (idx === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            });
+            ctx.stroke();
+
+            // Automation points
+            ctx.fillStyle = '#fff';
+            clip.automation.forEach(pt => {
+                const px = timeToPx(pt.time);
+                const py = valToPy(pt.value, clip.trackIndex);
+                ctx.beginPath();
+                ctx.arc(px, py, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // resize handles when selected
+        if (clip.isSelected) {
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.fillRect(x, y + 2, CONFIG.handleWidth, h - 4);
+            ctx.fillRect(x + w - CONFIG.handleWidth, y + 2, CONFIG.handleWidth, h - 4);
+        }
+    });
+
+    // Playhead
+    const phX = timeToPx(STATE.playheadTime);
+    if (phX >= 0 && phX <= canvas.width) {
+        ctx.strokeStyle = '#0f0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(phX, 0);
+        ctx.lineTo(phX, canvas.height);
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f0';
+        ctx.beginPath();
+        ctx.moveTo(phX - 6, 0);
+        ctx.lineTo(phX + 6, 0);
+        ctx.lineTo(phX, 10);
+        ctx.fill();
+    }
+
+    canvas.style.cursor = STATE.cursor;
+}
+
+// Animation loop
+function loop() {
+    const now = performance.now();
+    const dt = (now - STATE.lastFrameTime) / 1000;
+    STATE.lastFrameTime = now;
+
+    if (STATE.isPlaying) {
+        STATE.playheadTime += dt;
+
+        const phX = timeToPx(STATE.playheadTime);
+        if (phX > canvas.width * 0.9) {
+            VIEW.scrollX = STATE.playheadTime;
+        }
+    }
+
+    draw();
+    requestAnimationFrame(loop);
+}
+
+/**
+ * ============================================================
+ * 4. INPUT HANDLING (Mouse / Wheel)
+ * ============================================================
+ */
+
+// snapping to beats
+function snapTime(t) {
+    const beat = 60 / PROJECT.bpm;
+    const snapped = Math.round(t / beat) * beat;
+    return Math.abs(t - snapped) < 0.2 ? snapped : t;
+}
+
+canvas.addEventListener('mousedown', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const mTime = pxToTime(mx);
+
+    // 1) automation points first
+    for (const c of PROJECT.clips) {
+        if (!c.automation) continue;
+        for (let i = 0; i < c.automation.length; i++) {
+            const pt = c.automation[i];
+            const px = timeToPx(pt.time);
+            const py = valToPy(pt.value, c.trackIndex);
+            const dist = Math.hypot(mx - px, my - py);
+            if (dist < 8) {
+                STATE.dragMode = 'MOVE_AUTO';
+                STATE.activeClip = c;
+                STATE.activePointIndex = i;
+                return;
+            }
+        }
+    }
+
+    // 2) clips
+    let clickedClip = null;
+    for (const c of PROJECT.clips) {
+        const x = timeToPx(c.startTime);
+        const w = c.duration * VIEW.zoomX;
+        const y = trackToPy(c.trackIndex);
+        if (mx >= x && mx <= x + w && my >= y && my <= y + CONFIG.trackHeight) {
+            clickedClip = c;
+            break;
+        }
+    }
+
+    PROJECT.clips.forEach(c => (c.isSelected = false));
+
+    if (clickedClip) {
+        const c = clickedClip;
+        c.isSelected = true;
+        STATE.activeClip = c;
+        STATE.dragStartMouseX = mx;
+        STATE.originalTime = c.startTime;
+        STATE.originalDuration = c.duration;
+
+        const x = timeToPx(c.startTime);
+        const w = c.duration * VIEW.zoomX;
+
+        if (mx < x + CONFIG.handleWidth) STATE.dragMode = 'RESIZE_L';
+        else if (mx > x + w - CONFIG.handleWidth) STATE.dragMode = 'RESIZE_R';
+        else STATE.dragMode = 'MOVE_CLIP';
+        return;
+    }
+
+    // 3) click on ruler to move playhead
+    if (my < 30) {
+        STATE.playheadTime = mTime;
+        return;
+    }
+
+    STATE.dragMode = 'NONE';
+    STATE.activeClip = null;
+});
+
+canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const mTime = pxToTime(mx);
+    const snappedTime = snapTime(mTime);
+
+    if (STATE.dragMode !== 'NONE' && STATE.activeClip) {
+        const clip = STATE.activeClip;
+
+        if (STATE.dragMode === 'MOVE_CLIP') {
+            const dt = pxToTime(mx) - pxToTime(STATE.dragStartMouseX);
+            clip.startTime = snapTime(STATE.originalTime + dt);
+            updateProjectLength();
+        } else if (STATE.dragMode === 'RESIZE_R') {
+            const newDur = snappedTime - clip.startTime;
+            if (newDur > 0.1) clip.duration = newDur;
+            updateProjectLength();
+        } else if (STATE.dragMode === 'RESIZE_L') {
+            const endTime = STATE.originalTime + STATE.originalDuration;
+            const newStart = Math.min(snappedTime, endTime - 0.1);
+            clip.startTime = newStart;
+            clip.duration = endTime - newStart;
+            updateProjectLength();
+        } else if (STATE.dragMode === 'MOVE_AUTO') {
+            const pt = clip.automation[STATE.activePointIndex];
+            pt.time = Math.max(
+                clip.startTime,
+                Math.min(clip.startTime + clip.duration, mTime)
+            );
+            pt.value = Math.max(0, Math.min(1, pyToVal(my, clip.trackIndex)));
+        }
+    } else {
+        // hover cursor
+        STATE.cursor = 'default';
+        for (const c of PROJECT.clips) {
+            const x = timeToPx(c.startTime);
+            const w = c.duration * VIEW.zoomX;
+            const y = trackToPy(c.trackIndex);
+            if (mx >= x && mx <= x + w && my >= y && my <= y + CONFIG.trackHeight) {
+                if (mx < x + CONFIG.handleWidth || mx > x + w - CONFIG.handleWidth) {
+                    STATE.cursor = 'col-resize';
+                } else {
+                    STATE.cursor = 'move';
+                }
+            }
+        }
+    }
+});
+
+canvas.addEventListener('mouseup', () => {
+    STATE.dragMode = 'NONE';
+    STATE.activeClip = null;
+    STATE.activePointIndex = -1;
+});
+
+// Zoom + Pan (Wheel / Shift+Wheel)
+canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+
+    if (e.shiftKey) {
+        // pan
+        VIEW.scrollX += e.deltaY > 0 ? 0.5 : -0.5;
+        if (VIEW.scrollX < 0) VIEW.scrollX = 0;
+    } else {
+        // zoom toward mouse
+        const mouseTime = pxToTime(e.offsetX);
+        const factor = e.deltaY > 0 ? 0.9 : 1.1;
+        VIEW.zoomX *= factor;
+        if (VIEW.zoomX < 10) VIEW.zoomX = 10;
+        if (VIEW.zoomX > 500) VIEW.zoomX = 500;
+
+        VIEW.scrollX = mouseTime - e.offsetX / VIEW.zoomX;
+        if (VIEW.scrollX < 0) VIEW.scrollX = 0;
+    }
+});
+
+/**
+ * ============================================================
+ * 5. BUTTONS & INIT
+ * ============================================================
+ */
+document.getElementById('btnPlay').onclick = playAudio;
+document.getElementById('btnStop').onclick = () => {
+    stopAudio();
+    STATE.isPlaying = false;
+};
+document.getElementById('btnExport').onclick = exportWAV;
+
+document.getElementById('bpmLabel').textContent = PROJECT.bpm.toString();
+
+// Init
+resize();
+STATE.lastFrameTime = performance.now();
+loop();
+</script>
+</body>
+</html>
