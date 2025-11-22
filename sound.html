@@ -171,11 +171,17 @@
       cursor: pointer;
       position: relative;
       box-shadow: 0 0 8px rgba(0,0,0,0.9);
-      font-size: 14px;
-      color: #02041b;
       transition: transform .08s, box-shadow .08s, border-color .08s;
+      background: #02041b;
+      overflow: hidden;
     }
-    .dock-icon span { font-weight: 700; }
+    .dock-icon img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.7));
+      pointer-events: none;
+    }
     .dock-icon[data-panel="browser"] { background: radial-gradient(circle at 0 0,#4aa8ff,#071134); }
     .dock-icon[data-panel="rack"]    { background: radial-gradient(circle at 0 0,#7cffc7,#071134); }
     .dock-icon[data-panel="mixer"]   { background: radial-gradient(circle at 0 0,#ff7cf1,#071134); }
@@ -446,6 +452,10 @@
     .transport-btn.metro {
       width: 30px;
       font-size: 13px;
+    }
+    .transport-btn.export {
+      background: radial-gradient(circle at 0 0,#7cffc7,#01402a);
+      font-size: 14px;
     }
     .transport-btn.active {
       box-shadow: 0 0 14px rgba(255,255,255,0.85);
@@ -1089,22 +1099,23 @@
   <section class="icon-dock">
     <div class="icon-row">
       <div class="dock-icon active" data-panel="browser" title="File / Samples">
-        <span>F</span>
+        <!-- replace src paths with your own icon files -->
+        <img src="assets/icons/file-browser.svg" alt="Browser">
       </div>
       <div class="dock-icon" data-panel="rack" title="Channel Rack">
-        <span>R</span>
+        <img src="assets/icons/channel-rack.svg" alt="Rack">
       </div>
       <div class="dock-icon" data-panel="mixer" title="Mixer">
-        <span>M</span>
+        <img src="assets/icons/mixer.svg" alt="Mixer">
       </div>
       <div class="dock-icon" data-panel="piano" title="Piano Roll">
-        <span>P</span>
+        <img src="assets/icons/piano-roll.svg" alt="Piano Roll">
       </div>
       <div class="dock-icon active" data-panel="plugins" title="Plugins / FX">
-        <span>X</span>
+        <img src="assets/icons/plugins.svg" alt="Plugins">
       </div>
       <div class="dock-icon active" data-panel="timeline" title="Timeline View">
-        <span>T</span>
+        <img src="assets/icons/timeline.svg" alt="Timeline">
       </div>
     </div>
     <div class="dock-icon-labels">
@@ -1184,6 +1195,8 @@
             <button class="transport-btn" id="btn-stop">⏹</button>
             <button class="transport-btn rec" id="btn-rec">●</button>
             <button class="transport-btn metro" id="btn-metronome" title="Metronome">♩</button>
+            <!-- NEW: Export WAV -->
+            <button class="transport-btn export" id="btn-export" title="Export WAV">⤓</button>
           </div>
         </div>
         <div class="tempo-zoom-row">
@@ -1248,7 +1261,7 @@
         <span>Slot 3 – Master FX</span>
         <span>Slot 4 – Creative FX</span>
       </div>
-      <p style="margin-top:8px;">Click the <span style="color:#ff7cf1;">X</span> icon at the top row to hide/show this panel.</p>
+      <p style="margin-top:8px;">Click the <span style="color:#ff7cf1;">Plugins</span> icon at the top row to hide/show this panel.</p>
       <p class="panel-note">Later you can replace this block with an &lt;iframe src="plugins.html"&gt; or inject content from your AI engine.</p>
     </aside>
   </section>
@@ -1299,7 +1312,7 @@
 </div>
 
 <script>
-  // ===== BASIC CONSTANTS + STATE (inspired by your C++ view engine) =====
+  // ===== BASIC CONSTANTS + STATE (inspired by your C++ view engine + JS engine) =====
   const BEATS_PER_BAR = 4;
   const GRID_LEFT_OFFSET = 8; // padding-left in .grid-inner
   let gridBars = 200;         // default visible bars
@@ -1316,7 +1329,7 @@
   let nextClipId = 1;
   let nextPatternId = 1;
 
-  // Playback state (simplified)
+  // Playback state (timeline)
   let tempo = 130;
   let isPlaying = false;
   let playheadBeat = 0;
@@ -1357,6 +1370,7 @@
   const backBtn       = document.getElementById('btn-back');
   const recBtn        = document.getElementById('btn-rec');
   const metroBtn      = document.getElementById('btn-metronome');
+  const exportBtn     = document.getElementById('btn-export');
   const tempoValueEl  = document.getElementById('tempo-value');
 
   const mixerStripsEl = document.getElementById('mixer-strips');
@@ -1381,6 +1395,9 @@
     piano: document.getElementById('bottom-piano'),
     rack : document.getElementById('bottom-rack')
   };
+
+  const dockIcons     = document.querySelectorAll('.dock-icon');
+  const dockPanels    = document.querySelectorAll('.dock-panel');
 
   let songKey = 'C# MINOR';
   let metronomeOn = false;
@@ -1828,7 +1845,7 @@
     });
   }
 
-  // ===== Zoom & scroll – core logic (similar to your DAWViewEngine) =====
+  // ===== Zoom & scroll – core logic =====
   function zoomAtBeatWidth(newBeatWidth, anchorClientX) {
     newBeatWidth = Math.max(MIN_BEAT_WIDTH, Math.min(MAX_BEAT_WIDTH, newBeatWidth));
     if (newBeatWidth === beatWidth) return;
@@ -1912,7 +1929,6 @@
     let newWidth = thumbResizeStartWidth + (thumbResizeMode === 'right' ? dx : -dx);
     newWidth = Math.max(40, Math.min(barWidth, newWidth));
 
-    // Map thumb width -> zoom (fraction of total)
     const newFraction = newWidth / barWidth;
     const clientWidth = timelineScroll.clientWidth || 1;
     const totalBeats = gridBars * BEATS_PER_BAR;
@@ -2064,7 +2080,7 @@
     setVerticalScrollRatio(ratio);
   });
 
-  // ===== Playback =====
+  // ===== Playback (visual) + Audio Engine integration =====
   function updatePlayheadPosition(autoScroll) {
     ensureGridForBeat(playheadBeat + 4);
     const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
@@ -2097,12 +2113,201 @@
     requestAnimationFrame(playLoop);
   }
 
+  // ===== AUDIO ENGINE (from JS DAW + C++ logic, adapted) =====
+  const AUDIO_CONFIG = {
+    sampleRate: 44100
+  };
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  let activeAudioNodes = [];
+
+  function buildAudioClipsFromTimeline() {
+    const secPerBeat = bpmToSecPerBeat(tempo);
+    const result = [];
+    if (!clips.length) return result;
+
+    clips.forEach(c => {
+      const startTime = c.startBeat * secPerBeat;
+      const duration = c.lengthBeats * secPerBeat;
+      const trackIndex = (c.trackId || 1) - 1;
+
+      const freqBase = 220 + trackIndex * 110;
+      const freq = freqBase + (c.patternId || 0) * 15;
+
+      const totalSamples = Math.max(1, Math.floor(duration * AUDIO_CONFIG.sampleRate));
+      const buffer = new Float32Array(totalSamples);
+      for (let i = 0; i < totalSamples; i++) {
+        const t = i / AUDIO_CONFIG.sampleRate;
+        buffer[i] = Math.sin(2 * Math.PI * freq * t) * 0.4; // 0.4 amplitude
+      }
+
+      result.push({
+        startTime,
+        duration,
+        trackIndex,
+        buffer,
+        name: c.label || 'Clip',
+        automation: [
+          { time: startTime,           value: 0.8 },
+          { time: startTime + duration, value: 0.8 }
+        ]
+      });
+    });
+
+    return result;
+  }
+
+  function getAutomationValueAtTime(clip, time) {
+    const pts = clip.automation || [];
+    if (!pts.length) return 1.0;
+    if (time <= pts[0].time) return pts[0].value;
+    if (time >= pts[pts.length - 1].time) return pts[pts.length - 1].value;
+
+    for (let i = 0; i < pts.length - 1; i++) {
+      if (time >= pts[i].time && time < pts[i + 1].time) {
+        const range = pts[i + 1].time - pts[i].time;
+        const dist = time - pts[i].time;
+        const t = dist / range;
+        return pts[i].value + t * (pts[i + 1].value - pts[i].value);
+      }
+    }
+    return 1.0;
+  }
+
+  function playEngineAudio() {
+    if (activeAudioNodes.length) {
+      stopEngineAudio();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const audioClips = buildAudioClipsFromTimeline();
+    if (!audioClips.length) return;
+
+    activeAudioNodes = [];
+
+    const now = audioCtx.currentTime;
+    const playheadSec = playheadBeat * bpmToSecPerBeat(tempo);
+
+    audioClips.forEach(clip => {
+      if (clip.startTime + clip.duration <= playheadSec) return;
+
+      const source = audioCtx.createBufferSource();
+      const buffer = audioCtx.createBuffer(1, clip.buffer.length, AUDIO_CONFIG.sampleRate);
+      buffer.copyToChannel(clip.buffer, 0);
+      source.buffer = buffer;
+
+      const gainNode = audioCtx.createGain();
+      gainNode.gain.value = clip.automation?.[0]?.value ?? 0.8;
+
+      source.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      let when = now + (clip.startTime - playheadSec);
+      let offset = 0;
+
+      if (playheadSec > clip.startTime) {
+        when = now;
+        offset = playheadSec - clip.startTime;
+      }
+
+      if (when >= now) {
+        try {
+          source.start(when, offset);
+          activeAudioNodes.push(source);
+        } catch (e) {
+          console.warn('Audio start error', e);
+        }
+      }
+    });
+  }
+
+  function stopEngineAudio() {
+    activeAudioNodes.forEach(node => {
+      try { node.stop(); } catch {}
+    });
+    activeAudioNodes = [];
+  }
+
+  function encodeWAV(samples, sampleRate) {
+    const buffer = new ArrayBuffer(44 + samples.length * 2);
+    const view = new DataView(buffer);
+
+    const writeString = (offset, string) => {
+      for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+    };
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + samples.length * 2, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true); // PCM
+    view.setUint16(22, 1, true); // Mono
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, samples.length * 2, true);
+
+    for (let i = 0; i < samples.length; i++) {
+      let s = Math.max(-1, Math.min(1, samples[i]));
+      view.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    }
+
+    return view;
+  }
+
+  function exportTimelineToWAV() {
+    const audioClips = buildAudioClipsFromTimeline();
+    if (!audioClips.length) {
+      alert('No clips on the timeline to export yet.');
+      return;
+    }
+
+    let totalDuration = 0;
+    audioClips.forEach(clip => {
+      totalDuration = Math.max(totalDuration, clip.startTime + clip.duration);
+    });
+    if (totalDuration <= 0) totalDuration = 1;
+
+    const lengthInSamples = Math.floor(totalDuration * AUDIO_CONFIG.sampleRate);
+    const mixBuffer = new Float32Array(lengthInSamples);
+
+    for (let i = 0; i < lengthInSamples; i++) {
+      const time = i / AUDIO_CONFIG.sampleRate;
+      let sample = 0;
+
+      audioClips.forEach(clip => {
+        if (time >= clip.startTime && time < clip.startTime + clip.duration) {
+          const localTime = time - clip.startTime;
+          const idx = Math.floor(localTime * AUDIO_CONFIG.sampleRate);
+          if (idx < clip.buffer.length) {
+            const vol = getAutomationValueAtTime(clip, time);
+            sample += clip.buffer[idx] * vol;
+          }
+        }
+      });
+      mixBuffer[i] = sample;
+    }
+
+    const wavBytes = encodeWAV(mixBuffer, AUDIO_CONFIG.sampleRate);
+    const blob = new Blob([wavBytes], { type: 'audio/wav' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sulandra_timeline_export.wav';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ===== Playback control wired to audio engine =====
   function startPlayback() {
     if (isPlaying) return;
     isPlaying = true;
     playBtn.classList.add('active');
     playheadBeatAtStart = playheadBeat;
     playStartTime = performance.now();
+    playEngineAudio();
     requestAnimationFrame(playLoop);
   }
 
@@ -2110,6 +2315,7 @@
     if (!isPlaying) return;
     isPlaying = false;
     playBtn.classList.remove('active');
+    stopEngineAudio();
   }
 
   playBtn.addEventListener('click', () => {
@@ -2138,6 +2344,10 @@
     metroBtn.classList.toggle('active', metronomeOn);
   });
 
+  exportBtn.addEventListener('click', () => {
+    exportTimelineToWAV();
+  });
+
   // Spacebar for play/pause
   window.addEventListener('keydown', e => {
     const active = document.activeElement;
@@ -2151,7 +2361,7 @@
     }
   });
 
-  // ===== Grid double-click to place pattern =====
+  // ===== Snapping for double-click placement =====
   gridInner.addEventListener('dblclick', e => {
     if (e.target.closest('.clip')) return;
     if (!currentPatternId) {
@@ -2234,4 +2444,62 @@
   });
 
   bottomTabs.forEach(tab => {
-   
+    tab.addEventListener('click', () => {
+      const panelKey = tab.dataset.bottomPanel;
+      bottomTabs.forEach(t => t.classList.toggle('active', t === tab));
+      Object.entries(bottomPanels).forEach(([key, el]) => {
+        el.classList.toggle('active', key === panelKey);
+      });
+    });
+  });
+
+  // ===== Dock icon simple panel toggle (browser / plugins) =====
+  dockIcons.forEach(icon => {
+    icon.addEventListener('click', () => {
+      const panel = icon.dataset.panel;
+      if (panel === 'timeline') {
+        // Timeline is always visible; we could scroll to it or flash it later.
+        return;
+      }
+      dockIcons.forEach(i => {
+        if (i.dataset.panel === panel) {
+          i.classList.toggle('active');
+        }
+      });
+      dockPanels.forEach(p => {
+        if (p.dataset.panelId === panel) {
+          p.style.display = (p.style.display === 'none' ? '' : 'none');
+        }
+      });
+    });
+  });
+
+  // ===== Initial setup =====
+  function initDemoData() {
+    // Default patterns
+    addPattern('Pattern 1', 'blue');
+    addPattern('Pattern 2', 'green');
+
+    // Default tracks
+    const t1 = addTrack('Drums');
+    const t2 = addTrack('Bass');
+    const t3 = addTrack('Keys');
+
+    const secPerBeat = bpmToSecPerBeat(tempo);
+    // Place a few default clips
+    createClip(t1, 0, 4, 'Drum Loop', 'blue', 1);
+    createClip(t2, 4, 4, 'Bassline', 'green', 2);
+    createClip(t3, 8, 4, 'Chords', 'purple', 1);
+  }
+
+  // Initialize grid and UI
+  buildRuler();
+  updateGridSizes();
+  initDemoData();
+  updatePlayheadPosition(false);
+  updateHorizontalThumb();
+  updateScreenDisplay();
+
+</script>
+</body>
+</html>
