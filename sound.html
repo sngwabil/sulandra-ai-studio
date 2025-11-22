@@ -354,25 +354,29 @@
       justify-content: center;
       align-items: center;
       padding: 4px 0 6px;
+      background: #02030f; /* dark, no glow */
     }
     .screen-grid {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       max-width: 720px;
       width: 100%;
       justify-content: center;
+      padding: 4px 6px;
+      border-radius: 8px;
+      background: #02030f; /* one big dark display strip */
     }
     .screen-box {
       flex: 1 1 0;
       min-width: 140px;
-      border-radius: 7px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#1d2cff,#050820 55%);
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: #02041b;       /* flat black display */
       padding: 4px 8px 5px;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      box-shadow: 0 0 16px rgba(0,0,0,0.85);
+      /* removed glow */
     }
     .screen-label {
       font-size: 9px;
@@ -391,19 +395,19 @@
       text-overflow: ellipsis;
     }
     .screen-box.mix {
-      transition: box-shadow .12s, border-color .12s;
+      transition: box-shadow .12s, border-color .12s, background .12s;
     }
     .screen-box.mix.low {
       border-color: #4aa8ff;
-      box-shadow: 0 0 14px rgba(74,168,255,0.7);
+      box-shadow: 0 0 10px rgba(74,168,255,0.45);
     }
     .screen-box.mix.normal {
       border-color: #7cffc7;
-      box-shadow: 0 0 14px rgba(124,255,199,0.7);
+      box-shadow: 0 0 10px rgba(124,255,199,0.45);
     }
     .screen-box.mix.clip {
       border-color: #ff6c8a;
-      box-shadow: 0 0 16px rgba(255,108,138,0.9);
+      box-shadow: 0 0 12px rgba(255,108,138,0.7);
     }
 
     .timeline-row-top {
@@ -520,24 +524,24 @@
       flex: 1;
       min-height: 0;
       display: grid;
-      grid-template-columns: 16px 170px minmax(0,1fr);
+      grid-template-columns: 170px minmax(0,1fr) 14px; /* track, grid, right scrollbar */
     }
 
-    .timeline-vscroll {
+    /* RIGHT VERTICAL SCROLLBAR */
+    .timeline-vscroll-right {
       background: linear-gradient(to bottom,#050a27,#020318);
-      border-right: 1px solid #000;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-      padding: 4px 0;
+      border-left: 1px solid #000;
+      position: relative;
     }
-    .timeline-vscroll input[type="range"] {
-      writing-mode: bt-lr; /* for Firefox */
-      -webkit-appearance: slider-vertical;
-      width: 12px;
-      height: 100%;
-      margin: 0;
-      background: transparent;
+    .timeline-vscroll-thumb {
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      height: 40px;
+      border-radius: 999px;
+      background: linear-gradient(to bottom,#4aa8ff,#7cffc7);
+      box-shadow: 0 0 10px rgba(124,190,255,0.8);
+      cursor: pointer;
     }
 
     .track-list {
@@ -1048,11 +1052,6 @@
       </div>
 
       <div class="timeline-main">
-        <!-- VERTICAL SCROLL SLIDER -->
-        <div class="timeline-vscroll">
-          <input type="range" id="vscroll-range" min="0" max="100" value="0">
-        </div>
-
         <!-- TRACK LIST -->
         <div class="track-list" id="track-list">
           <!-- dynamic track headers here -->
@@ -1071,6 +1070,11 @@
             <div class="playhead" id="playhead"></div>
             <!-- track rows & clips via JS -->
           </div>
+        </div>
+
+        <!-- RIGHT VERTICAL SCROLLBAR -->
+        <div class="timeline-vscroll-right" id="vscroll-right">
+          <div class="timeline-vscroll-thumb" id="vscroll-thumb"></div>
         </div>
       </div>
     </section>
@@ -1220,7 +1224,12 @@
   const screenMixBox = document.getElementById('screen-mix-box');
   const screenKeyBox = document.getElementById('screen-key-box');
 
-  const vScrollRange = document.getElementById('vscroll-range');
+  // Right vertical scrollbar
+  const vscrollRight = document.getElementById('vscroll-right');
+  const vscrollThumb = document.getElementById('vscroll-thumb');
+  let vThumbDragging = false;
+  let vThumbStartY = 0;
+  let vThumbStartTop = 0;
   let syncingVertical = false;
 
   const bottomDock = document.getElementById('bottom-dock');
@@ -1462,7 +1471,7 @@
     renderClips();
     updatePlayheadPosition(false);
     updateLoopRegion();
-    updateVerticalSlider();
+    updateVerticalThumb();
   }
 
   addTrackBtn.addEventListener('click', () => {
@@ -1742,7 +1751,7 @@
     // convert to pseudo dB from -48 to +3
     const db = -48 + mixLevel * 51; // 0 -> -48, 1 -> +3
     let status = '';
-    let cls = 'mix';
+    let cls = 'screen-box mix';
 
     if (db < -24) {
       status = 'LOW';
@@ -1756,7 +1765,7 @@
     }
 
     screenMixEl.textContent = `${db.toFixed(1)} dB · ${status}`;
-    screenMixBox.className = 'screen-box ' + cls;
+    screenMixBox.className = cls;
   }
 
   function updatePlayheadPosition(autoScroll) {
@@ -2056,6 +2065,7 @@
             ic.classList.add('active');
           }
         });
+        updateVerticalThumb();
         return;
       }
 
@@ -2074,10 +2084,11 @@
       icon.classList.toggle('active', !currentlyVisible);
 
       refreshMainGridLayout();
+      updateVerticalThumb();
     });
   });
 
-  /* ========= TIMELINE SCROLL THUMB ========= */
+  /* ========= HORIZONTAL TIMELINE SCROLL THUMB ========= */
   let thumbDragging = false;
   let thumbStartX = 0;
   let thumbStartLeft = 0;
@@ -2114,38 +2125,79 @@
     thumb.style.left = (ratio * maxLeft) + 'px';
   });
 
-  /* ========= VERTICAL SCROLL SYNC ========= */
-  function updateVerticalSlider() {
-    const maxScroll = trackListEl.scrollHeight - trackListEl.clientHeight;
-    const pos = maxScroll > 0 ? (trackListEl.scrollTop / maxScroll) * 100 : 0;
+  /* ========= VERTICAL SCROLL SYNC (RIGHT BAR) ========= */
+  function updateVerticalThumb() {
+    if (!vscrollRight || !vscrollThumb) return;
+    const contentHeight = timelineScroll.scrollHeight;
+    const viewportHeight = timelineScroll.clientHeight;
+    const containerHeight = vscrollRight.clientHeight;
+    const maxScroll = contentHeight - viewportHeight;
+
+    if (maxScroll <= 0 || containerHeight <= 0) {
+      vscrollThumb.style.display = 'none';
+      return;
+    }
+
+    vscrollThumb.style.display = 'block';
+
+    const visibleRatio = viewportHeight / contentHeight;
+    const thumbHeight = Math.max(30, containerHeight * visibleRatio);
+    vscrollThumb.style.height = thumbHeight + 'px';
+
+    const maxTop = containerHeight - thumbHeight;
+    const top = maxTop > 0 ? (timelineScroll.scrollTop / maxScroll) * maxTop : 0;
+    vscrollThumb.style.top = top + 'px';
+  }
+
+  function syncVerticalScrollFrom(sourceEl) {
+    if (syncingVertical) return;
     syncingVertical = true;
-    vScrollRange.value = pos;
+    const value = sourceEl.scrollTop;
+    trackListEl.scrollTop = value;
+    timelineScroll.scrollTop = value;
+    updateVerticalThumb();
     syncingVertical = false;
   }
 
-  trackListEl.addEventListener('scroll', () => {
-    if (syncingVertical) return;
+  trackListEl.addEventListener('scroll', () => syncVerticalScrollFrom(trackListEl));
+  timelineScroll.addEventListener('scroll', () => syncVerticalScrollFrom(timelineScroll));
+
+  vscrollThumb.addEventListener('mousedown', e => {
+    vThumbDragging = true;
+    vThumbStartY = e.clientY;
+    vThumbStartTop = parseFloat(getComputedStyle(vscrollThumb).top) || 0;
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!vThumbDragging) return;
+    const containerHeight = vscrollRight.clientHeight;
+    const thumbHeight = vscrollThumb.clientHeight;
+    const maxTop = containerHeight - thumbHeight;
+    let newTop = vThumbStartTop + (e.clientY - vThumbStartY);
+    newTop = Math.max(0, Math.min(maxTop, newTop));
+    vscrollThumb.style.top = newTop + 'px';
+
+    const maxScroll = timelineScroll.scrollHeight - timelineScroll.clientHeight;
+    const ratio = maxTop > 0 ? newTop / maxTop : 0;
+    const newScroll = maxScroll * ratio;
+
     syncingVertical = true;
-    timelineScroll.scrollTop = trackListEl.scrollTop;
-    updateVerticalSlider();
+    trackListEl.scrollTop = newScroll;
+    timelineScroll.scrollTop = newScroll;
     syncingVertical = false;
   });
 
-  timelineScroll.addEventListener('scroll', () => {
-    if (syncingVertical) return;
-    syncingVertical = true;
-    trackListEl.scrollTop = timelineScroll.scrollTop;
-    updateVerticalSlider();
-    syncingVertical = false;
+  window.addEventListener('mouseup', () => {
+    if (vThumbDragging) {
+      vThumbDragging = false;
+      document.body.style.userSelect = '';
+    }
   });
 
-  vScrollRange.addEventListener('input', () => {
-    const maxScroll = trackListEl.scrollHeight - trackListEl.clientHeight;
-    const newTop = maxScroll * (vScrollRange.value / 100);
-    syncingVertical = true;
-    trackListEl.scrollTop = newTop;
-    timelineScroll.scrollTop = newTop;
-    syncingVertical = false;
+  window.addEventListener('resize', () => {
+    updateVerticalThumb();
   });
 
   /* ========= INITIAL SETUP ========= */
@@ -2156,6 +2208,9 @@
     buildRuler();
     updateGridSizes();
     refreshMainGridLayout();
+
+    // Hide bottom dock at startup so timeline fills downwards
+    bottomDock.style.display = 'none';
     bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
 
     // Default patterns
@@ -2163,7 +2218,7 @@
     const pBass  = addPattern('Pattern 2 – Bass', 'green');
     const pChrd  = addPattern('Pattern 3 – Chords', 'purple');
 
-    // Default tracks (enough to force vertical scroll)
+    // Default tracks (enough to see vertical scrolling)
     const t1 = addTrack('Drums');
     const t2 = addTrack('Bass');
     const t3 = addTrack('Chords');
@@ -2172,6 +2227,8 @@
     const t6 = addTrack('Strings');
     const t7 = addTrack('Piano');
     const t8 = addTrack('Percussion');
+    const t9 = addTrack('Synths');
+    const t10 = addTrack('Pads');
 
     // Starter clips
     createClip(t1, 0, 4, 'Pattern 1 – Drums', 'blue', pDrums);
@@ -2182,7 +2239,7 @@
     tempoDisplay.textContent = tempo.toFixed(1);
     screenKeyEl.textContent = songKey;
     updatePlayheadPosition(false);
-    updateVerticalSlider();
+    updateVerticalThumb();
   }
 
   init();
