@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     /* =========================================
-       YOUR ORIGINAL CSS (UNCHANGED)
+       CSS STYLING (UNCHANGED)
        ========================================= */
     :root {
       --bg-deep: #020419;
@@ -1176,6 +1176,12 @@
         <div class="browser-section-title">Effect Chains</div>
         <div class="browser-item"><span>Vocal Polished Chain</span><span>FX</span></div>
         <div class="browser-item"><span>Mastering Glue Chain</span><span>FX</span></div>
+
+        <div class="browser-section-title">User</div>
+        <div class="browser-item" id="btn-upload-device">
+            <span>Upload from Device</span>
+            <span>📂</span>
+        </div>
       </div>
     </aside>
 
@@ -1930,8 +1936,19 @@ document.getElementById('btn-stop').onclick = () => {
 
 document.getElementById('add-track-btn').onclick = () => addTrack();
 
-// Wire up the "File" icon to trigger upload
-document.querySelector('.dock-icon[data-panel="browser"]').onclick = triggerImport;
+// Upload Button Listener (New)
+document.getElementById('btn-upload-device').onclick = triggerImport;
+
+// Toggle Browser Panel
+const browserPanel = document.querySelector('.left-browser');
+const browserIcon = document.querySelector('.dock-icon[data-panel="browser"]');
+
+browserIcon.onclick = () => {
+    const isHidden = browserPanel.style.display === 'none';
+    browserPanel.style.display = isHidden ? 'flex' : 'none';
+    browserIcon.classList.toggle('active', isHidden);
+    refreshMainGridLayout(); 
+};
 
 // Zoom
 dom.zoomInput.addEventListener('input', (e) => {
@@ -1939,21 +1956,21 @@ dom.zoomInput.addEventListener('input', (e) => {
   renderAll();
 });
 
-// Toggle Bottom Dock Logic
-const dockIcons = document.querySelectorAll('.dock-icon');
-const bottomDock = document.getElementById('bottom-dock');
-  
-dockIcons.forEach(icon => {
-  icon.addEventListener('click', () => {
-    const panel = icon.dataset.panel;
-    if(['mixer','piano','rack'].includes(panel)) {
-      if(bottomDock.style.display === 'none') bottomDock.style.display = 'flex';
-      else bottomDock.style.display = 'none';
+function refreshMainGridLayout() {
+    const leftVisible = document.querySelector('.left-browser').style.display !== 'none';
+    const rightVisible = document.querySelector('.right-placeholder').style.display !== 'none';
+    const mainGrid = document.querySelector('.main-grid');
+
+    if (leftVisible && rightVisible) {
+      mainGrid.style.gridTemplateColumns = '260px minmax(0,1fr) 220px';
+    } else if (leftVisible && !rightVisible) {
+      mainGrid.style.gridTemplateColumns = '260px minmax(0,1fr)';
+    } else if (!leftVisible && rightVisible) {
+      mainGrid.style.gridTemplateColumns = 'minmax(0,1fr) 220px';
+    } else {
+      mainGrid.style.gridTemplateColumns = 'minmax(0,1fr)';
     }
-    dockIcons.forEach(i => i.classList.remove('active'));
-    icon.classList.add('active');
-  });
-});
+}
 
 /**
  * ============================================================
@@ -1968,9 +1985,6 @@ function initDAW() {
   addTrack("Bass");
   
   renderAll();
-  
-  // Hide dock initially
-  bottomDock.style.display = 'none';
   console.log("Sulandra Audio Engine Initialized.");
 }
 
