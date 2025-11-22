@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sulandra AI Studio 20 – Enhanced</title>
+  <title>Sulandra AI Studio 20 – Ultimate Edition</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
-      /* FL Studio 20 Inspired Palette */
       --bg-deep: #222426;
       --bg-dark: #2d3033;
       --bg-panel: #36393e;
@@ -16,13 +15,11 @@
       --fl-red: #ff4040;
       --fl-blue: #5f8bc8;
       --fl-purple: #a96cff;
+      --fl-yellow: #ffd700;
       --text-main: #dcdcdc;
       --text-muted: #888888;
       --border-soft: #181818;
-      --grid-line: rgba(255,255,255,0.1);
-      
       --beat-width: 48px;
-      --track-height: 40px;
     }
 
     * { box-sizing: border-box; user-select: none; }
@@ -38,13 +35,13 @@
       overflow: hidden;
     }
 
-    /* === SCROLLBARS === */
+    /* SCROLLBARS */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #1a1a1a; }
     ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-    /* === HEADER / TOOLBAR === */
+    /* === HEADER === */
     header {
       background: #2b2d31;
       border-bottom: 1px solid #000;
@@ -62,8 +59,10 @@
       border-radius: 6px; 
       box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
+    .menu-bar { font-size: 11px; color: #888; cursor: pointer; }
+    .menu-bar span:hover { color: #fff; }
 
-    /* === MAIN TRANSPORT === */
+    /* === TRANSPORT BAR === */
     .transport-bar {
       display: flex;
       align-items: center;
@@ -96,18 +95,6 @@
     }
     .fl-btn.rec.active { background: var(--fl-red); color: white; box-shadow: 0 0 8px var(--fl-red); border-color: var(--fl-red); }
 
-    .display-screen {
-      background: #000;
-      border: 1px solid #444;
-      border-radius: 4px;
-      padding: 2px 8px;
-      font-family: monospace;
-      color: var(--fl-orange);
-      font-size: 14px;
-      min-width: 70px;
-      text-align: right;
-    }
-    
     .mode-switch {
       display: flex;
       background: #111;
@@ -121,22 +108,18 @@
       cursor: pointer;
       color: #666;
     }
-    .mode-opt.selected {
-      background: var(--fl-orange);
-      color: #000;
-      font-weight: bold;
-    }
+    .mode-opt.selected { background: var(--fl-orange); color: #000; font-weight: bold; }
 
-    /* === MAIN LAYOUT === */
+    /* === WORKSPACE === */
     .workspace {
       display: grid;
       grid-template-columns: 220px 1fr;
-      grid-template-rows: 1fr 300px;
+      grid-template-rows: 1fr 320px;
       flex: 1;
       overflow: hidden;
     }
 
-    /* === BROWSER === */
+    /* === BROWSER (Left) === */
     .browser-panel {
       grid-row: 1 / -1;
       background: #232528;
@@ -150,6 +133,10 @@
       border-bottom: 1px solid #000;
       font-size: 12px;
       font-weight: bold;
+      display: flex; justify-content: space-between;
+    }
+    .browser-search {
+      background: #111; border: none; color: #ccc; width: 100%; padding: 4px; border-bottom: 1px solid #333;
     }
     .browser-content {
       flex: 1;
@@ -157,18 +144,11 @@
       padding: 5px;
       font-size: 11px;
     }
-    .folder-item {
-      padding: 4px;
-      cursor: pointer;
-      color: #aaa;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .folder-item { padding: 4px; cursor: pointer; color: #aaa; display: flex; align-items: center; gap: 6px; }
     .folder-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
     .folder-icon { width: 12px; text-align: center; color: var(--fl-orange); }
 
-    /* === PLAYLIST === */
+    /* === PLAYLIST (Top Right) === */
     .playlist-panel {
       grid-column: 2;
       grid-row: 1;
@@ -182,17 +162,10 @@
       height: 28px;
       background: #2d3033;
       border-bottom: 1px solid #000;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      gap: 10px;
+      display: flex; align-items: center; padding: 0 10px; gap: 10px;
     }
-    .timeline-ruler {
-      height: 20px;
-      background: #222;
-      border-bottom: 1px solid #444;
-      position: relative;
-    }
+    .perf-toggle { font-size: 10px; display: flex; align-items: center; gap: 5px; color: #aaa; cursor: pointer;}
+    
     .tracks-area {
       flex: 1;
       display: grid;
@@ -206,9 +179,8 @@
       background: #2d3033;
       padding: 4px;
       font-size: 11px;
-      display: flex;
-      align-items: center;
-      color: #ccc;
+      display: flex; align-items: center; color: #ccc;
+      position: relative;
     }
     .grid-canvas {
       position: relative;
@@ -216,217 +188,148 @@
       background-size: 100% 40px, var(--beat-width) 100%;
       background-color: #181818;
     }
-    .pattern-clip {
-      position: absolute;
-      height: 38px;
-      background: rgba(149, 200, 64, 0.3);
-      border: 1px solid var(--fl-green);
-      border-radius: 3px;
-      top: 1px;
-      color: #ddd;
-      font-size: 10px;
-      padding: 2px;
-      overflow: hidden;
-      cursor: move;
+    
+    /* Clips */
+    .clip {
+      position: absolute; height: 38px; border-radius: 3px; top: 1px;
+      font-size: 10px; padding: 2px; overflow: hidden; cursor: move;
+      border: 1px solid rgba(255,255,255,0.2);
     }
-    .pattern-clip::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 4px;
-      background: var(--fl-green);
-      opacity: 0.8;
-    }
+    .clip-pattern { background: rgba(149, 200, 64, 0.3); border-color: var(--fl-green); }
+    .clip-pattern::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--fl-green); opacity: 0.8; }
+    
+    .clip-audio { background: rgba(95, 139, 200, 0.3); border-color: var(--fl-blue); }
+    .clip-audio svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 20px; opacity: 0.6; fill: var(--fl-blue); }
+
+    .clip-automation { background: rgba(169, 108, 255, 0.2); border-color: var(--fl-purple); }
+    .clip-automation svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; stroke: var(--fl-purple); stroke-width: 2; fill: none; }
 
     /* === BOTTOM DOCK === */
     .bottom-dock {
-      grid-column: 2;
-      grid-row: 2;
-      background: #232528;
-      border-top: 4px solid #111;
-      display: flex;
-      flex-direction: column;
+      grid-column: 2; grid-row: 2;
+      background: #232528; border-top: 4px solid #111;
+      display: flex; flex-direction: column;
     }
-    .dock-tabs {
-      display: flex;
-      background: #111;
-    }
+    .dock-tabs { display: flex; background: #111; }
     .dock-tab {
-      padding: 4px 15px;
-      font-size: 11px;
-      background: #2d3033;
-      color: #888;
-      cursor: pointer;
-      border-right: 1px solid #111;
-      border-top: 2px solid transparent;
+      padding: 4px 15px; font-size: 11px; background: #2d3033; color: #888;
+      cursor: pointer; border-right: 1px solid #111; border-top: 2px solid transparent;
     }
-    .dock-tab.active {
-      background: #36393e;
-      color: #fff;
-      border-top-color: var(--fl-orange);
-    }
-    .dock-content {
-      flex: 1;
-      position: relative;
-      display: none;
-    }
+    .dock-tab.active { background: #36393e; color: #fff; border-top-color: var(--fl-orange); }
+    .dock-content { flex: 1; position: relative; display: none; }
     .dock-content.active { display: block; }
-
-    /* === MIXER VIEW === */
-    #view-mixer {
-      display: flex;
-      height: 100%;
-      overflow-x: auto;
-      background: #181818;
-      padding: 5px;
-    }
-    .mixer-channel {
-      width: 50px;
-      background: #2d3033;
-      border: 1px solid #000;
-      margin-right: 2px;
-      display: flex;
-      flex-direction: column;
-      border-radius: 2px;
-    }
-    .mixer-channel.master { border: 1px solid #555; }
-    .mix-fader-area {
-      flex: 1;
-      position: relative;
-      background: #111;
-      margin: 4px;
-      border-radius: 2px;
-    }
-    .mix-fader {
-      width: 20px;
-      height: 30px;
-      background: #ccc;
-      position: absolute;
-      left: 10px;
-      bottom: 20%;
-      border-radius: 2px;
-      transform: translateX(-50%);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.8);
-      cursor: ns-resize;
-    }
-    .mix-meter {
-      position: absolute;
-      right: 4px;
-      top: 2px;
-      bottom: 2px;
-      width: 6px;
-      background: #222;
-    }
-    .mix-label {
-      text-align: center;
-      font-size: 9px;
-      padding: 2px;
-      background: #222;
-      color: #aaa;
-    }
-    /* Mixer Inspector (Right side) */
-    .mixer-inspector {
-      width: 180px;
-      background: #232528;
-      border-left: 2px solid #000;
-      padding: 5px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      flex-shrink: 0;
-    }
-    .slot-header { font-size: 10px; color: var(--fl-blue); margin-bottom: 4px; text-transform: uppercase; }
-    .fx-slot {
-      background: #2d3033;
-      border: 1px solid #111;
-      color: #ccc;
-      font-size: 10px;
-      padding: 4px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-    }
-    .fx-slot:hover { background: #383b40; color: #fff; }
-    .fx-led { width: 8px; height: 8px; background: var(--fl-green); border-radius: 50%; box-shadow: 0 0 4px var(--fl-green); }
 
     /* === CHANNEL RACK === */
     #view-rack { height: 100%; overflow-y: auto; background: #282b2e; padding: 10px; }
     .rack-row {
-      display: flex;
-      align-items: center;
-      background: #33363a;
-      margin-bottom: 4px;
-      padding: 2px;
-      border-radius: 3px;
-      border: 1px solid #1a1a1a;
+      display: flex; align-items: center; background: #33363a;
+      margin-bottom: 4px; padding: 2px; border-radius: 3px; border: 1px solid #1a1a1a;
+      position: relative;
     }
+    .channel-led { width: 8px; height: 8px; background: #444; border: 1px solid #000; margin-right: 5px; cursor: pointer; }
+    .channel-led.on { background: var(--fl-green); box-shadow: 0 0 4px var(--fl-green); }
+    
     .channel-btn {
-      width: 100px;
-      height: 24px;
-      background: #444;
-      border: 1px solid #222;
-      color: #ddd;
-      font-size: 11px;
-      text-align: center;
-      line-height: 22px;
-      border-radius: 2px;
-      cursor: pointer;
-      margin-right: 10px;
+      width: 90px; height: 24px; background: #444; border: 1px solid #222;
+      color: #ddd; font-size: 11px; text-align: center; line-height: 22px;
+      border-radius: 2px; cursor: pointer; margin-right: 5px;
     }
     .channel-btn:hover { background: #555; color: #fff; }
-    .step-grid { display: flex; gap: 2px; }
+    
+    /* Graph Editor (Hidden by default) */
+    .graph-editor {
+      height: 0; overflow: hidden; background: #222; transition: height 0.2s;
+      display: flex; gap: 2px; padding-left: 160px; /* Offset for controls */
+    }
+    .graph-editor.open { height: 40px; padding-top: 2px; border-bottom: 1px solid #444; }
+    .graph-bar { flex: 1; background: #444; align-self: flex-end; cursor: ns-resize; border: 1px solid #000; }
+    .graph-bar:hover { background: var(--fl-blue); }
+
+    /* Steps */
+    .step-grid { display: flex; gap: 2px; flex: 1; }
     .step-btn {
-      width: 16px;
-      height: 24px;
-      background: #222;
-      border: 1px solid #111;
-      cursor: pointer;
+      flex: 1; height: 24px; background: #222; border: 1px solid #111; cursor: pointer;
     }
     .step-btn.active { background: #ddd; box-shadow: 0 0 2px #fff; }
-    .step-btn:nth-child(4n+1) { background: #2a2a2a; } /* Grouping visual */
-    .step-btn.active:nth-child(4n+1) { background: #f08080; } /* Accents */
+    .step-btn:nth-child(4n+1) { background: #2a2a2a; }
+    .step-btn.active:nth-child(4n+1) { background: #f08080; }
+
+    /* === MIXER === */
+    #view-mixer { display: flex; height: 100%; overflow-x: auto; background: #181818; padding: 5px; }
+    .mixer-channel {
+      width: 50px; background: #2d3033; border: 1px solid #000;
+      margin-right: 2px; display: flex; flex-direction: column; border-radius: 2px;
+      position: relative;
+    }
+    .mixer-channel.selected { border: 1px solid #aaa; background: #383b40; }
+    .mix-fader-area {
+      flex: 1; position: relative; background: #111; margin: 4px; border-radius: 2px;
+    }
+    .mix-fader {
+      width: 20px; height: 30px; background: #ccc; position: absolute; left: 10px; bottom: 20%;
+      border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.8); cursor: ns-resize;
+    }
+    .mix-meter { position: absolute; right: 4px; top: 2px; bottom: 2px; width: 6px; background: #222; }
+    
+    /* Sidechain Cable */
+    .sidechain-area { height: 20px; background: #222; display: flex; justify-content: center; align-items: center; }
+    .sidechain-knob { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #666; cursor: pointer; }
+    .sidechain-knob.active { background: var(--fl-yellow); box-shadow: 0 0 5px var(--fl-yellow); }
+
+    /* Mixer Inspector */
+    .mixer-inspector {
+      width: 200px; background: #232528; border-left: 2px solid #000; padding: 5px;
+      display: flex; flex-direction: column; gap: 2px; flex-shrink: 0;
+    }
+    .fx-slot {
+      background: #2d3033; border: 1px solid #111; color: #ccc;
+      font-size: 10px; padding: 4px; cursor: pointer; display: flex; justify-content: space-between;
+    }
+    .fx-slot:hover { background: #383b40; color: #fff; }
+    .fx-led { width: 8px; height: 8px; background: var(--fl-green); border-radius: 50%; box-shadow: 0 0 4px var(--fl-green); }
 
     /* === PIANO ROLL === */
-    #view-piano { display: grid; grid-template-columns: 60px 1fr; height: 100%; background: #222; }
-    .piano-keys { background: #eee; overflow: hidden; position: relative; border-right: 1px solid #000; }
-    .key-white { height: 16px; background: #fff; border-bottom: 1px solid #ccc; }
+    #view-piano { display: grid; grid-template-columns: 60px 1fr; grid-template-rows: 1fr 60px; height: 100%; background: #222; }
+    .piano-keys { background: #eee; overflow: hidden; position: relative; border-right: 1px solid #000; grid-row: 1; }
+    .key-white { height: 16px; background: #fff; border-bottom: 1px solid #ccc; font-size: 9px; padding-left: 2px; color: #ccc;}
     .key-black { height: 10px; background: #000; margin-bottom: 6px; border-bottom: 1px solid #333; }
+    
     .piano-grid {
+      grid-row: 1;
       background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
       background-size: 100% 16px, var(--beat-width) 100%;
-      position: relative;
-      overflow: auto;
+      position: relative; overflow: auto;
     }
     .piano-note {
-      position: absolute;
-      height: 14px;
-      background: var(--fl-green);
-      border: 1px solid #fff;
-      border-radius: 2px;
-      opacity: 0.8;
+      position: absolute; height: 14px; background: var(--fl-green);
+      border: 1px solid #fff; border-radius: 2px; opacity: 0.8; cursor: e-resize;
+    }
+    .piano-note.slide::after {
+      content: '▲'; font-size: 8px; position: absolute; right: 2px; top: 0; color: #000;
+    }
+    
+    .velocity-lane {
+      grid-row: 2; grid-column: 2;
+      background: #1a1a1a; border-top: 2px solid #000;
+      position: relative;
+    }
+    .vel-bar {
+      position: absolute; bottom: 0; width: 4px; background: var(--fl-purple); opacity: 0.6;
+      border-top: 2px solid #fff;
     }
 
-    /* === CONTEXT MENU (Simulated) === */
+    /* === CONTEXT MENU === */
     .context-menu {
-      position: fixed;
-      background: #eee;
-      color: #000;
-      border: 1px solid #999;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-      padding: 5px 0;
-      z-index: 9999;
-      font-size: 12px;
-      display: none;
+      position: fixed; background: #eee; color: #000; border: 1px solid #999;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.5); padding: 5px 0; z-index: 9999; font-size: 12px; display: none;
     }
     .ctx-item { padding: 4px 15px; cursor: pointer; }
     .ctx-item:hover { background: #3399ff; color: #fff; }
     
-    /* Knobs (Visual CSS) */
     .knob-simple {
-      width: 20px; height: 20px; border-radius: 50%;
+      width: 18px; height: 18px; border-radius: 50%;
       background: conic-gradient(#999 0%, #999 70%, #222 70%, #222 100%);
-      border: 2px solid #111;
-      transform: rotate(-135deg); /* Start pos */
-      cursor: ns-resize;
+      border: 1px solid #111; transform: rotate(-135deg); cursor: ns-resize;
     }
 
   </style>
@@ -436,10 +339,13 @@
   <header>
     <div class="logo-area">
       <div class="logo-icon"></div>
-      <span>FL STUDIO 20</span>
+      <span>SULANDRA STUDIO 20</span>
     </div>
-    <div style="font-size: 11px; color: #888;">FILE EDIT ADD PATTERNS VIEW OPTIONS TOOLS ?</div>
-    <div class="display-screen" id="cpu-meter">CPU: 2%</div>
+    <div class="menu-bar">FILE EDIT ADD PATTERNS VIEW OPTIONS TOOLS ?</div>
+    <div style="display:flex; gap:10px; font-size:12px; color:#aaa;">
+      <div title="CPU Load">CPU: 4%</div>
+      <div title="Memory">RAM: 204MB</div>
+    </div>
   </header>
 
   <section class="transport-bar">
@@ -455,148 +361,190 @@
       <div class="fl-btn rec" id="btn-rec" oncontextmenu="showRecOptions(event)">●</div>
     </div>
     <div class="transport-group">
-      <div class="display-screen" style="color:var(--fl-green);" id="tempo-display">130.00</div>
+      <div style="font-family:monospace; color:var(--fl-green); font-size:16px;">130.00</div>
       <div style="font-size:10px; color:#888;">BPM</div>
     </div>
     <div class="transport-group">
-      <div class="fl-btn" title="Metronome">M</div>
-      <div class="fl-btn" title="Wait for input">W</div>
+      <div class="fl-btn" title="Metronome" onclick="this.classList.toggle('active')">M</div>
+      <div class="fl-btn" title="Wait for Input" onclick="this.classList.toggle('active')">W</div>
+      <div class="fl-btn" title="Countdown before recording (3..2..1)" onclick="this.classList.toggle('active')">3.2.1</div>
     </div>
     <div style="flex:1"></div>
-    <div class="transport-group">
-      <div class="display-screen" style="width: 100px; color: var(--fl-blue);">00:00:00</div>
-    </div>
+    <div style="color:var(--fl-blue); font-family:monospace; font-size:18px;">00:01:04</div>
   </section>
 
   <div class="workspace">
     
     <aside class="browser-panel">
-      <div class="browser-header">Browser - All</div>
-      <div class="browser-content">
-        <div class="folder-item"><span class="folder-icon">📂</span> Current Project</div>
+      <div class="browser-header">
+        <span>Browser</span>
+        <span style="cursor:pointer">🔍</span>
+      </div>
+      <input type="text" class="browser-search" placeholder="Find..." onkeyup="filterBrowser(this.value)">
+      <div class="browser-content" id="browser-list">
+        [cite_start]<div class="folder-item"><span class="folder-icon">📂</span> Current Project [cite: 166]</div>
         <div class="folder-item"><span class="folder-icon">📂</span> Recent files</div>
-        <div class="folder-item"><span class="folder-icon">📂</span> Plugin database</div>
+        [cite_start]<div class="folder-item"><span class="folder-icon">📂</span> Plugin database [cite: 1068]</div>
         <div style="padding-left: 15px; font-size:10px;">
           <div class="folder-item">Effects (VST)</div>
           <div class="folder-item">Generators (Synths)</div>
         </div>
-        <div class="folder-item"><span class="folder-icon">📂</span> Packs</div>
+        [cite_start]<div class="folder-item"><span class="folder-icon">📂</span> Packs [cite: 382]</div>
         <div style="padding-left: 15px; font-size:10px;">
-          <div class="folder-item">Drums (ModeAudio)</div>
-          <div class="folder-item">Loops</div>
+          <div class="folder-item">Drums</div>
+          <div class="folder-item">Instruments</div>
           <div class="folder-item">Vocals</div>
         </div>
-        <div class="folder-item"><span class="folder-icon">📂</span> Recorded</div>
-        <div class="folder-item"><span class="folder-icon">📂</span> Rendered</div>
+        [cite_start]<div class="folder-item"><span class="folder-icon">📂</span> Recorded [cite: 73]</div>
       </div>
     </aside>
 
     <section class="playlist-panel">
       <div class="playlist-toolbar">
-        <span style="font-weight:bold; font-size:11px;">Playlist - Arrangement 1</span>
-        <span class="fl-btn" style="width:20px; height:20px;">✏️</span>
-        <span class="fl-btn" style="width:20px; height:20px;">🖌️</span>
-        <span class="fl-btn" style="width:20px; height:20px;">✂️</span>
-      </div>
-      <div class="timeline-ruler">
+        <span style="font-weight:bold; font-size:11px; color: #ccc;">Playlist - Arrangement</span>
+        <div class="fl-btn" style="width:20px; height:20px;" title="Draw (P)">✏️</div>
+        <div class="fl-btn" style="width:20px; height:20px;" title="Paint (B)">🖌️</div>
+        <div class="fl-btn" style="width:20px; height:20px;" title="Slice (C)">✂️</div>
+        <div class="perf-toggle" onclick="togglePerformanceMode()">
+          [cite_start]<input type="checkbox" id="perf-check"> Performance Mode [cite: 1016]
         </div>
+      </div>
+      <div class="timeline-ruler" id="pl-ruler"></div>
       <div class="tracks-area">
         <div class="track-headers" id="pl-track-headers">
           </div>
         <div class="grid-canvas" id="pl-grid">
           <div id="playhead" style="position:absolute; left:0; top:0; height:100%; width:2px; background:var(--fl-red); z-index:10;"></div>
+          
+          <div class="clip clip-pattern" style="left:0px; width:192px; top:41px;">
+            Pattern 1 (Drums)
           </div>
+
+          <div class="clip clip-audio" style="left:192px; width:192px; top:81px;">
+            Vocals_Take1.wav
+            <svg viewBox="0 0 100 20" preserveAspectRatio="none">
+              <path d="M0,10 Q25,0 50,10 T100,10" stroke="none" />
+            </svg>
+          </div>
+
+          <div class="clip clip-automation" style="left:0px; width:384px; top:121px;">
+            Filter Cutoff (Auto)
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path d="M0,80 C30,80 30,20 60,20 S100,80 100,80" />
+            </svg>
+          </div>
+
+        </div>
       </div>
     </section>
 
     <section class="bottom-dock">
       <div class="dock-tabs">
-        <div class="dock-tab active" onclick="switchDock('mixer')">Mixer</div>
-        <div class="dock-tab" onclick="switchDock('rack')">Channel Rack</div>
-        <div class="dock-tab" onclick="switchDock('piano')">Piano Roll</div>
+        <div class="dock-tab active" onclick="switchDock('mixer')">Mixer (F9)</div>
+        <div class="dock-tab" onclick="switchDock('rack')">Channel Rack (F6)</div>
+        <div class="dock-tab" onclick="switchDock('piano')">Piano Roll (F7)</div>
       </div>
 
       <div class="dock-content active" id="view-mixer">
-        <div class="mixer-channel master">
-          <div class="mix-fader-area">
-            <div class="mix-fader"></div>
-            <div class="mix-meter"></div>
+        <div id="mixer-scroll-area" style="display:flex; overflow-x:auto; height:100%;">
+          <div class="mixer-channel master" onclick="selectMixerTrack(0)">
+            <div class="mix-fader-area">
+              <div class="mix-fader"></div>
+              <div class="mix-meter"></div>
+            </div>
+            <div class="mix-label">Master</div>
+            <div class="sidechain-area"></div>
           </div>
-          <div class="mix-label">Master</div>
+          
+          <div id="mixer-inserts" style="display:flex;"></div>
         </div>
-        <div id="mixer-inserts" style="display:flex;"></div>
-        
+
         <div class="mixer-inspector">
-          <div class="slot-header">FX Slots (Insert 1)</div>
-          <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
+          [cite_start]<div class="slot-header">FX Slots (Insert 1) [cite: 2212]</div>
+          [cite_start]<div class="fx-slot" onclick="alert('Loading Edison...')"><span>Edison [cite: 2634]</span><div class="fx-led"></div></div>
           <div class="fx-slot"><span>Fruity Reverb 2</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>Fruity Parametric EQ</span><div class="fx-led"></div></div>
+          <div class="fx-slot"><span>Fruity Parametric EQ 2</span><div class="fx-led"></div></div>
           <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
           <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
           <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
           <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
           <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
-          <div class="fx-slot"><span>(none)</span><div class="fx-led"></div></div>
+          
           <div style="margin-top:auto; border-top:1px solid #444; padding-top:4px;">
-            <div style="font-size:10px; color:#888;">EQ</div>
-            <div style="height:40px; background:#111; border:1px solid #333;"></div>
+            <div style="font-size:10px; color:#888; display:flex; justify-content:space-between;">
+              <span>EQ</span>
+              [cite_start]<span>Delay Comp [cite: 2193]</span>
+            </div>
+            <div style="height:40px; background:#111; border:1px solid #333; position:relative;">
+              <div style="position:absolute; bottom:0; left:20%; width:20%; height:60%; background:#444;"></div>
+              <div style="position:absolute; bottom:0; left:50%; width:20%; height:30%; background:#444;"></div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="dock-content" id="view-rack">
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-          <span style="font-size:11px; font-weight:bold;">Unsorted</span>
-          <div class="fl-btn" style="width:60px;" onclick="addChannel()">+</div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:5px; padding:0 10px;">
+          <div style="display:flex; gap:5px;">
+            <span style="font-size:11px; font-weight:bold;">Target Mixer Track:</span>
+            <div class="display-screen" style="width:30px; font-size:11px; padding:0 2px;">--</div>
+          </div>
+          <div style="display:flex; gap:5px;">
+            [cite_start]<div class="fl-btn" style="width:80px;" onclick="addChannel()">+ Add [cite: 1067]</div>
+            [cite_start]<div class="fl-btn" style="width:40px;" onclick="toggleGraphEditor()">Graph [cite: 648]</div>
+          </div>
         </div>
         <div id="rack-channels"></div>
       </div>
 
       <div class="dock-content" id="view-piano">
+        <div style="position:absolute; top:5px; right:20px; z-index:10; display:flex; gap:5px;">
+           [cite_start]<div class="fl-btn" title="Slide Note [cite: 857]">Slide</div>
+           [cite_start]<div class="fl-btn" title="Stamp Tool [cite: 851]">Chord</div>
+        </div>
         <div class="piano-keys" id="piano-keys"></div>
         <div class="piano-grid" id="piano-grid"></div>
+        <div class="velocity-lane" id="piano-velocity">
+          [cite_start]<div style="position:absolute; top:0; left:0; background:#222; color:#aaa; font-size:9px; padding:2px;">Control: Velocity [cite: 648]</div>
+        </div>
       </div>
 
     </section>
   </div>
 
   <div id="rec-menu" class="context-menu">
-    <div class="ctx-item" onclick="toggleRecFilter('audio')">✔ Audio</div>
-    <div class="ctx-item" onclick="toggleRecFilter('automation')">✔ Automation</div>
-    <div class="ctx-item" onclick="toggleRecFilter('notes')">✔ Notes</div>
-    <div class="ctx-item" onclick="toggleRecFilter('clips')">✔ Clips</div>
+    <div class="ctx-item"><b>Recording Filter</b></div>
+    [cite_start]<div class="ctx-item">✔ Audio [cite: 2583]</div>
+    [cite_start]<div class="ctx-item">✔ Automation [cite: 2410]</div>
+    <div class="ctx-item">✔ Notes (Score)</div>
+    <div class="ctx-item">✔ Clips</div>
     <div style="border-top:1px solid #ccc; margin:2px 0;"></div>
     <div class="ctx-item">Loop Recording</div>
   </div>
 
 <script>
-  // --- STATE ---
+  /* === STATE === */
   let isPlaying = false;
-  let playMode = 'pat'; // 'pat' or 'song'
-  let tempo = 130;
-  let currentBar = 0;
-  let animationId;
+  let showGraphEditor = false;
+  let activeMixerTrack = 0;
   
-  // --- DATA ---
-  const channels = [
-    { name: "Kick", steps: [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0] },
-    { name: "Clap", steps: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0] },
-    { name: "Hat",  steps: [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0] },
-    { name: "Snare",steps: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0] }
+  /* === DATA: CHANNELS === */
+  let channels = [
+    [cite_start]{ name: "Kick", vol: 80, pan: 50, steps: [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0], cut: true }, // Cut itself [cite: 695]
+    { name: "Clap", vol: 80, pan: 50, steps: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0], cut: false },
+    { name: "Hat",  vol: 70, pan: 30, steps: [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0], cut: true },
+    { name: "Snare",vol: 80, pan: 50, steps: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0], cut: false }
   ];
 
-  const mixerTracks = 10;
-
-  // --- INITIALIZATION ---
+  /* === INIT === */
   function init() {
     renderChannelRack();
     renderMixer();
-    renderPlaylist();
+    renderPlaylistHeaders();
     renderPianoRoll();
   }
 
-  // --- DOCK SWITCHING ---
+  /* === DOCK LOGIC === */
   function switchDock(view) {
     document.querySelectorAll('.dock-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.dock-content').forEach(c => c.classList.remove('active'));
@@ -605,162 +553,226 @@
     document.getElementById('view-'+view).classList.add('active');
   }
 
-  // --- TRANSPORT ---
-  function setMode(mode) {
-    playMode = mode;
-    document.getElementById('mode-pat').className = mode === 'pat' ? 'mode-opt selected' : 'mode-opt';
-    document.getElementById('mode-song').className = mode === 'song' ? 'mode-opt selected' : 'mode-opt';
-  }
-
+  /* === TRANSPORT LOGIC === */
   function togglePlay() {
     isPlaying = !isPlaying;
     const btn = document.getElementById('btn-play');
+    const head = document.getElementById('playhead');
+    
     if(isPlaying) {
       btn.classList.add('active');
       btn.style.color = 'var(--fl-orange)';
-      animatePlayhead();
+      // Simple animation simulation
+      head.style.transition = "left 4s linear";
+      head.style.left = "100%";
     } else {
       btn.classList.remove('active');
       btn.style.color = '#bbb';
-      cancelAnimationFrame(animationId);
+      head.style.transition = "none";
+      // Stop animation logic would go here
     }
   }
 
   function stopPlay() {
     isPlaying = false;
     document.getElementById('btn-play').classList.remove('active');
-    document.getElementById('btn-play').style.color = '#bbb';
-    cancelAnimationFrame(animationId);
-    document.getElementById('playhead').style.left = '0px';
+    document.getElementById('playhead').style.transition = "none";
+    document.getElementById('playhead').style.left = "0px";
   }
 
-  function animatePlayhead() {
-    const ph = document.getElementById('playhead');
-    let left = parseFloat(ph.style.left || 0);
-    left += (tempo / 60); // Simple speed simulation
-    if(left > 1000) left = 0; // Loop
-    ph.style.left = left + 'px';
-    animationId = requestAnimationFrame(animatePlayhead);
+  function setMode(mode) {
+    document.getElementById('mode-pat').className = mode === 'pat' ? 'mode-opt selected' : 'mode-opt';
+    document.getElementById('mode-song').className = mode === 'song' ? 'mode-opt selected' : 'mode-opt';
   }
 
-  // --- CHANNEL RACK ---
+  [cite_start]/* === CHANNEL RACK [cite: 235] === */
   function renderChannelRack() {
     const container = document.getElementById('rack-channels');
     container.innerHTML = '';
     
     channels.forEach((ch, idx) => {
       const row = document.createElement('div');
-      row.className = 'rack-row';
+      row.style.display = 'flex';
+      row.style.flexDirection = 'column';
       
-      // Controls
-      const knobs = `<div style="display:flex; gap:5px; margin-right:10px;">
-        <div class="knob-simple" title="Volume"></div>
-        <div class="knob-simple" title="Pan"></div>
-      </div>`;
+      // Main Row
+      const mainRow = document.createElement('div');
+      mainRow.className = 'rack-row';
       
-      // Button
-      const btn = `<div class="channel-btn" onclick="alert('Channel Settings: ${ch.name}')">${ch.name}</div>`;
+      // LED + Knobs
+      const controls = `
+        <div class="channel-led on" title="Mute/Solo"></div>
+        <div style="display:flex; gap:2px; margin-right:5px;">
+          <div class="knob-simple" title="Volume"></div>
+          <div class="knob-simple" title="Pan"></div>
+        </div>
+        [cite_start]<div class="channel-btn" onclick="alert('Opening Plugin: ${ch.name} [cite: 1097]')">${ch.name}</div>
+      `;
       
-      // Steps
+      [cite_start]// Step Sequencer Buttons [cite: 300]
       let stepsHtml = '<div class="step-grid">';
       for(let i=0; i<16; i++) {
         const active = ch.steps[i] ? 'active' : '';
-        stepsHtml += `<div class="step-btn ${active}" onclick="toggleStep(${idx}, ${i}, this)"></div>`;
+        stepsHtml += `<div class="step-btn ${active}" onclick="this.classList.toggle('active')"></div>`;
       }
       stepsHtml += '</div>';
 
-      row.innerHTML = knobs + btn + stepsHtml;
+      mainRow.innerHTML = controls + stepsHtml;
+      row.appendChild(mainRow);
+
+      [cite_start]// Graph Editor (Hidden by default) [cite: 648]
+      const graphRow = document.createElement('div');
+      graphRow.className = showGraphEditor ? 'graph-editor open' : 'graph-editor';
+      
+      // 16 bars for velocity
+      let graphHtml = '';
+      for(let i=0; i<16; i++) {
+        // Random heights for demo
+        let h = ch.steps[i] ? '80%' : '20%';
+        graphHtml += `<div class="graph-bar" style="height:${h}"></div>`;
+      }
+      graphRow.innerHTML = graphHtml;
+      
+      row.appendChild(graphRow);
       container.appendChild(row);
     });
   }
 
-  function toggleStep(chIdx, stepIdx, el) {
-    channels[chIdx].steps[stepIdx] = !channels[chIdx].steps[stepIdx];
-    el.classList.toggle('active');
-  }
-  
   function addChannel() {
-    const name = prompt("Instrument Name (e.g. 3xOsc, Sampler):", "Sampler");
+    const name = prompt("Add Generator (e.g. Sytrus, 3xOsc, FPC):", "Sytrus");
     if(name) {
-      channels.push({ name: name, steps: new Array(16).fill(0) });
+      channels.push({ name: name, vol: 80, pan: 50, steps: new Array(16).fill(0), cut: false });
       renderChannelRack();
     }
   }
 
-  // --- MIXER ---
+  function toggleGraphEditor() {
+    showGraphEditor = !showGraphEditor;
+    renderChannelRack(); // Re-render to show/hide graphs
+  }
+
+  [cite_start]/* === MIXER [cite: 2137] === */
   function renderMixer() {
     const container = document.getElementById('mixer-inserts');
-    for(let i=1; i<=mixerTracks; i++) {
+    container.innerHTML = '';
+    
+    // 20 Insert Tracks
+    for(let i=1; i<=20; i++) {
       const ch = document.createElement('div');
       ch.className = 'mixer-channel';
+      if(i === activeMixerTrack) ch.classList.add('selected');
+      
       ch.innerHTML = `
         <div class="mix-fader-area">
           <div class="mix-fader"></div>
           <div class="mix-meter"></div>
         </div>
         <div class="mix-label">Insert ${i}</div>
+        <div class="sidechain-area">
+           [cite_start]<div class="sidechain-knob" title="Sidechain Send [cite: 2252]" onclick="this.classList.toggle('active')"></div>
+        </div>
       `;
+      
       ch.onclick = function() {
-        document.querySelectorAll('.mixer-channel').forEach(c => c.style.border = '1px solid #000');
-        this.style.border = '1px solid #bbb';
+        activeMixerTrack = i;
+        renderMixer(); // Re-render to update selection styling
         document.querySelector('.slot-header').innerText = `FX Slots (Insert ${i})`;
       };
+      
       container.appendChild(ch);
     }
   }
 
-  // --- PLAYLIST ---
-  function renderPlaylist() {
-    const headers = document.getElementById('pl-track-headers');
-    const grid = document.getElementById('pl-grid');
-    
-    for(let i=1; i<=10; i++) {
-      const h = document.createElement('div');
-      h.className = 'track-header';
-      h.innerText = `Track ${i}`;
-      headers.appendChild(h);
-    }
-
-    // Add dummy pattern clip
-    const clip = document.createElement('div');
-    clip.className = 'pattern-clip';
-    clip.style.left = '0px';
-    clip.style.width = '192px'; // 4 beats * 48px
-    clip.style.top = '41px'; // Track 2
-    clip.innerText = 'Pattern 1';
-    grid.appendChild(clip);
+  function selectMixerTrack(index) {
+    activeMixerTrack = index;
+    renderMixer();
+    document.querySelector('.slot-header').innerText = index === 0 ? "FX Slots (Master)" : `FX Slots (Insert ${index})`;
   }
 
-  // --- PIANO ROLL ---
-  function renderPianoRoll() {
-    const keysContainer = document.getElementById('piano-keys');
-    const gridContainer = document.getElementById('piano-grid');
-    
-    // Generate 2 Octaves
-    for(let i=0; i<24; i++) {
-      const isBlack = [1,3,6,8,10].includes(i % 12);
-      const k = document.createElement('div');
-      k.className = isBlack ? 'key-black' : 'key-white';
-      keysContainer.appendChild(k);
-      
-      // Grid line
-      const line = document.createElement('div');
-      line.style.height = isBlack ? '17px' : '17px'; // Simplified height
-      line.style.borderBottom = '1px solid #333';
-      line.style.width = '1000px';
-      gridContainer.appendChild(line);
+  /* === PLAYLIST === */
+  function renderPlaylistHeaders() {
+    const h = document.getElementById('pl-track-headers');
+    for(let i=1; i<=15; i++) {
+      const div = document.createElement('div');
+      div.className = 'track-header';
+      div.innerText = `Track ${i}`;
+      // Right click menu simulation
+      [cite_start]div.oncontextmenu = (e) => { e.preventDefault(); alert('Track options: Rename, Color, Icon... [cite: 2198]'); };
+      h.appendChild(div);
     }
+  }
+
+  function togglePerformanceMode() {
+    const check = document.getElementById('perf-check');
+    if(check.checked) {
+      [cite_start]alert("Performance Mode Activated! [cite: 1016]\nThe playlist is now divided into trigger zones.");
+    }
+  }
+
+  [cite_start]/* === PIANO ROLL [cite: 725] === */
+  function renderPianoRoll() {
+    const keys = document.getElementById('piano-keys');
+    const grid = document.getElementById('piano-grid');
+    const vel = document.getElementById('piano-velocity');
     
-    // Add a dummy note
+    // Generate keys (C3 to C5 approx)
+    const notes = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+    
+    for(let i=24; i>=0; i--) { // Reverse order for top-down
+      const noteName = notes[i % 12];
+      const isBlack = noteName.includes("#");
+      
+      const key = document.createElement('div');
+      key.className = isBlack ? 'key-black' : 'key-white';
+      if(!isBlack && (i%12 === 0)) key.innerText = "C" + (Math.floor(i/12) + 3);
+      keys.appendChild(key);
+      
+      // Grid Row
+      const row = document.createElement('div');
+      row.style.height = isBlack ? '10px' : '16px';
+      row.style.borderBottom = '1px solid #333';
+      row.style.width = '1000px'; // Arbitrary width
+      grid.appendChild(row);
+    }
+
+    [cite_start]// Add a demo note [cite: 828]
     const note = document.createElement('div');
     note.className = 'piano-note';
     note.style.top = '50px';
-    note.style.left = '48px';
-    note.style.width = '48px';
-    gridContainer.appendChild(note);
+    note.style.left = '48px'; // Beat 1
+    note.style.width = '96px'; // 2 beats
+    grid.appendChild(note);
+
+    [cite_start]// Add a Slide note [cite: 857]
+    const slideNote = document.createElement('div');
+    slideNote.className = 'piano-note slide';
+    slideNote.style.top = '30px'; // Higher pitch
+    slideNote.style.left = '96px'; 
+    slideNote.style.width = '48px';
+    slideNote.title = "Slide Note";
+    grid.appendChild(slideNote);
+    
+    // Velocity bars
+    const velBar = document.createElement('div');
+    velBar.className = 'vel-bar';
+    velBar.style.left = '48px';
+    velBar.style.height = '80%';
+    vel.appendChild(velBar);
   }
 
-  // --- UTILS ---
+  [cite_start]/* === BROWSER FILTER [cite: 216] === */
+  function filterBrowser(text) {
+    const items = document.querySelectorAll('.folder-item');
+    items.forEach(item => {
+      if(item.innerText.toLowerCase().includes(text.toLowerCase())) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  [cite_start]/* === RECORDING MENU [cite: 2418] === */
   function showRecOptions(e) {
     e.preventDefault();
     const menu = document.getElementById('rec-menu');
@@ -769,17 +781,13 @@
     menu.style.top = e.pageY + 'px';
   }
   
-  function toggleRecFilter(type) {
-    document.getElementById('rec-menu').style.display = 'none';
-    // Logic for toggling would go here
-  }
-
   window.onclick = function(e) {
     if (!e.target.matches('#btn-rec')) {
       document.getElementById('rec-menu').style.display = 'none';
     }
   }
 
+  // Start
   init();
 
 </script>
