@@ -491,7 +491,7 @@
       cursor: pointer;
     }
 
-    /* HORIZONTAL TIMELINE SLIDER (zoom + scroll) */
+    /* HORIZONTAL TIMELINE SLIDER */
     .timeline-scrollbar {
       width: 100%;
       height: 12px;
@@ -518,7 +518,7 @@
       width: 18px;
       height: 100%;
       background: rgba(0,0,0,0.32);
-      cursor: ew-resize;
+      cursor: pointer;
     }
     .timeline-scroll-center {
       flex: 1;
@@ -611,7 +611,7 @@
       color: #f7fbff;
       font-size: 11px;
       overflow: hidden;
-      white-space: normal; /* show full names again */
+      white-space: normal; /* show full names */
     }
     .track-name[contenteditable="true"] {
       outline: 1px solid var(--accent);
@@ -871,7 +871,7 @@
       margin-top: 4px;
     }
 
-    /* ===== MIXER (more serious look) ===== */
+    /* ===== MIXER ===== */
     .mixer-strips {
       display: flex;
       align-items: stretch;
@@ -1214,7 +1214,7 @@
           </div>
           <div>Double-click empty grid to place active pattern · drag clips to move / resize.</div>
         </div>
-        <!-- bottom slider now handles zoom + horizontal scroll -->
+        <!-- bottom slider: center = scroll, handles = step zoom -->
         <div class="timeline-scrollbar">
           <div class="timeline-scroll-thumb" id="timeline-thumb">
             <div class="timeline-scroll-handle" id="thumb-left"></div>
@@ -1298,7 +1298,7 @@
 
   <section class="hint-bar">
     <span>Tip: Spacebar toggles play / pause without resetting the playhead · right-click + drag on the bar numbers to set a loop region.</span>
-    <span>Use + / – keys or drag the slider handles to zoom · slider centre moves the view, vertical bar and arrows scroll tracks up/down.</span>
+    <span>Use + / – keys or drag the slider centre to scroll · hold mouse on grid + wheel to zoom smoothly.</span>
   </section>
 </main>
 
@@ -1324,8 +1324,8 @@
 <script>
   /* ========= BASIC DATA ========= */
   const BEATS_PER_BAR = 4;
-  const MIN_BEAT_WIDTH = 4;    // zoom far out (see many bars)
-  const MAX_BEAT_WIDTH = 260;  // zoom way in (almost ms-level)
+  const MIN_BEAT_WIDTH = 4;    // zoom far out
+  const MAX_BEAT_WIDTH = 260;  // zoom way in
   let beatWidth = 48;
   let gridBars = 200;
   const GRID_LEFT_OFFSET = 0;
@@ -1353,7 +1353,7 @@
   let loopSelecting = false;
   let loopSelectAnchorBeat = 0;
 
-  // Zoom-on-wheel
+  // Zoom wheel drag
   let isTimelineMouseDown = false;
 
   // Display
@@ -1389,6 +1389,7 @@
   const thumbLeftHandle = document.getElementById('thumb-left');
   const thumbRightHandle = document.getElementById('thumb-right');
   const thumbCenter = document.getElementById('thumb-center');
+  const timelineThumbBar = thumb.parentElement;
 
   const playBtn = document.getElementById('btn-play');
   const stopBtn = document.getElementById('btn-stop');
@@ -1408,7 +1409,6 @@
   const screenMixBox = document.getElementById('screen-mix-box');
   const screenKeyBox = document.getElementById('screen-key-box');
 
-  const vscrollRight = document.getElementById('vscroll-right');
   const vscrollTrack = document.getElementById('vscroll-track');
   const vscrollThumb = document.getElementById('vscroll-thumb');
   const vscrollBtnUp = document.getElementById('vscroll-btn-up');
@@ -1420,6 +1420,34 @@
 
   const leftBrowserPanel = document.querySelector('.left-browser');
   const rightPluginsPanel = document.querySelector('.right-placeholder');
+  const mainGrid = document.querySelector('.main-grid');
+
+  /* ========= PANEL LAYOUT (fix timeline not filling space) ========= */
+  let leftPanelVisible = true;
+  let rightPanelVisible = true;
+
+  function applyPanelLayout() {
+    // display
+    leftBrowserPanel.style.display = leftPanelVisible ? 'flex' : 'none';
+    rightPluginsPanel.style.display = rightPanelVisible ? 'block' : 'none';
+
+    // grid columns
+    if (leftPanelVisible && rightPanelVisible) {
+      mainGrid.style.gridTemplateColumns = '260px minmax(0,1fr) 220px';
+    } else if (leftPanelVisible && !rightPanelVisible) {
+      mainGrid.style.gridTemplateColumns = '260px minmax(0,1fr)';
+    } else if (!leftPanelVisible && rightPanelVisible) {
+      mainGrid.style.gridTemplateColumns = 'minmax(0,1fr) 220px';
+    } else {
+      mainGrid.style.gridTemplateColumns = 'minmax(0,1fr)';
+    }
+
+    updateGridSizes();
+    renderClips();
+    updatePlayheadPosition(false);
+    updateHorizontalThumb();
+    updateVerticalThumb();
+  }
 
   /* ========= PLUGIN WINDOW ========= */
   function openPluginWindow(title, descriptionHtml) {
@@ -1676,7 +1704,6 @@
     }
   });
 
-  /* track drag drop mouseup */
   window.addEventListener('mouseup', e => {
     if (trackDragInfo) {
       const headers = Array.from(trackListEl.querySelectorAll('.track-header'));
@@ -1996,9 +2023,7 @@
     createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
   });
 
-  /* ========= ZOOM via timeline slider / wheel / keys ========= */
-  const timelineThumbBar = thumb.parentElement;
-
+  /* ========= ZOOM & SCROLL ========= */
   function updateHorizontalThumb() {
     if (!timelineThumbBar) return;
     const scrollWidth = timelineScroll.scrollWidth;
@@ -2048,10 +2073,13 @@
     updateHorizontalThumb();
   }
 
+  // Mouse button + wheel for zoom
   gridInner.addEventListener('mousedown', e => {
     if (e.button === 0) isTimelineMouseDown = true;
   });
-  window.addEventListener('mouseup', () => { isTimelineMouseDown = false; });
+  window.addEventListener('mouseup', () => {
+    isTimelineMouseDown = false;
+  });
 
   gridInner.addEventListener('wheel', e => {
     if (!isTimelineMouseDown) return;
@@ -2062,69 +2090,67 @@
     zoomAtBeatWidth(newBeatWidth, e.clientX);
   }, { passive: false });
 
-  /* HORIZONTAL THUMB DRAG / RESIZE */
+  // Key zoom
+  window.addEventListener('keydown', e => {
+    const active = document.activeElement;
+    const typingInField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+
+    if (e.code === 'Space') {
+      if (typingInField) return;
+      e.preventDefault();
+      if (isPlaying) pausePlayback();
+      else startPlayback();
+      return;
+    }
+    if (typingInField) return;
+
+    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
+      e.preventDefault();
+      zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
+    } else if (e.key === '-' || e.key === '_') {
+      e.preventDefault();
+      zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
+    }
+  });
+
+  // Slider centre: drag to scroll ONLY (no zoom)
   let thumbDragging = false;
   let thumbStartX = 0;
-  let thumbScrollStart = 0;
+  let thumbStartLeft = 0;
   thumbCenter.addEventListener('mousedown', e => {
     thumbDragging = true;
     thumbStartX = e.clientX;
-    thumbScrollStart = timelineScroll.scrollLeft;
+    thumbStartLeft = parseFloat(getComputedStyle(thumb).left) || 0;
     e.preventDefault();
   });
   window.addEventListener('mousemove', e => {
-    if (thumbDragging) {
-      const bar = timelineThumbBar;
-      const total = bar.clientWidth;
-      const scrollWidth = timelineScroll.scrollWidth;
-      const clientWidth = timelineScroll.clientWidth;
-      const dx = e.clientX - thumbStartX;
-      const maxScroll = scrollWidth - clientWidth;
-      if (maxScroll <= 0) return;
+    if (!thumbDragging) return;
+    const barWidth = timelineThumbBar.clientWidth;
+    const thumbWidth = thumb.clientWidth;
+    const maxLeft = Math.max(0, barWidth - thumbWidth);
+    let newLeft = thumbStartLeft + (e.clientX - thumbStartX);
+    newLeft = Math.max(0, Math.min(maxLeft, newLeft));
+    thumb.style.left = newLeft + 'px';
 
-      const thumbWidth = thumb.clientWidth;
-      const maxLeft = total - thumbWidth;
-      const scrollPerPixel = maxScroll / maxLeft;
-      let newScroll = thumbScrollStart + dx * scrollPerPixel;
-      newScroll = Math.max(0, Math.min(maxScroll, newScroll));
-      timelineScroll.scrollLeft = newScroll;
-      updateHorizontalThumb();
-    }
+    const scrollWidth = timelineScroll.scrollWidth;
+    const clientWidth = timelineScroll.clientWidth;
+    const maxScroll = Math.max(0, scrollWidth - clientWidth);
+    const ratio = maxLeft > 0 ? (newLeft / maxLeft) : 0;
+    timelineScroll.scrollLeft = maxScroll * ratio;
   });
-  window.addEventListener('mouseup', () => { thumbDragging = false; });
-
-  let thumbResizeMode = null;
-  let thumbResizeStartX = 0;
-  let thumbResizeStartWidth = 0;
-  let thumbResizeInitialBeatWidth = 0;
-
-  function startThumbResize(mode, e) {
-    thumbResizeMode = mode;
-    thumbResizeStartX = e.clientX;
-    thumbResizeStartWidth = thumb.clientWidth;
-    thumbResizeInitialBeatWidth = beatWidth;
-    e.preventDefault();
-  }
-  thumbLeftHandle.addEventListener('mousedown', e => startThumbResize('left', e));
-  thumbRightHandle.addEventListener('mousedown', e => startThumbResize('right', e));
-  window.addEventListener('mousemove', e => {
-    if (!thumbResizeMode) return;
-    const bar = timelineThumbBar;
-    const total = bar.clientWidth;
-    if (total <= 0) return;
-
-    const dx = e.clientX - thumbResizeStartX;
-    let newWidth = thumbResizeStartWidth + (thumbResizeMode === 'right' ? dx : -dx);
-    newWidth = Math.max(60, Math.min(total, newWidth));
-
-    const factor = thumbResizeStartWidth / newWidth;
-    let newBeatWidth = thumbResizeInitialBeatWidth * factor;
-
-    const rect = timelineScroll.getBoundingClientRect();
-    const anchorX = (thumbResizeMode === 'left') ? (rect.left + 20) : (rect.right - 20);
-    zoomAtBeatWidth(newBeatWidth, anchorX);
+  window.addEventListener('mouseup', () => {
+    thumbDragging = false;
   });
-  window.addEventListener('mouseup', () => { thumbResizeMode = null; });
+
+  // Slider handles: step zoom in/out (no dragging)
+  thumbLeftHandle.addEventListener('click', e => {
+    e.stopPropagation();
+    zoomAtBeatWidth(beatWidth - 6, e.clientX);
+  });
+  thumbRightHandle.addEventListener('click', e => {
+    e.stopPropagation();
+    zoomAtBeatWidth(beatWidth + 6, e.clientX);
+  });
 
   /* ========= PLAYBACK ========= */
   function bpmToSecPerBeat(bpm) {
@@ -2240,28 +2266,6 @@
     if (!val) return;
     songKey = val.trim().toUpperCase();
     screenKeyEl.textContent = songKey;
-  });
-
-  window.addEventListener('keydown', e => {
-    const active = document.activeElement;
-    const typingInField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
-
-    if (e.code === 'Space') {
-      if (typingInField) return;
-      e.preventDefault();
-      if (isPlaying) pausePlayback();
-      else startPlayback();
-      return;
-    }
-    if (typingInField) return;
-
-    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
-    } else if (e.key === '-' || e.key === '_') {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
-    }
   });
 
   /* ========= LOOP (RIGHT-CLICK RULER) ========= */
@@ -2446,39 +2450,38 @@
     });
   });
 
-  /* ========= TOP DOCK ICONS (SHOW / HIDE PANELS) ========= */
+  /* ========= TOP DOCK ICONS ========= */
   const dockIcons = document.querySelectorAll('.dock-icon');
-  const dockPanels = document.querySelectorAll('.dock-panel');
 
   dockIcons.forEach(icon => {
     icon.addEventListener('click', () => {
       const target = icon.dataset.panel;
 
       if (target === 'browser') {
-        const isVisible = !leftBrowserPanel.classList.contains('hidden');
-        if (isVisible) {
-          leftBrowserPanel.style.display = 'none';
-        } else {
-          leftBrowserPanel.style.display = 'flex';
-        }
+        leftPanelVisible = !leftPanelVisible;
+        applyPanelLayout();
       } else if (target === 'plugins') {
-        const isVisible = !rightPluginsPanel.classList.contains('hidden');
-        if (isVisible) {
-          rightPluginsPanel.style.display = 'none';
-        } else {
-          rightPluginsPanel.style.display = 'block';
-        }
+        rightPanelVisible = !rightPanelVisible;
+        applyPanelLayout();
       } else if (target === 'mixer') {
-        // toggle bottom mixer visibility
-        if (bottomDock.style.height && parseInt(bottomDock.style.height, 10) < 40) {
-          bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
-        } else if (!bottomDock.style.height || parseInt(bottomDock.style.height, 10) <= 40) {
+        if (!bottomDock.style.height || parseInt(bottomDock.style.height, 10) <= 40) {
           bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
         } else {
           bottomDock.style.height = '24px';
         }
+      } else if (target === 'timeline') {
+        // timeline stays open visually; we could later toggle focus
       }
     });
+  });
+
+  /* ========= WINDOW RESIZE ========= */
+  window.addEventListener('resize', () => {
+    updateGridSizes();
+    renderClips();
+    updatePlayheadPosition(false);
+    updateHorizontalThumb();
+    updateVerticalThumb();
   });
 
   /* ========= INITIAL SETUP ========= */
@@ -2486,14 +2489,12 @@
     buildRuler();
     updateGridSizes();
 
-    // starter patterns
     const pat1 = addPattern('Hook – Drums', 'blue');
     const pat2 = addPattern('Bassline A', 'green');
     const pat3 = addPattern('Chords Pad', 'purple');
     currentPatternId = pat1;
     renderPatterns();
 
-    // starter tracks
     const t1 = addTrack('Master');
     const t2 = addTrack('Drums');
     const t3 = addTrack('Bass');
@@ -2505,6 +2506,7 @@
     createClip(t4, 0, 16, 'Chords Pad', 'purple', pat3);
 
     bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
+    applyPanelLayout();
     updatePlayheadPosition(false);
     updateScreenDisplay();
     updateHorizontalThumb();
