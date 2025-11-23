@@ -679,6 +679,7 @@
       cursor: pointer;
     }
 
+/* UPDATED: Track List Container */
     .track-list {
       background: linear-gradient(to bottom,#050a28,#020317);
       border-right: 1px solid #000;
@@ -686,194 +687,51 @@
       color: var(--text-muted);
       position: relative;
       overflow-y: auto;
-    }
-.track-header {
-      display: grid;
-      grid-template-columns: 24px 1fr; /* Left (Color/Icon) | Right (Data) */
-      padding: 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(7,14,60,0.96);
-      /* Remove fixed height here, controlled by JS/Min-height */
-      gap: 8px;
-      cursor: grab;
-      align-items: center;
-    }
-    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
-    .track-header.dragging { opacity: 0.7; }
-    
-    .track-header-left {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-    
-.track-header {
-      display: grid;
-      grid-template-columns: 24px 1fr; /* Column 1: Icon/Dot, Column 2: Content */
-      padding: 4px 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(7,14,60,0.96);
-      gap: 8px;
-      cursor: grab;
-      align-items: center;
-      /* Height is determined by JS, but grid helps align contents */
-    }
-    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
-    .track-header.dragging { opacity: 0.7; }
-
-    /* Left column holding the color dot and icon */
-    .track-header-left {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      height: 100%;
+      flex-direction: column; /* Ensures the add button stays at bottom */
     }
 
-    /* Right column holding the Name (top) and Controls (bottom) */
-    .track-header-right {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-evenly;
-      height: 100%;
-      min-width: 0;
-    }
-
-    .track-name {
-      font-size: 11px;
-      font-weight: 600;
-      color: #f7fbff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding: 2px 4px;
-      border-radius: 4px;
-    }
-    .track-name[contenteditable="true"] {
-      outline: 1px solid var(--accent);
-      background: #02041b;
-    }
-
-    .track-controls {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    
-    .track-color-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg,#4aa8ff,#ffd77c);
-      box-shadow: 0 0 8px rgba(124,190,255,0.9);
-      cursor: pointer;
+    /* NEW: Header Label "TRACKS" above the list */
+    .track-list-header-label {
+      height: 23px; /* Matches Ruler Height + border */
       flex-shrink: 0;
-    }
-    
-    .track-icon {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-
-    .track-btn, .track-options-btn {
-      width: 20px;
-      height: 18px;
-      border-radius: 3px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #050a27;
-      color: var(--text-muted);
-      font-size: 9px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .track-btn.active {
-      background: var(--accent);
-      color: #02041b;
-      border-color: #fff;
-    }
-    .track-options-btn {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #02041b;
-      color: var(--text-muted);
-      font-size: 11px;
-      cursor: pointer;
-      padding: 0;
-    }
-    .track-resize-handle {
-      height: 4px;
-      cursor: row-resize;
-      background: linear-gradient(to right,transparent,var(--grid-line),transparent);
-    }
-    .add-track-bar {
-      padding: 4px 6px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      background: rgba(4,8,40,0.96);
-      display: flex;
-      justify-content: center;
-    }
-    .add-track-btn {
-      padding: 2px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#7cffc7,#050a24);
-      font-size: 11px;
-      cursor: pointer;
-      color: #02041b;
-    }
-
-    .timeline-grid-wrap {
-      position: relative;
-      background: var(--timeline-grid-bg);
-      overflow: auto;
-    }
-
-    .timeline-ruler {
-      position: sticky;
-      top: 0;
-      height: 22px;
       background: var(--timeline-ruler-bg);
       border-bottom: 1px solid rgba(0,0,0,0.9);
       display: flex;
-      align-items: flex-end;
-      z-index: 2;
+      align-items: flex-end; /* Aligns text to bottom like ruler */
+      justify-content: center;
+      padding-bottom: 3px;
       font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .1em;
       color: var(--text-muted);
-      user-select: none;
-    }
-    .timeline-ruler-inner {
-      display: flex;
-      padding: 3px 8px;
-      white-space: nowrap;
-      gap: 0;
-    }
-    .timeline-ruler-inner span {
-      display: inline-block;
-      min-width: calc(var(--beat-width,48px) * var(--beats-per-bar,4));
-      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
+    /* UPDATED: Grid Background with Bold Lines every 4 bars */
     .grid-inner {
       position: relative;
       padding: 0 8px 8px;
+      min-height: 100%;
+      /* 1. Bold Vertical (Bar), 2. Thin Vertical (Beat), 3. Horizontal (Track) */
       background-image:
-        linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
-        linear-gradient(to right,rgba(124,190,255,0.12) 1px,transparent 1px),
-        linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
+        linear-gradient(to right, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      
       background-size:
-        var(--beat-width,48px) 1px,
-        calc(var(--beat-width,48px) / 4) 1px,
-        1px var(--track-height,40px);
-      background-repeat: repeat;
+        calc(var(--beat-width, 48px) * 4) 100%,  /* Bold every 4 beats */
+        var(--beat-width, 48px) 100%,            /* Thin every 1 beat */
+        100% var(--track-height, 65px);          /* Horizontal matches track height */
+      
+      background-attachment: local;
     }
+
+    /* UPDATED: Grid Row Height */
     .grid-track-row {
-      height: 40px;
+      height: 65px; /* Explicit match to track height */
       border-bottom: 1px solid rgba(255,255,255,0.08);
       position: relative;
     }
