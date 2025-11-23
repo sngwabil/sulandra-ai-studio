@@ -3114,7 +3114,116 @@
       header.addEventListener('dblclick', () => {
         openTrackSettingsOverlay(t.id);
       });
+  function openRecordOverlay(trackId, buttonEl) {
+    const overlay = document.getElementById('record-overlay');
+    const label = document.getElementById('record-track-label');
+    const presetSelect = document.getElementById('record-preset-select');
+    const inputSelect = document.getElementById('record-input-select');
+    const outputSelect = document.getElementById('record-output-select');
+    const savePresetCheckbox = document.getElementById('record-save-as-preset');
+    const presetNameInput = document.getElementById('record-preset-name');
 
+    const track = tracks.find(t => t.id === trackId);
+    if (!track) return;
+
+    overlay.dataset.trackId = String(trackId);
+    label.textContent = `Track: ${track.name}`;
+
+    // Presets
+    presetSelect.innerHTML = '<option value="">(No preset)</option>';
+    recordPresets.forEach((p, idx) => {
+      const opt = document.createElement('option');
+      opt.value = String(idx);
+      opt.textContent = p.name;
+      presetSelect.appendChild(opt);
+    });
+
+    // Reset
+    savePresetCheckbox.checked = false;
+    presetNameInput.value = '';
+
+    // Basic inputs – later you can populate via enumerateDevices
+    inputSelect.innerHTML = '';
+    const baseInputs = [
+      { id: 'auto', label: 'Auto-detect input' },
+      { id: 'built-in-mic', label: 'Built-in microphone' },
+      { id: 'studio-interface-1', label: 'Studio Interface – Input 1' },
+      { id: 'studio-interface-2', label: 'Studio Interface – Input 2' }
+    ];
+    baseInputs.forEach(src => {
+      const opt = document.createElement('option');
+      opt.value = src.id;
+      opt.textContent = src.label;
+      inputSelect.appendChild(opt);
+    });
+
+    // Load track config if exists
+    if (track.recordConfig) {
+      const cfg = track.recordConfig;
+      inputSelect.value = cfg.inputId || 'auto';
+      outputSelect.value = cfg.outputId || 'project';
+    } else {
+      inputSelect.value = 'auto';
+      outputSelect.value = 'project';
+    }
+
+    overlay.classList.remove('hidden');
+  }
+
+  function closeRecordOverlay() {
+    const overlay = document.getElementById('record-overlay');
+    overlay.classList.add('hidden');
+    delete overlay.dataset.trackId;
+  }
+
+  document.getElementById('record-close').addEventListener('click', closeRecordOverlay);
+  document.getElementById('record-cancel').addEventListener('click', closeRecordOverlay);
+
+  document.getElementById('record-apply').addEventListener('click', () => {
+    const overlay = document.getElementById('record-overlay');
+    const id = parseInt(overlay.dataset.trackId || '0', 10);
+    const track = tracks.find(t => t.id === id);
+    if (!track) { closeRecordOverlay(); return; }
+
+    const presetSelect = document.getElementById('record-preset-select');
+    const inputSelect = document.getElementById('record-input-select');
+    const outputSelect = document.getElementById('record-output-select');
+    const savePresetCheckbox = document.getElementById('record-save-as-preset');
+    const presetNameInput = document.getElementById('record-preset-name');
+
+    let inputId = inputSelect.value;
+    let outputId = outputSelect.value;
+
+    // If user selected existing preset, apply it
+    if (presetSelect.value !== '') {
+      const p = recordPresets[parseInt(presetSelect.value, 10)];
+      if (p) {
+        inputId = p.inputId;
+        outputId = p.outputId;
+      }
+    }
+
+    track.recordConfig = {
+      inputId,
+      outputId,
+      presetName: savePresetCheckbox.checked && presetNameInput.value.trim()
+        ? presetNameInput.value.trim()
+        : (track.recordConfig && track.recordConfig.presetName) || null
+    };
+    track.recordArmed = true;
+
+    // Save new preset if requested
+    if (savePresetCheckbox.checked && presetNameInput.value.trim()) {
+      recordPresets.push({
+        name: presetNameInput.value.trim(),
+        inputId,
+        outputId
+      });
+    }
+
+    renderTracks();
+    closeRecordOverlay();
+  });
       // Insert header + resize handle
       const resize = document.createElement('div');
       resize.className = 'track-resize-handle';
@@ -3834,7 +3943,22 @@
   });
 
   stopBtn.addEventListener('click', () => {
+    const prevBeat = playheadBeat;
     pausePlayback();
+
+    // If we were recording, create clips for all armed tracks
+    if (isRecording) {
+      const length = Math.max(1, Math.round(prevBeat - recordStartBeat));
+      tracks.forEach(track => {
+        if (track.recordArmed) {
+          const label = `Recorded – ${track.name}`;
+          createClip(track.id, recordStartBeat, length, label, track.color ? 'custom' : 'blue', null);
+        }
+      });
+      isRecording = false;
+      recBtn.classList.remove('active');
+    }
+
     playheadBeat = 0;
     updatePlayheadPosition(false);
   });
@@ -3845,8 +3969,26 @@
   });
 
   recBtn.addEventListener('click', () => {
-    recBtn.classList.toggle('active');
-    alert(`Record mode is set to "${recordMode.toUpperCase()}". Later this will control whether we capture into the Playlist or into a step-style rack.`);
+    if (isRecording) {
+      // Stop recording mode
+      isRecording = false;
+      recBtn.classList.remove('active');
+      return;
+    }
+
+    const armedTracks = tracks.filter(t => t.recordArmed);
+    if (!armedTracks.length) {
+      alert('Arm at least one track for recording by clicking the R button on a track.');
+      return;
+    }
+
+    isRecording = true;
+    recBtn.classList.add('active');
+    recordStartBeat = playheadBeat;
+
+    if (!isPlaying) {
+      startPlayback();
+    }
   });
 
   metronomeBtn.addEventListener('click', () => {
@@ -4398,6 +4540,155 @@
     </div>
   </div>
 </div>
+    function openSlAssistant(trackId) {
+    const overlay = document.getElementById('sl-assistant-overlay');
+    const trackLabel = document.getElementById('sl-assistant-track-label');
+    const tags = document.getElementById('sl-assistant-tags');
+    const lyricsBlock = document.getElementById('sl-assistant-lyrics-block');
+
+    const track = tracks.find(t => t.id === trackId);
+    if (!track) return;
+
+    slAssistantTrackId = trackId;
+    trackLabel.textContent = `Track: ${track.name}`;
+
+    tags.innerHTML = '';
+    const tagValues = [
+      `Type: ${track.type || 'Audio'}`,
+      track.role ? `Role: ${track.role}` : null,
+      track.subType ? `Preset: ${track.subType}` : null
+    ].filter(Boolean);
+    tagValues.forEach(v => {
+      const span = document.createElement('div');
+      span.className = 'sl-assistant-tag';
+      span.textContent = v;
+      tags.appendChild(span);
+    });
+
+    // Show lyrics box only for vocal tracks
+    const isVocalTrack = track.role === 'vocal' || track.type === 'Vocal';
+    lyricsBlock.style.display = isVocalTrack ? 'flex' : 'none';
+
+    document.getElementById('sl-assistant-prompt').value = '';
+    document.getElementById('sl-assistant-lyrics').value = '';
+
+    overlay.classList.remove('hidden');
+  }
+
+  function closeSlAssistant() {
+    const overlay = document.getElementById('sl-assistant-overlay');
+    overlay.classList.add('hidden');
+    slAssistantTrackId = null;
+  }
+
+  document.getElementById('sl-assistant-close').addEventListener('click', closeSlAssistant);
+  document.getElementById('sl-assistant-cancel').addEventListener('click', closeSlAssistant);
+
+  document.getElementById('sl-assistant-generate').addEventListener('click', () => {
+    if (slAssistantTrackId == null) {
+      closeSlAssistant();
+      return;
+    }
+    const track = tracks.find(t => t.id === slAssistantTrackId);
+    if (!track) { closeSlAssistant(); return; }
+
+    const prompt = document.getElementById('sl-assistant-prompt').value.trim();
+    const lyrics = document.getElementById('sl-assistant-lyrics').value.trim();
+    const type = document.getElementById('sl-assistant-type').value;
+    const bars = parseInt(document.getElementById('sl-assistant-length').value, 10) || 4;
+
+    // Simple placement: snap to nearest bar from current playhead
+    const startBar = Math.floor(playheadBeat / BEATS_PER_BAR);
+    const startBeat = startBar * BEATS_PER_BAR;
+    const lengthBeats = bars * BEATS_PER_BAR;
+
+    const labelBase = type === 'loop' ? 'SL Loop' :
+                      type === 'oneshot' ? 'SL One-shot' :
+                      type === 'phrase' ? 'SL Phrase' :
+                      'SL Section';
+
+    const label = `${labelBase} – ${track.name}`;
+
+    createClip(track.id, startBeat, lengthBeats, label, track.color ? 'custom' : 'pink', null);
+
+    // In the future you will send (prompt, lyrics, type, bars) to your backend
+    // and replace the placeholder clip with actual generated audio.
+
+    closeSlAssistant();
+  });
+    function openTrackSettingsOverlay(trackId) {
+    const overlay = document.getElementById('track-settings-overlay');
+    const titleEl = document.getElementById('track-settings-title');
+    const nameInput = document.getElementById('track-settings-name');
+    const iconSelect = document.getElementById('track-settings-icon');
+    const colorInput = document.getElementById('track-settings-color');
+
+    const track = tracks.find(t => t.id === trackId);
+    if (!track) return;
+
+    overlay.dataset.trackId = String(trackId);
+
+    titleEl.textContent = `Track Settings – ${track.name}`;
+    nameInput.value = track.name;
+    iconSelect.value = track.icon || '';
+    colorInput.value = track.color || '#4aa8ff';
+
+    overlay.classList.remove('hidden');
+  }
+
+  function closeTrackSettingsOverlay() {
+    const overlay = document.getElementById('track-settings-overlay');
+    overlay.classList.add('hidden');
+    delete overlay.dataset.trackId;
+  }
+
+  document.getElementById('track-settings-close').addEventListener('click', closeTrackSettingsOverlay);
+  document.getElementById('track-settings-cancel').addEventListener('click', closeTrackSettingsOverlay);
+
+  document.getElementById('track-settings-use-default').addEventListener('click', () => {
+    const overlay = document.getElementById('track-settings-overlay');
+    const id = parseInt(overlay.dataset.trackId || '0', 10);
+    const track = tracks.find(t => t.id === id);
+    if (!track) return;
+
+    let preset = null;
+    if (track.role === 'instrument' && track.subType && TRACK_PRESETS.instruments[track.subType]) {
+      preset = TRACK_PRESETS.instruments[track.subType];
+    } else if (track.role === 'vocal' && track.subType && TRACK_PRESETS.vocals[track.subType]) {
+      preset = TRACK_PRESETS.vocals[track.subType];
+    }
+
+    if (preset) {
+      document.getElementById('track-settings-color').value = preset.color;
+      document.getElementById('track-settings-icon').value = preset.icon;
+    }
+  });
+
+  document.getElementById('track-settings-apply').addEventListener('click', () => {
+    const overlay = document.getElementById('track-settings-overlay');
+    const id = parseInt(overlay.dataset.trackId || '0', 10);
+    const track = tracks.find(t => t.id === id);
+    if (!track) { closeTrackSettingsOverlay(); return; }
+
+    const nameInput = document.getElementById('track-settings-name');
+    const iconSelect = document.getElementById('track-settings-icon');
+    const colorInput = document.getElementById('track-settings-color');
+
+    const newName = nameInput.value.trim() || track.name;
+    const newIcon = iconSelect.value || '';
+    const newColor = colorInput.value || null;
+
+    track.name = newName;
+    track.icon = newIcon;
+    track.color = newColor;
+
+    if (newColor) {
+      applyTrackColorToClips(track.id, newColor);
+    }
+
+    renderTracks();
+    closeTrackSettingsOverlay();
+  });
 
 <!-- RECORD ROUTING OVERLAY -->
 <div class="record-overlay hidden" id="record-overlay">
