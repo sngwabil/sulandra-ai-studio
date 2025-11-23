@@ -687,15 +687,63 @@
       position: relative;
       overflow-y: auto;
     }
-    .track-header {
+.track-header {
+      display: grid;
+      grid-template-columns: 24px 1fr; /* Left (Color/Icon) | Right (Data) */
+      padding: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(7,14,60,0.96);
+      /* Remove fixed height here, controlled by JS/Min-height */
+      gap: 8px;
+      cursor: grab;
+      align-items: center;
+    }
+    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
+    .track-header.dragging { opacity: 0.7; }
+    
+    .track-header-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .track-header-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      min-width: 0; /* Ensures text truncation works */
+      height: 100%;
+    }
+
+    .track-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f7fbff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    .track-name[contenteditable="true"] {
+      outline: 1px solid var(--accent);
+      background: #02041b;
+      padding: 2px;
+    }
+
+    .track-controls {
       display: flex;
       align-items: center;
-      padding: 4px 4px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      background: rgba(7,14,60,0.96);
-      height: 40px;
-      gap: 3px;
-      cursor: grab;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    
+    /* Make buttons slightly larger/easier to click */
+    .track-btn, .track-options-btn {
+      height: 20px;
+      min-width: 20px;
+      padding: 0 4px; 
     }
     .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
     .track-header.dragging {
@@ -2613,12 +2661,12 @@ function addTrack(name) {
   tracks.push({
     id,
     name: name || `Track ${id}`,
-    height: 40,
-    type: 'Audio',    // text used in mixer tag
-    kind: 'audio',    // audio / instrument / vocal
-    preset: null,     // piano, guitar, lead, etc.
-    color: null,      // dot color
-    icon: ''          // emoji icon
+    height: 65, // Increased height for new layout
+    type: 'Audio',
+    kind: 'audio', 
+    preset: null,
+    color: null,
+    icon: ''
   });
   renderTracks();
   return id;
@@ -2637,7 +2685,7 @@ function addTrack(name) {
   const trackListAddBar = trackListEl.querySelector('.add-track-bar');
   let trackDragInfo = null;
 
-  function renderTracks() {
+function renderTracks() {
     const headers = Array.from(trackListEl.querySelectorAll('.track-header,.track-resize-handle'));
     headers.forEach(h => h.remove());
 
@@ -2645,16 +2693,136 @@ function addTrack(name) {
     rows.forEach(r => r.remove());
 
     tracks.forEach((t, idx) => {
+      // 1. CONTAINER
       const header = document.createElement('div');
       header.className = 'track-header';
       header.style.height = t.height + 'px';
       header.dataset.trackId = t.id;
 
-const dot = document.createElement('div');
-dot.className = 'track-color-dot';
-if (t.color) {
-  dot.style.background = t.color;
-}
+      // 2. LEFT COLUMN (Dot + Icon)
+      const leftCol = document.createElement('div');
+      leftCol.className = 'track-header-left';
+
+      const dot = document.createElement('div');
+      dot.className = 'track-color-dot';
+      if (t.color) dot.style.background = t.color;
+      // Double click dot -> Open Track Type Menu
+      dot.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        activeTypeTrackId = t.id;
+        showTrackTypeMenu(e.clientX, e.clientY);
+      });
+
+      const iconEl = document.createElement('div');
+      iconEl.className = 'track-icon';
+      iconEl.textContent = t.icon || '';
+      
+      leftCol.appendChild(dot);
+      leftCol.appendChild(iconEl);
+
+      // 3. RIGHT COLUMN (Name + Controls)
+      const rightCol = document.createElement('div');
+      rightCol.className = 'track-header-right';
+
+      // Track Name
+      const nameEl = document.createElement('div');
+      nameEl.className = 'track-name';
+      nameEl.textContent = t.name;
+      nameEl.title = "Double click to rename";
+      
+      nameEl.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        nameEl.contentEditable = 'true';
+        nameEl.focus();
+        document.execCommand('selectAll', false, null);
+      });
+      nameEl.addEventListener('blur', () => {
+        nameEl.contentEditable = 'false';
+        t.name = nameEl.textContent.trim() || t.name;
+        nameEl.textContent = t.name;
+        renderMixer();
+      });
+      nameEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
+      });
+
+      // Controls Row
+      const controls = document.createElement('div');
+      controls.className = 'track-controls';
+
+      const mBtn = document.createElement('button');
+      mBtn.className = 'track-btn';
+      mBtn.textContent = 'M';
+      mBtn.title = 'Mute';
+      mBtn.onclick = () => mBtn.classList.toggle('active');
+
+      const sBtn = document.createElement('button');
+      sBtn.className = 'track-btn';
+      sBtn.textContent = 'S';
+      sBtn.title = 'Solo';
+      sBtn.onclick = () => sBtn.classList.toggle('active');
+
+      const optionsBtn = document.createElement('button');
+      optionsBtn.className = 'track-options-btn';
+      optionsBtn.textContent = '⋮ Options'; // Clearer label
+      optionsBtn.title = 'Track Type / Import';
+      optionsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activeTypeTrackId = t.id;
+        showTrackTypeMenu(e.clientX, e.clientY);
+      });
+
+      // Add buttons to controls
+      controls.appendChild(mBtn);
+      controls.appendChild(sBtn);
+      controls.appendChild(optionsBtn);
+
+      // Add Name and Controls to Right Column
+      rightCol.appendChild(nameEl);
+      rightCol.appendChild(controls);
+
+      // Assemble Header
+      header.appendChild(leftCol);
+      header.appendChild(rightCol);
+
+      // RESIZE HANDLE
+      const resize = document.createElement('div');
+      resize.className = 'track-resize-handle';
+      resize.dataset.trackId = t.id;
+
+      trackListEl.insertBefore(resize, trackListAddBar);
+      trackListEl.insertBefore(header, resize);
+
+      // Right click header -> Also opens menu
+      header.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        activeTypeTrackId = t.id;
+        showTrackTypeMenu(e.clientX, e.clientY);
+      });
+
+      // Drag Logic
+      header.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button') || e.target.closest('.track-name[contenteditable="true"]')) return;
+        if (e.button !== 0) return;
+        trackDragInfo = { id: t.id };
+        header.classList.add('dragging');
+      });
+
+      const gridRow = document.createElement('div');
+      gridRow.className = 'grid-track-row';
+      gridRow.dataset.trackId = t.id;
+      gridRow.style.height = t.height + 'px';
+      gridInner.appendChild(gridRow);
+    });
+
+    gridInner.style.setProperty('--track-height', '40px'); // fallback
+    renderClips();
+    renderMixer();
+    updatePlayheadPosition(false);
+    updateLoopRegion();
+    updateVerticalThumb();
+    updateHorizontalThumb();
+  }
 dot.addEventListener('dblclick', () => {
   openPluginWindow(
     `Track Plugin – ${t.name}`,
@@ -2875,15 +3043,57 @@ if (trackFileInput) {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
-    const trackId = parseInt(trackFileInput.dataset.trackId || '', 10);
-    const t = tracks.find(tr => tr.id === trackId);
-    if (t) {
-      // for now, just store filenames on the track;
-      // later you can actually decode and place them on the timeline
-      t.importedFiles = files.map(f => f.name);
+    let targetTrackId = parseInt(trackFileInput.dataset.trackId || '', 10);
+    let targetTrack = tracks.find(tr => tr.id === targetTrackId);
+
+    if (!targetTrack) return;
+
+    // 1. Check if target track already has clips
+    const trackHasClips = clips.some(c => c.trackId === targetTrackId);
+
+    if (trackHasClips) {
+      // 2. Occupied: Create new track directly below
+      const currentTrackIndex = tracks.findIndex(tr => tr.id === targetTrackId);
+      
+      const newId = nextTrackId++;
+      const newTrack = {
+        id: newId,
+        name: files[0].name, // Name track after file
+        height: 65,
+        type: targetTrack.type, // Copy properties from parent
+        kind: targetTrack.kind,
+        preset: targetTrack.preset,
+        color: targetTrack.color,
+        icon: targetTrack.icon,
+        importedFiles: []
+      };
+
+      // Insert into array at index + 1
+      tracks.splice(currentTrackIndex + 1, 0, newTrack);
+      
+      // Update our target references
+      targetTrackId = newId;
+      targetTrack = newTrack;
+      
+      // Re-render immediately so we can place the clip
+      renderTracks();
+    } else {
+      // 3. Not occupied: Just rename existing track to file name
+      targetTrack.name = files[0].name;
+      renderTracks(); // update name in UI
+    }
+
+    // 4. Create the Clip on the (potentially new) track
+    // Place at beat 0, default length 8
+    createClip(targetTrackId, 0, 8, files[0].name, targetTrack.color || 'blue', null);
+
+    // 5. Store file reference
+    if (targetTrack) {
+      targetTrack.importedFiles = files.map(f => f.name);
       renderMixer();
     }
 
+    // Cleanup
     trackFileInput.value = '';
     trackFileInput.dataset.trackId = '';
   });
