@@ -2454,7 +2454,34 @@
   let tracks = [];
   let clips = [];
   let patterns = [];
+  // Track presets for instruments & vocals
+  const TRACK_PRESETS = {
+    instruments: {
+      'Laser Drums':     { icon: 'DR', color: '#ff7c4a' },
+      'Sub Bass':        { icon: 'BS', color: '#7cffc7' },
+      'Cloud Keys':      { icon: 'KY', color: '#7cbeff' },
+      'Nebula Pads':     { icon: 'PD', color: '#a96cff' },
+      'Lead Synth':      { icon: 'LD', color: '#ff6ca4' },
+      'Pluck Matrix':    { icon: 'PL', color: '#ffd77c' },
+      'String Halo':     { icon: 'ST', color: '#7cefff' },
+      'FX Horizon':      { icon: 'FX', color: '#ff8a7c' }
+    },
+    vocals: {
+      'Lead Vocal':      { icon: 'VO', color: '#ff6ac1' },
+      'Backing Vocals':  { icon: 'BV', color: '#7cffc7' },
+      'Choir Stack':     { icon: 'CH', color: '#ffd77c' }
+    }
+  };
 
+  // Recording presets (simple in-memory; later can be persisted)
+  const recordPresets = [];
+
+  // Recording state
+  let isRecording = false;
+  let recordStartBeat = 0;
+
+  // SL Assistant state
+  let slAssistantTrackId = null;
   let currentPatternId = null;
   let nextTrackId = 1;
   let nextClipId = 1;
@@ -2954,9 +2981,21 @@
   /* ========= TRACKS ========= */
   function addTrack(name) {
     const id = nextTrackId++;
-    tracks.push({ id, name: name || `Track ${id}`, height: 40, type: 'Audio' });
+    tracks.push({
+      id,
+      name: name || `Track ${id}`,
+      height: 40,
+      type: 'Audio',      // Audio / Instrument / Vocal / AI
+      role: 'generic',    // instrument / vocal / generic
+      subType: null,      // e.g. "Laser Drums", "Lead Vocal"
+      icon: '',           // small 2-letter code like DR, BS, VO
+      color: null,        // custom CSS color string
+      recordArmed: false,
+      recordConfig: null  // { presetName, inputId, outputId }
+    });
     renderTracks();
     return id;
+  }
   }
 
   function moveTrack(id, dir) {
@@ -2985,39 +3024,32 @@
       header.style.height = t.height + 'px';
       header.dataset.trackId = t.id;
 
+      // COLOR DOT (follows track.color if set)
       const dot = document.createElement('div');
       dot.className = 'track-color-dot';
-      dot.addEventListener('dblclick', () => {
-        openPluginWindow(
-          `Track Plugin – ${t.name}`,
-          `<p>Future plugin window for <b>${t.name}</b>.</p>
-           <p>Later you can load a track plugin UI here (EQ, compressor, reverb, sends).</p>
-           <p>Ideas:</p>
-           <ul>
-             <li>AI-assisted EQ suggestions per track</li>
-             <li>Preset browser tied to genre &amp; tempo</li>
-           </ul>`
-        );
-      });
+      if (t.color) {
+        dot.style.background = t.color;
+        dot.style.boxShadow = `0 0 8px ${t.color}`;
+      }
 
+      // ICON
+      const iconEl = document.createElement('div');
+      iconEl.className = 'track-icon';
+      iconEl.textContent = t.icon || '';
+
+      // NAME
       const nameEl = document.createElement('div');
       nameEl.className = 'track-name';
       nameEl.textContent = t.name;
-      nameEl.addEventListener('dblclick', () => {
-        nameEl.contentEditable = 'true';
-        nameEl.focus();
-        document.execCommand('selectAll', false, null);
-      });
-      nameEl.addEventListener('blur', () => {
-        nameEl.contentEditable = 'false';
-        t.name = nameEl.textContent.trim() || t.name;
-        nameEl.textContent = t.name;
-        renderMixer();
-      });
-      nameEl.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
-      });
 
+      // Main area (dot + icon + name)
+      const mainInfo = document.createElement('div');
+      mainInfo.className = 'track-main';
+      mainInfo.appendChild(dot);
+      mainInfo.appendChild(iconEl);
+      mainInfo.appendChild(nameEl);
+
+      // Controls: M / S / R / Move / Options
       const controls = document.createElement('div');
       controls.className = 'track-controls';
 
@@ -3037,6 +3069,16 @@
         sBtn.classList.toggle('active');
       });
 
+      // Record arm button
+      const rBtn = document.createElement('button');
+      rBtn.className = 'track-btn rec-btn';
+      rBtn.textContent = 'R';
+      rBtn.title = 'Arm for recording';
+      if (t.recordArmed) rBtn.classList.add('active');
+      rBtn.addEventListener('click', () => {
+        openRecordOverlay(t.id, rBtn);
+      });
+
       const upBtn = document.createElement('button');
       upBtn.className = 'track-btn';
       upBtn.textContent = '▲';
@@ -3052,23 +3094,28 @@
       const optionsBtn = document.createElement('button');
       optionsBtn.className = 'track-options-btn';
       optionsBtn.textContent = '⋯';
-      optionsBtn.title = 'Track type / options';
+      optionsBtn.title = 'Track type / instruments / SL Assistant';
       optionsBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        activeTypeTrackId = t.id;
-        showTrackTypeMenu(e.clientX, e.clientY);
+        openTrackTypeMenu(t.id, e.clientX, e.clientY);
       });
 
       controls.appendChild(mBtn);
       controls.appendChild(sBtn);
+      controls.appendChild(rBtn);
       controls.appendChild(upBtn);
       controls.appendChild(downBtn);
       controls.appendChild(optionsBtn);
 
-      header.appendChild(dot);
-      header.appendChild(nameEl);
+      header.appendChild(mainInfo);
       header.appendChild(controls);
 
+      // Double-click: open Track Settings (rename, icon, color)
+      header.addEventListener('dblclick', () => {
+        openTrackSettingsOverlay(t.id);
+      });
+
+      // Insert header + resize handle
       const resize = document.createElement('div');
       resize.className = 'track-resize-handle';
       resize.dataset.trackId = t.id;
@@ -3076,13 +3123,7 @@
       trackListEl.insertBefore(resize, trackListAddBar);
       trackListEl.insertBefore(header, resize);
 
-      header.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.track-btn') || e.target.closest('.track-options-btn') || e.target.classList.contains('track-color-dot')) return;
-        if (e.button !== 0) return;
-        trackDragInfo = { id: t.id };
-        header.classList.add('dragging');
-      });
-
+      // Create corresponding grid row
       const gridRow = document.createElement('div');
       gridRow.className = 'grid-track-row';
       gridRow.dataset.trackId = t.id;
@@ -3098,6 +3139,7 @@
     updateVerticalThumb();
     updateHorizontalThumb();
   }
+  }
 
   addTrackBtn.addEventListener('click', () => {
     const id = addTrack();
@@ -3107,33 +3149,146 @@
     }
   });
 
-  /* ========= TRACK TYPE MENU ========= */
-  function showTrackTypeMenu(clientX, clientY) {
-    const menu = trackTypeMenu;
-    menu.style.display = 'block';
-    const rect = menu.getBoundingClientRect();
-    let x = clientX + 4;
-    let y = clientY + 4;
-    if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 6;
-    if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 6;
-    menu.style.left = x + 'px';
-    menu.style.top = y + 'px';
+  /* ========= TRACK TYPE MENU (Instrument / Vocals / Import / SL Assistant) ========= */
+
+  function buildTrackTypeMenuContent(track) {
+    const isVocalTrack = track.role === 'vocal' || (track.type === 'Vocal');
+
+    const instrumentItems = Object.keys(TRACK_PRESETS.instruments).map(name => {
+      const p = TRACK_PRESETS.instruments[name];
+      return `
+        <div class="track-type-menu-item" data-action="instrument" data-name="${name}">
+          <span><strong>${p.icon}</strong> ${name}</span>
+          <small>Instrument</small>
+        </div>`;
+    }).join('');
+
+    const vocalItems = Object.keys(TRACK_PRESETS.vocals).map(name => {
+      const p = TRACK_PRESETS.vocals[name];
+      return `
+        <div class="track-type-menu-item" data-action="vocal" data-name="${name}">
+          <span><strong>${p.icon}</strong> ${name}</span>
+          <small>Vocal</small>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="track-type-section-title">Instrument</div>
+      ${instrumentItems}
+      <div class="track-type-section-title">Vocals</div>
+      ${vocalItems}
+      <div class="track-type-section-title">Import</div>
+      <div class="track-type-menu-item" data-action="import-device">
+        <span>Upload from device</span>
+        <small>Choose audio file on this device</small>
+      </div>
+      <div class="track-type-menu-item" data-action="import-audio-lib">
+        <span>Import from SL Audio Library</span>
+        <small>Link to creations in music.html</small>
+      </div>
+      <div class="track-type-section-title">Create</div>
+      <div class="track-type-menu-item" data-action="sl-assistant">
+        <span>Create with SL Assistant</span>
+        <small>${isVocalTrack ? 'Loops, stems & vocals for this track' : 'Loops & patterns for this track'}</small>
+      </div>
+    `;
+  }
+
+  function openTrackTypeMenu(trackId, clientX, clientY) {
+    const track = tracks.find(t => t.id === trackId);
+    if (!track) return;
+    activeTypeTrackId = trackId;
+    trackTypeMenu.innerHTML = buildTrackTypeMenuContent(track);
+    trackTypeMenu.classList.add('visible');
+
+    const menuRect = trackTypeMenu.getBoundingClientRect();
+    let x = clientX;
+    let y = clientY;
+    const margin = 8;
+    if (x + menuRect.width > window.innerWidth - margin) {
+      x = window.innerWidth - menuRect.width - margin;
+    }
+    if (y + menuRect.height > window.innerHeight - margin) {
+      y = window.innerHeight - menuRect.height - margin;
+    }
+    trackTypeMenu.style.left = x + 'px';
+    trackTypeMenu.style.top = y + 'px';
   }
 
   function hideTrackTypeMenu() {
-    trackTypeMenu.style.display = 'none';
+    trackTypeMenu.classList.remove('visible');
     activeTypeTrackId = null;
   }
 
-  trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const type = item.dataset.type;
-      if (!activeTypeTrackId) return;
-      const t = tracks.find(tr => tr.id === activeTypeTrackId);
-      if (t) t.type = type;
+  // Handle menu clicks
+  trackTypeMenu.addEventListener('click', (e) => {
+    const item = e.target.closest('.track-type-menu-item');
+    if (!item || activeTypeTrackId == null) return;
+    const action = item.dataset.action;
+    const name = item.dataset.name;
+    const track = tracks.find(t => t.id === activeTypeTrackId);
+    if (!track) return;
+
+    if (action === 'instrument') {
+      const preset = TRACK_PRESETS.instruments[name];
+      track.type = 'Instrument';
+      track.role = 'instrument';
+      track.subType = name;
+      track.icon = preset.icon;
+      track.color = preset.color;
+      track.name = name;
+      applyTrackColorToClips(track.id, preset.color);
+      renderTracks();
       hideTrackTypeMenu();
-      renderMixer();
-    });
+      return;
+    }
+
+    if (action === 'vocal') {
+      const preset = TRACK_PRESETS.vocals[name];
+      track.type = 'Vocal';
+      track.role = 'vocal';
+      track.subType = name;
+      track.icon = preset.icon;
+      track.color = preset.color;
+      track.name = name;
+      applyTrackColorToClips(track.id, preset.color);
+      renderTracks();
+      hideTrackTypeMenu();
+      return;
+    }
+
+    if (action === 'import-device') {
+      hideTrackTypeMenu();
+      // Simple file input for now
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'audio/*';
+      input.onchange = () => {
+        if (!input.files || !input.files[0]) return;
+        const fileName = input.files[0].name;
+        // Drop a placeholder clip using file name
+        createClip(track.id, Math.floor(playheadBeat / BEATS_PER_BAR) * BEATS_PER_BAR, 4,
+          `Imported – ${fileName}`, track.color ? 'custom' : 'green', null);
+      };
+      input.click();
+      return;
+    }
+
+    if (action === 'import-audio-lib') {
+      hideTrackTypeMenu();
+      openPluginWindow(
+        'Import from SL Audio Library',
+        `<p>This will connect to your <b>music.html</b> creations and let you drop stems or loops directly onto <b>${track.name}</b>.</p>
+         <p>Later you can replace this window with an iframe pointing to your SL Audio Library browser.</p>`
+      );
+      return;
+    }
+
+    if (action === 'sl-assistant') {
+      hideTrackTypeMenu();
+      openSlAssistant(track.id);
+      return;
+    }
   });
 
   window.addEventListener('click', (e) => {
@@ -3262,7 +3417,17 @@
       const el = document.createElement('div');
       el.className = 'clip';
       el.dataset.clipId = c.id;
-      el.dataset.color = c.color || 'blue';
+
+      const track = tracks.find(t => t.id === c.trackId);
+      const customColor = c.customColor || (track && track.color) || null;
+
+      if (customColor) {
+        el.dataset.color = 'custom';
+        el.style.background = customColor;
+        el.style.borderColor = '#ffffff';
+      } else {
+        el.dataset.color = c.color || 'blue';
+      }
 
       el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
       el.style.top = (top + 4) + 'px';
@@ -4130,5 +4295,164 @@
 
   init();
 </script>
+  <!-- SL ASSISTANT OVERLAY -->
+<div class="sl-assistant-overlay hidden" id="sl-assistant-overlay">
+  <div class="sl-assistant-window">
+    <div class="sl-assistant-header">
+      <div>
+        <div class="sl-assistant-title">Create with SL Assistant</div>
+        <div class="sl-assistant-chip" id="sl-assistant-track-label">Track: —</div>
+      </div>
+      <button class="sl-assistant-close-btn" id="sl-assistant-close">✕</button>
+    </div>
+    <div class="sl-assistant-body">
+      <div class="sl-assistant-track-summary" id="sl-assistant-tags"></div>
+
+      <div class="sl-assistant-label">
+        <span>Describe what you want SL Assistant to create</span>
+        <textarea id="sl-assistant-prompt" placeholder="Example: Afrobeat drum loop with punchy kick and bright rimshots…"></textarea>
+      </div>
+
+      <div class="sl-assistant-label sl-assistant-lyrics-block" id="sl-assistant-lyrics-block">
+        <span>Lyrics for this vocal (optional)</span>
+        <textarea id="sl-assistant-lyrics" placeholder="Paste or type your lyrics here so SL Assistant can shape the loop or vocal performance…"></textarea>
+      </div>
+
+      <div class="sl-assistant-options-row">
+        <div class="sl-assistant-option">
+          <span>Generation type</span>
+          <select id="sl-assistant-type">
+            <option value="loop">Loop (4–8 bars)</option>
+            <option value="oneshot">One-shot / hit</option>
+            <option value="phrase">Short phrase</option>
+            <option value="full">Full section</option>
+          </select>
+        </div>
+        <div class="sl-assistant-option">
+          <span>Length (bars)</span>
+          <select id="sl-assistant-length">
+            <option value="4">4 bars</option>
+            <option value="8" selected>8 bars</option>
+            <option value="16">16 bars</option>
+          </select>
+        </div>
+        <div class="sl-assistant-option">
+          <span>Style / vibe</span>
+          <select id="sl-assistant-style">
+            <option value="afro">Afrobeat / Afrofusion</option>
+            <option value="trap">Trap / Hip-hop</option>
+            <option value="house">House / EDM</option>
+            <option value="pop">Pop / R&amp;B</option>
+            <option value="cinematic">Cinematic / Ambient</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="sl-assistant-footer">
+      <button class="sl-assistant-secondary-btn" id="sl-assistant-cancel">Cancel</button>
+      <button class="sl-assistant-primary-btn" id="sl-assistant-generate">Generate into track</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRACK SETTINGS OVERLAY (rename, icon, color) -->
+<div class="track-settings-overlay hidden" id="track-settings-overlay">
+  <div class="track-settings-window">
+    <div class="track-settings-header">
+      <span id="track-settings-title">Track Settings</span>
+      <button class="sl-assistant-close-btn" id="track-settings-close">✕</button>
+    </div>
+    <div class="track-settings-body">
+      <div class="track-settings-row">
+        <label for="track-settings-name">Track name</label>
+        <input id="track-settings-name" type="text" />
+      </div>
+      <div class="track-settings-row">
+        <label for="track-settings-icon">Track icon</label>
+        <select id="track-settings-icon">
+          <option value="">None</option>
+          <option value="DR">Drums</option>
+          <option value="BS">Bass</option>
+          <option value="KY">Keys</option>
+          <option value="PD">Pads</option>
+          <option value="LD">Lead</option>
+          <option value="VO">Vocal</option>
+          <option value="FX">FX</option>
+          <option value="ST">Strings</option>
+          <option value="SY">Synth</option>
+        </select>
+      </div>
+      <div class="track-settings-row">
+        <label>Track color</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input id="track-settings-color" type="color" />
+          <button class="track-settings-btn apply" id="track-settings-use-default" type="button" style="padding:3px 8px;font-size:10px;">
+            Use type default
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="track-settings-footer">
+      <button class="track-settings-btn cancel" id="track-settings-cancel">Cancel</button>
+      <button class="track-settings-btn apply" id="track-settings-apply">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECORD ROUTING OVERLAY -->
+<div class="record-overlay hidden" id="record-overlay">
+  <div class="record-window">
+    <div class="record-header">
+      <div>
+        <div class="record-title">Track Recording Setup</div>
+        <div class="record-subtitle" id="record-track-label">Track: —</div>
+      </div>
+      <button class="record-close-btn" id="record-close">✕</button>
+    </div>
+    <div class="record-body">
+      <div class="record-row">
+        <span>Preset</span>
+        <select id="record-preset-select">
+          <option value="">(No preset)</option>
+        </select>
+        <div class="record-note">Choose an existing routing preset or configure a new one below.</div>
+      </div>
+
+      <div class="record-row">
+        <span>Input source</span>
+        <select id="record-input-select">
+          <option value="auto">Auto-detect input</option>
+        </select>
+        <div class="record-note">We will list microphones and audio interfaces where the browser has access.</div>
+      </div>
+
+      <div class="record-row">
+        <span>Output routing</span>
+        <select id="record-output-select">
+          <option value="project">Project output (default)</option>
+          <option value="headphones">Headphones / system default</option>
+          <option value="interface-main">Audio interface – Main out</option>
+          <option value="interface-alt">Audio interface – Alt out</option>
+        </select>
+      </div>
+
+      <div class="record-row">
+        <label style="display:flex;align-items:center;gap:6px;">
+          <input type="checkbox" id="record-save-as-preset" />
+          <span>Save these settings as a new preset</span>
+        </label>
+        <input id="record-preset-name" type="text" placeholder="Preset name (e.g., Podcast Mic, Studio Vocals)" />
+      </div>
+
+      <div class="record-note">
+        When you arm this track and press the global record button, SOUND will capture the input in real time and drop clips directly onto this track.
+      </div>
+    </div>
+    <div class="record-footer">
+      <button class="record-btn secondary" id="record-cancel">Cancel</button>
+      <button class="record-btn primary" id="record-apply">Accept &amp; Arm</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
