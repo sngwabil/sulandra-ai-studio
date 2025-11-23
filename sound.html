@@ -2621,18 +2621,38 @@
   </section>
 </main>
 
-<!-- TRACK TYPE POPUP -->
+<!-- TRACK ACTION POPUP FOR EACH TRACK -->
 <div class="track-type-menu" id="track-type-menu">
-  <div class="track-type-menu-item" data-type="Audio">
-    <span>Audio</span><span>Wave clips</span>
+  <div class="track-type-menu-item" data-action="instrument">
+    <div class="track-type-menu-item-label">
+      <span class="emoji">🎹</span>
+      <span>Assign Instrument</span>
+    </div>
+    <span>Auto name · color · icon</span>
   </div>
-  <div class="track-type-menu-item" data-type="Instrument">
-    <span>Instrument</span><span>Midi / synth</span>
+  <div class="track-type-menu-item" data-action="vocal">
+    <div class="track-type-menu-item-label">
+      <span class="emoji">🎤</span>
+      <span>Assign Vocal</span>
+    </div>
+    <span>Lead · Backing · Choir</span>
   </div>
-  <div class="track-type-menu-item" data-type="Create with AI">
-    <span>Create with AI</span><span>AI generator</span>
+  <div class="track-type-menu-item" data-action="import">
+    <div class="track-type-menu-item-label">
+      <span class="emoji">📥</span>
+      <span>Import Audio</span>
+    </div>
+    <span>Device · My SL Creations</span>
+  </div>
+  <div class="track-type-menu-item" data-action="assistant">
+    <div class="track-type-menu-item-label">
+      <span class="emoji">✨</span>
+      <span>Create with SL Assistant</span>
+    </div>
+    <span>Loops · Vocals · FX</span>
   </div>
 </div>
+  <input type="file" id="track-file-input" style="display:none;" accept="audio/*">
 
 <!-- PLUGIN POPUP -->
 <div class="plugin-overlay" id="plugin-overlay">
