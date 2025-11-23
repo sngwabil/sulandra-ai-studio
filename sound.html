@@ -3433,8 +3433,6 @@
       }
       hideTrackTypeMenu();
     });
-  });
-
   function applyInstrumentPresetToTrack(trackId) {
     const t = tracks.find(tr => tr.id === trackId);
     if (!t) return;
@@ -3447,7 +3445,6 @@
     recolorClipsOnTrack(t.id, t.color);
     renderTracks();
   }
-
   function applyVocalPresetToTrack(trackId) {
     const t = tracks.find(tr => tr.id === trackId);
     if (!t) return;
@@ -3486,7 +3483,6 @@
       );
     }
   }
-
   /* ========= SL ASSISTANT ========= */
   function openSlAssistantForTrack(trackId, forcedMode) {
     const t = tracks.find(tr => tr.id === trackId);
