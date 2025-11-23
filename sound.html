@@ -2852,36 +2852,40 @@ function applyTrackPresetToActive(item) {
 }
 
 // handle clicks on menu items (presets, import, assistant)
+// Track Type Menu Click Handler
 trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
-  item.addEventListener('click', () => {
+  item.addEventListener('click', (e) => {
+    // Stop propagation to prevent immediate closing before logic runs
+    e.stopPropagation(); 
+    
     const action = item.dataset.action || 'preset';
 
     if (action === 'preset') {
       applyTrackPresetToActive(item);
-
-    } else if (action === 'import-device') {
-      // open file picker, remember which track this is for
+    } 
+    else if (action === 'import-device') {
+      // 1. Hide Menu
       hideTrackTypeMenu();
-      if (!trackFileInput || !activeTypeTrackId) return;
-      trackFileInput.dataset.trackId = String(activeTypeTrackId);
-      trackFileInput.click();
-
-    } else if (action === 'import-audio') {
-      // jump to your Audio / Creations page
+      
+      // 2. Check elements exist
+      const fileInput = document.getElementById('track-file-input');
+      if (fileInput && activeTypeTrackId) {
+        fileInput.dataset.trackId = String(activeTypeTrackId);
+        // 3. Trigger Click
+        fileInput.click();
+      } else {
+        console.error("File input or active track ID missing");
+      }
+    } 
+    else if (action === 'import-audio') {
       hideTrackTypeMenu();
       window.location.href = 'music.html#creations';
-
-    } else if (action === 'sl-assistant') {
+    } 
+    else if (action === 'sl-assistant') {
       hideTrackTypeMenu();
       const t = tracks.find(tr => tr.id === activeTypeTrackId);
       const title = t ? `SL Assistant – ${t.name}` : 'SL Assistant';
-      const bodyHtml = `
-        <p>Use SL Assistant to create or refine audio for
-           <b>${t ? t.name : 'this track'}</b>.</p>
-        <p>Later you can connect this to Sulandra AI Studio’s
-           generation pipeline.</p>
-      `;
-      openPluginWindow(title, bodyHtml);
+      openPluginWindow(title, `<p>AI Assistant for <b>${t ? t.name : 'Track'}</b>...</p>`);
     }
   });
 });
