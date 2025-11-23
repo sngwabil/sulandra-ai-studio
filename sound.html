@@ -1,1149 +1,1701 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Sulandra Sound Lab – Timeline</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-        }
-
-        #toolbar {
-            height: 48px;
-            background: #1e1e1e;
-            border-bottom: 1px solid #333;
-            display: flex;
-            align-items: center;
-            padding: 0 12px;
-            gap: 12px;
-        }
-
-        #appTitle {
-            font-size: 14px;
-            font-weight: 600;
-            color: #f5f5f5;
-            margin-right: 24px;
-        }
-
-        button,
-        .toolbar-button {
-            background: #2b2b2b;
-            color: #f0f0f0;
-            border: 1px solid #444;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        button:hover,
-        .toolbar-button:hover {
-            background: #3a3a3a;
-        }
-
-        button:active,
-        .toolbar-button:active {
-            background: #444;
-        }
-
-        .toolbar-spacer {
-            flex: 1;
-        }
-
-        /* Transport controls */
-        #transport {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .transport-button {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            justify-content: center;
-            padding: 0;
-        }
-
-        .transport-button.record {
-            border-color: #e53935;
-            color: #ff5252;
-        }
-
-        /* Layout */
-        #main {
-            position: absolute;
-            top: 48px;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: grid;
-            grid-template-columns: 260px 1fr;
-        }
-
-        #trackList {
-            background: #181818;
-            border-right: 1px solid #333;
-            overflow-y: auto;
-        }
-
-        #timeline {
-            background: #151515;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        #timelineHeader {
-            height: 28px;
-            border-bottom: 1px solid #333;
-            background: linear-gradient(to right, #202020, #252525);
-            display: flex;
-            align-items: center;
-            font-size: 11px;
-            color: #b0b0b0;
-            padding-left: 8px;
-        }
-
-        #timelineGrid {
-            flex: 1;
-            overflow: auto;
-            position: relative;
-            background-image: linear-gradient(#1f1f1f 1px, transparent 1px),
-                              linear-gradient(90deg, #1f1f1f 1px, transparent 1px);
-            background-size: 24px 48px;
-            background-position: 40px 0;
-        }
-
-        .timeline-row {
-            position: relative;
-            height: 48px;
-            border-bottom: 1px solid #242424;
-            margin-left: 40px;
-        }
-
-        .clip {
-            position: absolute;
-            top: 8px;
-            height: 32px;
-            border-radius: 4px;
-            border: 1px solid rgba(0,0,0,0.5);
-            background: #4caf50;
-            display: flex;
-            align-items: center;
-            padding: 0 8px;
-            font-size: 11px;
-            color: #111;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        /* Track list */
-        .track-row {
-            display: flex;
-            flex-direction: column;
-            border-bottom: 1px solid #242424;
-        }
-
-        .track-header {
-            display: grid;
-            grid-template-columns: 4px 28px 1fr auto;
-            align-items: center;
-            height: 48px;
-            cursor: default;
-        }
-
-        .track-color-strip {
-            width: 4px;
-            height: 100%;
-            background: #4caf50;
-        }
-
-        .track-icon {
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .track-name {
-            font-size: 13px;
-            padding: 0 8px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .track-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding-right: 6px;
-        }
-
-        .track-control-btn {
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
-            font-size: 11px;
-            padding: 0;
-            justify-content: center;
-        }
-
-        .track-control-btn.record-arm.on {
-            background: #b71c1c;
-            border-color: #ff5252;
-            color: #ffebee;
-        }
-
-        .track-row:hover {
-            background: #1f1f1f;
-        }
-
-        /* Dropdown menu */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            min-width: 260px;
-            background: #222;
-            border-radius: 6px;
-            border: 1px solid #444;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            padding: 6px 0;
-            margin-top: 4px;
-            z-index: 50;
-            display: none;
-        }
-
-        .dropdown-menu.open {
-            display: block;
-        }
-
-        .menu-section {
-            padding: 4px 0 6px 0;
-            border-top: 1px solid #333;
-        }
-
-        .menu-section:first-child {
-            border-top: none;
-        }
-
-        .menu-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #888;
-            padding: 2px 10px;
-        }
-
-        .menu-item {
-            width: 100%;
-            text-align: left;
-            padding: 4px 10px;
-            font-size: 12px;
-            background: transparent;
-            border: none;
-            color: #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-item span {
-            pointer-events: none;
-        }
-
-        .menu-item:hover {
-            background: #333;
-        }
-
-        .shortcut {
-            font-size: 10px;
-            color: #777;
-        }
-
-        /* Modals */
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-        }
-
-        .modal-backdrop.open {
-            display: flex;
-        }
-
-        .modal {
-            background: #1a1a1a;
-            border-radius: 10px;
-            border: 1px solid #444;
-            padding: 14px 16px 16px 16px;
-            width: 460px;
-            max-width: 96vw;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.75);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .modal-title {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            padding: 0;
-            justify-content: center;
-        }
-
-        .form-row {
-            margin-bottom: 10px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .form-row label {
-            font-size: 12px;
-            color: #bbb;
-            min-width: 100px;
-        }
-
-        .form-row input[type="text"],
-        .form-row select,
-        .form-row textarea,
-        .form-row input[type="color"] {
-            flex: 1;
-            background: #121212;
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: #eee;
-            font-size: 12px;
-            padding: 4px 6px;
-        }
-
-        .form-row textarea {
-            min-height: 70px;
-            resize: vertical;
-        }
-
-        .modal-footer {
-            margin-top: 12px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
-        .checkbox-row {
-            font-size: 12px;
-            color: #ccc;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-
-        /* SL Assistant modal – extra colorful */
-        .sl-assistant-modal {
-            background: radial-gradient(circle at top left, #ff9a9e 0, #fad0c4 22%, #fbc2eb 40%, #a18cd1 58%, #5ee7df 76%, #b2fefa 100%);
-            border: none;
-            color: #111;
-        }
-
-        .sl-assistant-modal .modal-header,
-        .sl-assistant-modal .modal-footer {
-            color: #111;
-        }
-
-        .sl-assistant-modal .modal-title {
-            color: #111;
-            text-shadow: 0 1px 4px rgba(255,255,255,0.6);
-        }
-
-        .sl-assistant-modal .badge {
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 999px;
-            background: rgba(0,0,0,0.1);
-            margin-left: 6px;
-        }
-
-        .sl-assistant-modal .form-row label {
-            color: #222;
-            font-weight: 600;
-        }
-
-        .sl-assistant-modal .form-row input[type="text"],
-        .sl-assistant-modal .form-row textarea,
-        .sl-assistant-modal .form-row select {
-            background: rgba(255,255,255,0.85);
-            border: none;
-            color: #111;
-        }
-
-        .sl-assistant-modal .helper-text {
-            font-size: 11px;
-            color: #222;
-            margin-top: -6px;
-            margin-bottom: 6px;
-        }
-
-        .pill-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-
-        .pill {
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: rgba(0,0,0,0.15);
-            cursor: pointer;
-        }
-
-        .pill.active {
-            background: rgba(0,0,0,0.35);
-        }
-
-        .sl-assistant-logo {
-            font-size: 11px;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
-
-        .sl-assistant-logo span {
-            font-weight: 700;
-        }
-
-        /* Utility */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #111;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>SL Sound Lab – JS DAW Engine</title>
+  <style>
+    :root {
+      --sl-bg: #1e1f23;
+      --sl-bg-alt: #25262b;
+      --sl-panel: #2a2b31;
+      --sl-panel-strong: #30323a;
+      --sl-accent: #4da3ff;
+      --sl-accent-soft: #3b7bd5;
+      --sl-text-main: #e0e0e0;
+      --sl-text-soft: #b0b0b5;
+      --sl-border: #3d3f48;
+      --sl-timeline-bg: #202126;
+      --sl-grid-line: #333540;
+      --sl-clip-border: #101118;
+      --sl-danger: #ff4b6a;
+      --sl-success: #62d26f;
+      --sl-warning: #ffb74d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--sl-bg);
+      color: var(--sl-text-main);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Toolbar */
+
+    #toolbar {
+      height: 40px;
+      background-color: var(--sl-panel);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--sl-border);
+      gap: 8px;
+    }
+
+    .toolbar-section {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 16px;
+    }
+
+    button {
+      background-color: #3a3b42;
+      color: var(--sl-text-main);
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    button:hover {
+      background-color: #4a4b54;
+    }
+
+    button.active {
+      background-color: var(--sl-accent);
+      color: #fff;
+    }
+
+    .toolbar-icon-button img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      display: block;
+    }
+
+    #titleLabel {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--sl-text-soft);
+      margin-right: 8px;
+    }
+
+    /* Add Track Dropdown */
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 4px;
+      min-width: 200px;
+      background-color: var(--sl-panel-strong);
+      border-radius: 6px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
+      border: 1px solid var(--sl-border);
+      padding: 4px 0;
+      z-index: 1000;
+      display: none;
+    }
+
+    .dropdown-menu.open {
+      display: block;
+    }
+
+    .menu-item {
+      padding: 6px 12px;
+      font-size: 12px;
+      color: var(--sl-text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .menu-item:hover {
+      background-color: #3c3e48;
+    }
+
+    .menu-item-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .menu-item .shortcut {
+      font-size: 11px;
+      color: var(--sl-text-soft);
+    }
+
+    .menu-item.has-submenu {
+      position: relative;
+    }
+
+    .submenu {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      margin-left: 2px;
+      min-width: 190px;
+      background-color: var(--sl-panel-strong);
+      border-radius: 6px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
+      border: 1px solid var(--sl-border);
+      padding: 4px 0;
+      display: none;
+    }
+
+    .menu-item.has-submenu:hover .submenu {
+      display: block;
+    }
+
+    .menu-separator {
+      border-top: 1px solid var(--sl-border);
+      margin: 4px 0;
+    }
+
+    /* Main layout */
+
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--sl-bg-alt);
+    }
+
+    /* Timeline layout */
+
+    #timelineWrapper {
+      flex: 1;
+      display: flex;
+      background-color: var(--sl-timeline-bg);
+    }
+
+    #trackHeaders {
+      width: 230px;
+      border-right: 1px solid var(--sl-border);
+      background-color: var(--sl-panel);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    #trackHeadersTitle {
+      padding: 6px 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--sl-text-soft);
+      border-bottom: 1px solid var(--sl-border);
+    }
+
+    #trackHeaderList {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .track-header {
+      display: flex;
+      align-items: center;
+      padding: 4px 6px;
+      border-bottom: 1px solid #2f3037;
+      cursor: pointer;
+    }
+
+    .track-header:hover {
+      background-color: #343641;
+    }
+
+    .track-color-bar {
+      width: 4px;
+      height: 26px;
+      border-radius: 2px;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+
+    .track-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 14px;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
+    .track-name {
+      flex: 1;
+      font-size: 12px;
+      color: var(--sl-text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 6px;
+    }
+
+    .track-type-badge {
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 10px;
+      background-color: #3c3d46;
+      color: var(--sl-text-soft);
+      margin-right: 6px;
+      text-transform: uppercase;
+    }
+
+    .track-record-btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #4a232b;
+      color: var(--sl-danger);
+      flex-shrink: 0;
+    }
+
+    .track-record-btn.armed {
+      background: radial-gradient(circle at 30% 30%, #ffb0c1, #ff3155);
+      color: #fff;
+      box-shadow: 0 0 6px rgba(255, 80, 120, 0.9);
+    }
+
+    #timelineViewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #timelineHeader {
+      height: 26px;
+      border-bottom: 1px solid var(--sl-border);
+      background: linear-gradient(to bottom, #2a2c33, #24252b);
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      font-size: 10px;
+      color: var(--sl-text-soft);
+    }
+
+    #timelineHeader .marker {
+      width: 60px;
+      text-align: center;
+      border-left: 1px solid #333540;
+    }
+
+    #timelineScroll {
+      flex: 1;
+      overflow: auto;
+      position: relative;
+    }
+
+    .timeline-row {
+      position: relative;
+      height: 40px;
+      border-bottom: 1px solid #262732;
+      background-image: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.02) 1px,
+        transparent 1px
+      );
+      background-size: 60px 100%;
+    }
+
+    .timeline-row:nth-child(2n) {
+      background-color: #24252e;
+    }
+
+    .timeline-row:nth-child(2n + 1) {
+      background-color: #22232b;
+    }
+
+    .clip {
+      position: absolute;
+      top: 6px;
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid var(--sl-clip-border);
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15),
+        rgba(0, 0, 0, 0.3)
+      );
+      padding: 2px 6px;
+      font-size: 11px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .clip-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+
+    .clip-tag {
+      font-size: 9px;
+      padding: 0 4px;
+      border-radius: 6px;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Bottom transport bar */
+
+    #transportBar {
+      height: 42px;
+      background-color: var(--sl-panel);
+      border-top: 1px solid var(--sl-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .transport-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .transport-time {
+      font-family: "Consolas", "Menlo", monospace;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background-color: #2e3038;
+    }
+
+    .tiny-label {
+      font-size: 10px;
+      color: var(--sl-text-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input[type="range"] {
+      accent-color: var(--sl-accent);
+    }
+
+    /* Modals */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.9));
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background-color: #252733;
+      border-radius: 10px;
+      border: 1px solid var(--sl-border);
+      padding: 14px 16px 12px;
+      min-width: 360px;
+      max-width: 620px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .modal-close {
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--sl-text-soft);
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .form-row-inline {
+      display: flex;
+      gap: 8px;
+    }
+
+    .form-row label {
+      font-size: 11px;
+      color: var(--sl-text-soft);
+    }
+
+    .form-row input[type="text"],
+    .form-row input[type="number"],
+    .form-row select,
+    .form-row textarea {
+      background-color: #2f313c;
+      border-radius: 4px;
+      border: 1px solid #424455;
+      color: var(--sl-text-main);
+      font-size: 12px;
+      padding: 4px 6px;
+      outline: none;
+    }
+
+    .form-row textarea {
+      resize: vertical;
+      min-height: 60px;
+      max-height: 180px;
+    }
+
+    .form-row input[type="color"] {
+      padding: 0;
+      border-radius: 4px;
+      border: 1px solid #424455;
+      width: 36px;
+      height: 22px;
+      cursor: pointer;
+    }
+
+    .form-row small {
+      font-size: 10px;
+      color: var(--sl-text-soft);
+    }
+
+    /* Colorful SL Assistant modal */
+
+    #slAssistantModal .modal {
+      background: radial-gradient(circle at top left, #30345b, #1d1e29 55%, #18141f 100%);
+      border: 1px solid rgba(119, 187, 255, 0.5);
+      box-shadow:
+        0 0 25px rgba(77, 163, 255, 0.45),
+        0 30px 60px rgba(0, 0, 0, 0.9);
+    }
+
+    #slAssistantModal .modal-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #slAssistantModal .badge-pill {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background-color: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #d5e7ff;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    #slAssistantModal .gradient-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    #slAssistantModal .gradient-chip {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff7ae0, #8f6bff);
+      color: #fff;
+      cursor: pointer;
+      opacity: 0.85;
+    }
+
+    #slAssistantModal .gradient-chip:nth-child(2) {
+      background: linear-gradient(135deg, #7df9ff, #4da3ff);
+    }
+
+    #slAssistantModal .gradient-chip:nth-child(3) {
+      background: linear-gradient(135deg, #ffc857, #ff7a3c);
+    }
+
+    #slAssistantModal .gradient-chip:nth-child(4) {
+      background: linear-gradient(135deg, #b0ff92, #45e28b);
+    }
+
+    #slAssistantModal .gradient-chip:hover {
+      opacity: 1;
+    }
+
+    #slAssistantModal .form-row textarea {
+      background: rgba(0, 0, 0, 0.35);
+      border-color: rgba(159, 206, 255, 0.6);
+    }
+
+    #slAssistantModal .form-row select,
+    #slAssistantModal .form-row input[type="text"] {
+      background: rgba(0, 0, 0, 0.35);
+      border-color: rgba(159, 206, 255, 0.6);
+    }
+
+    /* Hidden helper */
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Simple scrollbars */
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #3a3b44;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: #22232a;
+    }
+  </style>
 </head>
 <body>
-<div id="toolbar">
-    <div id="appTitle">🎧 Sulandra Sound Lab – Timeline</div>
+<div id="app">
+  <!-- Top toolbar -->
+  <div id="toolbar">
+    <span id="titleLabel">SL Sound Lab</span>
 
-    <!-- Add Track dropdown -->
-    <div class="dropdown">
-        <button class="toolbar-button" id="addTrackBtn">
-            + Add Track ▾
-        </button>
-        <div class="dropdown-menu" id="addTrackMenu">
-            <div class="menu-section">
-                <div class="menu-title">Instruments</div>
-                <button class="menu-item" data-category="instrument" data-type="Piano">
-                    <span>🎹 Piano</span><span class="shortcut">Ctrl+1</span>
-                </button>
-                <button class="menu-item" data-category="instrument" data-type="Guitar">
-                    <span>🎸 Guitar</span><span class="shortcut">Ctrl+2</span>
-                </button>
-                <button class="menu-item" data-category="instrument" data-type="Bass">
-                    <span>🎸 Bass</span><span class="shortcut">Ctrl+3</span>
-                </button>
-                <button class="menu-item" data-category="instrument" data-type="Drums">
-                    <span>🥁 Drums</span><span class="shortcut">Ctrl+4</span>
-                </button>
-                <button class="menu-item" data-category="instrument" data-type="Strings">
-                    <span>🎻 Strings</span>
-                </button>
-                <button class="menu-item" data-category="instrument" data-type="Synth">
-                    <span>🎛️ Synth</span>
-                </button>
-            </div>
+    <div class="toolbar-section">
+      <!-- Example real-ish icons – replace src with your own PNG/SVG if desired -->
+      <button id="timelineBtn" class="toolbar-icon-button active" title="Timeline">
+        <img src="icons/timeline.png" alt="Timeline">
+        Timeline
+      </button>
+      <button id="mixerBtn" class="toolbar-icon-button" title="Mixer (overlay)">
+        <img src="icons/mixer.png" alt="Mixer">
+        Mixer
+      </button>
+      <button id="patternsBtn" class="toolbar-icon-button" title="Pattern Rack (overlay)">
+        <img src="icons/patterns.png" alt="Patterns">
+        Patterns
+      </button>
+    </div>
 
-            <div class="menu-section">
-                <div class="menu-title">Vocals</div>
-                <button class="menu-item" data-category="vocal" data-type="Lead Vocal">
-                    <span>🎤 Lead Vocal</span>
-                </button>
-                <button class="menu-item" data-category="vocal" data-type="Backing Vocals">
-                    <span>👥 Backing Vocals</span>
-                </button>
-                <button class="menu-item" data-category="vocal" data-type="Choir">
-                    <span>🎶 Choir</span>
-                </button>
+    <div class="toolbar-section">
+      <!-- Add Track dropdown -->
+      <div class="dropdown" id="addTrackDropdown">
+        <button id="addTrackButton">+ Track ▾</button>
+        <div id="addTrackMenu" class="dropdown-menu">
+          <div class="menu-item has-submenu">
+            <span class="menu-item-label">
+              <span>Instrument</span>
+            </span>
+            <span class="shortcut">▶</span>
+            <div class="submenu" id="instrumentSubmenu">
+              <div class="menu-item" data-instrument="Aurora Keys" data-color="#4caf50" data-icon="🎹">
+                <span class="menu-item-label"><span>🎹 Aurora Keys</span></span>
+                <span class="shortcut">Keys</span>
+              </div>
+              <div class="menu-item" data-instrument="Nebula Bass" data-color="#ff7043" data-icon="🌀">
+                <span class="menu-item-label"><span>🌀 Nebula Bass</span></span>
+                <span class="shortcut">Bass</span>
+              </div>
+              <div class="menu-item" data-instrument="Photon Drums" data-color="#ffca28" data-icon="🥁">
+                <span class="menu-item-label"><span>🥁 Photon Drums</span></span>
+                <span class="shortcut">Drums</span>
+              </div>
+              <div class="menu-item" data-instrument="Cosmic Pad" data-color="#7e57c2" data-icon="☁️">
+                <span class="menu-item-label"><span>☁️ Cosmic Pad</span></span>
+                <span class="shortcut">Pad</span>
+              </div>
+              <div class="menu-item" data-instrument="Starlite Pluck" data-color="#26c6da" data-icon="✨">
+                <span class="menu-item-label"><span>✨ Starlite Pluck</span></span>
+                <span class="shortcut">Pluck</span>
+              </div>
             </div>
+          </div>
 
-            <div class="menu-section">
-                <div class="menu-title">Import</div>
-                <button class="menu-item" data-action="import-device">
-                    <span>📂 Import from device…</span>
-                </button>
-                <button class="menu-item" data-action="import-library">
-                    <span>🎼 Import from audio library…</span>
-                </button>
+          <div class="menu-item has-submenu">
+            <span class="menu-item-label">
+              <span>Vocals</span>
+            </span>
+            <span class="shortcut">▶</span>
+            <div class="submenu" id="vocalSubmenu">
+              <div class="menu-item" data-vocal="Lead Vocals" data-color="#ec407a" data-icon="🎙️">
+                <span class="menu-item-label"><span>🎙️ Lead Vocals</span></span>
+                <span class="shortcut">Lead</span>
+              </div>
+              <div class="menu-item" data-vocal="Backing Vocals" data-color="#ab47bc" data-icon="🎤">
+                <span class="menu-item-label"><span>🎤 Backing Vocals</span></span>
+                <span class="shortcut">BGV</span>
+              </div>
+              <div class="menu-item" data-vocal="Choir Stack" data-color="#42a5f5" data-icon="👥">
+                <span class="menu-item-label"><span>👥 Choir Stack</span></span>
+                <span class="shortcut">Choir</span>
+              </div>
             </div>
+          </div>
 
-            <div class="menu-section">
-                <div class="menu-title">Create</div>
-                <button class="menu-item" data-action="open-sl-assistant">
-                    <span>✨ Create with SL Assistant…</span>
-                </button>
+          <div class="menu-item has-submenu">
+            <span class="menu-item-label">
+              <span>Import</span>
+            </span>
+            <span class="shortcut">▶</span>
+            <div class="submenu" id="importSubmenu">
+              <div class="menu-item" data-import="device">
+                <span class="menu-item-label"><span>Upload from device…</span></span>
+              </div>
+              <div class="menu-item" data-import="library">
+                <span class="menu-item-label"><span>Import from Audio Library (music.html)…</span></span>
+              </div>
             </div>
+          </div>
+
+          <div class="menu-separator"></div>
+
+          <div class="menu-item" id="createWithSlAssistantMenuItem">
+            <span class="menu-item-label">
+              <span>✨ Create with SL Assistant…</span>
+            </span>
+            <span class="shortcut">Ctrl+Shift+A</span>
+          </div>
         </div>
+      </div>
     </div>
 
-    <div class="toolbar-spacer"></div>
-
-    <!-- Transport controls -->
-    <div id="transport">
-        <button class="transport-button toolbar-button" id="btnStop" title="Stop">
-            ⏹
-        </button>
-        <button class="transport-button toolbar-button" id="btnPlay" title="Play / Pause">
-            ▶
-        </button>
-        <button class="transport-button toolbar-button record" id="btnRecord" title="Record">
-            ●
-        </button>
+    <div class="toolbar-section" style="margin-left:auto;">
+      <span class="tiny-label">Metronome</span>
+      <button id="metronomeBtn">⏱️</button>
+      <span class="tiny-label">Tempo</span>
+      <input id="tempoInput" type="number" value="120" min="40" max="220"
+             style="width:60px;background:#2e2f37;border:1px solid #444;border-radius:4px;color:var(--sl-text-main);font-size:11px;padding:2px 4px;">
     </div>
+  </div>
+
+  <!-- Main timeline + track area -->
+  <div id="main">
+    <div id="timelineWrapper">
+      <!-- Track headers -->
+      <div id="trackHeaders">
+        <div id="trackHeadersTitle">Tracks</div>
+        <div id="trackHeaderList"></div>
+      </div>
+
+      <!-- Timeline grid -->
+      <div id="timelineViewport">
+        <div id="timelineHeader"></div>
+        <div id="timelineScroll"></div>
+      </div>
+    </div>
+
+    <!-- Transport bar -->
+    <div id="transportBar">
+      <div class="transport-section">
+        <button id="playBtn">▶</button>
+        <button id="stopBtn">■</button>
+        <button id="recordGlobalBtn">●</button>
+        <span class="transport-time" id="timeDisplay">000:01:01</span>
+      </div>
+
+      <div class="transport-section">
+        <span class="tiny-label">Volume</span>
+        <input id="masterVolume" type="range" min="0" max="100" value="85">
+        <span class="tiny-label">Snap</span>
+        <select id="snapSelect"
+                style="background:#2e2f37;border:1px solid #444;border-radius:4px;color:var(--sl-text-main);font-size:11px;padding:2px 4px;">
+          <option>Line</option>
+          <option>Beat</option>
+          <option>Bar</option>
+          <option>None</option>
+        </select>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div id="main">
-    <div id="trackList">
-        <!-- Tracks appear here -->
-    </div>
-    <div id="timeline">
-        <div id="timelineHeader">
-            <span>Bars / Beats</span>
-        </div>
-        <div id="timelineGrid">
-            <!-- Timeline rows appear here -->
-        </div>
-    </div>
-</div>
+<!-- Hidden file input for import from device -->
+<input type="file" id="audioUploadInput" accept="audio/*" class="hidden">
 
-<!-- Hidden file input for import-from-device -->
-<input type="file" id="audioFileInput" accept="audio/*" multiple class="hidden"/>
+<!-- Modals -->
 
 <!-- Track Settings Modal -->
-<div class="modal-backdrop" id="trackSettingsBackdrop">
-    <div class="modal" id="trackSettingsModal">
-        <div class="modal-header">
-            <div class="modal-title">Track Settings</div>
-            <button class="modal-close" data-close-track-settings>✕</button>
-        </div>
-        <div class="form-row">
-            <label for="trackNameInput">Track name</label>
-            <input type="text" id="trackNameInput">
-        </div>
-        <div class="form-row">
-            <label for="trackIconSelect">Track icon</label>
-            <select id="trackIconSelect">
-                <option value="🎹">🎹 Piano</option>
-                <option value="🎸">🎸 Guitar/Bass</option>
-                <option value="🥁">🥁 Drums</option>
-                <option value="🎻">🎻 Strings</option>
-                <option value="🎛️">🎛️ Synth</option>
-                <option value="🎤">🎤 Lead Vocal</option>
-                <option value="👥">👥 Backing Vocals</option>
-                <option value="🎶">🎶 Choir</option>
-                <option value="🎧">🎧 FX/Bus</option>
-            </select>
-        </div>
-        <div class="form-row">
-            <label for="trackColorInput">Track color</label>
-            <input type="color" id="trackColorInput">
-        </div>
-        <div class="modal-footer">
-            <button id="trackSettingsCancelBtn">Cancel</button>
-            <button id="trackSettingsSaveBtn">Save</button>
-        </div>
+<div id="trackSettingsModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Track Settings</div>
+      <div class="modal-close" data-close="trackSettingsModal">×</div>
     </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label for="trackSettingsName">Track name</label>
+        <input type="text" id="trackSettingsName">
+      </div>
+      <div class="form-row-inline">
+        <div class="form-row" style="flex:1;">
+          <label for="trackSettingsIcon">Track icon (emoji or 1–2 chars)</label>
+          <input type="text" id="trackSettingsIcon" maxlength="4">
+        </div>
+        <div class="form-row" style="width:110px;">
+          <label for="trackSettingsColor">Track color</label>
+          <input type="color" id="trackSettingsColor">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Info</label>
+        <small>Changing the track color will also recolor all clips on this track to keep things visually organized.</small>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button data-close="trackSettingsModal">Cancel</button>
+      <button id="trackSettingsSaveBtn">Apply</button>
+    </div>
+  </div>
 </div>
 
 <!-- Record Settings Modal -->
-<div class="modal-backdrop" id="recordSettingsBackdrop">
-    <div class="modal" id="recordSettingsModal">
-        <div class="modal-header">
-            <div class="modal-title">Record Settings</div>
-            <button class="modal-close" data-close-record-settings>✕</button>
-        </div>
-
-        <div class="form-row">
-            <label for="recordPresetSelect">Preset</label>
-            <select id="recordPresetSelect">
-                <option value="none">None (manual)</option>
-            </select>
-        </div>
-
-        <div class="form-row">
-            <label for="inputSourceSelect">Input source</label>
-            <select id="inputSourceSelect">
-                <option>Built-in Microphone</option>
-                <option>USB Interface – Input 1</option>
-                <option>USB Interface – Input 2</option>
-                <option>USB Interface – Stereo 1–2</option>
-                <option>Virtual Loopback</option>
-            </select>
-        </div>
-        <div class="form-row">
-            <label for="outputDestinationSelect">Output</label>
-            <select id="outputDestinationSelect">
-                <option>Project Output (Main Out)</option>
-                <option>Headphones – 1</option>
-                <option>Headphones – 2</option>
-                <option>USB Interface – Monitor Out</option>
-            </select>
-        </div>
-
-        <div class="checkbox-row">
-            <input type="checkbox" id="saveAsPresetCheckbox">
-            <label for="saveAsPresetCheckbox">Save these settings as a new preset</label>
-        </div>
-
-        <div class="form-row" id="presetNameRow">
-            <label for="presetNameInput">Preset name</label>
-            <input type="text" id="presetNameInput" placeholder="e.g., Lead Vocal – SM7B">
-        </div>
-
-        <div class="checkbox-row">
-            <input type="checkbox" id="setAsDefaultCheckbox">
-            <label for="setAsDefaultCheckbox">Set this preset as default for this track</label>
-        </div>
-
-        <div class="modal-footer">
-            <button id="recordSettingsCancelBtn">Cancel</button>
-            <button id="recordSettingsApplyBtn">Apply & Arm Track</button>
-        </div>
+<div id="recordSettingsModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Record Routing – <span id="recordSettingsTrackName"></span></div>
+      <div class="modal-close" data-close="recordSettingsModal">×</div>
     </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label for="recordPresetSelect">Preset</label>
+        <select id="recordPresetSelect">
+          <option value="">New route / custom</option>
+        </select>
+        <small>Select a saved routing preset or configure a new route below.</small>
+      </div>
+
+      <div class="form-row-inline">
+        <div class="form-row" style="flex:1;">
+          <label for="recordInputDevice">Input device (microphone / interface)</label>
+          <select id="recordInputDevice"></select>
+          <small>We’ll list microphones and audio interfaces that the browser can see.</small>
+        </div>
+        <div class="form-row" style="flex:1;">
+          <label for="recordOutputDevice">Output target</label>
+          <select id="recordOutputDevice"></select>
+          <small>Default is the main project output. You can route monitoring to an interface or headphones.</small>
+        </div>
+      </div>
+
+      <div class="form-row-inline">
+        <div class="form-row" style="flex:1;">
+          <label for="recordPresetName">Save as preset (optional)</label>
+          <input type="text" id="recordPresetName" placeholder="My vocal chain A">
+        </div>
+        <div class="form-row" style="width:150px;">
+          <label>
+            <input type="checkbox" id="recordPresetDefault" style="margin-right:4px;vertical-align:middle;">
+            <span style="font-size:11px;color:var(--sl-text-soft);">Set as default</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Behavior</label>
+        <small>When you arm this track and start global recording, SL Sound Lab will record from the chosen input into this track in real time. You can arm multiple tracks at once for multi-input recording.</small>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button data-close="recordSettingsModal">Cancel</button>
+      <button id="recordSettingsApplyBtn">Accept</button>
+    </div>
+  </div>
 </div>
 
 <!-- SL Assistant Modal -->
-<div class="modal-backdrop" id="slAssistantBackdrop">
-    <div class="modal sl-assistant-modal" id="slAssistantModal">
-        <div class="modal-header">
-            <div>
-                <div class="sl-assistant-logo">
-                    <span>SL</span> Assistant · Creative Engine
-                </div>
-                <div class="modal-title">
-                    Create with SL Assistant
-                    <span class="badge">Auto-syncs with project tempo</span>
-                </div>
-            </div>
-            <button class="modal-close" data-close-sl-assistant>✕</button>
-        </div>
-
-        <div class="form-row">
-            <label for="slTrackTypeSelect">Track type</label>
-            <select id="slTrackTypeSelect">
-                <option value="instrument">Instrument</option>
-                <option value="vocal-lead">Lead Vocal</option>
-                <option value="vocal-backing">Backing Vocals</option>
-                <option value="vocal-choir">Choir</option>
-            </select>
-        </div>
-
-        <div class="form-row">
-            <label for="slPromptInput">Creative prompt</label>
-            <textarea id="slPromptInput" placeholder="Describe the loop, texture, or idea you want..."></textarea>
-        </div>
-        <div class="helper-text">
-            Example: “Warm Afrobeat guitar loop, syncopated, bright top-end, fits 4 bars at 100 BPM”
-        </div>
-
-        <div class="form-row" id="slLyricsRow">
-            <label for="slLyricsInput">Lyrics</label>
-            <textarea id="slLyricsInput" placeholder="Paste or write your lyrics here for SL Assistant to shape the vocal..."></textarea>
-        </div>
-
-        <div class="helper-text" id="slLyricsHelper">
-            For vocal tracks, SL Assistant will align phrasing to your lyrics and the project grid.
-        </div>
-
-        <div class="form-row">
-            <label>Style & mood</label>
-            <div style="flex: 1;">
-                <div class="pill-row" id="stylePills">
-                    <div class="pill" data-style="afrobeat">Afrobeat Groovy</div>
-                    <div class="pill" data-style="trap">Trap / 808</div>
-                    <div class="pill" data-style="gospel">Gospel / Worship</div>
-                    <div class="pill" data-style="cinematic">Cinematic</div>
-                    <div class="pill" data-style="aerial">Ambient / Aerial</div>
-                </div>
-                <div class="pill-row" id="intensityPills">
-                    <div class="pill" data-intensity="soft">Soft</div>
-                    <div class="pill" data-intensity="medium">Medium Energy</div>
-                    <div class="pill" data-intensity="high">High Energy</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="helper-text">
-            SL Assistant will return loops, vocals, and layers that you can drop directly into the timeline lanes for this project.
-        </div>
-
-        <div class="modal-footer">
-            <button id="slAssistantCancelBtn">Cancel</button>
-            <button id="slAssistantCreateBtn">
-                Generate & Drop into Timeline
-            </button>
-        </div>
+<div id="slAssistantModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        ✨ SL Assistant
+        <span class="badge-pill">Loop • Vocal • FX</span>
+      </div>
+      <div class="modal-close" data-close="slAssistantModal">×</div>
     </div>
+    <div class="modal-body">
+      <div class="gradient-chip-row">
+        <div class="gradient-chip" data-chip-prompt="Afrobeat drum loop, bouncy, warm, human feel">Afrobeat Groove</div>
+        <div class="gradient-chip" data-chip-prompt="Soulful keys, atmospheric pads, gentle arps">Soul Keys</div>
+        <div class="gradient-chip" data-chip-prompt="Punchy 808, trap bounce, modern pop energy">808 Bounce</div>
+        <div class="gradient-chip" data-chip-prompt="Choir harmonies, lush reverb, emotional worship">Choir Stack</div>
+      </div>
+
+      <div class="form-row-inline">
+        <div class="form-row" style="flex:1;">
+          <label for="slAssistantTargetTrack">Target track</label>
+          <select id="slAssistantTargetTrack">
+            <option value="">Create new track automatically</option>
+          </select>
+        </div>
+        <div class="form-row" style="flex:1;">
+          <label for="slAssistantContentType">Content type</label>
+          <select id="slAssistantContentType">
+            <option value="instrument">Instrument Loop</option>
+            <option value="drum">Drum Loop</option>
+            <option value="vocal-lead">Vocal – Lead</option>
+            <option value="vocal-choir">Vocal – Choir</option>
+            <option value="fx">FX / Atmosphere</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="slAssistantPrompt">Style / sound prompt</label>
+        <textarea id="slAssistantPrompt" placeholder="Describe the loop, vocal, or FX you want SL Assistant to create…"></textarea>
+      </div>
+
+      <div class="form-row hidden" id="slAssistantLyricsRow">
+        <label for="slAssistantLyrics">Lyrics (for vocals)</label>
+        <textarea id="slAssistantLyrics" placeholder="Paste or type the lyrics here so SL Assistant can phrase the performance to match."></textarea>
+      </div>
+
+      <div class="form-row-inline">
+        <div class="form-row" style="flex:1;">
+          <label for="slAssistantLength">Loop length (bars)</label>
+          <input type="number" id="slAssistantLength" value="4" min="1" max="64">
+        </div>
+        <div class="form-row" style="flex:1;">
+          <label for="slAssistantEnergy">Energy</label>
+          <select id="slAssistantEnergy">
+            <option value="chill">Chill / background</option>
+            <option value="medium" selected>Medium groove</option>
+            <option value="high">High energy</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Sync</label>
+        <small>SL Assistant will lock the new loop to the current project tempo (<span id="slAssistantTempoLabel">120</span> BPM) and start it at the next full bar in the timeline.</small>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button data-close="slAssistantModal">Close</button>
+      <button id="slAssistantGenerateBtn">Generate & Drop into Timeline</button>
+    </div>
+  </div>
 </div>
 
 <script>
-    (function () {
-        // ------- Data / State -------
+  // Basic data structures
+  const tracks = [];
+  let trackIdCounter = 1;
 
-        const TRACK_TEMPLATES = {
-            instrument: {
-                "Piano":  { icon: "🎹", color: "#4caf50" },
-                "Guitar": { icon: "🎸", color: "#ff9800" },
-                "Bass":   { icon: "🎸", color: "#3f51b5" },
-                "Drums":  { icon: "🥁", color: "#e91e63" },
-                "Strings":{ icon: "🎻", color: "#9c27b0" },
-                "Synth":  { icon: "🎛️", color: "#00bcd4" }
-            },
-            vocal: {
-                "Lead Vocal":      { icon: "🎤", color: "#f44336" },
-                "Backing Vocals":  { icon: "👥", color: "#ff9800" },
-                "Choir":           { icon: "🎶", color: "#8bc34a" }
-            }
-        };
+  const recordPresets = []; // { name, inputId, inputLabel, outputId, outputLabel, isDefault }
 
-        let trackCounter = 0;
-        const tracks = new Map(); // id -> { id, name, color, icon, category, type, defaultRecordPresetId }
+  // Cached DOM
+  const trackHeaderListEl = document.getElementById('trackHeaderList');
+  const timelineHeaderEl = document.getElementById('timelineHeader');
+  const timelineScrollEl = document.getElementById('timelineScroll');
 
-        // Presets: id -> { id, name, input, output }
-        let recordPresetCounter = 0;
-        const recordPresets = new Map();
+  const addTrackDropdownEl = document.getElementById('addTrackDropdown');
+  const addTrackButtonEl = document.getElementById('addTrackButton');
+  const addTrackMenuEl = document.getElementById('addTrackMenu');
 
-        let currentTrackForSettings = null;
-        let currentTrackForRecord = null;
+  const audioUploadInputEl = document.getElementById('audioUploadInput');
 
-        // ------- Helper Functions -------
+  // Modals
+  const trackSettingsModalEl = document.getElementById('trackSettingsModal');
+  const recordSettingsModalEl = document.getElementById('recordSettingsModal');
+  const slAssistantModalEl = document.getElementById('slAssistantModal');
 
-        function createTrack(category, type) {
-            const id = "track-" + (++trackCounter);
-            const templateGroup = category === "vocal" ? TRACK_TEMPLATES.vocal : TRACK_TEMPLATES.instrument;
-            const template = templateGroup[type] || { icon: "🎧", color: "#607d8b" };
+  // Track settings modal fields
+  const trackSettingsNameEl = document.getElementById('trackSettingsName');
+  const trackSettingsIconEl = document.getElementById('trackSettingsIcon');
+  const trackSettingsColorEl = document.getElementById('trackSettingsColor');
+  const trackSettingsSaveBtn = document.getElementById('trackSettingsSaveBtn');
+  let trackSettingsEditingId = null;
 
-            const trackData = {
-                id,
-                name: type,
-                color: template.color,
-                icon: template.icon,
-                category,
-                type,
-                defaultRecordPresetId: null
-            };
-            tracks.set(id, trackData);
+  // Record settings modal fields
+  const recordSettingsTrackNameEl = document.getElementById('recordSettingsTrackName');
+  const recordPresetSelectEl = document.getElementById('recordPresetSelect');
+  const recordInputDeviceEl = document.getElementById('recordInputDevice');
+  const recordOutputDeviceEl = document.getElementById('recordOutputDevice');
+  const recordPresetNameEl = document.getElementById('recordPresetName');
+  const recordPresetDefaultEl = document.getElementById('recordPresetDefault');
+  const recordSettingsApplyBtn = document.getElementById('recordSettingsApplyBtn');
+  let recordSettingsTrackId = null;
 
-            // Track list row
-            const trackList = document.getElementById("trackList");
-            const row = document.createElement("div");
-            row.className = "track-row";
-            row.dataset.trackId = id;
+  // SL Assistant fields
+  const slAssistantTargetTrackEl = document.getElementById('slAssistantTargetTrack');
+  const slAssistantContentTypeEl = document.getElementById('slAssistantContentType');
+  const slAssistantPromptEl = document.getElementById('slAssistantPrompt');
+  const slAssistantLyricsEl = document.getElementById('slAssistantLyrics');
+  const slAssistantLyricsRowEl = document.getElementById('slAssistantLyricsRow');
+  const slAssistantLengthEl = document.getElementById('slAssistantLength');
+  const slAssistantEnergyEl = document.getElementById('slAssistantEnergy');
+  const slAssistantTempoLabelEl = document.getElementById('slAssistantTempoLabel');
+  const tempoInputEl = document.getElementById('tempoInput');
+  const slAssistantGenerateBtn = document.getElementById('slAssistantGenerateBtn');
 
-            const header = document.createElement("div");
-            header.className = "track-header";
+  const timeDisplayEl = document.getElementById('timeDisplay');
 
-            const colorStrip = document.createElement("div");
-            colorStrip.className = "track-color-strip";
-            colorStrip.style.backgroundColor = trackData.color;
+  /* Utility: modal handling */
 
-            const iconCell = document.createElement("div");
-            iconCell.className = "track-icon";
-            iconCell.textContent = trackData.icon;
+  function openModal(modalEl) {
+    modalEl.classList.add('open');
+  }
 
-            const nameCell = document.createElement("div");
-            nameCell.className = "track-name";
-            nameCell.textContent = trackData.name;
+  function closeModal(modalEl) {
+    modalEl.classList.remove('open');
+  }
 
-            const controlsCell = document.createElement("div");
-            controlsCell.className = "track-controls";
+  document.querySelectorAll('.modal-close').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.getAttribute('data-close');
+      if (id) {
+        const modal = document.getElementById(id);
+        if (modal) closeModal(modal);
+      }
+    });
+  });
 
-            const recordBtn = document.createElement("button");
-            recordBtn.className = "track-control-btn record-arm";
-            recordBtn.textContent = "●";
-            recordBtn.title = "Record settings / arm track";
-            recordBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                openRecordSettingsModal(id);
-            });
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+    backdrop.addEventListener('click', e => {
+      if (e.target === backdrop) {
+        backdrop.classList.remove('open');
+      }
+    });
+  });
 
-            controlsCell.appendChild(recordBtn);
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-close');
+      const modal = document.getElementById(id);
+      if (modal) closeModal(modal);
+    });
+  });
 
-            header.appendChild(colorStrip);
-            header.appendChild(iconCell);
-            header.appendChild(nameCell);
-            header.appendChild(controlsCell);
-            row.appendChild(header);
-            trackList.appendChild(row);
+  /* Timeline header (beats / bars grid) */
 
-            // Double click to open track settings
-            header.addEventListener("dblclick", () => {
-                openTrackSettingsModal(id);
-            });
+  function renderTimelineHeader() {
+    timelineHeaderEl.innerHTML = '';
+    const totalMarkers = 32; // simple static
+    for (let i = 0; i < totalMarkers; i++) {
+      const marker = document.createElement('div');
+      marker.className = 'marker';
+      marker.textContent = i % 4 === 0 ? `Bar ${Math.floor(i / 4) + 1}` : '';
+      timelineHeaderEl.appendChild(marker);
+    }
+  }
 
-            // Timeline row
-            const timelineGrid = document.getElementById("timelineGrid");
-            const tRow = document.createElement("div");
-            tRow.className = "timeline-row";
-            tRow.dataset.trackId = id;
-            timelineGrid.appendChild(tRow);
+  /* Track + timeline rendering */
 
-            // Example: we could add empty clip placeholders later
+  function renderTracks() {
+    // Render track headers
+    trackHeaderListEl.innerHTML = '';
+    tracks.forEach(track => {
+      const header = document.createElement('div');
+      header.className = 'track-header';
+      header.dataset.trackId = track.id;
+
+      const colorBar = document.createElement('div');
+      colorBar.className = 'track-color-bar';
+      colorBar.style.backgroundColor = track.color;
+      header.appendChild(colorBar);
+
+      const icon = document.createElement('div');
+      icon.className = 'track-icon';
+      icon.textContent = track.icon || '🎛️';
+      header.appendChild(icon);
+
+      const nameSpan = document.createElement('div');
+      nameSpan.className = 'track-name';
+      nameSpan.textContent = track.name;
+      header.appendChild(nameSpan);
+
+      const typeBadge = document.createElement('div');
+      typeBadge.className = 'track-type-badge';
+      typeBadge.textContent = track.type.toUpperCase();
+      header.appendChild(typeBadge);
+
+      const recBtn = document.createElement('button');
+      recBtn.className = 'track-record-btn';
+      if (track.armed) recBtn.classList.add('armed');
+      recBtn.textContent = '●';
+      recBtn.title = 'Arm for recording';
+      recBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        toggleTrackRecordArm(track.id);
+      });
+      header.appendChild(recBtn);
+
+      // Double-click for track settings
+      header.addEventListener('dblclick', () => {
+        openTrackSettings(track.id);
+      });
+
+      trackHeaderListEl.appendChild(header);
+    });
+
+    // Render timeline rows
+    timelineScrollEl.innerHTML = '';
+    tracks.forEach(track => {
+      const row = document.createElement('div');
+      row.className = 'timeline-row';
+      row.dataset.trackId = track.id;
+
+      // Render existing clips on this track
+      (track.clips || []).forEach(clip => {
+        const clipEl = document.createElement('div');
+        clipEl.className = 'clip';
+        clipEl.style.left = clip.left + 'px';
+        clipEl.style.width = clip.width + 'px';
+        clipEl.style.backgroundColor = track.color;
+        clipEl.style.borderColor = 'rgba(0,0,0,0.6)';
+
+        const labelEl = document.createElement('span');
+        labelEl.className = 'clip-label';
+        labelEl.textContent = clip.label || 'Clip';
+        clipEl.appendChild(labelEl);
+
+        const tagEl = document.createElement('span');
+        tagEl.className = 'clip-tag';
+        tagEl.textContent = clip.tag || track.type;
+        clipEl.appendChild(tagEl);
+
+        row.appendChild(clipEl);
+      });
+
+      timelineScrollEl.appendChild(row);
+    });
+
+    // Update SL Assistant track list
+    refreshSlAssistantTrackList();
+  }
+
+  function createTrack({ name, type, color, icon }) {
+    const track = {
+      id: 'track-' + (trackIdCounter++),
+      name: name || 'Track ' + trackIdCounter,
+      type: type || 'generic',
+      color: color || '#4da3ff',
+      icon: icon || '🎛️',
+      clips: [],
+      armed: false,
+      recordingRoute: null
+    };
+    tracks.push(track);
+    renderTracks();
+    return track;
+  }
+
+  function getTrackById(trackId) {
+    return tracks.find(t => t.id === trackId) || null;
+  }
+
+  function recolorTrack(trackId, newColor) {
+    const track = getTrackById(trackId);
+    if (!track) return;
+    track.color = newColor;
+    // Re-apply color to all clips
+    (track.clips || []).forEach(clip => {
+      clip.color = newColor;
+    });
+    renderTracks();
+  }
+
+  // Adding some initial tracks so the timeline isn't empty
+  function createDefaultTracksIfEmpty() {
+    if (tracks.length > 0) return;
+    createTrack({ name: 'Aurora Keys', type: 'instrument', color: '#4caf50', icon: '🎹' });
+    createTrack({ name: 'Nebula Bass', type: 'instrument', color: '#ff7043', icon: '🌀' });
+    createTrack({ name: 'Lead Vocals', type: 'vocal', color: '#ec407a', icon: '🎙️' });
+  }
+
+  /* Track Settings */
+
+  function openTrackSettings(trackId) {
+    const track = getTrackById(trackId);
+    if (!track) return;
+    trackSettingsEditingId = trackId;
+    trackSettingsNameEl.value = track.name;
+    trackSettingsIconEl.value = track.icon || '';
+    trackSettingsColorEl.value = track.color || '#4da3ff';
+    openModal(trackSettingsModalEl);
+  }
+
+  trackSettingsSaveBtn.addEventListener('click', () => {
+    if (!trackSettingsEditingId) return;
+    const track = getTrackById(trackSettingsEditingId);
+    if (!track) return;
+    const newName = trackSettingsNameEl.value.trim();
+    const newIcon = trackSettingsIconEl.value.trim();
+    const newColor = trackSettingsColorEl.value || track.color;
+
+    if (newName) track.name = newName;
+    if (newIcon) track.icon = newIcon;
+    track.color = newColor;
+
+    // Recolor clips
+    (track.clips || []).forEach(clip => {
+      clip.color = newColor;
+    });
+
+    renderTracks();
+    closeModal(trackSettingsModalEl);
+  });
+
+  /* Add Track dropdown events */
+
+  addTrackButtonEl.addEventListener('click', () => {
+    const isOpen = addTrackMenuEl.classList.contains('open');
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+    if (!isOpen) addTrackMenuEl.classList.add('open');
+  });
+
+  document.addEventListener('click', e => {
+    if (!addTrackDropdownEl.contains(e.target)) {
+      addTrackMenuEl.classList.remove('open');
+    }
+  });
+
+  // Instrument submenu
+  document.getElementById('instrumentSubmenu').addEventListener('click', e => {
+    const item = e.target.closest('.menu-item[data-instrument]');
+    if (!item) return;
+    const instName = item.getAttribute('data-instrument');
+    const color = item.getAttribute('data-color');
+    const icon = item.getAttribute('data-icon');
+    createTrack({
+      name: instName,
+      type: 'instrument',
+      color,
+      icon
+    });
+    addTrackMenuEl.classList.remove('open');
+  });
+
+  // Vocal submenu
+  document.getElementById('vocalSubmenu').addEventListener('click', e => {
+    const item = e.target.closest('.menu-item[data-vocal]');
+    if (!item) return;
+    const vocalName = item.getAttribute('data-vocal');
+    const color = item.getAttribute('data-color');
+    const icon = item.getAttribute('data-icon');
+    createTrack({
+      name: vocalName,
+      type: 'vocal',
+      color,
+      icon
+    });
+    addTrackMenuEl.classList.remove('open');
+  });
+
+  // Import submenu
+  document.getElementById('importSubmenu').addEventListener('click', e => {
+    const item = e.target.closest('.menu-item[data-import]');
+    if (!item) return;
+    const mode = item.getAttribute('data-import');
+    if (mode === 'device') {
+      // open file input
+      audioUploadInputEl.click();
+    } else if (mode === 'library') {
+      alert('Import from Audio Library: link this to your creations in music.html (placeholder hook).');
+    }
+    addTrackMenuEl.classList.remove('open');
+  });
+
+  audioUploadInputEl.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    // Placeholder: create a new "Audio Import" track and drop a clip
+    const importTrack = createTrack({
+      name: 'Audio Import – ' + (file.name || 'File'),
+      type: 'audio',
+      color: '#26c6da',
+      icon: '📂'
+    });
+    addClipToTrack(importTrack.id, {
+      label: file.name || 'Imported Audio',
+      tag: 'Audio',
+      bars: 4
+    });
+  });
+
+  // Create with SL Assistant
+  document.getElementById('createWithSlAssistantMenuItem').addEventListener('click', () => {
+    openSlAssistantModal();
+    addTrackMenuEl.classList.remove('open');
+  });
+
+  /* Clips */
+
+  function addClipToTrack(trackId, { label, tag, bars }) {
+    const track = getTrackById(trackId);
+    if (!track) return;
+    const rowWidth = timelineScrollEl.clientWidth || 1200;
+    const pxPerBar = 60; // matches background size
+    const clipWidth = (bars || 4) * pxPerBar;
+
+    // Position at first free spot: simple layout left to right
+    let left = 10;
+    const used = (track.clips || []).map(c => ({ left: c.left, right: c.left + c.width }));
+    used.sort((a, b) => a.left - b.left);
+    for (const seg of used) {
+      if (left + clipWidth <= seg.left - 8) break;
+      left = seg.right + 10;
+    }
+
+    const clip = {
+      id: 'clip-' + Date.now() + '-' + Math.floor(Math.random() * 9999),
+      label: label || 'Clip',
+      tag: tag || track.type,
+      left,
+      width: clipWidth,
+      color: track.color
+    };
+    track.clips.push(clip);
+    renderTracks();
+  }
+
+  /* Record routing + arming */
+
+  async function populateAudioDeviceDropdowns() {
+    recordInputDeviceEl.innerHTML = '';
+    recordOutputDeviceEl.innerHTML = '';
+
+    let inputs = [];
+    let outputs = [];
+
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        inputs = devices.filter(d => d.kind === 'audioinput');
+        outputs = devices.filter(d => d.kind === 'audiooutput');
+      }
+    } catch (err) {
+      console.warn('Could not enumerate audio devices, using fallback list.', err);
+    }
+
+    if (inputs.length === 0) {
+      inputs = [
+        { deviceId: 'builtin-mic', label: 'Built-in Microphone' },
+        { deviceId: 'usb-interface-1', label: 'USB Interface In 1–2' },
+        { deviceId: 'stream-mic', label: 'Streaming Mic' }
+      ];
+    } else {
+      inputs = inputs.map(d => ({ deviceId: d.deviceId, label: d.label || 'Mic ' + d.deviceId.slice(0, 6) }));
+    }
+
+    if (outputs.length === 0) {
+      outputs = [
+        { deviceId: 'project-out', label: 'Project Output (Default)' },
+        { deviceId: 'headphones', label: 'Headphones / Monitor Out' },
+        { deviceId: 'usb-out-1', label: 'USB Interface Out 1–2' }
+      ];
+    } else {
+      outputs = outputs.map(d => ({ deviceId: d.deviceId, label: d.label || 'Out ' + d.deviceId.slice(0, 6) }));
+    }
+
+    inputs.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.deviceId;
+      opt.textContent = d.label;
+      recordInputDeviceEl.appendChild(opt);
+    });
+
+    outputs.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.deviceId;
+      opt.textContent = d.label;
+      recordOutputDeviceEl.appendChild(opt);
+    });
+
+    // Default selections
+    recordInputDeviceEl.selectedIndex = 0;
+    const projectOutOpt = Array.from(recordOutputDeviceEl.options).find(o => o.value === 'project-out') || recordOutputDeviceEl.options[0];
+    if (projectOutOpt) projectOutOpt.selected = true;
+  }
+
+  function refreshRecordPresetSelect() {
+    recordPresetSelectEl.innerHTML = '';
+    const baseOpt = document.createElement('option');
+    baseOpt.value = '';
+    baseOpt.textContent = 'New route / custom';
+    recordPresetSelectEl.appendChild(baseOpt);
+
+    recordPresets.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.name;
+      opt.textContent = p.name + (p.isDefault ? ' (default)' : '');
+      recordPresetSelectEl.appendChild(opt);
+    });
+  }
+
+  function applyPresetToUi(presetName) {
+    const preset = recordPresets.find(p => p.name === presetName);
+    if (!preset) return;
+    setSelectValue(recordInputDeviceEl, preset.inputId);
+    setSelectValue(recordOutputDeviceEl, preset.outputId);
+  }
+
+  function setSelectValue(selectEl, value) {
+    const opt = Array.from(selectEl.options).find(o => o.value === value);
+    if (opt) {
+      selectEl.value = value;
+    }
+  }
+
+  function openRecordSettings(trackId) {
+    const track = getTrackById(trackId);
+    if (!track) return;
+    recordSettingsTrackId = trackId;
+    recordSettingsTrackNameEl.textContent = track.name;
+    recordPresetNameEl.value = '';
+    recordPresetDefaultEl.checked = false;
+
+    populateAudioDeviceDropdowns().then(() => {
+      refreshRecordPresetSelect();
+
+      // If track already has route, set UI to it
+      if (track.recordingRoute) {
+        const r = track.recordingRoute;
+        if (r.presetName && recordPresets.some(p => p.name === r.presetName)) {
+          recordPresetSelectEl.value = r.presetName;
+          applyPresetToUi(r.presetName);
+        } else {
+          setSelectValue(recordInputDeviceEl, r.inputId);
+          setSelectValue(recordOutputDeviceEl, r.outputId);
         }
-
-        function getTrackRowElements(trackId) {
-            const row = document.querySelector('.track-row[data-track-id="' + trackId + '"]');
-            if (!row) return null;
-            return {
-                row,
-                header: row.querySelector(".track-header"),
-                colorStrip: row.querySelector(".track-color-strip"),
-                iconCell: row.querySelector(".track-icon"),
-                nameCell: row.querySelector(".track-name"),
-                recordBtn: row.querySelector(".record-arm")
-            };
+      } else {
+        // if a default preset exists, apply it
+        const defaultPreset = recordPresets.find(p => p.isDefault);
+        if (defaultPreset) {
+          recordPresetSelectEl.value = defaultPreset.name;
+          applyPresetToUi(defaultPreset.name);
         }
+      }
 
-        function applyTrackVisuals(trackId) {
-            const trackData = tracks.get(trackId);
-            if (!trackData) return;
-            const els = getTrackRowElements(trackId);
-            if (!els) return;
-            els.colorStrip.style.backgroundColor = trackData.color;
-            els.iconCell.textContent = trackData.icon;
-            els.nameCell.textContent = trackData.name;
+      openModal(recordSettingsModalEl);
+    });
+  }
 
-            // Update any clips on this track
-            const clips = document.querySelectorAll(
-                '.timeline-row[data-track-id="' + trackId + '"] .clip'
-            );
-            clips.forEach(c => {
-                c.style.backgroundColor = trackData.color;
-            });
-        }
+  recordPresetSelectEl.addEventListener('change', () => {
+    const presetName = recordPresetSelectEl.value;
+    if (!presetName) return;
+    applyPresetToUi(presetName);
+  });
 
-        function openDropdown() {
-            document.getElementById("addTrackMenu").classList.add("open");
-        }
+  recordSettingsApplyBtn.addEventListener('click', () => {
+    if (!recordSettingsTrackId) return;
+    const track = getTrackById(recordSettingsTrackId);
+    if (!track) return;
 
-        function closeDropdown() {
-            document.getElementById("addTrackMenu").classList.remove("open");
-        }
+    const inputId = recordInputDeviceEl.value;
+    const inputLabel = recordInputDeviceEl.selectedOptions[0]?.textContent || '';
+    const outputId = recordOutputDeviceEl.value;
+    const outputLabel = recordOutputDeviceEl.selectedOptions[0]?.textContent || 'Project Output';
 
-        function toggleDropdown() {
-            const menu = document.getElementById("addTrackMenu");
-            if (menu.classList.contains("open")) closeDropdown();
-            else openDropdown();
-        }
+    let presetName = recordPresetSelectEl.value;
+    const customPresetName = recordPresetNameEl.value.trim();
+    const markDefault = recordPresetDefaultEl.checked;
 
-        function openTrackSettingsModal(trackId) {
-            const trackData = tracks.get(trackId);
-            if (!trackData) return;
-            currentTrackForSettings = trackId;
-
-            document.getElementById("trackNameInput").value = trackData.name;
-            document.getElementById("trackIconSelect").value = trackData.icon;
-            document.getElementById("trackColorInput").value = trackData.color;
-
-            document.getElementById("trackSettingsBackdrop").classList.add("open");
-        }
-
-        function closeTrackSettingsModal() {
-            currentTrackForSettings = null;
-            document.getElementById("trackSettingsBackdrop").classList.remove("open");
-        }
-
-        function openRecordSettingsModal(trackId) {
-            currentTrackForRecord = trackId;
-
-            // Reset checkboxes
-            document.getElementById("saveAsPresetCheckbox").checked = false;
-            document.getElementById("setAsDefaultCheckbox").checked = false;
-            document.getElementById("presetNameInput").value = "";
-
-            const presetSelect = document.getElementById("recordPresetSelect");
-            presetSelect.innerHTML = "";
-            const noneOption = document.createElement("option");
-            noneOption.value = "none";
-            noneOption.textContent = "None (manual)";
-            presetSelect.appendChild(noneOption);
-
-            // Fill presets
-            recordPresets.forEach(preset => {
-                const opt = document.createElement("option");
-                opt.value = preset.id;
-                opt.textContent = preset.name;
-                presetSelect.appendChild(opt);
-            });
-
-            // If track has default preset, preselect it
-            const trackData = tracks.get(trackId);
-            if (trackData && trackData.defaultRecordPresetId) {
-                presetSelect.value = trackData.defaultRecordPresetId;
-                const defaultPreset = recordPresets.get(trackData.defaultRecordPresetId);
-                if (defaultPreset) {
-                    document.getElementById("inputSourceSelect").value = defaultPreset.input;
-                    document.getElementById("outputDestinationSelect").value = defaultPreset.output;
-                }
-            }
-
-            document.getElementById("recordSettingsBackdrop").classList.add("open");
-        }
-
-        function closeRecordSettingsModal() {
-            currentTrackForRecord = null;
-            document.getElementById("recordSettingsBackdrop").classList.remove("open");
-        }
-
-        function openSlAssistantModal(defaultVocalTypeIfAny = null) {
-            const trackTypeSelect = document.getElementById("slTrackTypeSelect");
-            if (defaultVocalTypeIfAny) {
-                trackTypeSelect.value = defaultVocalTypeIfAny;
-            } else {
-                trackTypeSelect.value = "instrument";
-            }
-            updateSlAssistantLyricsVisibility();
-            document.getElementById("slAssistantBackdrop").classList.add("open");
-        }
-
-        function closeSlAssistantModal() {
-            document.getElementById("slAssistantBackdrop").classList.remove("open");
-        }
-
-        function updateSlAssistantLyricsVisibility() {
-            const value = document.getElementById("slTrackTypeSelect").value;
-            const isVocal = value.startsWith("vocal-");
-            document.getElementById("slLyricsRow").style.display = isVocal ? "flex" : "none";
-            document.getElementById("slLyricsHelper").style.display = isVocal ? "block" : "none";
-        }
-
-        // ------- Event Wiring -------
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const addTrackBtn = document.getElementById("addTrackBtn");
-            const addTrackMenu = document.getElementById("addTrackMenu");
-
-            addTrackBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                toggleDropdown();
-            });
-
-            // Click outside to close dropdown
-            document.addEventListener("click", (e) => {
-                if (!addTrackMenu.contains(e.target) && e.target !== addTrackBtn) {
-                    closeDropdown();
-                }
-            });
-
-            // Menu actions
-            addTrackMenu.querySelectorAll(".menu-item").forEach(item => {
-                item.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    const category = item.dataset.category;
-                    const type = item.dataset.type;
-                    const action = item.dataset.action;
-
-                    closeDropdown();
-
-                    if (category && type) {
-                        createTrack(category, type);
-                        return;
-                    }
-
-                    if (action === "import-device") {
-                        const input = document.getElementById("audioFileInput");
-                        input.click();
-                    } else if (action === "import-library") {
-                        alert("This will open your Sulandra creations from music.html and let you drop audio into the timeline.");
-                    } else if (action === "open-sl-assistant") {
-                        openSlAssistantModal();
-                    }
-                });
-            });
-
-            // File input change
-            document.getElementById("audioFileInput").addEventListener("change", (e) => {
-                const files = Array.from(e.target.files || []);
-                if (!files.length) return;
-                alert("Imported " + files.length + " file(s) from device.\n(Here you will sync them to the project tempo and place them on a selected track.)");
-                // You can hook this into the backend / audio engine later
-            });
-
-            // Track settings modal events
-            document.querySelectorAll("[data-close-track-settings]").forEach(btn => {
-                btn.addEventListener("click", closeTrackSettingsModal);
-            });
-            document.getElementById("trackSettingsCancelBtn").addEventListener("click", closeTrackSettingsModal);
-
-            document.getElementById("trackSettingsSaveBtn").addEventListener("click", () => {
-                if (!currentTrackForSettings) return;
-                const trackData = tracks.get(currentTrackForSettings);
-                if (!trackData) return;
-
-                trackData.name = document.getElementById("trackNameInput").value || trackData.name;
-                trackData.icon = document.getElementById("trackIconSelect").value || trackData.icon;
-                trackData.color = document.getElementById("trackColorInput").value || trackData.color;
-
-                tracks.set(currentTrackForSettings, trackData);
-                applyTrackVisuals(currentTrackForSettings);
-                closeTrackSettingsModal();
-            });
-
-            // Record settings modal events
-            document.querySelectorAll("[data-close-record-settings]").forEach(btn => {
-                btn.addEventListener("click", closeRecordSettingsModal);
-            });
-            document.getElementById("recordSettingsCancelBtn").addEventListener("click", closeRecordSettingsModal);
-
-            document.getElementById("recordPresetSelect").addEventListener("change", (e) => {
-                const value = e.target.value;
-                if (value === "none") return;
-                const preset = recordPresets.get(value);
-                if (!preset) return;
-                document.getElementById("inputSourceSelect").value = preset.input;
-                document.getElementById("outputDestinationSelect").value = preset.output;
-            });
-
-            document.getElementById("saveAsPresetCheckbox").addEventListener("change", (e) => {
-                document.getElementById("presetNameRow").style.display = e.target.checked ? "flex" : "none";
-            });
-
-            document.getElementById("recordSettingsApplyBtn").addEventListener("click", () => {
-                if (!currentTrackForRecord) return;
-                const trackData = tracks.get(currentTrackForRecord);
-                if (!trackData) return;
-
-                const input = document.getElementById("inputSourceSelect").value;
-                const output = document.getElementById("outputDestinationSelect").value;
-                const savePreset = document.getElementById("saveAsPresetCheckbox").checked;
-                const presetName = document.getElementById("presetNameInput").value.trim();
-                const setAsDefault = document.getElementById("setAsDefaultCheckbox").checked;
-
-                let newPresetId = null;
-
-                if (savePreset && presetName) {
-                    newPresetId = "preset-" + (++recordPresetCounter);
-                    const preset = {
-                        id: newPresetId,
-                        name: presetName,
-                        input,
-                        output
-                    };
-                    recordPresets.set(newPresetId, preset);
-                }
-
-                if (setAsDefault && (newPresetId || trackData.defaultRecordPresetId)) {
-                    trackData.defaultRecordPresetId = newPresetId || trackData.defaultRecordPresetId;
-                    tracks.set(currentTrackForRecord, trackData);
-                }
-
-                // Mark track as armed
-                const rowEls = getTrackRowElements(currentTrackForRecord);
-                if (rowEls && rowEls.recordBtn) {
-                    rowEls.recordBtn.classList.add("on");
-                }
-
-                closeRecordSettingsModal();
-            });
-
-            // SL Assistant events
-            document.querySelectorAll("[data-close-sl-assistant]").forEach(btn => {
-                btn.addEventListener("click", closeSlAssistantModal);
-            });
-            document.getElementById("slAssistantCancelBtn").addEventListener("click", closeSlAssistantModal);
-
-            document.getElementById("slTrackTypeSelect").addEventListener("change", updateSlAssistantLyricsVisibility);
-
-            // Style pills
-            const stylePills = document.getElementById("stylePills");
-            stylePills.querySelectorAll(".pill").forEach(pill => {
-                pill.addEventListener("click", () => {
-                    stylePills.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-                    pill.classList.add("active");
-                });
-            });
-
-            const intensityPills = document.getElementById("intensityPills");
-            intensityPills.querySelectorAll(".pill").forEach(pill => {
-                pill.addEventListener("click", () => {
-                    intensityPills.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-                    pill.classList.add("active");
-                });
-            });
-
-            document.getElementById("slAssistantCreateBtn").addEventListener("click", () => {
-                const type = document.getElementById("slTrackTypeSelect").value;
-                const prompt = document.getElementById("slPromptInput").value.trim();
-                const lyrics = document.getElementById("slLyricsInput").value.trim();
-
-                alert("SL Assistant would now generate content with:\n\n" +
-                    "- Track type: " + type + "\n" +
-                    "- Prompt: " + (prompt || "(none)") + "\n" +
-                    (type.startsWith("vocal-") ? "- Lyrics: " + (lyrics || "(none)") + "\n" : "") +
-                    "\nThen it will drop the generated loop/vocals directly into the chosen track lane.");
-
-                closeSlAssistantModal();
-            });
-
-            // Transport stubs (visual only)
-            document.getElementById("btnPlay").addEventListener("click", () => {
-                alert("Play / Pause project (transport wiring will connect to the audio engine).");
-            });
-            document.getElementById("btnStop").addEventListener("click", () => {
-                alert("Stop project and return playhead to start.");
-            });
-            document.getElementById("btnRecord").addEventListener("click", () => {
-                alert("Global record: all armed tracks will record into the timeline in real-time.");
-            });
-
-            // Initialize preset name row hidden
-            document.getElementById("presetNameRow").style.display = "none";
-            updateSlAssistantLyricsVisibility();
+    // If user typed a new preset name, store it
+    if (customPresetName) {
+      presetName = customPresetName;
+      // Remove old preset with same name
+      const index = recordPresets.findIndex(p => p.name === presetName);
+      if (index !== -1) recordPresets.splice(index, 1);
+      recordPresets.push({
+        name: presetName,
+        inputId,
+        inputLabel,
+        outputId,
+        outputLabel,
+        isDefault: markDefault
+      });
+      if (markDefault) {
+        recordPresets.forEach(p => {
+          if (p.name !== presetName) p.isDefault = false;
         });
-    })();
+      }
+    } else if (presetName && markDefault) {
+      // Mark existing preset default
+      recordPresets.forEach(p => {
+        p.isDefault = (p.name === presetName);
+      });
+    }
+
+    track.recordingRoute = {
+      presetName: presetName || null,
+      inputId,
+      inputLabel,
+      outputId,
+      outputLabel
+    };
+    track.armed = true;
+
+    renderTracks();
+    closeModal(recordSettingsModalEl);
+  });
+
+  function toggleTrackRecordArm(trackId) {
+    const track = getTrackById(trackId);
+    if (!track) return;
+    if (!track.armed) {
+      // First time arm -> open routing
+      openRecordSettings(trackId);
+    } else {
+      // Simple toggle off
+      track.armed = false;
+      renderTracks();
+    }
+  }
+
+  /* SL Assistant */
+
+  function refreshSlAssistantTrackList() {
+    slAssistantTargetTrackEl.innerHTML = '';
+    const noneOpt = document.createElement('option');
+    noneOpt.value = '';
+    noneOpt.textContent = 'Create new track automatically';
+    slAssistantTargetTrackEl.appendChild(noneOpt);
+
+    tracks.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = t.name;
+      slAssistantTargetTrackEl.appendChild(opt);
+    });
+  }
+
+  function openSlAssistantModal() {
+    slAssistantTempoLabelEl.textContent = tempoInputEl.value || '120';
+    slAssistantPromptEl.value = '';
+    slAssistantLyricsEl.value = '';
+    slAssistantLengthEl.value = 4;
+    slAssistantEnergyEl.value = 'medium';
+    refreshSlAssistantTrackList();
+    updateSlAssistantLyricsVisibility();
+    openModal(slAssistantModalEl);
+  }
+
+  slAssistantContentTypeEl.addEventListener('change', updateSlAssistantLyricsVisibility);
+
+  function updateSlAssistantLyricsVisibility() {
+    const val = slAssistantContentTypeEl.value;
+    if (val.startsWith('vocal')) {
+      slAssistantLyricsRowEl.classList.remove('hidden');
+    } else {
+      slAssistantLyricsRowEl.classList.add('hidden');
+    }
+  }
+
+  // Quick chips
+  document.querySelectorAll('#slAssistantModal .gradient-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const prompt = chip.getAttribute('data-chip-prompt');
+      if (prompt) {
+        slAssistantPromptEl.value = prompt;
+      }
+    });
+  });
+
+  slAssistantGenerateBtn.addEventListener('click', () => {
+    const targetTrackId = slAssistantTargetTrackEl.value;
+    const contentType = slAssistantContentTypeEl.value;
+    const prompt = slAssistantPromptEl.value.trim();
+    const lyrics = slAssistantLyricsEl.value.trim();
+    const bars = Math.max(1, parseInt(slAssistantLengthEl.value || '4', 10));
+
+    let track = null;
+    if (targetTrackId) {
+      track = getTrackById(targetTrackId);
+    }
+
+    if (!track) {
+      // create automatically, based on type
+      if (contentType === 'vocal-lead' || contentType === 'vocal-choir') {
+        track = createTrack({
+          name: contentType === 'vocal-lead' ? 'Lead Vocal (SL Assistant)' : 'Choir (SL Assistant)',
+          type: 'vocal',
+          color: contentType === 'vocal-lead' ? '#ec407a' : '#42a5f5',
+          icon: contentType === 'vocal-lead' ? '🎙️' : '👥'
+        });
+      } else if (contentType === 'drum') {
+        track = createTrack({
+          name: 'Drums – SL Assistant',
+          type: 'instrument',
+          color: '#ffca28',
+          icon: '🥁'
+        });
+      } else if (contentType === 'fx') {
+        track = createTrack({
+          name: 'FX – SL Assistant',
+          type: 'fx',
+          color: '#7e57c2',
+          icon: '🌌'
+        });
+      } else {
+        track = createTrack({
+          name: 'Instrument – SL Assistant',
+          type: 'instrument',
+          color: '#4caf50',
+          icon: '🎹'
+        });
+      }
+    }
+
+    let label = 'SL Assistant Loop';
+    let tag = 'Loop';
+
+    if (contentType === 'vocal-lead') {
+      label = 'SL Lead Vocal';
+      tag = 'Vocal';
+    } else if (contentType === 'vocal-choir') {
+      label = 'SL Choir';
+      tag = 'Vocal';
+    } else if (contentType === 'drum') {
+      label = 'SL Drum Loop';
+      tag = 'Drum';
+    } else if (contentType === 'fx') {
+      label = 'SL FX';
+      tag = 'FX';
+    } else if (contentType === 'instrument') {
+      label = 'SL Instrument Loop';
+      tag = 'Instrument';
+    }
+
+    if (prompt) {
+      label += ' – ' + prompt.slice(0, 22);
+    }
+
+    addClipToTrack(track.id, { label, tag, bars });
+
+    // For now we just visually add – audio generation / engine hooks go here.
+    closeModal(slAssistantModalEl);
+  });
+
+  /* Tempo label sync */
+
+  tempoInputEl.addEventListener('input', () => {
+    slAssistantTempoLabelEl.textContent = tempoInputEl.value || '120';
+  });
+
+  /* Very simple transport time mocked */
+
+  let fakeTime = 0;
+  let fakeTimer = null;
+
+  function startFakePlay() {
+    if (fakeTimer) return;
+    fakeTimer = setInterval(() => {
+      fakeTime += 0.05; // seconds
+      const totalBeats = fakeTime * (parseInt(tempoInputEl.value || '120', 10) / 60);
+      const bar = Math.floor(totalBeats / 4) + 1;
+      const beat = Math.floor(totalBeats % 4) + 1;
+      const step = Math.floor((totalBeats * 4) % 4) + 1;
+      timeDisplayEl.textContent = String(bar).padStart(3, '0') + ':' +
+        String(beat).padStart(2, '0') + ':' +
+        String(step).padStart(2, '0');
+    }, 50);
+  }
+
+  function stopFakePlay() {
+    if (fakeTimer) {
+      clearInterval(fakeTimer);
+      fakeTimer = null;
+    }
+  }
+
+  document.getElementById('playBtn').addEventListener('click', () => {
+    startFakePlay();
+  });
+
+  document.getElementById('stopBtn').addEventListener('click', () => {
+    stopFakePlay();
+  });
+
+  document.getElementById('recordGlobalBtn').addEventListener('click', () => {
+    // Placeholder: here you would start recording engine and capture armed tracks.
+    const armedTracks = tracks.filter(t => t.armed);
+    if (armedTracks.length === 0) {
+      alert('No tracks are armed for recording. Click the red circle on a track to configure and arm it.');
+      return;
+    }
+    alert('Global record triggered.\n(Engine hook placeholder – record from each armed track’s input.)');
+  });
+
+  /* Keyboard shortcut for SL Assistant */
+
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      openSlAssistantModal();
+      e.preventDefault();
+    }
+  });
+
+  /* Init */
+
+  function init() {
+    renderTimelineHeader();
+    createDefaultTracksIfEmpty();
+    renderTracks();
+  }
+
+  init();
 </script>
 </body>
 </html>
