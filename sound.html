@@ -1627,737 +1627,6 @@
       --timeline-header-bg: linear-gradient(to bottom,#2f332d,#1f221e);
       --timeline-ruler-bg: linear-gradient(to bottom,#2f332d,#1f221e);
     }
-    /* ===== TRACK ICON, RECORD & DROPDOWN ===== */
-
-.hidden {
-  display: none !important;
-}
-
-/* Track header icon + record button */
-
-.track-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  background: #202020;
-  border-bottom: 1px solid #333;
-  box-sizing: border-box;
-}
-
-.track-color-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 6px;
-  background: #4aa8ff;
-  box-shadow: 0 0 8px rgba(74, 168, 255, 0.7);
-  cursor: pointer;
-}
-
-.track-main {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
-}
-
-.track-icon {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  background: linear-gradient(135deg, #3a3a3a, #505050);
-  color: #fefefe;
-  flex-shrink: 0;
-}
-
-.track-name {
-  font-size: 11px;
-  color: #f0f0f0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.track-controls {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-/* ===== TRACK ICON, RECORD & DROPDOWN ===== */
-.track-icon {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  background: rgba(0,0,0,0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  margin-right: 3px;
-  flex-shrink: 0;
-  color: #ffd77c;
-}
-
-.track-rec-btn {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.9);
-  background: radial-gradient(circle at 30% 20%,#ff4a7a,#3a0112);
-  cursor: pointer;
-  position: relative;
-}
-.track-rec-btn::after {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.4);
-}
-.track-rec-btn.armed {
-  box-shadow: 0 0 8px rgba(255,108,138,0.95);
-  border-color: #ffd0df;
-}
-
-/* Make the options dropdown button look like a menu */
-.track-options-btn {
-  width: 20px;
-  height: 18px;
-  border-radius: 4px;
-  border: 1px solid rgba(0,0,0,0.9);
-  background: #02041b;
-  color: #9cb3ff;
-  font-size: 12px;
-  cursor: pointer;
-  padding: 0;
-}
-
-/* ===== POPUP OVERLAYS (track settings, SL Assistant, record config) ===== */
-.sl-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,20,0.80);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1200;
-}
-
-.sl-window {
-  width: min(640px, 96vw);
-  max-height: 80vh;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: radial-gradient(circle at 0 0,#3246ff,#050822 40%,#020419 100%);
-  box-shadow: 0 0 40px rgba(0,0,0,0.95);
-  padding: 10px 14px 12px;
-  color: var(--text-main);
-  font-size: 12px;
-  display: flex;
-  flex-direction: column;
-}
-
-.sl-window-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-.sl-window-title {
-  text-transform: uppercase;
-  letter-spacing: .16em;
-  font-size: 11px;
-  color: var(--accent3);
-}
-.sl-window-close {
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.9);
-  background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
-  color: #02041b;
-  font-size: 11px;
-  padding: 2px 10px;
-  cursor: pointer;
-}
-
-.sl-window-body {
-  border-radius: 9px;
-  border: 1px solid rgba(0,0,0,0.9);
-  background: rgba(4,8,40,0.95);
-  padding: 8px 10px;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.sl-field-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-.sl-field-row label {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-.sl-field-row input[type="text"],
-.sl-field-row select,
-.sl-field-row textarea {
-  border-radius: 6px;
-  border: 1px solid rgba(0,0,0,0.9);
-  background: #02041b;
-  color: var(--text-main);
-  font-size: 11px;
-  padding: 3px 6px;
-}
-.sl-field-row textarea {
-  min-height: 80px;
-  resize: vertical;
-}
-.sl-color-input {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.sl-color-input input[type="color"] {
-  width: 26px;
-  height: 20px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.3);
-  background: #02041b;
-  padding: 0;
-}
-.sl-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.sl-chip {
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.8);
-  background: radial-gradient(circle at 0 0,#7cbeff,#050a24);
-  font-size: 10px;
-  cursor: pointer;
-  color: #02041b;
-}
-.sl-chip.active {
-  border-color: #fff;
-  box-shadow: 0 0 10px rgba(255,255,255,0.8);
-}
-
-.sl-window-footer {
-  margin-top: 8px;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.sl-btn {
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.9);
-  background: radial-gradient(circle at 0 0,#7cffc7,#050a24);
-  color: #02041b;
-  font-size: 11px;
-  padding: 3px 10px;
-  cursor: pointer;
-}
-.sl-btn.secondary {
-  background: radial-gradient(circle at 0 0,#7cbeff,#050a24);
-}
-.sl-btn.danger {
-  background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
-  color: #ffe8f2;
-}
-
-.sl-assistant-badge-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-size: 10px;
-}
-.sl-assistant-badge-row span {
-  padding: 2px 6px;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.85);
-  background: linear-gradient(135deg,#7cffc7,#ff7cf1);
-  color: #02041b;
-}
-
-/* Make SL Assistant visually louder */
-.sl-assistant-window {
-  background:
-    radial-gradient(circle at 0 0,#7cffc7 0,transparent 45%),
-    radial-gradient(circle at 100% 0,#ff7cf1 0,transparent 45%),
-    radial-gradient(circle at 50% 100%,#ffd77c 0,transparent 55%),
-    #050822;
-}
-
-/* Track type menu updated for new actions */
-.track-type-menu-item[data-action] {
-  justify-content: flex-start;
-}
-.track-type-menu-item-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.track-type-menu-item-label span.emoji {
-  font-size: 13px;
-}
-
-.track-btn {
-  border: none;
-  outline: none;
-  background: #353535;
-  color: #d0d0d0;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  min-width: 18px;
-  text-align: center;
-}
-
-.track-btn:hover {
-  background: #444;
-}
-
-.track-btn.active {
-  background: #ff9c4a;
-  color: #111;
-}
-
-.rec-btn {
-  color: #ff5c5c;
-}
-
-.rec-btn.active {
-  background: #ff3b3b;
-  color: #111;
-}
-
-/* Track options dropdown */
-
-.track-type-menu {
-  position: absolute;
-  min-width: 210px;
-  background: #1d1d1d;
-  border-radius: 6px;
-  border: 1px solid #444;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.65);
-  z-index: 9999;
-  padding: 6px 0;
-  font-size: 12px;
-  color: #f0f0f0;
-  display: none;
-}
-
-.track-type-menu.visible {
-  display: block;
-}
-
-.track-type-section-title {
-  padding: 4px 12px;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #9d9d9d;
-  opacity: 0.9;
-}
-
-.track-type-menu-item {
-  padding: 5px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.track-type-menu-item span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.track-type-menu-item small {
-  font-size: 10px;
-  opacity: 0.65;
-}
-
-.track-type-menu-item:hover {
-  background: #303030;
-}
-
-/* SL Assistant overlay – colorful & attractive */
-
-.sl-assistant-overlay {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at top, rgba(120, 120, 255, 0.18), transparent 55%),
-              radial-gradient(circle at bottom, rgba(255, 120, 200, 0.25), transparent 55%),
-              rgba(0, 0, 0, 0.78);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-}
-
-.sl-assistant-window {
-  width: 620px;
-  max-width: 92vw;
-  background: linear-gradient(145deg, #13141a, #181921, #101018);
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.sl-assistant-header {
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(90deg, #4a7cff, #ff6ac1);
-}
-
-.sl-assistant-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.sl-assistant-chip {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.25);
-  color: #fefefe;
-}
-
-.sl-assistant-close-btn {
-  border: none;
-  background: transparent;
-  color: #fefefe;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.sl-assistant-body {
-  padding: 14px 16px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.sl-assistant-track-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.sl-assistant-tag {
-  font-size: 10px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.sl-assistant-label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 11px;
-  color: #cccccc;
-}
-
-.sl-assistant-label textarea {
-  resize: vertical;
-  min-height: 60px;
-  max-height: 180px;
-  border-radius: 8px;
-  border: 1px solid #35374f;
-  background: #101019;
-  color: #fefefe;
-  padding: 6px 8px;
-  font-size: 12px;
-  outline: none;
-}
-
-.sl-assistant-label textarea:focus {
-  border-color: #4a7cff;
-  box-shadow: 0 0 0 1px rgba(74, 124, 255, 0.4);
-}
-
-.sl-assistant-lyrics-block {
-  display: none; /* shown for vocal tracks */
-}
-
-.sl-assistant-options-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.sl-assistant-option {
-  flex: 1 1 120px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 11px;
-}
-
-.sl-assistant-option select {
-  border-radius: 6px;
-  border: 1px solid #343444;
-  background: #12121b;
-  color: #f4f4f4;
-  padding: 4px 6px;
-  font-size: 11px;
-}
-
-.sl-assistant-footer {
-  padding: 10px 16px 12px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  background: radial-gradient(circle at left, rgba(74, 124, 255, 0.24), transparent 55%);
-}
-
-.sl-assistant-primary-btn,
-.sl-assistant-secondary-btn {
-  border-radius: 999px;
-  padding: 5px 12px;
-  font-size: 11px;
-  border: none;
-  cursor: pointer;
-}
-
-.sl-assistant-primary-btn {
-  background: linear-gradient(135deg, #4a7cff, #ff6ac1);
-  color: #ffffff;
-}
-
-.sl-assistant-secondary-btn {
-  background: rgba(255, 255, 255, 0.06);
-  color: #f0f0f0;
-}
-
-/* Track settings overlay (rename, icon, color) */
-
-.track-settings-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.72);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-}
-
-.track-settings-window {
-  width: 420px;
-  max-width: 90vw;
-  background: #15151c;
-  border-radius: 10px;
-  border: 1px solid #333;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.track-settings-header {
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  background: #20202a;
-  border-bottom: 1px solid #2d2d37;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.track-settings-body {
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  font-size: 11px;
-}
-
-.track-settings-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.track-settings-row label {
-  color: #cccccc;
-}
-
-.track-settings-row input,
-.track-settings-row select {
-  border-radius: 6px;
-  border: 1px solid #323242;
-  background: #101019;
-  color: #fefefe;
-  padding: 4px 6px;
-  font-size: 11px;
-}
-
-.track-settings-row input[type="color"] {
-  padding: 0;
-  border: none;
-  background: transparent;
-  width: 36px;
-  height: 22px;
-}
-
-.track-settings-footer {
-  padding: 9px 14px 11px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  background: #181820;
-}
-
-.track-settings-btn {
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 11px;
-  border: none;
-  cursor: pointer;
-}
-
-.track-settings-btn.cancel {
-  background: #292935;
-  color: #eeeeee;
-}
-
-.track-settings-btn.apply {
-  background: #4a7cff;
-  color: #ffffff;
-}
-
-/* Record routing overlay */
-
-.record-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.76);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-}
-
-.record-window {
-  width: 520px;
-  max-width: 92vw;
-  background: #15151c;
-  border-radius: 10px;
-  border: 1px solid #333;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.record-header {
-  padding: 10px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(90deg, #ff5c5c, #ff9c4a);
-  color: #ffffff;
-}
-
-.record-title {
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.record-subtitle {
-  font-size: 11px;
-  opacity: 0.9;
-}
-
-.record-close-btn {
-  border: none;
-  background: transparent;
-  color: #ffffff;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.record-body {
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 11px;
-  color: #dcdcdc;
-}
-
-.record-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.record-row select,
-.record-row input {
-  border-radius: 6px;
-  border: 1px solid #323242;
-  background: #101019;
-  color: #fefefe;
-  padding: 4px 6px;
-  font-size: 11px;
-}
-
-.record-note {
-  font-size: 10px;
-  opacity: 0.7;
-  margin-top: 4px;
-}
-
-.record-footer {
-  padding: 9px 14px 11px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  background: #181820;
-}
-
-.record-btn {
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 11px;
-  border: none;
-  cursor: pointer;
-}
-
-.record-btn.secondary {
-  background: #292935;
-  color: #eeeeee;
-}
-
-.record-btn.primary {
-  background: #ff5c5c;
-  color: #ffffff;
-}
 
   </style>
 </head>
@@ -2621,215 +1890,19 @@
   </section>
 </main>
 
-<!-- TRACK ACTION POPUP FOR EACH TRACK -->
+<!-- TRACK TYPE POPUP -->
 <div class="track-type-menu" id="track-type-menu">
-  <div class="track-type-menu-item" data-action="instrument">
-    <div class="track-type-menu-item-label">
-      <span class="emoji">🎹</span>
-      <span>Assign Instrument</span>
-    </div>
-    <span>Auto name · color · icon</span>
+  <div class="track-type-menu-item" data-type="Audio">
+    <span>Audio</span><span>Wave clips</span>
   </div>
-  <div class="track-type-menu-item" data-action="vocal">
-    <div class="track-type-menu-item-label">
-      <span class="emoji">🎤</span>
-      <span>Assign Vocal</span>
-    </div>
-    <span>Lead · Backing · Choir</span>
+  <div class="track-type-menu-item" data-type="Instrument">
+    <span>Instrument</span><span>Midi / synth</span>
   </div>
-  <div class="track-type-menu-item" data-action="import">
-    <div class="track-type-menu-item-label">
-      <span class="emoji">📥</span>
-      <span>Import Audio</span>
-    </div>
-    <span>Device · My SL Creations</span>
-  </div>
-  <div class="track-type-menu-item" data-action="assistant">
-    <div class="track-type-menu-item-label">
-      <span class="emoji">✨</span>
-      <span>Create with SL Assistant</span>
-    </div>
-    <span>Loops · Vocals · FX</span>
-  </div>
-</div>
-  <input type="file" id="track-file-input" style="display:none;" accept="audio/*">
-  <!-- SL ASSISTANT MODAL -->
-<div class="sl-overlay" id="sl-assistant-overlay">
-  <div class="sl-window sl-assistant-window">
-    <div class="sl-window-header">
-      <div class="sl-window-title">Create with SL Assistant</div>
-      <button class="sl-window-close" id="sl-assistant-close">Close</button>
-    </div>
-    <div class="sl-window-body">
-      <div class="sl-assistant-badge-row">
-        <span>SL Assistant · Futuristic Audio Engine</span>
-        <span id="sl-assistant-track-label"></span>
-      </div>
-
-      <div class="sl-field-row">
-        <label>Mode</label>
-        <select id="sl-assistant-mode">
-          <option value="instrument">Instrument loop</option>
-          <option value="drums">Drums / Percussion</option>
-          <option value="vocal">Vocal line</option>
-          <option value="pad">Atmosphere / Pad</option>
-          <option value="fx">FX / Risers</option>
-        </select>
-      </div>
-
-      <div class="sl-field-row">
-        <label>Prompt for SL Assistant</label>
-      </div>
-      <div class="sl-field-row">
-        <textarea id="sl-assistant-prompt" placeholder="Describe the loop you want: genre, mood, energy, length…"></textarea>
-      </div>
-
-      <div class="sl-field-row" id="sl-assistant-lyrics-row" style="display:none;">
-        <label>Lyrics (for vocal generation)</label>
-      </div>
-      <div class="sl-field-row" id="sl-assistant-lyrics-field" style="display:none;">
-        <textarea id="sl-assistant-lyrics" placeholder="Paste or write your lyrics here so SL can sync vocals to the project tempo…"></textarea>
-      </div>
-
-      <div class="sl-field-row">
-        <label>Length (bars)</label>
-        <select id="sl-assistant-length">
-          <option value="2">2 bars</option>
-          <option value="4" selected>4 bars</option>
-          <option value="8">8 bars</option>
-          <option value="16">16 bars</option>
-        </select>
-      </div>
-    </div>
-    <div class="sl-window-footer">
-      <button class="sl-btn secondary" id="sl-assistant-preview-btn">Preview idea (placeholder)</button>
-      <div>
-        <button class="sl-btn" id="sl-assistant-insert-btn">Generate &amp; drop into timeline</button>
-      </div>
-    </div>
+  <div class="track-type-menu-item" data-type="Create with AI">
+    <span>Create with AI</span><span>AI generator</span>
   </div>
 </div>
 
-<!-- TRACK SETTINGS MODAL (NAME · ICON · COLOR · CATEGORY) -->
-<div class="sl-overlay" id="track-settings-overlay">
-  <div class="sl-window">
-    <div class="sl-window-header">
-      <div class="sl-window-title">Track Settings</div>
-      <button class="sl-window-close" id="track-settings-close">Close</button>
-    </div>
-    <div class="sl-window-body">
-      <div class="sl-field-row">
-        <label>Track name</label>
-        <input type="text" id="track-settings-name">
-      </div>
-
-      <div class="sl-field-row">
-        <label>Track icon</label>
-        <select id="track-settings-icon">
-          <option value="">(None)</option>
-          <option value="🎹">🎹 Keys</option>
-          <option value="🎸">🎸 Guitar</option>
-          <option value="🎻">🎻 Strings</option>
-          <option value="🥁">🥁 Drums</option>
-          <option value="🎧">🎧 FX / Bus</option>
-          <option value="🎤">🎤 Vocal</option>
-          <option value="🎼">🎼 Orchestral</option>
-        </select>
-      </div>
-
-      <div class="sl-field-row">
-        <label>Track role</label>
-        <select id="track-settings-role">
-          <option value="Audio">Generic audio</option>
-          <option value="Instrument:SL Quantum Keys">Instrument – SL Quantum Keys</option>
-          <option value="Instrument:SL Nebula Bass">Instrument – SL Nebula Bass</option>
-          <option value="Instrument:SL Halo Pad">Instrument – SL Halo Pad</option>
-          <option value="Instrument:SL Eclipse Lead">Instrument – SL Eclipse Lead</option>
-          <option value="Instrument:SL Pulse Drums">Instrument – SL Pulse Drums</option>
-          <option value="Vocal:Lead">Vocal – Lead</option>
-          <option value="Vocal:Backing">Vocal – Backing</option>
-          <option value="Vocal:Choir">Vocal – Choir</option>
-        </select>
-      </div>
-
-      <div class="sl-field-row">
-        <label>Track color</label>
-        <div class="sl-color-input">
-          <input type="color" id="track-settings-color">
-          <input type="text" id="track-settings-color-hex" placeholder="#7cffc7" style="width:80px;">
-        </div>
-      </div>
-
-      <div class="sl-field-row">
-        <span style="font-size:10px;color:var(--text-muted);">
-          Changing the track color will also recolor any clips on this track so your playlist stays organized.
-        </span>
-      </div>
-    </div>
-    <div class="sl-window-footer">
-      <button class="sl-btn secondary" id="track-settings-apply">Apply</button>
-      <button class="sl-btn" id="track-settings-apply-close">Apply &amp; close</button>
-    </div>
-  </div>
-</div>
-
-<!-- RECORD SETTINGS MODAL FOR TRACK ARMING -->
-<div class="sl-overlay" id="record-settings-overlay">
-  <div class="sl-window">
-    <div class="sl-window-header">
-      <div class="sl-window-title">Track Recording Setup</div>
-      <button class="sl-window-close" id="record-settings-close">Close</button>
-    </div>
-    <div class="sl-window-body">
-      <div class="sl-field-row">
-        <label>Preset</label>
-        <select id="record-preset-select">
-          <option value="">(No preset – manual)</option>
-        </select>
-      </div>
-
-      <div class="sl-field-row">
-        <label>Input source</label>
-        <select id="record-input-select">
-          <!-- These are placeholders; later you can populate from real devices -->
-          <option value="builtin-mic">Built-in Mic – SL Studio</option>
-          <option value="usb-vocal-mic">USB Mic – SL Vocal Capsule</option>
-          <option value="audio-if-1">Audio Interface – SL Quantum I/O (Input 1)</option>
-          <option value="audio-if-2">Audio Interface – SL Quantum I/O (Input 2)</option>
-        </select>
-      </div>
-
-      <div class="sl-field-row">
-        <label>Output routing</label>
-        <select id="record-output-select">
-          <option value="project">Project output (default)</option>
-          <option value="headphones">Headphones – SL Control Room</option>
-          <option value="audio-if-main">Audio Interface – SL Quantum I/O (Main)</option>
-        </select>
-      </div>
-
-      <div class="sl-field-row">
-        <label>Save as preset name</label>
-        <input type="text" id="record-preset-name" placeholder="e.g. Lead Vocal Chain">
-      </div>
-
-      <div class="sl-field-row">
-        <label><input type="checkbox" id="record-preset-default"> Save / update preset and set as default for this track</label>
-      </div>
-
-      <div class="sl-field-row">
-        <span style="font-size:10px;color:var(--text-muted);">
-          After you arm this track and press the global record button, SL SOUND will record from the selected input
-          directly into the playlist on this track in real time. Multiple tracks can be armed at once.
-        </span>
-      </div>
-    </div>
-    <div class="sl-window-footer">
-      <button class="sl-btn secondary" id="record-settings-arm-only">Arm without preset</button>
-      <button class="sl-btn" id="record-settings-apply">Apply &amp; arm track</button>
-    </div>
-  </div>
-</div>
 <!-- PLUGIN POPUP -->
 <div class="plugin-overlay" id="plugin-overlay">
   <div class="plugin-window">
@@ -2873,7 +1946,7 @@
     </div>
   </div>
 </div>
-  
+
 <script>
   /* ========= BASIC DATA ========= */
   const BEATS_PER_BAR = 4;
@@ -2892,7 +1965,6 @@
 
   // playback
   let tempo = 130;
-  let baseSongBpm = tempo;
   let isPlaying = false;
   let playheadBeat = 0;
   let playStartTime = 0;
@@ -2919,31 +1991,119 @@
   let bottomVisible = false;
   let currentBottomPanelKey = 'mixer';
 
-  // Track menu / modals
-  let activeTypeTrackId = null;
-  let trackSettingsTrackId = null;
-  let recordSettingsTrackId = null;
-  let slAssistantTrackId = null;
-  let slAssistantModeFromMenu = null;
+  // mode: 'song' or 'pattern'
+  let playMode = 'song';
 
-  // Record presets (simple in-memory; later you can persist)
-  const recordPresets = [];
+  // record mode: 'playlist' or 'step'
+  let recordMode = 'playlist';
 
-  // SL instrument / vocal "catchy futuristic" presets
-  const slInstrumentPresets = [
-    { id: 'quantum-keys',   label: 'SL Quantum Keys',   icon: '🎹', color: '#7cbeff' },
-    { id: 'nebula-bass',    label: 'SL Nebula Bass',    icon: '🎸', color: '#7cffc7' },
-    { id: 'halo-pad',       label: 'SL Halo Pad',       icon: '🎼', color: '#ff7cf1' },
-    { id: 'eclipse-lead',   label: 'SL Eclipse Lead',   icon: '🎹', color: '#ffd77c' },
-    { id: 'pulse-drums',    label: 'SL Pulse Drums',    icon: '🥁', color: '#ff8a7c' },
-    { id: 'starlight-strings', label: 'SL Starlight Strings', icon: '🎻', color: '#b57cff' }
+  // THEME HANDLING
+  const THEME_CLASS_LIST = [
+    'theme-sl-dark-lab',
+    'theme-sl-dark-gray',
+    'theme-sl-midnight',
+    'theme-sl-aurora',
+    'theme-sl-sunset',
+    'theme-sl-cyber',
+    'theme-sl-console'
+  ];
+  const THEME_STORAGE_KEY = 'sulandra_sound_theme';
+  const CUSTOM_THEME_KEY = 'sulandra_sound_custom_theme';
+
+  const CSS_VAR_KEYS = [
+    '--bg-deep','--bg-surface','--bg-panel','--bg-panel-soft',
+    '--border-soft','--border-strong',
+    '--accent','--accent2','--accent3','--accent4',
+    '--text-main','--text-muted',
+    '--grid-line',
+    '--clip-blue','--clip-purple','--clip-pink','--clip-green',
+    '--timeline-bg','--timeline-grid-bg','--timeline-header-bg','--timeline-ruler-bg',
+    '--header-bg','--icon-dock-bg','--main-grid-bg','--bottom-dock-bg'
   ];
 
-  const slVocalPresets = [
-    { id: 'lead',   label: 'Lead Vocal',   icon: '🎤', color: '#ff7cf1' },
-    { id: 'backing',label: 'Backing Vocal',icon: '🎤', color: '#7cffc7' },
-    { id: 'choir',  label: 'Choir Stack',  icon: '🎤', color: '#ffd77c' }
-  ];
+  const themeSelect = document.getElementById('theme-select');
+  const themeCustomBtn = document.getElementById('theme-custom-btn');
+
+  let activeThemeName = 'default';
+
+  function resetCustomVariables() {
+    CSS_VAR_KEYS.forEach(v => document.documentElement.style.removeProperty(v));
+  }
+
+  function applyCustomTheme(vars) {
+    resetCustomVariables();
+    document.body.classList.remove(...THEME_CLASS_LIST);
+    Object.keys(vars).forEach(k => {
+      if (CSS_VAR_KEYS.includes(k)) {
+        document.documentElement.style.setProperty(k, vars[k]);
+      }
+    });
+    activeThemeName = 'custom';
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, 'custom');
+      localStorage.setItem(CUSTOM_THEME_KEY, JSON.stringify(vars));
+    } catch (e) {}
+    if (themeSelect && themeSelect.value !== 'custom') {
+      themeSelect.value = 'custom';
+    }
+  }
+
+  function loadCustomTheme() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_THEME_KEY);
+      if (!raw) return false;
+      const vars = JSON.parse(raw);
+      applyCustomTheme(vars);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function setTheme(themeName) {
+    if (!themeName) themeName = 'default';
+
+    if (themeName === 'custom') {
+      if (!loadCustomTheme()) {
+        openThemeDesigner();
+      }
+      return;
+    }
+
+    resetCustomVariables();
+    document.body.classList.remove(...THEME_CLASS_LIST);
+
+    if (themeName !== 'default' && THEME_CLASS_LIST.includes(themeName)) {
+      document.body.classList.add(themeName);
+    }
+
+    activeThemeName = themeName;
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, themeName);
+    } catch (e) {}
+
+    if (themeSelect) {
+      if (themeName === 'default') themeSelect.value = 'default';
+      else if (THEME_CLASS_LIST.includes(themeName)) themeSelect.value = themeName;
+    }
+  }
+
+  if (themeSelect) {
+    themeSelect.addEventListener('change', () => {
+      const val = themeSelect.value;
+      if (val === 'custom') {
+        setTheme('custom');
+      } else {
+        setTheme(val);
+      }
+    });
+  }
+
+  if (themeCustomBtn) {
+    themeCustomBtn.addEventListener('click', () => {
+      openThemeDesigner();
+    });
+  }
 
   const trackListEl = document.getElementById('track-list');
   const rulerInner = document.getElementById('ruler-inner');
@@ -2974,6 +2134,13 @@
   const metronomeBtn = document.getElementById('btn-metronome');
   const tempoDisplay = document.getElementById('tempo-value');
 
+  const modeSongBtn = document.getElementById('mode-song');
+  const modePatternBtn = document.getElementById('mode-pattern');
+  const timelineTitleEl = document.getElementById('timeline-title');
+
+  const recModePlaylistBtn = document.getElementById('rec-mode-playlist');
+  const recModeStepBtn = document.getElementById('rec-mode-step');
+
   const bottomDock = document.getElementById('bottom-dock');
   const bottomHandle = document.getElementById('bottom-resize');
   const DEFAULT_BOTTOM_HEIGHT = 220;
@@ -3002,42 +2169,45 @@
   const rightPluginsPanel = document.querySelector('.right-placeholder');
 
   const trackTypeMenu = document.getElementById('track-type-menu');
-  const trackFileInput = document.getElementById('track-file-input');
+  let activeTypeTrackId = null;
 
-  // SL Assistant DOM
-  const slAssistantOverlay = document.getElementById('sl-assistant-overlay');
-  const slAssistantClose = document.getElementById('sl-assistant-close');
-  const slAssistantTrackLabel = document.getElementById('sl-assistant-track-label');
-  const slAssistantModeSelect = document.getElementById('sl-assistant-mode');
-  const slAssistantPrompt = document.getElementById('sl-assistant-prompt');
-  const slAssistantLyricsRow = document.getElementById('sl-assistant-lyrics-row');
-  const slAssistantLyricsField = document.getElementById('sl-assistant-lyrics-field');
-  const slAssistantLyrics = document.getElementById('sl-assistant-lyrics');
-  const slAssistantLength = document.getElementById('sl-assistant-length');
-  const slAssistantPreviewBtn = document.getElementById('sl-assistant-preview-btn');
-  const slAssistantInsertBtn = document.getElementById('sl-assistant-insert-btn');
+  const themeOverlay = document.getElementById('theme-overlay');
+  const themeFormEl = document.getElementById('theme-form');
+  const themeCloseBtn = document.getElementById('theme-close-btn');
+  const themeResetBtn = document.getElementById('theme-reset-btn');
+  const themePreviewBtn = document.getElementById('theme-preview-btn');
+  const themeSaveBtn = document.getElementById('theme-save-btn');
 
-  // Track settings DOM
-  const trackSettingsOverlay = document.getElementById('track-settings-overlay');
-  const trackSettingsClose = document.getElementById('track-settings-close');
-  const trackSettingsName = document.getElementById('track-settings-name');
-  const trackSettingsIcon = document.getElementById('track-settings-icon');
-  const trackSettingsRole = document.getElementById('track-settings-role');
-  const trackSettingsColor = document.getElementById('track-settings-color');
-  const trackSettingsColorHex = document.getElementById('track-settings-color-hex');
-  const trackSettingsApply = document.getElementById('track-settings-apply');
-  const trackSettingsApplyClose = document.getElementById('track-settings-apply-close');
-
-  // Record settings DOM
-  const recordSettingsOverlay = document.getElementById('record-settings-overlay');
-  const recordSettingsClose = document.getElementById('record-settings-close');
-  const recordPresetSelect = document.getElementById('record-preset-select');
-  const recordInputSelect = document.getElementById('record-input-select');
-  const recordOutputSelect = document.getElementById('record-output-select');
-  const recordPresetName = document.getElementById('record-preset-name');
-  const recordPresetDefault = document.getElementById('record-preset-default');
-  const recordSettingsArmOnly = document.getElementById('record-settings-arm-only');
-  const recordSettingsApply = document.getElementById('record-settings-apply');
+  const THEME_FIELDS = [
+    { var: '--bg-deep', label: 'Global Background' },
+    { var: '--bg-panel', label: 'Panels / Sidebars' },
+    { var: '--timeline-bg', label: 'Timeline Background' },
+    { var: '--timeline-grid-bg', label: 'Timeline Grid' },
+    { var: '--timeline-header-bg', label: 'Timeline Header' },
+    { var: '--timeline-ruler-bg', label: 'Timeline Ruler' },
+    { var: '--accent', label: 'Primary Accent' },
+    { var: '--accent2', label: 'Secondary Accent' },
+    { var: '--accent3', label: 'Highlight Accent' },
+    { var: '--accent4', label: 'Header Accent' },
+    { var: '--text-main', label: 'Main Text' },
+    { var: '--text-muted', label: 'Muted Text' },
+    { var: '--grid-line', label: 'Grid Lines' },
+    { var: '--clip-blue', label: 'Clip Color A' },
+    { var: '--clip-purple', label: 'Clip Color B' },
+    { var: '--clip-pink', label: 'Clip Color C' },
+    { var: '--clip-green', label: 'Clip Color D' }
+  ];
+  const QUICK_COLORS = [
+    { name: 'Mint Neon', value: '#7cffc7' },
+    { name: 'Electric Blue', value: '#4aa8ff' },
+    { name: 'Hot Pink', value: '#ff5aa8' },
+    { name: 'Sunset Gold', value: '#ffd77c' },
+    { name: 'Deep Violet', value: '#5a2dff' },
+    { name: 'Aqua Cyan', value: '#00e0ff' },
+    { name: 'Soft Gray', value: '#808080' },
+    { name: 'Custom…', value: 'custom' }
+  ];
+  const themeFieldControls = {}; // varName -> { colorInput, textInput }
 
   /* ========= PLUGIN POPUP ========= */
   function openPluginWindow(title, descriptionHtml) {
@@ -3051,6 +2221,147 @@
   pluginCloseBtn.addEventListener('click', closePluginWindow);
   pluginOverlay.addEventListener('click', (e) => {
     if (e.target === pluginOverlay) closePluginWindow();
+  });
+
+  /* ========= THEME DESIGNER ========= */
+  function ensureThemeFormBuilt() {
+    if (!themeFormEl || themeFormEl.children.length > 0) return;
+    const cs = getComputedStyle(document.documentElement);
+
+    THEME_FIELDS.forEach(field => {
+      const row = document.createElement('div');
+      row.className = 'theme-row';
+
+      const label = document.createElement('label');
+      label.textContent = field.label;
+
+      const controls = document.createElement('div');
+      controls.className = 'theme-color-controls';
+
+      const select = document.createElement('select');
+      QUICK_COLORS.forEach(q => {
+        const opt = document.createElement('option');
+        opt.value = q.value;
+        opt.textContent = q.name;
+        select.appendChild(opt);
+      });
+      select.value = 'custom';
+
+      const colorInput = document.createElement('input');
+      colorInput.type = 'color';
+
+      const textInput = document.createElement('input');
+      textInput.type = 'text';
+      textInput.maxLength = 9;
+
+      let currentValue = cs.getPropertyValue(field.var).trim();
+      if (!currentValue || !currentValue.startsWith('#')) {
+        currentValue = '#ffffff';
+      }
+      colorInput.value = currentValue;
+      textInput.value = currentValue;
+
+      function applyColor(value) {
+        if (!value) return;
+        if (!value.startsWith('#')) {
+          if (/^[0-9a-fA-F]{6}$/.test(value)) value = '#' + value;
+          else return;
+        }
+        colorInput.value = value;
+        textInput.value = value;
+        document.documentElement.style.setProperty(field.var, value);
+      }
+
+      select.addEventListener('change', () => {
+        const v = select.value;
+        if (v === 'custom') {
+          colorInput.focus();
+        } else {
+          applyColor(v);
+        }
+      });
+
+      colorInput.addEventListener('input', () => {
+        applyColor(colorInput.value);
+      });
+
+      textInput.addEventListener('change', () => {
+        applyColor(textInput.value.trim());
+      });
+
+      controls.appendChild(select);
+      controls.appendChild(colorInput);
+      controls.appendChild(textInput);
+
+      row.appendChild(label);
+      row.appendChild(controls);
+      themeFormEl.appendChild(row);
+
+      themeFieldControls[field.var] = { colorInput, textInput };
+    });
+  }
+
+  function collectCurrentThemeVarsFromDesigner() {
+    const vars = {};
+    THEME_FIELDS.forEach(field => {
+      const controls = themeFieldControls[field.var];
+      if (!controls) return;
+      let val = controls.colorInput.value || controls.textInput.value;
+      if (!val) return;
+      if (!val.startsWith('#') && /^[0-9a-fA-F]{6}$/.test(val)) {
+        val = '#' + val;
+      }
+      vars[field.var] = val;
+    });
+    return vars;
+  }
+
+  function openThemeDesigner() {
+    ensureThemeFormBuilt();
+
+    const cs = getComputedStyle(document.documentElement);
+    THEME_FIELDS.forEach(field => {
+      const controls = themeFieldControls[field.var];
+      if (!controls) return;
+      let currentValue = cs.getPropertyValue(field.var).trim();
+      if (!currentValue || !currentValue.startsWith('#')) {
+        currentValue = '#ffffff';
+      }
+      controls.colorInput.value = currentValue;
+      controls.textInput.value = currentValue;
+    });
+
+    themeOverlay.style.display = 'flex';
+  }
+
+  function closeThemeDesigner() {
+    themeOverlay.style.display = 'none';
+  }
+
+  themeOverlay.addEventListener('click', (e) => {
+    if (e.target === themeOverlay) closeThemeDesigner();
+  });
+  themeCloseBtn.addEventListener('click', closeThemeDesigner);
+
+  themeResetBtn.addEventListener('click', () => {
+    if (activeThemeName === 'custom') {
+      loadCustomTheme();
+    } else {
+      setTheme(activeThemeName || 'default');
+    }
+  });
+
+  themePreviewBtn.addEventListener('click', () => {
+    const vars = collectCurrentThemeVarsFromDesigner();
+    Object.keys(vars).forEach(k => {
+      document.documentElement.style.setProperty(k, vars[k]);
+    });
+  });
+
+  themeSaveBtn.addEventListener('click', () => {
+    const vars = collectCurrentThemeVarsFromDesigner();
+    applyCustomTheme(vars);
+    closeThemeDesigner();
   });
 
   /* ========= RULER & GRID ========= */
@@ -3084,7 +2395,7 @@
   /* ========= PATTERNS ========= */
   function addPattern(name, color) {
     const id = nextPatternId++;
-    patterns.push({ id, name, color });
+    patterns.push({ id, name, color, lengthBeats: 4 });
     if (!currentPatternId) currentPatternId = id;
     renderPatterns();
     return id;
@@ -3120,6 +2431,7 @@
       item.appendChild(right);
       item.addEventListener('click', () => {
         currentPatternId = p.id;
+        patternSelect.value = currentPatternId;
         renderPatterns();
       });
       patternListEl.appendChild(item);
@@ -3136,28 +2448,16 @@
     if (!name) return;
     const colors = ['blue','green','purple','pink'];
     const color = colors[patterns.length % colors.length];
-    addPattern(name, color);
+    const pId = addPattern(name, color);
+    currentPatternId = pId;
+    patternSelect.value = pId;
+    renderPatterns();
   });
 
   /* ========= TRACKS ========= */
-
-  const trackListAddBar = trackListEl.querySelector('.add-track-bar');
-  let trackDragInfo = null;
-
   function addTrack(name) {
     const id = nextTrackId++;
-    tracks.push({
-      id,
-      name: name || `Track ${id}`,
-      height: 40,
-      type: 'Audio',       // generic role
-      roleDetail: null,    // e.g. Instrument:SL Quantum Keys
-      icon: '',
-      color: null,
-      recordArmed: false,
-      recordConfig: null,  // {input, output, presetName}
-      defaultRecordPresetId: null
-    });
+    tracks.push({ id, name: name || `Track ${id}`, height: 40, type: 'Audio' });
     renderTracks();
     return id;
   }
@@ -3172,91 +2472,8 @@
     renderTracks();
   }
 
-  function openTrackSettings(trackId) {
-    const t = tracks.find(tr => tr.id === trackId);
-    if (!t) return;
-    trackSettingsTrackId = trackId;
-    trackSettingsName.value = t.name || '';
-    trackSettingsIcon.value = t.icon || '';
-
-    const roleValue = t.roleDetail ? t.roleDetail : t.type;
-    let found = false;
-    for (const opt of trackSettingsRole.options) {
-      if (opt.value === roleValue) { found = true; break; }
-    }
-    trackSettingsRole.value = found ? roleValue : 'Audio';
-
-    const color = t.color || '#7cffc7';
-    trackSettingsColor.value = color;
-    trackSettingsColorHex.value = color;
-
-    trackSettingsOverlay.style.display = 'flex';
-  }
-
-  function applyTrackSettings(closeAfter) {
-    if (!trackSettingsTrackId) return;
-    const t = tracks.find(tr => tr.id === trackSettingsTrackId);
-    if (!t) return;
-
-    const name = trackSettingsName.value.trim();
-    if (name) t.name = name;
-
-    const icon = trackSettingsIcon.value || '';
-    t.icon = icon;
-
-    const roleRaw = trackSettingsRole.value;
-    if (roleRaw.startsWith('Instrument:')) {
-      t.type = 'Instrument';
-      t.roleDetail = roleRaw;
-    } else if (roleRaw.startsWith('Vocal:')) {
-      t.type = 'Vocal';
-      t.roleDetail = roleRaw;
-    } else {
-      t.type = roleRaw;
-      t.roleDetail = null;
-    }
-
-    let color = trackSettingsColorHex.value.trim();
-    if (!color) color = trackSettingsColor.value;
-    if (!color.startsWith('#')) color = '#' + color;
-    t.color = color;
-
-    recolorClipsOnTrack(t.id, color);
-    renderTracks();
-
-    if (closeAfter) {
-      trackSettingsOverlay.style.display = 'none';
-    }
-  }
-
-  trackSettingsApply.addEventListener('click', () => applyTrackSettings(false));
-  trackSettingsApplyClose.addEventListener('click', () => applyTrackSettings(true));
-  trackSettingsClose.addEventListener('click', () => {
-    trackSettingsOverlay.style.display = 'none';
-  });
-  trackSettingsOverlay.addEventListener('click', (e) => {
-    if (e.target === trackSettingsOverlay) trackSettingsOverlay.style.display = 'none';
-  });
-
-  trackSettingsColor.addEventListener('input', () => {
-    trackSettingsColorHex.value = trackSettingsColor.value;
-  });
-  trackSettingsColorHex.addEventListener('blur', () => {
-    let v = trackSettingsColorHex.value.trim();
-    if (!v) return;
-    if (!v.startsWith('#')) v = '#' + v;
-    trackSettingsColorHex.value = v;
-    trackSettingsColor.value = v;
-  });
-
-  function recolorClipsOnTrack(trackId, color) {
-    clips.forEach(c => {
-      if (c.trackId === trackId) {
-        c.customColor = color;
-      }
-    });
-    renderClips();
-  }
+  const trackListAddBar = trackListEl.querySelector('.add-track-bar');
+  let trackDragInfo = null;
 
   function renderTracks() {
     const headers = Array.from(trackListEl.querySelectorAll('.track-header,.track-resize-handle'));
@@ -3273,21 +2490,36 @@
 
       const dot = document.createElement('div');
       dot.className = 'track-color-dot';
-      if (t.color) {
-        dot.style.background = t.color;
-        dot.style.boxShadow = `0 0 8px ${t.color}55`;
-      }
       dot.addEventListener('dblclick', () => {
-        openTrackSettings(t.id);
+        openPluginWindow(
+          `Track Plugin – ${t.name}`,
+          `<p>Future plugin window for <b>${t.name}</b>.</p>
+           <p>Later you can load a track plugin UI here (EQ, compressor, reverb, sends).</p>
+           <p>Ideas:</p>
+           <ul>
+             <li>AI-assisted EQ suggestions per track</li>
+             <li>Preset browser tied to genre &amp; tempo</li>
+           </ul>`
+        );
       });
-
-      const iconEl = document.createElement('div');
-      iconEl.className = 'track-icon';
-      iconEl.textContent = t.icon || '•';
 
       const nameEl = document.createElement('div');
       nameEl.className = 'track-name';
       nameEl.textContent = t.name;
+      nameEl.addEventListener('dblclick', () => {
+        nameEl.contentEditable = 'true';
+        nameEl.focus();
+        document.execCommand('selectAll', false, null);
+      });
+      nameEl.addEventListener('blur', () => {
+        nameEl.contentEditable = 'false';
+        t.name = nameEl.textContent.trim() || t.name;
+        nameEl.textContent = t.name;
+        renderMixer();
+      });
+      nameEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
+      });
 
       const controls = document.createElement('div');
       controls.className = 'track-controls';
@@ -3308,15 +2540,6 @@
         sBtn.classList.toggle('active');
       });
 
-      const recBtnTrack = document.createElement('button');
-      recBtnTrack.className = 'track-rec-btn';
-      recBtnTrack.title = 'Arm for recording';
-      if (t.recordArmed) recBtnTrack.classList.add('armed');
-      recBtnTrack.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openRecordSettings(t.id, recBtnTrack);
-      });
-
       const upBtn = document.createElement('button');
       upBtn.className = 'track-btn';
       upBtn.textContent = '▲';
@@ -3331,8 +2554,8 @@
 
       const optionsBtn = document.createElement('button');
       optionsBtn.className = 'track-options-btn';
-      optionsBtn.textContent = '⋮';
-      optionsBtn.title = 'Track actions (instrument, vocal, import, SL Assistant)';
+      optionsBtn.textContent = '⋯';
+      optionsBtn.title = 'Track type / options';
       optionsBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         activeTypeTrackId = t.id;
@@ -3341,13 +2564,11 @@
 
       controls.appendChild(mBtn);
       controls.appendChild(sBtn);
-      controls.appendChild(recBtnTrack);
       controls.appendChild(upBtn);
       controls.appendChild(downBtn);
       controls.appendChild(optionsBtn);
 
       header.appendChild(dot);
-      header.appendChild(iconEl);
       header.appendChild(nameEl);
       header.appendChild(controls);
 
@@ -3359,15 +2580,10 @@
       trackListEl.insertBefore(header, resize);
 
       header.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.track-btn') || e.target.closest('.track-options-btn') || e.target.classList.contains('track-color-dot') || e.target.classList.contains('track-rec-btn')) return;
+        if (e.target.closest('.track-btn') || e.target.closest('.track-options-btn') || e.target.classList.contains('track-color-dot')) return;
         if (e.button !== 0) return;
         trackDragInfo = { id: t.id };
         header.classList.add('dragging');
-      });
-
-      header.addEventListener('dblclick', (e) => {
-        if (e.target.closest('.track-btn') || e.target.closest('.track-options-btn') || e.target.classList.contains('track-rec-btn')) return;
-        openTrackSettings(t.id);
       });
 
       const gridRow = document.createElement('div');
@@ -3390,11 +2606,11 @@
     const id = addTrack();
     if (clips.length === 0 && patterns.length > 0) {
       const p = patterns[0];
-      createClip(id, 0, 4, p.name, 'blue', p.id);
+      createClip(id, 0, 4, p.name, p.color, p.id);
     }
   });
 
-  /* ========= TRACK TYPE MENU (Instrument · Vocal · Import · SL Assistant) ========= */
+  /* ========= TRACK TYPE MENU ========= */
   function showTrackTypeMenu(clientX, clientY) {
     const menu = trackTypeMenu;
     menu.style.display = 'block';
@@ -3412,256 +2628,24 @@
     activeTypeTrackId = null;
   }
 
+  trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const type = item.dataset.type;
+      if (!activeTypeTrackId) return;
+      const t = tracks.find(tr => tr.id === activeTypeTrackId);
+      if (t) t.type = type;
+      hideTrackTypeMenu();
+      renderMixer();
+    });
+  });
+
   window.addEventListener('click', (e) => {
     if (!trackTypeMenu.contains(e.target) && !e.target.classList.contains('track-options-btn')) {
       hideTrackTypeMenu();
     }
   });
 
-  trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const action = item.dataset.action;
-      if (!activeTypeTrackId) return;
-      if (action === 'instrument') {
-        applyInstrumentPresetToTrack(activeTypeTrackId);
-      } else if (action === 'vocal') {
-        applyVocalPresetToTrack(activeTypeTrackId);
-      } else if (action === 'import') {
-        openImportForTrack(activeTypeTrackId);
-      } else if (action === 'assistant') {
-        openSlAssistantForTrack(activeTypeTrackId, null);
-      }
-      hideTrackTypeMenu();
-    });
-  function applyInstrumentPresetToTrack(trackId) {
-    const t = tracks.find(tr => tr.id === trackId);
-    if (!t) return;
-    const preset = slInstrumentPresets[Math.floor(Math.random() * slInstrumentPresets.length)];
-    t.type = 'Instrument';
-    t.roleDetail = 'Instrument:' + preset.label;
-    t.name = preset.label;
-    t.icon = preset.icon;
-    t.color = preset.color;
-    recolorClipsOnTrack(t.id, t.color);
-    renderTracks();
-  }
-  function applyVocalPresetToTrack(trackId) {
-    const t = tracks.find(tr => tr.id === trackId);
-    if (!t) return;
-    const preset = slVocalPresets[Math.floor(Math.random() * slVocalPresets.length)];
-    t.type = 'Vocal';
-    t.roleDetail = 'Vocal:' + preset.id.charAt(0).toUpperCase() + preset.id.slice(1);
-    t.name = preset.label;
-    t.icon = preset.icon;
-    t.color = preset.color;
-    recolorClipsOnTrack(t.id, t.color);
-    renderTracks();
-  }
-
-  function openImportForTrack(trackId) {
-    const t = tracks.find(tr => tr.id === trackId);
-    if (!t) return;
-    const choice = window.prompt(
-      'Import audio to "' + t.name + '".\n\nType:\n1 = Upload from device\n2 = Import from My SL Creations (music.html)\n\n(Visual import window will be designed later.)',
-      '1'
-    );
-    if (choice === '1') {
-      trackFileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const label = file.name;
-        createClip(t.id, playheadBeat, 4, label, t.color ? 'custom' : 'blue', currentPatternId || null, t.color);
-        alert('Placeholder: "' + file.name + '" would be imported and placed on this track at the playhead.');
-        trackFileInput.value = '';
-      };
-      trackFileInput.click();
-    } else if (choice === '2') {
-      openPluginWindow(
-        'Import from SL Creations',
-        `<p>This will open your <b>music.html</b> creations library and let you pick existing AI-made loops or songs.</p>
-         <p>Once wired, selected audio will be dropped onto <b>${t.name}</b> at the playhead, synced to tempo.</p>`
-      );
-    }
-  }
-  /* ========= SL ASSISTANT ========= */
-  function openSlAssistantForTrack(trackId, forcedMode) {
-    const t = tracks.find(tr => tr.id === trackId);
-    if (!t) return;
-    slAssistantTrackId = trackId;
-
-    slAssistantTrackLabel.textContent = `Target track: ${t.name}`;
-    const defaultMode =
-      forcedMode ||
-      (t.type === 'Vocal' ? 'vocal' :
-       t.type === 'Instrument' ? 'instrument' :
-       'instrument');
-    slAssistantModeSelect.value = defaultMode;
-    slAssistantModeFromMenu = defaultMode;
-
-    slAssistantPrompt.value = '';
-    slAssistantLyrics.value = '';
-    updateSlAssistantLyricsVisibility();
-    slAssistantLength.value = '4';
-
-    slAssistantOverlay.style.display = 'flex';
-  }
-
-  function updateSlAssistantLyricsVisibility() {
-    const mode = slAssistantModeSelect.value;
-    const isVocal = mode === 'vocal';
-    slAssistantLyricsRow.style.display = isVocal ? 'flex' : 'none';
-    slAssistantLyricsField.style.display = isVocal ? 'flex' : 'none';
-  }
-
-  slAssistantModeSelect.addEventListener('change', updateSlAssistantLyricsVisibility);
-
-  slAssistantClose.addEventListener('click', () => {
-    slAssistantOverlay.style.display = 'none';
-  });
-  slAssistantOverlay.addEventListener('click', (e) => {
-    if (e.target === slAssistantOverlay) slAssistantOverlay.style.display = 'none';
-  });
-
-  slAssistantPreviewBtn.addEventListener('click', () => {
-    alert('Preview placeholder: SL Assistant will preview an idea based on your prompt and lyrics.');
-  });
-
-  slAssistantInsertBtn.addEventListener('click', () => {
-    if (!slAssistantTrackId) return;
-    const t = tracks.find(tr => tr.id === slAssistantTrackId);
-    if (!t) return;
-    const mode = slAssistantModeSelect.value;
-    const lengthBars = parseInt(slAssistantLength.value, 10) || 4;
-    const lengthBeats = lengthBars * BEATS_PER_BAR;
-
-    let label = '';
-    if (mode === 'instrument') label = 'SL Assist – Instrument';
-    else if (mode === 'drums') label = 'SL Assist – Drums';
-    else if (mode === 'vocal') label = 'SL Assist – Vocal';
-    else if (mode === 'pad') label = 'SL Assist – Pad';
-    else if (mode === 'fx') label = 'SL Assist – FX';
-    else label = 'SL Assist Clip';
-
-    createClip(
-      t.id,
-      playheadBeat,
-      lengthBeats,
-      label,
-      t.color ? 'custom' : 'purple',
-      currentPatternId || null,
-      t.color
-    );
-
-    alert('Placeholder: SL Assistant would now render audio and drop it here. A visual render queue can be added later.');
-    slAssistantOverlay.style.display = 'none';
-  });
-
-  /* ========= RECORD SETTINGS PER TRACK ========= */
-  function refreshRecordPresetSelect() {
-    recordPresetSelect.innerHTML = '';
-    const optNone = document.createElement('option');
-    optNone.value = '';
-    optNone.textContent = '(No preset – manual)';
-    recordPresetSelect.appendChild(optNone);
-
-    recordPresets.forEach((p, idx) => {
-      const opt = document.createElement('option');
-      opt.value = p.id;
-      opt.textContent = p.name;
-      recordPresetSelect.appendChild(opt);
-    });
-  }
-
-  function openRecordSettings(trackId, recBtnEl) {
-    const t = tracks.find(tr => tr.id === trackId);
-    if (!t) return;
-    recordSettingsTrackId = trackId;
-    refreshRecordPresetSelect();
-
-    const defaultPresetId = t.defaultRecordPresetId || '';
-    recordPresetSelect.value = defaultPresetId;
-
-    if (defaultPresetId) {
-      const p = recordPresets.find(p => p.id === defaultPresetId);
-      if (p) {
-        recordInputSelect.value = p.input || 'builtin-mic';
-        recordOutputSelect.value = p.output || 'project';
-      }
-    } else if (t.recordConfig) {
-      recordInputSelect.value = t.recordConfig.input || 'builtin-mic';
-      recordOutputSelect.value = t.recordConfig.output || 'project';
-    } else {
-      recordInputSelect.value = 'builtin-mic';
-      recordOutputSelect.value = 'project';
-    }
-
-    recordPresetName.value = '';
-    recordPresetDefault.checked = false;
-
-    recordSettingsOverlay.style.display = 'flex';
-  }
-
-  recordSettingsClose.addEventListener('click', () => {
-    recordSettingsOverlay.style.display = 'none';
-  });
-  recordSettingsOverlay.addEventListener('click', (e) => {
-    if (e.target === recordSettingsOverlay) recordSettingsOverlay.style.display = 'none';
-  });
-
-  function applyRecordConfigToTrack(armOnly) {
-    if (!recordSettingsTrackId) return;
-    const t = tracks.find(tr => tr.id === recordSettingsTrackId);
-    if (!t) return;
-
-    const input = recordInputSelect.value;
-    const output = recordOutputSelect.value;
-
-    t.recordConfig = { input, output };
-    t.recordArmed = true;
-
-    const presetName = recordPresetName.value.trim();
-    if (!armOnly && presetName) {
-      let preset = recordPresets.find(p => p.name.toLowerCase() === presetName.toLowerCase());
-      if (!preset) {
-        preset = {
-          id: 'preset-' + (recordPresets.length + 1),
-          name: presetName,
-          input,
-          output
-        };
-        recordPresets.push(preset);
-      } else {
-        preset.input = input;
-        preset.output = output;
-      }
-      if (recordPresetDefault.checked) {
-        t.defaultRecordPresetId = preset.id;
-      }
-    }
-
-    renderTracks();
-  }
-
-  recordSettingsArmOnly.addEventListener('click', () => {
-    applyRecordConfigToTrack(true);
-    recordSettingsOverlay.style.display = 'none';
-  });
-
-  recordSettingsApply.addEventListener('click', () => {
-    applyRecordConfigToTrack(false);
-    recordSettingsOverlay.style.display = 'none';
-  });
-
-  recordPresetSelect.addEventListener('change', () => {
-    const id = recordPresetSelect.value;
-    if (!id) return;
-    const p = recordPresets.find(p => p.id === id);
-    if (!p) return;
-    recordInputSelect.value = p.input || 'builtin-mic';
-    recordOutputSelect.value = p.output || 'project';
-  });
-
-  /* ========= MIXER (unchanged logic, but now shows track icons / roles indirectly) ========= */
+  /* ========= MIXER ========= */
   function renderMixer() {
     if (!mixerStripsEl) return;
     mixerStripsEl.innerHTML = '';
@@ -3682,9 +2666,7 @@
 
       const typeTag = document.createElement('div');
       typeTag.className = 'mixer-type-tag';
-      if (t.type === 'Instrument') typeTag.textContent = 'INSTRUMENT';
-      else if (t.type === 'Vocal') typeTag.textContent = 'VOCAL';
-      else typeTag.textContent = (t.type || 'AUDIO').toUpperCase();
+      typeTag.textContent = (t.type || 'Audio').toUpperCase();
 
       const knobRow = document.createElement('div');
       knobRow.className = 'mixer-knob-row';
@@ -3692,12 +2674,6 @@
       knob.className = 'mixer-knob';
       const led = document.createElement('div');
       led.className = 'mixer-led';
-      if (!t.recordArmed) {
-        led.style.background = 'radial-gradient(circle at 30% 20%,#72ff9e,#021408)';
-      } else {
-        led.style.background = 'radial-gradient(circle at 30% 20%,#ff7c8a,#3a0212)';
-        led.style.boxShadow = '0 0 8px rgba(255,108,138,0.9)';
-      }
       knobRow.appendChild(knob);
       knobRow.appendChild(led);
 
@@ -3771,19 +2747,9 @@
   }
 
   /* ========= CLIPS ========= */
-  function createClip(trackId, startBeat, lengthBeats, label, color, patternId, customColor) {
+  function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
     const id = nextClipId++;
-    const clipObj = {
-      id,
-      trackId,
-      startBeat,
-      lengthBeats,
-      label,
-      color,
-      patternId: patternId || null,
-      customColor: customColor || null
-    };
-    clips.push(clipObj);
+    clips.push({ id, trackId, startBeat, lengthBeats, label, color, patternId: patternId || null });
     ensureGridForBeat(startBeat + lengthBeats);
     renderClips();
   }
@@ -3801,16 +2767,9 @@
       el.dataset.clipId = c.id;
       el.dataset.color = c.color || 'blue';
 
-      const leftPx = GRID_LEFT_OFFSET + c.startBeat * beatWidth;
-      el.style.left = leftPx + 'px';
+      el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
       el.style.top = (top + 4) + 'px';
       el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
-
-      if (c.customColor) {
-        el.style.background = c.customColor;
-        el.style.borderColor = '#ffffffaa';
-        el.style.boxShadow = '0 0 14px rgba(0,0,0,0.9)';
-      }
 
       const leftHandle = document.createElement('div');
       leftHandle.className = 'clip-handle-left';
@@ -3832,7 +2791,7 @@
 
       el.addEventListener('dblclick', () => {
         const patternDesc = c.patternId
-          ? `<p>This clip references <b>Pattern ${c.patternId}</b>. Later you can open a pattern-specific editor here.</p>`
+          ? `<p>This clip references <b>Pattern ${c.patternId}</b>. In Pattern mode, playback loops within this pattern range.</p>`
           : `<p>This is a free audio / MIDI clip (no specific pattern bound yet).</p>`;
         openPluginWindow(
           `Clip Plugin – ${c.label}`,
@@ -3960,25 +2919,15 @@
       }
     });
     const trackId = parseInt(closestRow.dataset.trackId, 10);
-    const trackObj = tracks.find(tr => tr.id === trackId);
 
     let beatFromZero = (x - GRID_LEFT_OFFSET) / beatWidth;
     if (beatFromZero < 0) beatFromZero = 0;
     const snappedBeat = Math.round(beatFromZero);
-    const lengthBeats = 4;
-
-    createClip(
-      trackId,
-      snappedBeat,
-      lengthBeats,
-      pattern.name,
-      pattern.color,
-      pattern.id,
-      trackObj && trackObj.color ? trackObj.color : null
-    );
+    const lengthBeats = pattern.lengthBeats || 4;
+    createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
   });
 
-  /* ========= ZOOM (unchanged) ========= */
+  /* ========= ZOOM ========= */
   function updateHorizontalThumb() {
     const bar = thumb.parentElement;
     if (!bar) return;
@@ -4117,7 +3066,7 @@
 
   window.addEventListener('mouseup', () => { thumbResizeMode = null; });
 
-  /* ========= PLAYBACK ========= */
+  /* ========= PLAYBACK & MODES ========= */
   function bpmToSecPerBeat(bpm) { return 60 / bpm; }
 
   function formatTimeFromBeats(beats, bpm) {
@@ -4157,7 +3106,7 @@
     const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
     playheadEl.style.left = x + 'px';
 
-    if (autoScroll) {
+    if (autoScroll && playMode === 'song') {
       const marginLeft = 50;
       const marginRight = 100;
       const viewLeft = timelineScroll.scrollLeft;
@@ -4178,17 +3127,25 @@
     const elapsedSec = (ts - playStartTime) / 1000;
     const secPerBeat = bpmToSecPerBeat(tempo);
     const elapsedBeats = elapsedSec / secPerBeat;
-    let currentBeat = playheadBeatAtStart + elapsedBeats;
 
-    if (loopActive && loopEndBeat > loopStartBeat) {
-      if (currentBeat >= loopEndBeat) {
-        currentBeat = loopStartBeat;
-        playheadBeatAtStart = loopStartBeat;
-        playStartTime = ts;
+    if (playMode === 'pattern' && currentPatternId) {
+      const pattern = patterns.find(p => p.id === currentPatternId);
+      const patternLength = pattern ? (pattern.lengthBeats || 4) : 4;
+      let localBeat = (playheadBeatAtStart + elapsedBeats) % patternLength;
+      if (localBeat < 0) localBeat += patternLength;
+      playheadBeat = localBeat;
+    } else {
+      let currentBeat = playheadBeatAtStart + elapsedBeats;
+      if (loopActive && loopEndBeat > loopStartBeat) {
+        if (currentBeat >= loopEndBeat) {
+          currentBeat = loopStartBeat;
+          playheadBeatAtStart = loopStartBeat;
+          playStartTime = ts;
+        }
       }
+      playheadBeat = Math.max(0, currentBeat);
     }
 
-    playheadBeat = Math.max(0, currentBeat);
     updatePlayheadPosition(true);
     updateScreenDisplay(ts);
     requestAnimationFrame(playLoop);
@@ -4226,18 +3183,8 @@
   });
 
   recBtn.addEventListener('click', () => {
-    const nowArmed = !recBtn.classList.contains('active');
-    recBtn.classList.toggle('active', nowArmed);
-    if (nowArmed) {
-      const armedTracks = tracks.filter(t => t.recordArmed);
-      if (!armedTracks.length) {
-        alert('No tracks are armed. Use the red record buttons on individual tracks to set inputs/outputs and arm them.');
-      } else {
-        alert('Placeholder: recording would start for all armed tracks, writing directly into the playlist on their tracks.');
-      }
-    } else {
-      alert('Recording stopped (placeholder). Audio would be printed into clips on each armed track.');
-    }
+    recBtn.classList.toggle('active');
+    alert(`Record mode is set to "${recordMode.toUpperCase()}". Later this will control whether we capture into the Playlist or into a step-style rack.`);
   });
 
   metronomeBtn.addEventListener('click', () => {
@@ -4274,6 +3221,41 @@
     }
   });
 
+  /* ========= MODE TOGGLES ========= */
+  function updateModeUI() {
+    if (playMode === 'song') {
+      modeSongBtn.classList.add('active');
+      modePatternBtn.classList.remove('active');
+      timelineTitleEl.textContent = 'Playlist · Arrangement A (Song Mode)';
+    } else {
+      modeSongBtn.classList.remove('active');
+      modePatternBtn.classList.add('active');
+      const pattern = patterns.find(p => p.id === currentPatternId);
+      const pName = pattern ? pattern.name : 'No Pattern Selected';
+      timelineTitleEl.textContent = `Pattern Mode · ${pName}`;
+    }
+  }
+
+  modeSongBtn.addEventListener('click', () => {
+    playMode = 'song';
+    updateModeUI();
+  });
+  modePatternBtn.addEventListener('click', () => {
+    playMode = 'pattern';
+    updateModeUI();
+  });
+
+  recModePlaylistBtn.addEventListener('click', () => {
+    recordMode = 'playlist';
+    recModePlaylistBtn.classList.add('active');
+    recModeStepBtn.classList.remove('active');
+  });
+  recModeStepBtn.addEventListener('click', () => {
+    recordMode = 'step';
+    recModeStepBtn.classList.add('active');
+    recModePlaylistBtn.classList.remove('active');
+  });
+
   /* ========= LOOP SELECTION ========= */
   function clientXToBeat(clientX) {
     const rect = timelineScroll.getBoundingClientRect();
@@ -4284,7 +3266,7 @@
   }
 
   function updateLoopRegion() {
-    if (!loopActive && !loopSelecting) {
+    if ((!loopActive && !loopSelecting) || playMode === 'pattern') {
       loopRegionEl.style.display = 'none';
       return;
     }
@@ -4304,6 +3286,7 @@
 
   rulerEl.addEventListener('mousedown', (e) => {
     if (e.button !== 2) return;
+    if (playMode === 'pattern') return; // loop region not used in pattern mode
     e.preventDefault();
     const beat = clientXToBeat(e.clientX);
     loopSelecting = true;
@@ -4605,6 +3588,17 @@
     updateGridSizes();
     refreshMainGridLayout();
 
+    let savedTheme = 'default';
+    try {
+      const fromStorage = localStorage.getItem(THEME_STORAGE_KEY);
+      if (fromStorage) savedTheme = fromStorage;
+    } catch (e) {}
+    if (savedTheme === 'custom') {
+      setTheme('custom');
+    } else {
+      setTheme(savedTheme);
+    }
+
     bottomDock.style.display = 'none';
     bottomVisible = false;
     bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
@@ -4631,10 +3625,12 @@
     playheadBeat = 0;
     tempoDisplay.textContent = tempo.toFixed(1);
     screenKeyEl.textContent = songKey;
+    updateModeUI();
     updatePlayheadPosition(false);
     updateVerticalThumb();
     updateHorizontalThumb();
   }
+
   init();
 </script>
 </body>
