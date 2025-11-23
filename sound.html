@@ -2707,6 +2707,7 @@ function renderTracks() {
       dot.className = 'track-color-dot';
       if (t.color) dot.style.background = t.color;
       // Double click dot -> Open Track Type Menu
+      
 dot.addEventListener('dblclick', () => {
   openPluginWindow(
     `Track Plugin – ${t.name}`,
