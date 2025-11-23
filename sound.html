@@ -710,6 +710,32 @@
       cursor: pointer;
       flex-shrink: 0;
     }
+    .track-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin-right: 2px;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.track-type-menu-group + .track-type-menu-group {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 4px;
+  padding-top: 4px;
+}
+
+.track-type-menu-title {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
     .track-name {
       flex: 1;
       padding: 2px 4px;
@@ -2580,13 +2606,22 @@
     renderPatterns();
   });
 
-  /* ========= TRACKS ========= */
-  function addTrack(name) {
-    const id = nextTrackId++;
-    tracks.push({ id, name: name || `Track ${id}`, height: 40, type: 'Audio' });
-    renderTracks();
-    return id;
-  }
+/* ========= TRACKS ========= */
+function addTrack(name) {
+  const id = nextTrackId++;
+  tracks.push({
+    id,
+    name: name || `Track ${id}`,
+    height: 40,
+    type: 'Audio',    // text used in mixer tag
+    kind: 'audio',    // audio / instrument / vocal
+    preset: null,     // piano, guitar, lead, etc.
+    color: null,      // dot color
+    icon: ''          // emoji icon
+  });
+  renderTracks();
+  return id;
+}
 
   function moveTrack(id, dir) {
     const index = tracks.findIndex(t => t.id === id);
@@ -2614,20 +2649,29 @@
       header.style.height = t.height + 'px';
       header.dataset.trackId = t.id;
 
-      const dot = document.createElement('div');
-      dot.className = 'track-color-dot';
-      dot.addEventListener('dblclick', () => {
-        openPluginWindow(
-          `Track Plugin – ${t.name}`,
-          `<p>Future plugin window for <b>${t.name}</b>.</p>
-           <p>Later you can load a track plugin UI here (EQ, compressor, reverb, sends).</p>
-           <p>Ideas:</p>
-           <ul>
-             <li>AI-assisted EQ suggestions per track</li>
-             <li>Preset browser tied to genre &amp; tempo</li>
-           </ul>`
-        );
-      });
+const dot = document.createElement('div');
+dot.className = 'track-color-dot';
+if (t.color) {
+  dot.style.background = t.color;
+}
+dot.addEventListener('dblclick', () => {
+  openPluginWindow(
+    `Track Plugin – ${t.name}`,
+    `<p>Future plugin window for <b>${t.name}</b>.</p>
+     <p>Later you can load a track plugin UI here (EQ, compressor, reverb, sends).</p>
+     <p>Ideas:</p>
+     <ul>
+       <li>AI-assisted EQ suggestions per track</li>
+       <li>Preset browser tied to genre &amp; tempo</li>
+     </ul>`
+  );
+});
+
+// NEW: icon next to the color dot
+const iconEl = document.createElement('div');
+iconEl.className = 'track-icon';
+iconEl.textContent = t.icon || '';
+
 
       const nameEl = document.createElement('div');
       nameEl.className = 'track-name';
@@ -2693,10 +2737,11 @@
       controls.appendChild(upBtn);
       controls.appendChild(downBtn);
       controls.appendChild(optionsBtn);
-
-      header.appendChild(dot);
-      header.appendChild(nameEl);
-      header.appendChild(controls);
+      
+header.appendChild(dot);
+header.appendChild(iconEl);
+header.appendChild(nameEl);
+header.appendChild(controls);
 
       const resize = document.createElement('div');
       resize.className = 'track-resize-handle';
