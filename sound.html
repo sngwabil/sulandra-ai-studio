@@ -1627,6 +1627,514 @@
       --timeline-header-bg: linear-gradient(to bottom,#2f332d,#1f221e);
       --timeline-ruler-bg: linear-gradient(to bottom,#2f332d,#1f221e);
     }
+    /* ===== TRACK ICON, RECORD & DROPDOWN ===== */
+
+.hidden {
+  display: none !important;
+}
+
+/* Track header icon + record button */
+
+.track-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  background: #202020;
+  border-bottom: 1px solid #333;
+  box-sizing: border-box;
+}
+
+.track-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  background: #4aa8ff;
+  box-shadow: 0 0 8px rgba(74, 168, 255, 0.7);
+  cursor: pointer;
+}
+
+.track-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.track-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  background: linear-gradient(135deg, #3a3a3a, #505050);
+  color: #fefefe;
+  flex-shrink: 0;
+}
+
+.track-name {
+  font-size: 11px;
+  color: #f0f0f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.track-btn {
+  border: none;
+  outline: none;
+  background: #353535;
+  color: #d0d0d0;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  min-width: 18px;
+  text-align: center;
+}
+
+.track-btn:hover {
+  background: #444;
+}
+
+.track-btn.active {
+  background: #ff9c4a;
+  color: #111;
+}
+
+.rec-btn {
+  color: #ff5c5c;
+}
+
+.rec-btn.active {
+  background: #ff3b3b;
+  color: #111;
+}
+
+/* Track options dropdown */
+
+.track-type-menu {
+  position: absolute;
+  min-width: 210px;
+  background: #1d1d1d;
+  border-radius: 6px;
+  border: 1px solid #444;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.65);
+  z-index: 9999;
+  padding: 6px 0;
+  font-size: 12px;
+  color: #f0f0f0;
+  display: none;
+}
+
+.track-type-menu.visible {
+  display: block;
+}
+
+.track-type-section-title {
+  padding: 4px 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9d9d9d;
+  opacity: 0.9;
+}
+
+.track-type-menu-item {
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.track-type-menu-item span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.track-type-menu-item small {
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+.track-type-menu-item:hover {
+  background: #303030;
+}
+
+/* SL Assistant overlay – colorful & attractive */
+
+.sl-assistant-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(120, 120, 255, 0.18), transparent 55%),
+              radial-gradient(circle at bottom, rgba(255, 120, 200, 0.25), transparent 55%),
+              rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.sl-assistant-window {
+  width: 620px;
+  max-width: 92vw;
+  background: linear-gradient(145deg, #13141a, #181921, #101018);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sl-assistant-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #4a7cff, #ff6ac1);
+}
+
+.sl-assistant-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.sl-assistant-chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  color: #fefefe;
+}
+
+.sl-assistant-close-btn {
+  border: none;
+  background: transparent;
+  color: #fefefe;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sl-assistant-body {
+  padding: 14px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sl-assistant-track-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sl-assistant-tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sl-assistant-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: #cccccc;
+}
+
+.sl-assistant-label textarea {
+  resize: vertical;
+  min-height: 60px;
+  max-height: 180px;
+  border-radius: 8px;
+  border: 1px solid #35374f;
+  background: #101019;
+  color: #fefefe;
+  padding: 6px 8px;
+  font-size: 12px;
+  outline: none;
+}
+
+.sl-assistant-label textarea:focus {
+  border-color: #4a7cff;
+  box-shadow: 0 0 0 1px rgba(74, 124, 255, 0.4);
+}
+
+.sl-assistant-lyrics-block {
+  display: none; /* shown for vocal tracks */
+}
+
+.sl-assistant-options-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sl-assistant-option {
+  flex: 1 1 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.sl-assistant-option select {
+  border-radius: 6px;
+  border: 1px solid #343444;
+  background: #12121b;
+  color: #f4f4f4;
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+.sl-assistant-footer {
+  padding: 10px 16px 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: radial-gradient(circle at left, rgba(74, 124, 255, 0.24), transparent 55%);
+}
+
+.sl-assistant-primary-btn,
+.sl-assistant-secondary-btn {
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 11px;
+  border: none;
+  cursor: pointer;
+}
+
+.sl-assistant-primary-btn {
+  background: linear-gradient(135deg, #4a7cff, #ff6ac1);
+  color: #ffffff;
+}
+
+.sl-assistant-secondary-btn {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f0f0f0;
+}
+
+/* Track settings overlay (rename, icon, color) */
+
+.track-settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.track-settings-window {
+  width: 420px;
+  max-width: 90vw;
+  background: #15151c;
+  border-radius: 10px;
+  border: 1px solid #333;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.track-settings-header {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  background: #20202a;
+  border-bottom: 1px solid #2d2d37;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.track-settings-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 11px;
+}
+
+.track-settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.track-settings-row label {
+  color: #cccccc;
+}
+
+.track-settings-row input,
+.track-settings-row select {
+  border-radius: 6px;
+  border: 1px solid #323242;
+  background: #101019;
+  color: #fefefe;
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+.track-settings-row input[type="color"] {
+  padding: 0;
+  border: none;
+  background: transparent;
+  width: 36px;
+  height: 22px;
+}
+
+.track-settings-footer {
+  padding: 9px 14px 11px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: #181820;
+}
+
+.track-settings-btn {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  border: none;
+  cursor: pointer;
+}
+
+.track-settings-btn.cancel {
+  background: #292935;
+  color: #eeeeee;
+}
+
+.track-settings-btn.apply {
+  background: #4a7cff;
+  color: #ffffff;
+}
+
+/* Record routing overlay */
+
+.record-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.76);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.record-window {
+  width: 520px;
+  max-width: 92vw;
+  background: #15151c;
+  border-radius: 10px;
+  border: 1px solid #333;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.record-header {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #ff5c5c, #ff9c4a);
+  color: #ffffff;
+}
+
+.record-title {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.record-subtitle {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.record-close-btn {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.record-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 11px;
+  color: #dcdcdc;
+}
+
+.record-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.record-row select,
+.record-row input {
+  border-radius: 6px;
+  border: 1px solid #323242;
+  background: #101019;
+  color: #fefefe;
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+.record-note {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.record-footer {
+  padding: 9px 14px 11px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: #181820;
+}
+
+.record-btn {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  border: none;
+  cursor: pointer;
+}
+
+.record-btn.secondary {
+  background: #292935;
+  color: #eeeeee;
+}
+
+.record-btn.primary {
+  background: #ff5c5c;
+  color: #ffffff;
+}
 
   </style>
 </head>
