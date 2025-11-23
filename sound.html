@@ -2322,6 +2322,7 @@
 
   const trackTypeMenu = document.getElementById('track-type-menu');
   let activeTypeTrackId = null;
+  const trackFileInput = document.getElementById('track-file-input');
 
   const themeOverlay = document.getElementById('theme-overlay');
   const themeFormEl = document.getElementById('theme-form');
@@ -2781,40 +2782,112 @@ header.appendChild(controls);
     }
   });
 
-  /* ========= TRACK TYPE MENU ========= */
-  function showTrackTypeMenu(clientX, clientY) {
-    const menu = trackTypeMenu;
-    menu.style.display = 'block';
-    const rect = menu.getBoundingClientRect();
-    let x = clientX + 4;
-    let y = clientY + 4;
-    if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 6;
-    if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 6;
-    menu.style.left = x + 'px';
-    menu.style.top = y + 'px';
-  }
+/* ========= TRACK TYPE MENU ========= */
+function showTrackTypeMenu(clientX, clientY) {
+  if (!trackTypeMenu) return;
+  const menu = trackTypeMenu;
+  menu.style.display = 'block';
+  const rect = menu.getBoundingClientRect();
+  let x = clientX + 4;
+  let y = clientY + 4;
+  if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 6;
+  if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 6;
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+}
 
-  function hideTrackTypeMenu() {
-    trackTypeMenu.style.display = 'none';
-    activeTypeTrackId = null;
-  }
+function hideTrackTypeMenu() {
+  if (!trackTypeMenu) return;
+  trackTypeMenu.style.display = 'none';
+  activeTypeTrackId = null;
+}
 
-  trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const type = item.dataset.type;
-      if (!activeTypeTrackId) return;
+function applyTrackPresetToActive(item) {
+  if (!activeTypeTrackId) return;
+  const t = tracks.find(tr => tr.id === activeTypeTrackId);
+  if (!t) return;
+
+  const kind       = item.dataset.kind || 'audio';
+  const preset     = item.dataset.preset || null;
+  const label      = item.dataset.label || t.name;
+  const mixertype  = item.dataset.mixertype || kind;
+  const color      = item.dataset.color || null;
+  const icon       = item.dataset.icon || '';
+
+  t.kind   = kind;
+  t.preset = preset;
+  t.type   = mixertype;
+  t.name   = label;
+  t.color  = color;
+  t.icon   = icon;
+
+  hideTrackTypeMenu();
+  renderTracks();
+  renderMixer();
+}
+
+// handle clicks on menu items (presets, import, assistant)
+trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const action = item.dataset.action || 'preset';
+
+    if (action === 'preset') {
+      applyTrackPresetToActive(item);
+
+    } else if (action === 'import-device') {
+      // open file picker, remember which track this is for
+      hideTrackTypeMenu();
+      if (!trackFileInput || !activeTypeTrackId) return;
+      trackFileInput.dataset.trackId = String(activeTypeTrackId);
+      trackFileInput.click();
+
+    } else if (action === 'import-audio') {
+      // jump to your Audio / Creations page
+      hideTrackTypeMenu();
+      window.location.href = 'music.html#creations';
+
+    } else if (action === 'sl-assistant') {
+      hideTrackTypeMenu();
       const t = tracks.find(tr => tr.id === activeTypeTrackId);
-      if (t) t.type = type;
-      hideTrackTypeMenu();
-      renderMixer();
-    });
-  });
-
-  window.addEventListener('click', (e) => {
-    if (!trackTypeMenu.contains(e.target) && !e.target.classList.contains('track-options-btn')) {
-      hideTrackTypeMenu();
+      const title = t ? `SL Assistant – ${t.name}` : 'SL Assistant';
+      const bodyHtml = `
+        <p>Use SL Assistant to create or refine audio for
+           <b>${t ? t.name : 'this track'}</b>.</p>
+        <p>Later you can connect this to Sulandra AI Studio’s
+           generation pipeline.</p>
+      `;
+      openPluginWindow(title, bodyHtml);
     }
   });
+});
+
+// close menu when clicking outside
+window.addEventListener('click', (e) => {
+  if (!trackTypeMenu) return;
+  if (!trackTypeMenu.contains(e.target) && !e.target.classList.contains('track-options-btn')) {
+    hideTrackTypeMenu();
+  }
+});
+
+// handle file uploads from "Upload from device…"
+if (trackFileInput) {
+  trackFileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const trackId = parseInt(trackFileInput.dataset.trackId || '', 10);
+    const t = tracks.find(tr => tr.id === trackId);
+    if (t) {
+      // for now, just store filenames on the track;
+      // later you can actually decode and place them on the timeline
+      t.importedFiles = files.map(f => f.name);
+      renderMixer();
+    }
+
+    trackFileInput.value = '';
+    trackFileInput.dataset.trackId = '';
+  });
+}
 
   /* ========= MIXER ========= */
   function renderMixer() {
