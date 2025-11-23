@@ -5,7 +5,7 @@
   <title>Sulandra AI Studio – SOUND DAW</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    :root {
+:root {
       /* DEFAULT (SULANDRA NEON) THEME VARIABLES */
       --bg-deep: #020419;
       --bg-surface: #050b2a;
@@ -27,7 +27,7 @@
       --radius: 7px;
       --shadow-soft: 0 0 32px rgba(0,0,0,0.85);
       --beat-width: 48px;
-      --track-height: 40px;
+      --track-height: 65px; /* UPDATED: Changed from 40px to 65px to match new tracks */
       --beats-per-bar: 4;
 
       /* Timeline-specific base colors (overridden by themes + custom designer) */
@@ -687,20 +687,81 @@
       position: relative;
       overflow-y: auto;
     }
-    .track-header {
-      display: flex;
-      align-items: center;
-      padding: 4px 4px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+.track-header {
+      display: grid;
+      grid-template-columns: 24px 1fr; /* Left (Color/Icon) | Right (Data) */
+      padding: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       background: rgba(7,14,60,0.96);
-      height: 40px;
-      gap: 3px;
+      /* Remove fixed height here, controlled by JS/Min-height */
+      gap: 8px;
       cursor: grab;
+      align-items: center;
     }
     .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
-    .track-header.dragging {
-      opacity: 0.7;
+    .track-header.dragging { opacity: 0.7; }
+    
+    .track-header-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
+    
+.track-header {
+      display: grid;
+      grid-template-columns: 24px 1fr; /* Column 1: Icon/Dot, Column 2: Content */
+      padding: 4px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(7,14,60,0.96);
+      gap: 8px;
+      cursor: grab;
+      align-items: center;
+      /* Height is determined by JS, but grid helps align contents */
+    }
+    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
+    .track-header.dragging { opacity: 0.7; }
+
+    /* Left column holding the color dot and icon */
+    .track-header-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 100%;
+    }
+
+    /* Right column holding the Name (top) and Controls (bottom) */
+    .track-header-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      height: 100%;
+      min-width: 0;
+    }
+
+    .track-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #f7fbff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .track-name[contenteditable="true"] {
+      outline: 1px solid var(--accent);
+      background: #02041b;
+    }
+
+    .track-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
     .track-color-dot {
       width: 10px;
       height: 10px;
@@ -710,62 +771,24 @@
       cursor: pointer;
       flex-shrink: 0;
     }
+    
     .track-icon {
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  margin-right: 2px;
-  flex-shrink: 0;
-  opacity: 0.9;
-}
-
-.track-type-menu-group + .track-type-menu-group {
-  border-top: 1px solid rgba(255,255,255,0.08);
-  margin-top: 4px;
-  padding-top: 4px;
-}
-
-.track-type-menu-title {
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-  margin-bottom: 3px;
-}
-
-    .track-name {
-      flex: 1;
-      padding: 2px 4px;
-      border-radius: 4px;
-      color: #f7fbff;
-      font-size: 11px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      font-size: 14px;
+      opacity: 0.9;
     }
-    .track-name[contenteditable="true"] {
-      outline: 1px solid var(--accent);
-      background: #02041b;
-    }
-    .track-controls {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      flex-shrink: 0;
-    }
-    .track-btn {
-      width: 18px;
+
+    .track-btn, .track-options-btn {
+      width: 20px;
       height: 18px;
-      border-radius: 4px;
+      border-radius: 3px;
       border: 1px solid rgba(0,0,0,0.9);
       background: #050a27;
       color: var(--text-muted);
       font-size: 9px;
       cursor: pointer;
-      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .track-btn.active {
       background: var(--accent);
@@ -2613,12 +2636,12 @@ function addTrack(name) {
   tracks.push({
     id,
     name: name || `Track ${id}`,
-    height: 40,
-    type: 'Audio',    // text used in mixer tag
-    kind: 'audio',    // audio / instrument / vocal
-    preset: null,     // piano, guitar, lead, etc.
-    color: null,      // dot color
-    icon: ''          // emoji icon
+    height: 65, /* FIXED HEIGHT */
+    type: 'Audio',
+    kind: 'audio',
+    preset: null,
+    color: null,
+    icon: ''
   });
   renderTracks();
   return id;
@@ -2637,7 +2660,7 @@ function addTrack(name) {
   const trackListAddBar = trackListEl.querySelector('.add-track-bar');
   let trackDragInfo = null;
 
-  function renderTracks() {
+function renderTracks() {
     const headers = Array.from(trackListEl.querySelectorAll('.track-header,.track-resize-handle'));
     headers.forEach(h => h.remove());
 
@@ -2645,39 +2668,44 @@ function addTrack(name) {
     rows.forEach(r => r.remove());
 
     tracks.forEach((t, idx) => {
+      // 1. Main Container
       const header = document.createElement('div');
       header.className = 'track-header';
       header.style.height = t.height + 'px';
       header.dataset.trackId = t.id;
 
-const dot = document.createElement('div');
-dot.className = 'track-color-dot';
-if (t.color) {
-  dot.style.background = t.color;
-}
-dot.addEventListener('dblclick', () => {
-  openPluginWindow(
-    `Track Plugin – ${t.name}`,
-    `<p>Future plugin window for <b>${t.name}</b>.</p>
-     <p>Later you can load a track plugin UI here (EQ, compressor, reverb, sends).</p>
-     <p>Ideas:</p>
-     <ul>
-       <li>AI-assisted EQ suggestions per track</li>
-       <li>Preset browser tied to genre &amp; tempo</li>
-     </ul>`
-  );
-});
+      // 2. Left Column (Dot + Icon)
+      const leftCol = document.createElement('div');
+      leftCol.className = 'track-header-left';
 
-// NEW: icon next to the color dot
-const iconEl = document.createElement('div');
-iconEl.className = 'track-icon';
-iconEl.textContent = t.icon || '';
+      const dot = document.createElement('div');
+      dot.className = 'track-color-dot';
+      if (t.color) dot.style.background = t.color;
+      dot.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        activeTypeTrackId = t.id;
+        showTrackTypeMenu(e.clientX, e.clientY);
+      });
 
+      const iconEl = document.createElement('div');
+      iconEl.className = 'track-icon';
+      iconEl.textContent = t.icon || '';
 
+      leftCol.appendChild(dot);
+      leftCol.appendChild(iconEl);
+
+      // 3. Right Column (Name + Controls)
+      const rightCol = document.createElement('div');
+      rightCol.className = 'track-header-right';
+
+      // Track Name (Top)
       const nameEl = document.createElement('div');
       nameEl.className = 'track-name';
       nameEl.textContent = t.name;
-      nameEl.addEventListener('dblclick', () => {
+      nameEl.title = "Double click to rename";
+      
+      nameEl.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
         nameEl.contentEditable = 'true';
         nameEl.focus();
         document.execCommand('selectAll', false, null);
@@ -2692,6 +2720,7 @@ iconEl.textContent = t.icon || '';
         if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
       });
 
+      // Controls (Bottom)
       const controls = document.createElement('div');
       controls.className = 'track-controls';
 
@@ -2699,34 +2728,18 @@ iconEl.textContent = t.icon || '';
       mBtn.className = 'track-btn';
       mBtn.textContent = 'M';
       mBtn.title = 'Mute';
-      mBtn.addEventListener('click', () => {
-        mBtn.classList.toggle('active');
-      });
+      mBtn.addEventListener('click', () => mBtn.classList.toggle('active'));
 
       const sBtn = document.createElement('button');
       sBtn.className = 'track-btn';
       sBtn.textContent = 'S';
       sBtn.title = 'Solo';
-      sBtn.addEventListener('click', () => {
-        sBtn.classList.toggle('active');
-      });
-
-      const upBtn = document.createElement('button');
-      upBtn.className = 'track-btn';
-      upBtn.textContent = '▲';
-      upBtn.title = 'Move up';
-      upBtn.addEventListener('click', () => moveTrack(t.id, -1));
-
-      const downBtn = document.createElement('button');
-      downBtn.className = 'track-btn';
-      downBtn.textContent = '▼';
-      downBtn.title = 'Move down';
-      downBtn.addEventListener('click', () => moveTrack(t.id, +1));
+      sBtn.addEventListener('click', () => sBtn.classList.toggle('active'));
 
       const optionsBtn = document.createElement('button');
       optionsBtn.className = 'track-options-btn';
-      optionsBtn.textContent = '⋯';
-      optionsBtn.title = 'Track type / options';
+      optionsBtn.textContent = '⋮';
+      optionsBtn.title = 'Options / Upload';
       optionsBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         activeTypeTrackId = t.id;
@@ -2735,15 +2748,16 @@ iconEl.textContent = t.icon || '';
 
       controls.appendChild(mBtn);
       controls.appendChild(sBtn);
-      controls.appendChild(upBtn);
-      controls.appendChild(downBtn);
       controls.appendChild(optionsBtn);
-      
-header.appendChild(dot);
-header.appendChild(iconEl);
-header.appendChild(nameEl);
-header.appendChild(controls);
 
+      rightCol.appendChild(nameEl);
+      rightCol.appendChild(controls);
+
+      // Assemble
+      header.appendChild(leftCol);
+      header.appendChild(rightCol);
+
+      // Resize Handle
       const resize = document.createElement('div');
       resize.className = 'track-resize-handle';
       resize.dataset.trackId = t.id;
@@ -2751,13 +2765,22 @@ header.appendChild(controls);
       trackListEl.insertBefore(resize, trackListAddBar);
       trackListEl.insertBefore(header, resize);
 
+      // Context Menu Handler
+      header.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        activeTypeTrackId = t.id;
+        showTrackTypeMenu(e.clientX, e.clientY);
+      });
+
+      // Drag Start
       header.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.track-btn') || e.target.closest('.track-options-btn') || e.target.classList.contains('track-color-dot')) return;
+        if (e.target.closest('button') || e.target.classList.contains('track-name')) return;
         if (e.button !== 0) return;
         trackDragInfo = { id: t.id };
         header.classList.add('dragging');
       });
 
+      // Create Grid Row
       const gridRow = document.createElement('div');
       gridRow.className = 'grid-track-row';
       gridRow.dataset.trackId = t.id;
@@ -2765,7 +2788,9 @@ header.appendChild(controls);
       gridInner.appendChild(gridRow);
     });
 
-    gridInner.style.setProperty('--track-height', '40px');
+    // IMPORTANT: Update CSS variable so background lines match the new track height
+    gridInner.style.setProperty('--track-height', '65px');
+
     renderClips();
     renderMixer();
     updatePlayheadPosition(false);
@@ -2870,20 +2895,62 @@ window.addEventListener('click', (e) => {
 });
 
 // handle file uploads from "Upload from device…"
+// handle file uploads from "Upload from device…"
 if (trackFileInput) {
   trackFileInput.addEventListener('change', (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
-    const trackId = parseInt(trackFileInput.dataset.trackId || '', 10);
-    const t = tracks.find(tr => tr.id === trackId);
-    if (t) {
-      // for now, just store filenames on the track;
-      // later you can actually decode and place them on the timeline
-      t.importedFiles = files.map(f => f.name);
+    let targetTrackId = parseInt(trackFileInput.dataset.trackId || '', 10);
+    let targetTrack = tracks.find(tr => tr.id === targetTrackId);
+
+    if (!targetTrack) return;
+
+    // 1. Check if target track already has clips
+    const trackHasClips = clips.some(c => c.trackId === targetTrackId);
+
+    if (trackHasClips) {
+      // 2. Occupied: Create new track directly below
+      const currentTrackIndex = tracks.findIndex(tr => tr.id === targetTrackId);
+      
+      const newId = nextTrackId++;
+      const newTrack = {
+        id: newId,
+        name: files[0].name, // Name track after file
+        height: 65,
+        type: targetTrack.type, 
+        kind: targetTrack.kind,
+        preset: targetTrack.preset,
+        color: targetTrack.color,
+        icon: targetTrack.icon,
+        importedFiles: []
+      };
+
+      // Insert into array at index + 1
+      tracks.splice(currentTrackIndex + 1, 0, newTrack);
+      
+      // Update our target references
+      targetTrackId = newId;
+      targetTrack = newTrack;
+      
+      // Re-render immediately so we can place the clip
+      renderTracks();
+    } else {
+      // 3. Not occupied: Just rename existing track to file name
+      targetTrack.name = files[0].name;
+      renderTracks(); 
+    }
+
+    // 4. Create the Clip
+    createClip(targetTrackId, 0, 8, files[0].name, targetTrack.color || 'blue', null);
+
+    // 5. Store file reference
+    if (targetTrack) {
+      targetTrack.importedFiles = files.map(f => f.name);
       renderMixer();
     }
 
+    // Cleanup
     trackFileInput.value = '';
     trackFileInput.dataset.trackId = '';
   });
@@ -3879,5 +3946,3 @@ if (trackFileInput) {
 </script>
 </body>
 </html>
-
-
