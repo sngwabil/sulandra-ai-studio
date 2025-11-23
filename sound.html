@@ -1,1666 +1,3637 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sound Lab – SL DAW</title>
+  <meta charset="UTF-8">
+  <title>Sulandra AI Studio – SOUND DAW</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
-      /* THEME VARIABLES */
-      --sl-bg-main: #1e1f23;
-      --sl-bg-toolbar: #26272c;
-      --sl-bg-panel: #23242a;
-      --sl-bg-panel-alt: #1a1b1f;
-      --sl-bg-track-alt: #262830;
-      --sl-border: #3a3b42;
-      --sl-border-strong: #4a4c56;
-      --sl-text-main: #e4e4e8;
-      --sl-text-muted: #a0a1aa;
-      --sl-accent: #4fa8ff;
-      --sl-accent-soft: rgba(79, 168, 255, 0.1);
-      --sl-danger: #ff4b6b;
-      --sl-scroll-track: #18191d;
-      --sl-scroll-thumb: #3b3d46;
+      /* DEFAULT (SULANDRA NEON) THEME VARIABLES */
+      --bg-deep: #020419;
+      --bg-surface: #050b2a;
+      --bg-panel: #071134;
+      --bg-panel-soft: #091746;
+      --border-soft: rgba(129,166,255,0.25);
+      --border-strong: rgba(129,166,255,0.9);
+      --accent: #7cffc7;
+      --accent2: #ff7cf1;
+      --accent3: #ffd77c;
+      --accent4: #7cbeff;
+      --text-main: #f7fbff;
+      --text-muted: #9cb3ff;
+      --grid-line: rgba(167,194,255,0.18);
+      --clip-blue: #3d7cff;
+      --clip-purple: #a96cff;
+      --clip-pink: #ff6ca4;
+      --clip-green: #4dffbb;
+      --radius: 7px;
+      --shadow-soft: 0 0 32px rgba(0,0,0,0.85);
+      --beat-width: 48px;
+      --track-height: 40px;
+      --beats-per-bar: 4;
 
-      --sl-timeline-bg: #181920;
-      --sl-timeline-row-alt: #1f2028;
+      /* Timeline-specific base colors (overridden by themes + custom designer) */
+      --timeline-bg: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%);
+      --timeline-grid-bg: #050822;
+      --timeline-header-bg: linear-gradient(to bottom,#091650,#050a24);
+      --timeline-ruler-bg: linear-gradient(to bottom,#091650,#050a24);
+
+      --header-bg: linear-gradient(to bottom,rgba(10,20,70,0.98),rgba(4,8,35,0.98));
+      --icon-dock-bg: linear-gradient(to right,rgba(7,17,52,0.96),rgba(7,11,45,0.98));
+      --main-grid-bg: radial-gradient(circle at 0 0,#1a2aff,#050821 55%,#010313 100%);
+      --bottom-dock-bg: radial-gradient(circle at 0 0,#2a3bff,#050a21 45%,#020419 100%);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background-color: var(--sl-bg-main);
-      color: var(--sl-text-main);
-      user-select: none;
-      overflow: hidden;
-    }
-
-    /* ===== TOOLBAR ===== */
-    #toolbar {
-      height: 44px;
-      background-color: var(--sl-bg-toolbar);
-      border-bottom: 1px solid var(--sl-border-strong);
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      gap: 10px;
-    }
-
-    .sl-logo {
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      font-size: 13px;
-      color: #ffffff;
-    }
-
-    .toolbar-section {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border-right: 1px solid var(--sl-border);
-      padding-right: 10px;
-      margin-right: 10px;
-    }
-
-    .transport-btn {
-      border: none;
-      background: #33343c;
-      color: var(--sl-text-main);
-      width: 26px;
-      height: 26px;
-      border-radius: 4px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .transport-btn.play {
-      background: var(--sl-accent);
-      color: #fff;
-      font-weight: 700;
-    }
-
-    .transport-btn:hover {
-      background: #40424c;
-    }
-
-    .toolbar-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--sl-text-muted);
-    }
-
-    .toolbar-value {
-      font-size: 12px;
-      background: #30323a;
-      padding: 3px 6px;
-      border-radius: 3px;
-      min-width: 50px;
-      text-align: center;
-    }
-
-    .toolbar-select {
-      background: #30323a;
-      border-radius: 4px;
-      border: 1px solid var(--sl-border);
-      font-size: 12px;
-      color: var(--sl-text-main);
-      padding: 3px 6px;
-    }
-
-    .toolbar-spacer {
-      flex: 1;
-    }
-
-    /* ===== MAIN LAYOUT ===== */
-    #main-layout {
-      display: grid;
-      grid-template-columns: 260px minmax(0, 1fr);
-      height: calc(100vh - 44px);
-      background: var(--sl-bg-main);
-    }
-
-    /* ===== TRACK PANEL ===== */
-    #tracks-panel {
-      background: var(--sl-bg-panel);
-      border-right: 1px solid var(--sl-border-strong);
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+      background:
+        radial-gradient(circle at 0 0,#2744ff 0,transparent 45%),
+        radial-gradient(circle at 100% 0,#ff3ccf 0,transparent 45%),
+        radial-gradient(circle at 50% 100%,#00ffc8 0,transparent 50%),
+        var(--bg-deep);
+      color: var(--text-main);
       display: flex;
       flex-direction: column;
     }
 
-    #tracks-header {
-      height: 34px;
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      background: var(--header-bg);
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      box-shadow: 0 0 18px rgba(0,0,0,0.9);
+      z-index: 20;
+    }
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 4px 14px 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 8px;
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--sl-text-muted);
-      border-bottom: 1px solid var(--sl-border);
-      background: var(--sl-bg-panel-alt);
+      gap: 10px;
     }
-
-    #add-track-btn {
-      border: none;
-      background: #33343c;
-      color: var(--sl-text-main);
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: conic-gradient(from 120deg,#7cffc7,#7cbeff,#ff7cf1,#ffd77c,#7cffc7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #01030d;
+      font-weight: 900;
       font-size: 16px;
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      cursor: pointer;
+      box-shadow: 0 0 20px rgba(124,190,255,0.8);
+    }
+    .brand-text-main {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      background: linear-gradient(to right,#7cffc7,#ffd77c,#ff7cf1,#7cbeff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .brand-text-sub {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .brand-sound-pill {
+      margin-left: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: radial-gradient(circle at 0 0,#3f7cff,#050b2a);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--accent);
+      box-shadow: 0 0 14px rgba(61,124,255,0.9);
+    }
+
+    .top-right {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
-    #add-track-btn:hover {
-      background: #40424c;
-    }
-
-    #track-list {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    #track-list::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    #track-list::-webkit-scrollbar-track {
-      background: var(--sl-scroll-track);
-    }
-
-    #track-list::-webkit-scrollbar-thumb {
-      background: var(--sl-scroll-thumb);
-      border-radius: 4px;
-    }
-
-    .track-row {
-      display: flex;
-      align-items: center;
-      padding: 4px 6px;
-      gap: 6px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-      background: var(--sl-bg-panel);
-      cursor: pointer;
-    }
-
-    .track-row:nth-child(2n) {
-      background: var(--sl-bg-track-alt);
-    }
-
-    .track-row.active {
-      background: rgba(79, 168, 255, 0.08);
-      outline: 1px solid var(--sl-accent-soft);
-    }
-
-    .track-color-dot {
-      width: 10px;
-      height: 24px;
-      border-radius: 2px;
-      background: #ff7b7b;
-      flex-shrink: 0;
-    }
-
-    .track-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 4px;
-      background: #30323a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      color: var(--sl-text-main);
-      flex-shrink: 0;
-    }
-
-    .track-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .track-name-line {
-      display: flex;
+    /* THEME SELECTOR IN HEADER */
+    .theme-select-wrap {
+      display: inline-flex;
       align-items: center;
       gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      background: radial-gradient(circle at 0 0,#1a2755,#050b1e);
+      box-shadow: 0 0 8px rgba(0,0,0,0.9);
+    }
+    .theme-select-wrap span {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 9px;
+      color: var(--accent4);
+    }
+    #theme-select {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 2px 6px;
+      outline: none;
+      cursor: pointer;
+    }
+    .theme-custom-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#ffd77c,#3a2605);
+      color: #02041b;
+      font-size: 10px;
+      padding: 2px 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
     }
 
-    .track-name {
+    .session-pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      background: radial-gradient(circle at 0 0,#2135ff,#050b1a);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .session-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(124,255,199,0.9);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1440px;
+      margin: 6px auto 12px;
+      padding: 0 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* ===== TOP ICON BAR ===== */
+    .icon-dock {
+      border-radius: var(--radius);
+      border: 1px solid rgba(0,0,0,0.9);
+      background: var(--icon-dock-bg);
+      box-shadow: var(--shadow-soft);
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+    }
+    .icon-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .dock-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 0 8px rgba(0,0,0,0.9);
+      font-size: 14px;
+      color: #02041b;
+      transition: transform .08s, box-shadow .08s, border-color .08s;
+    }
+    .dock-icon span {
+      font-weight: 700;
+    }
+    .dock-icon[data-panel="browser"] { background: radial-gradient(circle at 0 0,#4aa8ff,#071134); }
+    .dock-icon[data-panel="rack"]    { background: radial-gradient(circle at 0 0,#7cffc7,#071134); }
+    .dock-icon[data-panel="mixer"]   { background: radial-gradient(circle at 0 0,#ff7cf1,#071134); }
+    .dock-icon[data-panel="piano"]   { background: radial-gradient(circle at 0 0,#ffd77c,#071134); }
+    .dock-icon[data-panel="plugins"] { background: radial-gradient(circle at 0 0,#7cbeff,#071134); }
+    .dock-icon[data-panel="timeline"]{ background: radial-gradient(circle at 0 0,#ff8a7c,#071134); }
+
+    .dock-icon.active {
+      transform: translateY(-2px);
+      border-color: #fff;
+      box-shadow: 0 0 12px rgba(255,255,255,0.8);
+    }
+    .dock-icon-labels {
+      display: flex;
+      gap: 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .dock-icon-labels span {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      background: rgba(7,15,66,0.9);
+    }
+
+    /* ===== MAIN GRID ===== */
+    .main-grid {
+      margin-top: 4px;
+      border-radius: 9px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: var(--main-grid-bg);
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      grid-template-columns: 260px minmax(0,1fr) 220px;
+      min-height: 450px;
+      overflow: hidden;
+    }
+    @media (max-width: 1100px) {
+      .main-grid { grid-template-columns: 220px minmax(0,1fr); }
+      .right-placeholder { display: none; }
+    }
+    @media (max-width: 800px) {
+      .main-grid { grid-template-columns: minmax(0,1fr); }
+      .left-browser { display: none; }
+    }
+
+    .left-browser {
+      background: linear-gradient(to bottom,var(--bg-panel),var(--bg-deep));
+      border-right: 1px solid #000;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .center-timeline-wrap {
+      background: var(--timeline-bg);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border-right: 1px solid #000;
+    }
+    .right-placeholder {
+      background: linear-gradient(to bottom,var(--bg-panel),var(--bg-deep));
+      border-left: 1px solid #000;
+      padding: 6px 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ===== LEFT BROWSER ===== */
+    .panel-header {
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      background: linear-gradient(to bottom,#091650,#050a28);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+    .panel-title {
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 10px;
+      color: var(--accent4);
+    }
+    .panel-tabs {
+      display: flex;
+      gap: 4px;
+      font-size: 10px;
+    }
+    .panel-tab {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      background: #050b2a;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .panel-tab.active {
+      border-color: var(--border-strong);
+      color: var(--accent);
+    }
+
+    .browser-search {
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #050b26;
+      font-size: 10px;
+    }
+    .browser-search input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      background: #02041b;
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 3px 8px;
+    }
+    .browser-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 6px 8px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      scrollbar-width: thin;
+    }
+    .browser-section-title {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #7cbeff;
+      margin: 6px 0 2px;
+    }
+    .browser-item {
+      padding: 3px 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .browser-item:hover {
+      background: rgba(124,190,255,0.15);
+    }
+    .browser-item span:last-child {
+      font-size: 9px;
+      color: #ffd77c;
+    }
+    .pattern-item {
+      border-left: 3px solid transparent;
+    }
+    .pattern-item.active {
+      border-left-color: var(--accent3);
+      background: rgba(255,215,124,0.1);
+    }
+
+    /* ===== TIMELINE HEADER + 4 DISPLAY SCREENS ===== */
+    .timeline-header {
+      padding: 4px 8px 2px;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      background: var(--timeline-header-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+    }
+
+    .timeline-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 4px 0 6px;
+      background: #02030f;
+    }
+    .screen-grid {
+      display: flex;
+      gap: 6px;
+      max-width: 720px;
+      width: 100%;
+      justify-content: center;
+      padding: 4px 6px;
+      border-radius: 8px;
+      background: #02030f;
+    }
+    .screen-box {
+      flex: 1 1 0;
+      min-width: 140px;
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: #02041b;
+      padding: 4px 8px 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .screen-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+    .screen-value {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 12px;
-      font-weight: 500;
+      letter-spacing: .12em;
+      color: #f7fbff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
-    .track-type-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      color: var(--sl-text-muted);
+    .screen-box.mix {
+      transition: box-shadow .12s, border-color .12s, background .12s;
+    }
+    .screen-box.mix.low {
+      border-color: #4aa8ff;
+      box-shadow: 0 0 10px rgba(74,168,255,0.45);
+    }
+    .screen-box.mix.normal {
+      border-color: #7cffc7;
+      box-shadow: 0 0 10px rgba(124,255,199,0.45);
+    }
+    .screen-box.mix.clip {
+      border-color: #ff6c8a;
+      box-shadow: 0 0 12px rgba(255,108,138,0.7);
     }
 
+    .timeline-row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .timeline-title {
+      color: var(--accent3);
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 10px;
+    }
+    .transport-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .mode-toggles {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      overflow: hidden;
+      background: rgba(4,8,40,0.9);
+    }
+    .mode-btn {
+      border: none;
+      padding: 2px 8px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+    }
+    .mode-btn.active {
+      background: radial-gradient(circle at 0 0,var(--accent),#050a20);
+      color: #02041b;
+    }
+
+    .transport-buttons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .transport-btn {
+      width: 26px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#4aa8ff,#050a24);
+      color: #02041b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.85);
+    }
+    .transport-btn.rec {
+      background: radial-gradient(circle at 0 0,#ff4a7a,#3a0210);
+      color: #ffe9f0;
+    }
+    .transport-btn.metro {
+      width: 30px;
+      font-size: 13px;
+    }
+    .transport-btn.active {
+      box-shadow: 0 0 14px rgba(255,255,255,0.85);
+      border-color: #fff;
+    }
+
+    .tempo-zoom-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .tempo-pill, .zoom-pill, .pattern-pill, .record-pill {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      background: rgba(4,8,40,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tempo-value {
+      color: #ffd77c;
+      font-weight: 600;
+    }
+    .zoom-pill input[type="range"] {
+      width: 120px;
+    }
+    .pattern-select {
+      background: #02041b;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+    .pattern-pill button {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#ff7cf1,#050a24);
+      color: #02041b;
+      font-size: 10px;
+      padding: 2px 8px;
+      cursor: pointer;
+    }
+    .record-mode-label {
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 9px;
+    }
+    .rec-mode-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-muted);
+      font-size: 9px;
+      padding: 2px 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .rec-mode-btn.active {
+      background: radial-gradient(circle at 0 0,var(--accent2),#050018);
+      color: #02041b;
+    }
+
+    /* HORIZONTAL TIMELINE SCROLL + ZOOM BAR */
+    .timeline-scrollbar {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #040825;
+      border: 1px solid rgba(0,0,0,0.9);
+      overflow: hidden;
+      margin-top: 2px;
+      position: relative;
+    }
+    .timeline-scroll-thumb {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(to right,#4aa8ff,#7cffc7);
+      box-shadow: 0 0 12px rgba(124,190,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .timeline-scroll-handle {
+      width: 8px;
+      height: 100%;
+      background: rgba(0,0,0,0.22);
+      cursor: ew-resize;
+    }
+    .timeline-scroll-center {
+      flex: 1;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    /* ===== TIMELINE GRID ===== */
+    .timeline-main {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 170px minmax(0,1fr) 16px;
+    }
+
+    /* RIGHT VERTICAL SCROLLBAR */
+    .timeline-vscroll-right {
+      background: linear-gradient(to bottom,#050a27,#020318);
+      border-left: 1px solid #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .vscroll-arrow {
+      height: 14px;
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .vscroll-arrow:hover {
+      background: rgba(124,190,255,0.15);
+    }
+    .vscroll-track {
+      position: relative;
+      flex: 1;
+      margin: 2px 0;
+    }
+    .timeline-vscroll-thumb {
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      height: 40px;
+      border-radius: 999px;
+      background: linear-gradient(to bottom,#4aa8ff,#7cffc7);
+      box-shadow: 0 0 10px rgba(124,190,255,0.8);
+      cursor: pointer;
+    }
+
+    .track-list {
+      background: linear-gradient(to bottom,#050a28,#020317);
+      border-right: 1px solid #000;
+      font-size: 11px;
+      color: var(--text-muted);
+      position: relative;
+      overflow-y: auto;
+    }
+    .track-header {
+      display: flex;
+      align-items: center;
+      padding: 4px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      background: rgba(7,14,60,0.96);
+      height: 40px;
+      gap: 3px;
+      cursor: grab;
+    }
+    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
+    .track-header.dragging {
+      opacity: 0.7;
+    }
+    .track-color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#4aa8ff,#ffd77c);
+      box-shadow: 0 0 8px rgba(124,190,255,0.9);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .track-name {
+      flex: 1;
+      padding: 2px 4px;
+      border-radius: 4px;
+      color: #f7fbff;
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .track-name[contenteditable="true"] {
+      outline: 1px solid var(--accent);
+      background: #02041b;
+    }
     .track-controls {
       display: flex;
       align-items: center;
-      gap: 3px;
-      margin-top: 2px;
+      gap: 2px;
+      flex-shrink: 0;
     }
-
     .track-btn {
-      border: none;
-      background: #343640;
-      color: var(--sl-text-main);
-      font-size: 10px;
-      padding: 1px 4px;
-      border-radius: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #050a27;
+      color: var(--text-muted);
+      font-size: 9px;
       cursor: pointer;
-      min-width: 16px;
-      height: 16px;
-      display: inline-flex;
-      align-items: center;
+      padding: 0;
+    }
+    .track-btn.active {
+      background: var(--accent);
+      color: #02041b;
+      border-color: #fff;
+    }
+    .track-options-btn {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-muted);
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0;
+    }
+    .track-resize-handle {
+      height: 4px;
+      cursor: row-resize;
+      background: linear-gradient(to right,transparent,var(--grid-line),transparent);
+    }
+    .add-track-bar {
+      padding: 4px 6px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(4,8,40,0.96);
+      display: flex;
       justify-content: center;
     }
-
-    .track-btn:hover {
-      background: #40424c;
-    }
-
-    .track-btn.mute.active {
-      background: #ffb34b;
-      color: #1a1b1f;
-    }
-
-    .track-btn.solo.active {
-      background: var(--sl-accent);
-      color: #fff;
-    }
-
-    .track-btn.rec {
-      color: var(--sl-danger);
-      border: 1px solid var(--sl-danger);
-      border-radius: 100px;
+    .add-track-btn {
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#7cffc7,#050a24);
       font-size: 11px;
-      padding: 0 6px;
+      cursor: pointer;
+      color: #02041b;
     }
 
-    .track-btn.rec.active {
-      background: var(--sl-danger);
-      color: #fff;
-    }
-
-    .track-options-btn {
-      font-size: 14px;
-      padding: 0 4px;
-    }
-
-    /* ===== TIMELINE PANEL ===== */
-    #timeline-panel {
-      display: flex;
-      flex-direction: column;
-      background: var(--sl-timeline-bg);
-    }
-
-    #timeline-header {
-      height: 34px;
-      border-bottom: 1px solid var(--sl-border-strong);
-      display: flex;
-      align-items: center;
-      padding: 0 8px;
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--sl-text-muted);
-      background: #202129;
-    }
-
-    #timeline-grid {
-      flex: 1;
+    .timeline-grid-wrap {
+      position: relative;
+      background: var(--timeline-grid-bg);
       overflow: auto;
+    }
+
+    .timeline-ruler {
+      position: sticky;
+      top: 0;
+      height: 22px;
+      background: var(--timeline-ruler-bg);
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      display: flex;
+      align-items: flex-end;
+      z-index: 2;
+      font-size: 9px;
+      color: var(--text-muted);
+      user-select: none;
+    }
+    .timeline-ruler-inner {
+      display: flex;
+      padding: 3px 8px;
+      white-space: nowrap;
+      gap: 0;
+    }
+    .timeline-ruler-inner span {
+      display: inline-block;
+      min-width: calc(var(--beat-width,48px) * var(--beats-per-bar,4));
+      text-align: left;
+    }
+
+    .grid-inner {
+      position: relative;
+      padding: 0 8px 8px;
+      background-image:
+        linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
+        linear-gradient(to right,rgba(124,190,255,0.12) 1px,transparent 1px),
+        linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
+      background-size:
+        var(--beat-width,48px) 1px,
+        calc(var(--beat-width,48px) / 4) 1px,
+        1px var(--track-height,40px);
+      background-repeat: repeat;
+    }
+    .grid-track-row {
+      height: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       position: relative;
     }
 
-    #timeline-grid::-webkit-scrollbar {
-      height: 8px;
-      width: 8px;
-    }
-
-    #timeline-grid::-webkit-scrollbar-track {
-      background: var(--sl-scroll-track);
-    }
-
-    #timeline-grid::-webkit-scrollbar-thumb {
-      background: var(--sl-scroll-thumb);
-      border-radius: 4px;
-    }
-
-    .timeline-row {
-      position: relative;
-      height: 36px;
-      border-bottom: 1px solid #111218;
-      background: var(--sl-timeline-bg);
-    }
-
-    .timeline-row:nth-child(2n) {
-      background: var(--sl-timeline-row-alt);
-    }
-
-    .timeline-beats {
+    .playhead {
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 0;
-      right: 0;
-      background-image: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0.06) 1px,
-        transparent 1px
-      );
-      background-size: 40px 100%;
+      width: 2px;
+      background: linear-gradient(to bottom,#ffd77c,#ff7cf1);
+      box-shadow: 0 0 12px rgba(255,215,124,0.9);
       pointer-events: none;
-      opacity: 0.6;
     }
 
-    .timeline-clip {
+    .loop-region {
       position: absolute;
-      top: 4px;
-      height: 28px;
-      border-radius: 4px;
-      background: rgba(79, 168, 255, 0.25);
-      border: 1px solid rgba(79, 168, 255, 0.7);
-      font-size: 10px;
-      padding: 2px 5px;
-      color: #eaf4ff;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    /* ===== FLOATING TRACK TYPE MENU ===== */
-    .floating-menu {
-      position: fixed;
-      min-width: 230px;
-      background: #2a2b33;
-      border-radius: 6px;
-      border: 1px solid var(--sl-border-strong);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-      z-index: 1000;
-      padding: 6px 0;
-      font-size: 12px;
-    }
-
-    .floating-menu.hidden {
+      top: 0;
+      bottom: 0;
+      background: rgba(255,215,124,0.14);
+      border-top: 1px solid #ffd77c;
+      border-bottom: 1px solid #ffd77c;
+      pointer-events: none;
       display: none;
     }
 
-    .track-type-menu-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--sl-text-muted);
-      padding: 4px 10px 3px;
-      border-bottom: 1px solid var(--sl-border);
-      margin-bottom: 4px;
-    }
-
-    .track-type-menu-section-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--sl-text-muted);
-      padding: 4px 10px 2px;
-      margin-top: 4px;
-    }
-
-    .track-type-menu-item {
-      padding: 5px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      cursor: pointer;
-    }
-
-    .track-type-menu-item span:first-child {
-      font-size: 12px;
-      color: var(--sl-text-main);
-    }
-
-    .track-type-menu-item span:last-child {
-      font-size: 10px;
-      color: var(--sl-text-muted);
-    }
-
-    .track-type-menu-item:hover {
-      background: rgba(79, 168, 255, 0.15);
-    }
-
-    .track-type-menu-item-accent {
-      background: linear-gradient(90deg, #ff6bb8, #ffb04b);
-      color: #1a1b1f;
-      margin-top: 4px;
-    }
-
-    .track-type-menu-item-accent span:first-child {
-      color: #1a1b1f;
-      font-weight: 600;
-    }
-
-    .track-type-menu-item-accent span:last-child {
-      color: #2d1a10;
-      font-weight: 500;
-    }
-
-    .track-type-menu-item-accent:hover {
-      filter: brightness(1.06);
-    }
-
-    /* ===== OVERLAY WINDOWS (SL ASSISTANT, TRACK SETTINGS, RECORD) ===== */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
+    /* ===== CLIPS ===== */
+    .clip {
+      position: absolute;
+      top: 6px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: 0 0 16px rgba(0,0,0,0.9);
       display: flex;
       align-items: center;
-      justify-content: center;
-      z-index: 1100;
+      padding: 0 6px;
+      font-size: 10px;
+      color: #02041b;
+      cursor: move;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .clip[data-color="blue"]   { background: linear-gradient(135deg,var(--clip-blue),#7cbeff); }
+    .clip[data-color="purple"] { background: linear-gradient(135deg,var(--clip-purple),#ffb4ff); }
+    .clip[data-color="pink"]   { background: linear-gradient(135deg,var(--clip-pink),#ffd7f0); }
+    .clip[data-color="green"]  { background: linear-gradient(135deg,var(--clip-green),#b5ffd8); }
+
+    .clip-label {
+      flex: 1;
+    }
+    .clip-handle-left,
+    .clip-handle-right {
+      width: 5px;
+      height: 80%;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.35);
+      margin: 0 3px;
+      cursor: ew-resize;
     }
 
-    .overlay.hidden {
-      display: none;
+    /* ===== RIGHT PLACEHOLDER ===== */
+    .right-placeholder h3 {
+      margin: 2px 0 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--accent2);
     }
+    .colored-list span {
+      display: inline-block;
+      margin: 2px 0;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+    }
+    .colored-list span:nth-child(1){ background: rgba(61,124,255,0.3); }
+    .colored-list span:nth-child(2){ background: rgba(255,124,241,0.3); }
+    .colored-list span:nth-child(3){ background: rgba(124,255,199,0.3); }
+    .colored-list span:nth-child(4){ background: rgba(255,215,124,0.3); }
 
-    .overlay-window {
-      width: 520px;
-      max-width: calc(100vw - 40px);
-      max-height: calc(100vh - 60px);
-      background: radial-gradient(circle at top left, #3d2b5c, #13141a 65%);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
+    /* ===== BOTTOM DOCK (MIXER / PIANO / RACK) ===== */
+    .bottom-dock {
+      margin-top: 6px;
+      border-radius: 9px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: var(--bottom-dock-bg);
+      box-shadow: var(--shadow-soft);
       display: flex;
       flex-direction: column;
+      min-height: 20px;
+      max-height: 520px;
+      position: relative;
+    }
+    .bottom-resize-handle {
+      position: absolute;
+      top: -5px;
+      left: 0;
+      right: 0;
+      height: 6px;
+      cursor: row-resize;
+      background: linear-gradient(to right,transparent,var(--grid-line),transparent);
+    }
+    .bottom-tabs {
+      display: flex;
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.9);
+      background: linear-gradient(to bottom,#091650,#050a24);
+      font-size: 10px;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .bottom-tab {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.8);
+      background: rgba(4,8,40,0.9);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .bottom-tab.active {
+      border-color: #fff;
+      color: var(--accent3);
+      box-shadow: 0 0 10px rgba(255,215,124,0.8);
+    }
+    .bottom-panels {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+    }
+    .bottom-panel {
+      padding: 6px 8px;
+      font-size: 11px;
+      display: none;
       overflow: hidden;
     }
-
-    .overlay-window.basic-window {
-      background: #252631;
+    .bottom-panel.active {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .bottom-panel h4 {
+      margin: 0 0 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--accent4);
+      flex-shrink: 0;
+    }
+    .bottom-panel p {
+      margin: 2px 0;
+      color: var(--text-muted);
+    }
+    .panel-note {
+      font-size: 10px;
+      color: var(--accent2);
+      margin-top: 4px;
+      flex-shrink: 0;
     }
 
-    .overlay-header {
-      height: 40px;
+    /* ===== MIXER (SL SOUND LAB STYLE) ===== */
+    .mixer-strips {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 4px 8px;
+      background: radial-gradient(circle at 0 0,#1b2747,#050815 55%,#01020b 100%);
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.85);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.7);
+    }
+    .mixer-strip {
+      flex: 0 0 72px;
+      height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(to bottom,#071425,#040917);
+      border: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 0 12px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      padding: 3px 3px 6px;
+      position: relative;
+      color: var(--text-muted);
+    }
+    .mixer-strip:hover {
+      border-color: rgba(124,190,255,0.5);
+    }
+    .mixer-strip-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 14px;
-      background: rgba(0, 0, 0, 0.25);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 9px;
+      margin-bottom: 3px;
     }
-
-    .overlay-title {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+    .mixer-strip-num {
+      color: #7cbeff;
+    }
+    .mixer-strip-name {
+      font-size: 9px;
+      color: #f7fbff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 52px;
+      text-align: right;
+    }
+    .mixer-type-tag {
+      font-size: 8px;
       text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 3px;
+      color: #9cb3ff;
+      text-align: center;
     }
-
-    .overlay-close-btn {
-      border: none;
-      background: transparent;
-      color: #ffffffcc;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    .overlay-body {
-      padding: 12px 16px 14px;
-      overflow: auto;
-      font-size: 12px;
-    }
-
-    .overlay-body::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .overlay-body::-webkit-scrollbar-thumb {
-      background: var(--sl-scroll-thumb);
-      border-radius: 4px;
-    }
-
-    .overlay-row {
-      margin-bottom: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .overlay-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--sl-text-muted);
-    }
-
-    .overlay-input,
-    .overlay-select,
-    .overlay-textarea {
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 5px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #f5f5f7;
-      font-size: 12px;
-      padding: 6px 8px;
-      resize: vertical;
-      min-height: 0;
-    }
-
-    .overlay-textarea {
-      min-height: 60px;
-    }
-
-    .overlay-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      margin-top: 6px;
-    }
-
-    .overlay-btn {
-      border: none;
-      border-radius: 6px;
-      font-size: 12px;
-      padding: 6px 12px;
-      cursor: pointer;
-    }
-
-    .overlay-btn.primary {
-      background: linear-gradient(90deg, #4fa8ff, #8f6bff);
-      color: white;
-      font-weight: 600;
-    }
-
-    .overlay-btn.secondary {
-      background: #2f3038;
-      color: var(--sl-text-main);
-      border: 1px solid var(--sl-border);
-    }
-
-    .overlay-pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 4px;
-    }
-
-    .overlay-pill {
-      font-size: 11px;
-      padding: 3px 7px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      cursor: pointer;
-    }
-
-    .overlay-pill.active {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: #ffffffaa;
-    }
-
-    /* Track settings color picker line */
-    .color-row {
+    .mixer-knob-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 4px;
     }
-
-    .color-row input[type="color"] {
-      border: none;
-      background: transparent;
-      padding: 0;
-      width: 28px;
-      height: 20px;
+    .mixer-knob {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 25%,#7cffc7,#020412);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 6px rgba(0,0,0,0.9);
+      position: relative;
+    }
+    .mixer-knob::after {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 5px;
+      background: #02041b;
+      left: 50%;
+      top: 3px;
+      transform: translateX(-50%);
+    }
+    .mixer-led {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%,#72ff9e,#021408);
+      box-shadow: 0 0 6px rgba(126,255,167,0.8);
+    }
+    .mixer-center {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .mixer-meter {
+      width: 8px;
+      height: 100%;
+      border-radius: 999px;
+      background: #02041b;
+      border: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .mixer-meter-inner {
+      width: 100%;
+      border-radius: 999px;
+      background: linear-gradient(to top,#ff6c8a,#ffd77c,#7cffc7);
+      height: 30%;
+    }
+    .mixer-fader-shell {
+      width: 22px;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(to bottom,#050b20,#030612);
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+    }
+    .mixer-fader-slot {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 4px;
+      bottom: 4px;
+      border-radius: 999px;
+      background: linear-gradient(to bottom,#0b1c38,#040710);
+    }
+    .mixer-fader-knob {
+      position: absolute;
+      left: 3px;
+      right: 3px;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(to right,#d6dde9,#8f9bb0);
+      box-shadow: 0 0 4px rgba(0,0,0,0.9);
       cursor: pointer;
     }
-
-    .color-preview {
-      flex: 1;
-      height: 18px;
-      border-radius: 5px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    .mixer-bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 8px;
+      color: var(--text-muted);
     }
+    .mixer-bottom-btns {
+      display: flex;
+      gap: 2px;
+    }
+    .mixer-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #050a24;
+      cursor: pointer;
+    }
+    .mixer-btn.mute {
+      background: #1a2233;
+    }
+    .mixer-btn.solo {
+      background: #1a2f1f;
+    }
+    .mixer-btn.active.mute {
+      background: #ff7c8a;
+      border-color: #ffd0d5;
+    }
+    .mixer-btn.active.solo {
+      background: #7cffc7;
+      border-color: #e0fff3;
+    }
+    .mixer-bottom-label {
+      flex: 1;
+      text-align: right;
+      color: #9cb3ff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-left: 2px;
+    }
+
+    /* ===== TRACK-TYPE POPUP MENU ===== */
+    .track-type-menu {
+      position: fixed;
+      z-index: 1000;
+      min-width: 140px;
+      background: #050b24;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 18px rgba(0,0,0,0.95);
+      padding: 4px 0;
+      font-size: 11px;
+      color: var(--text-main);
+      display: none;
+    }
+    .track-type-menu-item {
+      padding: 4px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .track-type-menu-item:hover {
+      background: rgba(124,190,255,0.18);
+    }
+    .track-type-menu-item span:last-child {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    /* ===== HINT BAR ===== */
+    .hint-bar {
+      margin-top: 4px;
+      border-radius: 7px;
+      border: 1px solid rgba(0,0,0,0.85);
+      background: linear-gradient(to right,#050b2b,#020419);
+      font-size: 10px;
+      padding: 4px 8px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* ===== PLUGIN POPUP ===== */
+    .plugin-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,15,0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .plugin-window {
+      width: min(520px, 95vw);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: radial-gradient(circle at 0 0,#3246ff,#050822 40%,#020419 100%);
+      box-shadow: 0 0 40px rgba(0,0,0,0.95);
+      padding: 10px 12px 12px;
+      color: var(--text-main);
+      font-size: 12px;
+    }
+    .plugin-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .plugin-window-title {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 11px;
+      color: var(--accent3);
+    }
+    .plugin-close-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
+      color: #02041b;
+      font-size: 11px;
+      padding: 2px 8px;
+      cursor: pointer;
+    }
+    .plugin-window-body {
+      background: rgba(4,8,40,0.9);
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.9);
+      padding: 8px;
+      max-height: 260px;
+      overflow: auto;
+    }
+    .plugin-window-body p {
+      margin: 4px 0;
+      color: var(--text-muted);
+    }
+    .plugin-window-body code {
+      background: rgba(0,0,0,0.5);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    /* ===== THEME DESIGNER OVERLAY ===== */
+    .theme-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,20,0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+    }
+    .theme-window {
+      width: min(720px, 95vw);
+      max-height: min(520px, 95vh);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: radial-gradient(circle at 0 0,#4152ff,#050828 40%,#020419 100%);
+      box-shadow: 0 0 40px rgba(0,0,0,0.95);
+      padding: 10px 12px 10px;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+    }
+    .theme-window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .theme-window-title {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 11px;
+      color: var(--accent3);
+    }
+    .theme-window-body {
+      flex: 1;
+      min-height: 0;
+      background: rgba(4,8,40,0.95);
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.9);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .theme-form {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .theme-row {
+      display: grid;
+      grid-template-columns: 170px minmax(0,1fr);
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      font-size: 11px;
+    }
+    .theme-row label {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text-muted);
+    }
+    .theme-color-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .theme-color-controls select {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+    .theme-color-controls input[type="color"] {
+      width: 32px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: transparent;
+      padding: 0;
+    }
+    .theme-color-controls input[type="text"] {
+      min-width: 70px;
+      max-width: 90px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-main);
+      font-size: 10px;
+      padding: 2px 4px;
+    }
+    .theme-window-actions {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .theme-actions-left,
+    .theme-actions-right {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .theme-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.9);
+      background: #02041b;
+      color: var(--text-main);
+      font-size: 11px;
+      padding: 3px 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .theme-btn.primary {
+      background: radial-gradient(circle at 0 0,#7cffc7,#041a12);
+      color: #02041b;
+    }
+    .theme-btn.save {
+      background: radial-gradient(circle at 0 0,#ffd77c,#3a2605);
+      color: #02041b;
+    }
+
+    /* ===== THEME VARIANTS (SL SOUND LAB THEMES) ===== */
+
+    /* 1) SL Dark Lab (deep studio dark) */
+    body.theme-sl-dark-lab {
+      --bg-deep: #050608;
+      --bg-surface: #12151c;
+      --bg-panel: #181c26;
+      --bg-panel-soft: #1f2430;
+      --border-soft: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,162,78,0.9);
+      --accent: #ff9f1a;
+      --accent2: #00e0ff;
+      --accent3: #ffe66d;
+      --accent4: #a3ff73;
+      --text-main: #f5f6f7;
+      --text-muted: #858ea0;
+      --grid-line: rgba(255,255,255,0.09);
+      --clip-blue: #4a9eff;
+      --clip-purple: #c074ff;
+      --clip-pink: #ff769e;
+      --clip-green: #63ff9c;
+
+      --header-bg: linear-gradient(to bottom,#252933,#181b23);
+      --icon-dock-bg: linear-gradient(to right,#1c202b,#141821);
+      --main-grid-bg: radial-gradient(circle at 0 0,#262b38,#10131c 60%,#05060a 100%);
+      --bottom-dock-bg: linear-gradient(to bottom,#262b38,#10131c);
+
+      --timeline-bg: linear-gradient(to bottom,#151821,#0a0d15);
+      --timeline-grid-bg: #10131b;
+      --timeline-header-bg: linear-gradient(to bottom,#202534,#141821);
+      --timeline-ruler-bg: linear-gradient(to bottom,#202534,#141821);
+    }
+
+    /* 2) SL Dark Gray (modern gray console, requested) */
+    body.theme-sl-dark-gray {
+      --bg-deep: #151618;
+      --bg-surface: #202326;
+      --bg-panel: #26292d;
+      --bg-panel-soft: #2c3035;
+      --border-soft: rgba(0,0,0,0.35);
+      --border-strong: rgba(140,140,160,0.9);
+      --accent: #f0b24a;
+      --accent2: #4dbfe8;
+      --accent3: #e8d47c;
+      --accent4: #9fc5ff;
+      --text-main: #f1f2f4;
+      --text-muted: #9ba0aa;
+      --grid-line: rgba(255,255,255,0.08);
+      --clip-blue: #3f7ad8;
+      --clip-purple: #a566ff;
+      --clip-pink: #f26a9e;
+      --clip-green: #4ecf98;
+
+      --header-bg: linear-gradient(to bottom,#2a2d32,#1b1d22);
+      --icon-dock-bg: linear-gradient(to right,#2a2e34,#1c1f26);
+      --main-grid-bg: linear-gradient(to bottom,#2b2f35,#17191e);
+      --bottom-dock-bg: linear-gradient(to bottom,#292d33,#181a20);
+
+      --timeline-bg: linear-gradient(to bottom,#2a2e34,#181b20);
+      --timeline-grid-bg: #22252b;
+      --timeline-header-bg: linear-gradient(to bottom,#333740,#23262c);
+      --timeline-ruler-bg: linear-gradient(to bottom,#333740,#23262c);
+    }
+
+    /* 3) SL Midnight Neon */
+    body.theme-sl-midnight {
+      --bg-deep: #020013;
+      --bg-surface: #050021;
+      --bg-panel: #070235;
+      --bg-panel-soft: #0b0841;
+      --border-soft: rgba(0,255,204,0.25);
+      --border-strong: rgba(0,255,204,0.9);
+      --accent: #00ffc8;
+      --accent2: #ff3ccf;
+      --accent3: #ffe066;
+      --accent4: #66b3ff;
+      --text-main: #f8fbff;
+      --text-muted: #9da8ff;
+      --grid-line: rgba(70,100,255,0.3);
+      --clip-blue: #4094ff;
+      --clip-purple: #c56cff;
+      --clip-pink: #ff5aa8;
+      --clip-green: #2cffb2;
+
+      --header-bg: linear-gradient(to bottom,#120848,#050020);
+      --icon-dock-bg: linear-gradient(to right,#14084a,#050020);
+      --main-grid-bg: radial-gradient(circle at 0 0,#3b44ff,#050028 55%,#010012 100%);
+      --bottom-dock-bg: radial-gradient(circle at 0 0,#3b44ff,#050028 55%,#010012 100%);
+
+      --timeline-bg: radial-gradient(circle at 0 0,#3940ff,#050028 55%,#010012 100%);
+      --timeline-grid-bg: #050026;
+      --timeline-header-bg: linear-gradient(to bottom,#1b0e60,#080030);
+      --timeline-ruler-bg: linear-gradient(to bottom,#1b0e60,#080030);
+    }
+
+    /* 4) SL Aurora Sky */
+    body.theme-sl-aurora {
+      --bg-deep: #021418;
+      --bg-surface: #04242a;
+      --bg-panel: #052f37;
+      --bg-panel-soft: #073942;
+      --border-soft: rgba(144,255,226,0.25);
+      --border-strong: rgba(144,255,226,0.9);
+      --accent: #9effd8;
+      --accent2: #55f0ff;
+      --accent3: #ffe39a;
+      --accent4: #7dd3ff;
+      --text-main: #f4fffd;
+      --text-muted: #98bfc4;
+      --grid-line: rgba(144,255,226,0.24);
+      --clip-blue: #55c9ff;
+      --clip-purple: #a9a9ff;
+      --clip-pink: #ff8ab9;
+      --clip-green: #71ffc3;
+
+      --header-bg: linear-gradient(to bottom,#06373f,#02181d);
+      --icon-dock-bg: linear-gradient(to right,#053137,#021418);
+      --main-grid-bg: radial-gradient(circle at 0 0,#148ea2,#021418 55%,#010708 100%);
+      --bottom-dock-bg: linear-gradient(to bottom,#05373f,#02181d);
+
+      --timeline-bg: linear-gradient(to bottom,#063941,#02181c);
+      --timeline-grid-bg: #032227;
+      --timeline-header-bg: linear-gradient(to bottom,#084952,#03252b);
+      --timeline-ruler-bg: linear-gradient(to bottom,#084952,#03252b);
+    }
+
+    /* 5) SL Sunset Glow */
+    body.theme-sl-sunset {
+      --bg-deep: #14060c;
+      --bg-surface: #2a1320;
+      --bg-panel: #351824;
+      --bg-panel-soft: #401c29;
+      --border-soft: rgba(255,180,140,0.25);
+      --border-strong: rgba(255,162,120,0.95);
+      --accent: #ff9e64;
+      --accent2: #ff5dac;
+      --accent3: #ffd27a;
+      --accent4: #ff8bb8;
+      --text-main: #fff7f2;
+      --text-muted: #c9a3a6;
+      --grid-line: rgba(255,160,120,0.22);
+      --clip-blue: #ff9e64;
+      --clip-purple: #ff7cd2;
+      --clip-pink: #ff6c9f;
+      --clip-green: #ffc67e;
+
+      --header-bg: linear-gradient(to bottom,#3a1823,#210c14);
+      --icon-dock-bg: linear-gradient(to right,#3a1c26,#220c16);
+      --main-grid-bg: radial-gradient(circle at 0 0,#ff8354,#2a1320 60%,#130509 100%);
+      --bottom-dock-bg: linear-gradient(to bottom,#3d1b26,#200b14);
+
+      --timeline-bg: linear-gradient(to bottom,#3b1c29,#1b0b12);
+      --timeline-grid-bg: #271119;
+      --timeline-header-bg: linear-gradient(to bottom,#492131,#2a101d);
+      --timeline-ruler-bg: linear-gradient(to bottom,#492131,#2a101d);
+    }
+
+    /* 6) SL Cyber Grid */
+    body.theme-sl-cyber {
+      --bg-deep: #030812;
+      --bg-surface: #050b1c;
+      --bg-panel: #071024;
+      --bg-panel-soft: #09142c;
+      --border-soft: rgba(0,255,255,0.24);
+      --border-strong: rgba(0,255,240,0.95);
+      --accent: #00ffe6;
+      --accent2: #ff3df2;
+      --accent3: #ffef80;
+      --accent4: #79c1ff;
+      --text-main: #f4feff;
+      --text-muted: #9fd1d4;
+      --grid-line: rgba(0,255,240,0.28);
+      --clip-blue: #48c8ff;
+      --clip-purple: #d36cff;
+      --clip-pink: #ff66d6;
+      --clip-green: #5dffd6;
+
+      --header-bg: linear-gradient(to bottom,#071630,#040715);
+      --icon-dock-bg: linear-gradient(to right,#071932,#030714);
+      --main-grid-bg: radial-gradient(circle at 0 0,#193c66,#030812 60%,#010309 100%);
+      --bottom-dock-bg: radial-gradient(circle at 0 0,#193c66,#030812 60%,#010309 100%);
+
+      --timeline-bg: linear-gradient(to bottom,#091734,#040712);
+      --timeline-grid-bg: #050b1c;
+      --timeline-header-bg: linear-gradient(to bottom,#0c2142,#050a1a);
+      --timeline-ruler-bg: linear-gradient(to bottom,#0c2142,#050a1a);
+    }
+
+    /* 7) SL Vintage Console */
+    body.theme-sl-console {
+      --bg-deep: #111311;
+      --bg-surface: #191b19;
+      --bg-panel: #202221;
+      --bg-panel-soft: #242726;
+      --border-soft: rgba(180,210,180,0.18);
+      --border-strong: rgba(180,230,180,0.9);
+      --accent: #a6d47b;
+      --accent2: #ffcf64;
+      --accent3: #ffec9e;
+      --accent4: #b5e08a;
+      --text-main: #f2f5f0;
+      --text-muted: #9ca79a;
+      --grid-line: rgba(190,220,190,0.18);
+      --clip-blue: #8bd0ff;
+      --clip-purple: #c5a4ff;
+      --clip-pink: #ff92b5;
+      --clip-green: #a6e67c;
+
+      --header-bg: linear-gradient(to bottom,#242724,#171917);
+      --icon-dock-bg: linear-gradient(to right,#262925,#181b17);
+      --main-grid-bg: linear-gradient(to bottom,#252823,#151814);
+      --bottom-dock-bg: linear-gradient(to bottom,#252823,#151814);
+
+      --timeline-bg: linear-gradient(to bottom,#252924,#171a16);
+      --timeline-grid-bg: #202320;
+      --timeline-header-bg: linear-gradient(to bottom,#2f332d,#1f221e);
+      --timeline-ruler-bg: linear-gradient(to bottom,#2f332d,#1f221e);
+    }
+
   </style>
 </head>
 <body>
-  <!-- ===== TOOLBAR ===== -->
-  <div id="toolbar">
-    <div class="sl-logo">SOUND LAB</div>
-
-    <div class="toolbar-section">
-      <button class="transport-btn">&#x23EE;</button>
-      <button class="transport-btn">&#x23F8;</button>
-      <button class="transport-btn play">&#x25B6;</button>
-      <button class="transport-btn">&#x23ED;</button>
-    </div>
-
-    <div class="toolbar-section">
-      <div class="toolbar-label">Tempo</div>
-      <div class="toolbar-value" id="tempo-display">120.0</div>
-    </div>
-
-    <div class="toolbar-section">
-      <div class="toolbar-label">Theme</div>
-      <select id="theme-select" class="toolbar-select">
-        <option value="sl-dark-gray">SL Dark Gray (Default)</option>
-        <option value="sl-midnight">SL Midnight Neon</option>
-        <option value="sl-sunset">SL Sunset Glow</option>
-        <option value="sl-oceanic">SL Oceanic Blue</option>
-        <option value="sl-emerald">SL Emerald Studio</option>
-        <option value="sl-mono">SL Mono Minimal</option>
-      </select>
-    </div>
-
-    <div class="toolbar-spacer"></div>
-  </div>
-
-  <!-- ===== MAIN LAYOUT ===== -->
-  <div id="main-layout">
-    <!-- TRACKS PANEL -->
-    <div id="tracks-panel">
-      <div id="tracks-header">
-        <span>Tracks</span>
-        <button id="add-track-btn">+</button>
-      </div>
-      <div id="track-list"></div>
-    </div>
-
-    <!-- TIMELINE PANEL -->
-    <div id="timeline-panel">
-      <div id="timeline-header">Timeline</div>
-      <div id="timeline-grid"></div>
-    </div>
-  </div>
-
-  <!-- TRACK TYPE MENU -->
-  <div class="floating-menu hidden" id="track-type-menu">
-    <div class="track-type-menu-title">Track Type & Source</div>
-
-    <div class="track-type-menu-section-label">Instruments</div>
-    <div class="track-type-menu-item" data-action="instrument" data-name="Drum Kit" data-icon="🥁" data-color="#ff7b7b">
-      <span>Drum Kit</span><span>Punchy drums & perc</span>
-    </div>
-    <div class="track-type-menu-item" data-action="instrument" data-name="Bass Synth" data-icon="🌀" data-color="#7bffb5">
-      <span>Bass Synth</span><span>Deep futuristic low end</span>
-    </div>
-    <div class="track-type-menu-item" data-action="instrument" data-name="Poly Keys" data-icon="🎹" data-color="#7b9dff">
-      <span>Poly Keys</span><span>Electric pianos & keys</span>
-    </div>
-    <div class="track-type-menu-item" data-action="instrument" data-name="Atmos Pad" data-icon="☁️" data-color="#c77bff">
-      <span>Atmos Pad</span><span>Ambient pads & textures</span>
-    </div>
-    <div class="track-type-menu-item" data-action="instrument" data-name="Lead Synth" data-icon="⚡" data-color="#ffbf7b">
-      <span>Lead Synth</span><span>Sharp melodic leads</span>
-    </div>
-    <div class="track-type-menu-item" data-action="instrument" data-name="FX Lab" data-icon="✨" data-color="#ffd76b">
-      <span>FX Lab</span><span>FX, risers & sound design</span>
-    </div>
-
-    <div class="track-type-menu-section-label">Vocals</div>
-    <div class="track-type-menu-item"
-      data-action="vocal"
-      data-role="lead"
-      data-name="Lead Vocal"
-      data-icon="🎙️"
-      data-color="#ff6bb8">
-      <span>Lead Vocal</span><span>Main lead voice</span>
-    </div>
-    <div class="track-type-menu-item"
-      data-action="vocal"
-      data-role="backing"
-      data-name="Backing Vocal"
-      data-icon="🎵"
-      data-color="#ff9be0">
-      <span>Backing Vocal</span><span>Harmony & adlibs</span>
-    </div>
-    <div class="track-type-menu-item"
-      data-action="vocal"
-      data-role="choir"
-      data-name="Choir Stack"
-      data-icon="👥"
-      data-color="#ffcfe9">
-      <span>Choir Stack</span><span>Choirs & group stacks</span>
-    </div>
-
-    <div class="track-type-menu-section-label">Import</div>
-    <div class="track-type-menu-item" data-action="import-device">
-      <span>Upload from Device</span><span>Open file browser</span>
-    </div>
-    <div class="track-type-menu-item" data-action="import-audio-lib">
-      <span>Import from SL Audio</span><span>Use “My Creations” audio</span>
-    </div>
-
-    <div class="track-type-menu-section-label">Create</div>
-    <div class="track-type-menu-item track-type-menu-item-accent" data-action="sl-assistant">
-      <span>Create with SL Assistant</span><span>Colorful AI loops & vocals</span>
-    </div>
-  </div>
-
-  <!-- OVERLAY (SL ASSISTANT / TRACK SETTINGS / RECORD) -->
-  <div class="overlay hidden" id="overlay-root">
-    <div class="overlay-window" id="overlay-window">
-      <div class="overlay-header">
-        <div class="overlay-title" id="overlay-title"></div>
-        <button class="overlay-close-btn" id="overlay-close-btn">&times;</button>
-      </div>
-      <div class="overlay-body" id="overlay-body"></div>
-    </div>
-  </div>
-
-  <script>
-    // ===== STATE =====
-    const tracks = [];
-    const clips = [];
-    let nextTrackId = 1;
-    let activeTrackId = null;
-
-    const trackListEl = document.getElementById('track-list');
-    const timelineGridEl = document.getElementById('timeline-grid');
-    const trackTypeMenuEl = document.getElementById('track-type-menu');
-    let trackTypeMenuTrackId = null;
-
-    const overlayRoot = document.getElementById('overlay-root');
-    const overlayWindow = document.getElementById('overlay-window');
-    const overlayTitleEl = document.getElementById('overlay-title');
-    const overlayBodyEl = document.getElementById('overlay-body');
-
-    let overlayMode = null; // 'slAssistant' | 'trackSettings' | 'recordConfig'
-    let overlayContextTrackId = null;
-
-    // ===== THEMES =====
-    const THEMES = {
-      'sl-dark-gray': {
-        '--sl-bg-main': '#1e1f23',
-        '--sl-bg-toolbar': '#26272c',
-        '--sl-bg-panel': '#23242a',
-        '--sl-bg-panel-alt': '#1a1b1f',
-        '--sl-bg-track-alt': '#262830',
-        '--sl-border': '#3a3b42',
-        '--sl-border-strong': '#4a4c56',
-        '--sl-text-main': '#e4e4e8',
-        '--sl-text-muted': '#a0a1aa',
-        '--sl-accent': '#4fa8ff',
-        '--sl-accent-soft': 'rgba(79, 168, 255, 0.18)',
-        '--sl-scroll-track': '#18191d',
-        '--sl-scroll-thumb': '#3b3d46',
-        '--sl-timeline-bg': '#181920',
-        '--sl-timeline-row-alt': '#1f2028'
-      },
-      'sl-midnight': {
-        '--sl-bg-main': '#050510',
-        '--sl-bg-toolbar': '#121225',
-        '--sl-bg-panel': '#0c0d1a',
-        '--sl-bg-panel-alt': '#090913',
-        '--sl-bg-track-alt': '#101123',
-        '--sl-border': '#292b4a',
-        '--sl-border-strong': '#3c3f68',
-        '--sl-text-main': '#e6ecff',
-        '--sl-text-muted': '#8f92b5',
-        '--sl-accent': '#7e5bff',
-        '--sl-accent-soft': 'rgba(126, 91, 255, 0.2)',
-        '--sl-scroll-track': '#050510',
-        '--sl-scroll-thumb': '#333367',
-        '--sl-timeline-bg': '#050619',
-        '--sl-timeline-row-alt': '#101131'
-      },
-      'sl-sunset': {
-        '--sl-bg-main': '#12080a',
-        '--sl-bg-toolbar': '#251016',
-        '--sl-bg-panel': '#170b0f',
-        '--sl-bg-panel-alt': '#1a1014',
-        '--sl-bg-track-alt': '#221016',
-        '--sl-border': '#3a1f2c',
-        '--sl-border-strong': '#5a2d3b',
-        '--sl-text-main': '#ffe7f0',
-        '--sl-text-muted': '#c691a5',
-        '--sl-accent': '#ff7b5b',
-        '--sl-accent-soft': 'rgba(255, 123, 91, 0.22)',
-        '--sl-scroll-track': '#13080b',
-        '--sl-scroll-thumb': '#5d2c35',
-        '--sl-timeline-bg': '#1a0b0f',
-        '--sl-timeline-row-alt': '#261018'
-      },
-      'sl-oceanic': {
-        '--sl-bg-main': '#041019',
-        '--sl-bg-toolbar': '#08202c',
-        '--sl-bg-panel': '#071721',
-        '--sl-bg-panel-alt': '#051019',
-        '--sl-bg-track-alt': '#0a1d29',
-        '--sl-border': '#153849',
-        '--sl-border-strong': '#215269',
-        '--sl-text-main': '#e4f7ff',
-        '--sl-text-muted': '#8bb6c9',
-        '--sl-accent': '#29c4ff',
-        '--sl-accent-soft': 'rgba(41, 196, 255, 0.22)',
-        '--sl-scroll-track': '#041019',
-        '--sl-scroll-thumb': '#215269',
-        '--sl-timeline-bg': '#05121c',
-        '--sl-timeline-row-alt': '#0a1f2b'
-      },
-      'sl-emerald': {
-        '--sl-bg-main': '#04110e',
-        '--sl-bg-toolbar': '#08201a',
-        '--sl-bg-panel': '#071712',
-        '--sl-bg-panel-alt': '#040e0a',
-        '--sl-bg-track-alt': '#0a1e18',
-        '--sl-border': '#184236',
-        '--sl-border-strong': '#256352',
-        '--sl-text-main': '#e5fff9',
-        '--sl-text-muted': '#8ccbb7',
-        '--sl-accent': '#29ff9c',
-        '--sl-accent-soft': 'rgba(41, 255, 156, 0.22)',
-        '--sl-scroll-track': '#04110e',
-        '--sl-scroll-thumb': '#256352',
-        '--sl-timeline-bg': '#04130f',
-        '--sl-timeline-row-alt': '#0a2018'
-      },
-      'sl-mono': {
-        '--sl-bg-main': '#151515',
-        '--sl-bg-toolbar': '#202020',
-        '--sl-bg-panel': '#1a1a1a',
-        '--sl-bg-panel-alt': '#101010',
-        '--sl-bg-track-alt': '#202020',
-        '--sl-border': '#2d2d2d',
-        '--sl-border-strong': '#3a3a3a',
-        '--sl-text-main': '#f0f0f0',
-        '--sl-text-muted': '#9a9a9a',
-        '--sl-accent': '#f5f5f5',
-        '--sl-accent-soft': 'rgba(255, 255, 255, 0.16)',
-        '--sl-scroll-track': '#151515',
-        '--sl-scroll-thumb': '#3a3a3a',
-        '--sl-timeline-bg': '#141414',
-        '--sl-timeline-row-alt': '#1f1f1f'
-      }
-    };
-
-    function applyTheme(id) {
-      const theme = THEMES[id] || THEMES['sl-dark-gray'];
-      Object.entries(theme).forEach(([key, value]) => {
-        document.documentElement.style.setProperty(key, value);
-      });
-    }
-
-    document.getElementById('theme-select').addEventListener('change', (e) => {
-      applyTheme(e.target.value);
-    });
-
-    applyTheme('sl-dark-gray');
-
-    // ===== TRACK MODEL =====
-    function createTrack(name, options = {}) {
-      const id = nextTrackId++;
-      const track = {
-        id,
-        name: name || options.name || `Track ${id}`,
-        type: options.type || 'instrument',        // 'instrument' | 'vocal' | 'import'
-        role: options.role || null,               // 'lead' | 'backing' | 'choir'
-        icon: options.icon || null,
-        color: options.color || '#ff7b7b',
-        mute: false,
-        solo: false,
-        recordArmed: false,
-        recordConfig: null   // { input, output, presetName }
-      };
-      tracks.push(track);
-      renderTracks();
-      renderTimeline();
-      return id;
-    }
-
-    function getTrack(id) {
-      return tracks.find(t => t.id === id);
-    }
-
-    function setActiveTrack(id) {
-      activeTrackId = id;
-      renderTracks();
-    }
-
-    // ===== RENDER TRACKS =====
-    function renderTracks() {
-      trackListEl.innerHTML = '';
-      tracks.forEach((t, index) => {
-        const row = document.createElement('div');
-        row.className = 'track-row';
-        if (t.id === activeTrackId) {
-          row.classList.add('active');
-        }
-        row.dataset.trackId = t.id;
-
-        const colorDot = document.createElement('div');
-        colorDot.className = 'track-color-dot';
-        colorDot.style.background = t.color || '#ff7b7b';
-
-        const icon = document.createElement('div');
-        icon.className = 'track-icon';
-        icon.textContent = t.icon || (t.type === 'vocal' ? 'VOX' : 'SL');
-
-        const main = document.createElement('div');
-        main.className = 'track-main';
-
-        const nameLine = document.createElement('div');
-        nameLine.className = 'track-name-line';
-
-        const nameEl = document.createElement('div');
-        nameEl.className = 'track-name';
-        nameEl.textContent = t.name;
-
-        const typeLabel = document.createElement('div');
-        typeLabel.className = 'track-type-label';
-        if (t.type === 'vocal') {
-          const roleText = t.role ? t.role.charAt(0).toUpperCase() + t.role.slice(1) : 'Lead';
-          typeLabel.textContent = `${roleText} vocal`;
-        } else if (t.type === 'import') {
-          typeLabel.textContent = 'Imported audio';
-        } else {
-          typeLabel.textContent = 'Instrument';
-        }
-
-        nameLine.appendChild(nameEl);
-        main.appendChild(nameLine);
-        main.appendChild(typeLabel);
-
-        const controls = document.createElement('div');
-        controls.className = 'track-controls';
-
-        const mBtn = document.createElement('button');
-        mBtn.className = 'track-btn mute';
-        mBtn.textContent = 'M';
-        if (t.mute) mBtn.classList.add('active');
-        mBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          t.mute = !t.mute;
-          renderTracks();
-        });
-
-        const sBtn = document.createElement('button');
-        sBtn.className = 'track-btn solo';
-        sBtn.textContent = 'S';
-        if (t.solo) sBtn.classList.add('active');
-        sBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          t.solo = !t.solo;
-          renderTracks();
-        });
-
-        const recBtn = document.createElement('button');
-        recBtn.className = 'track-btn rec';
-        recBtn.textContent = '●';
-        if (t.recordArmed) recBtn.classList.add('active');
-        recBtn.title = 'Record setup for this track';
-        recBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openRecordConfigForTrack(t.id);
-        });
-
-        const upBtn = document.createElement('button');
-        upBtn.className = 'track-btn';
-        upBtn.textContent = '▲';
-        upBtn.title = 'Move up';
-        upBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          moveTrack(t.id, -1);
-        });
-
-        const downBtn = document.createElement('button');
-        downBtn.className = 'track-btn';
-        downBtn.textContent = '▼';
-        downBtn.title = 'Move down';
-        downBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          moveTrack(t.id, 1);
-        });
-
-        const optionsBtn = document.createElement('button');
-        optionsBtn.className = 'track-btn track-options-btn';
-        optionsBtn.textContent = '⋮';
-        optionsBtn.title = 'Track options';
-        optionsBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const rect = e.currentTarget.getBoundingClientRect();
-          openTrackTypeMenu(t.id, rect.right + 2, rect.top + 2);
-        });
-
-        controls.appendChild(mBtn);
-        controls.appendChild(sBtn);
-        controls.appendChild(recBtn);
-        controls.appendChild(upBtn);
-        controls.appendChild(downBtn);
-        controls.appendChild(optionsBtn);
-
-        main.appendChild(controls);
-
-        row.appendChild(colorDot);
-        row.appendChild(icon);
-        row.appendChild(main);
-
-        row.addEventListener('click', () => {
-          setActiveTrack(t.id);
-        });
-
-        // Double-click to open Track Settings (rename, icon, color)
-        row.addEventListener('dblclick', (e) => {
-          e.stopPropagation();
-          openTrackSettingsForTrack(t.id);
-        });
-
-        trackListEl.appendChild(row);
-      });
-    }
-
-    function moveTrack(id, direction) {
-      const index = tracks.findIndex(t => t.id === id);
-      if (index === -1) return;
-      const newIndex = index + direction;
-      if (newIndex < 0 || newIndex >= tracks.length) return;
-      const [track] = tracks.splice(index, 1);
-      tracks.splice(newIndex, 0, track);
-      renderTracks();
-      renderTimeline();
-    }
-
-    // ===== TIMELINE =====
-    function renderTimeline() {
-      timelineGridEl.innerHTML = '';
-
-      tracks.forEach((t, index) => {
-        const row = document.createElement('div');
-        row.className = 'timeline-row';
-        row.dataset.trackId = t.id;
-
-        const beats = document.createElement('div');
-        beats.className = 'timeline-beats';
-        row.appendChild(beats);
-
-        // Simple placeholder clip for demonstration
-        const rowClips = clips.filter(c => c.trackId === t.id);
-        rowClips.forEach((clip) => {
-          const el = document.createElement('div');
-          el.className = 'timeline-clip';
-          el.textContent = clip.name || t.name;
-          el.style.left = (clip.start || 0) * 40 + 'px';
-          el.style.width = (clip.length || 4) * 40 + 'px';
-          el.style.background = t.color + '44';
-          el.style.borderColor = t.color + 'aa';
-          row.appendChild(el);
-        });
-
-        timelineGridEl.appendChild(row);
-      });
-    }
-
-    // ===== TRACK TYPE MENU HANDLING =====
-    function openTrackTypeMenu(trackId, x, y) {
-      trackTypeMenuTrackId = trackId;
-      trackTypeMenuEl.style.left = x + 'px';
-      trackTypeMenuEl.style.top = y + 'px';
-      trackTypeMenuEl.classList.remove('hidden');
-    }
-
-    function hideTrackTypeMenu() {
-      trackTypeMenuTrackId = null;
-      trackTypeMenuEl.classList.add('hidden');
-    }
-
-    document.addEventListener('click', (e) => {
-      if (!trackTypeMenuEl.classList.contains('hidden')) {
-        if (!trackTypeMenuEl.contains(e.target)) {
-          hideTrackTypeMenu();
-        }
-      }
-    });
-
-    trackTypeMenuEl.querySelectorAll('.track-type-menu-item').forEach(item => {
-      item.addEventListener('click', () => {
-        if (!trackTypeMenuTrackId) return;
-        const track = getTrack(trackTypeMenuTrackId);
-        if (!track) return;
-
-        const action = item.dataset.action;
-
-        if (action === 'instrument') {
-          track.type = 'instrument';
-          track.role = null;
-          track.name = item.dataset.name || track.name;
-          track.icon = item.dataset.icon || 'SL';
-          track.color = item.dataset.color || track.color;
-          hideTrackTypeMenu();
-          renderTracks();
-          renderTimeline();
-          return;
-        }
-
-        if (action === 'vocal') {
-          track.type = 'vocal';
-          track.role = item.dataset.role || 'lead';
-          track.name = item.dataset.name || track.name;
-          track.icon = item.dataset.icon || 'VOX';
-          track.color = item.dataset.color || track.color;
-          hideTrackTypeMenu();
-          renderTracks();
-          renderTimeline();
-          return;
-        }
-
-        if (action === 'import-device') {
-          hideTrackTypeMenu();
-          openImportFromDeviceDialog(track.id);
-          return;
-        }
-
-        if (action === 'import-audio-lib') {
-          hideTrackTypeMenu();
-          openImportFromAudioLibraryDialog(track.id);
-          return;
-        }
-
-        if (action === 'sl-assistant') {
-          hideTrackTypeMenu();
-          openSlAssistantForTrack(track.id);
-          return;
-        }
-      });
-    });
-
-    // ===== OVERLAY HELPERS =====
-    function openOverlay(title, mode, trackId, basicWindow = false) {
-      overlayMode = mode;
-      overlayContextTrackId = trackId || null;
-      overlayTitleEl.textContent = title || '';
-      overlayBodyEl.innerHTML = '';
-      overlayRoot.classList.remove('hidden');
-      if (basicWindow) {
-        overlayWindow.classList.add('basic-window');
-      } else {
-        overlayWindow.classList.remove('basic-window');
-      }
-    }
-
-    function closeOverlay() {
-      overlayMode = null;
-      overlayContextTrackId = null;
-      overlayRoot.classList.add('hidden');
-      overlayWindow.classList.remove('basic-window');
-    }
-
-    document.getElementById('overlay-close-btn').addEventListener('click', closeOverlay);
-
-    overlayRoot.addEventListener('click', (e) => {
-      if (e.target === overlayRoot) {
-        closeOverlay();
-      }
-    });
-
-    // ===== SL ASSISTANT WINDOW =====
-    function openSlAssistantForTrack(trackId) {
-      const track = getTrack(trackId);
-      if (!track) return;
-
-      openOverlay('SL Assistant – Creative Lab', 'slAssistant', trackId, false);
-
-      const isVocal = track.type === 'vocal';
-
-      const container = document.createElement('div');
-
-      const row1 = document.createElement('div');
-      row1.className = 'overlay-row';
-      row1.innerHTML = `
-        <div class="overlay-label">Target Track</div>
-        <div style="font-size:12px;">
-          <strong>${track.name}</strong>
-          <span style="color: var(--sl-text-muted);">(${track.type === 'vocal' ? 'Vocal' : 'Instrument'})</span>
+<header>
+  <div class="header-inner">
+    <div class="brand-left">
+      <div class="brand-logo">S</div>
+      <div>
+        <div class="brand-text-main">Sulandra Creative Studio</div>
+        <div class="brand-text-sub">
+          <span style="color:#7cffc7;">AI</span> ·
+          <span style="color:#ff7cf1;">Mix</span> ·
+          <span style="color:#ffd77c;">Master</span>
         </div>
-      `;
-      container.appendChild(row1);
+      </div>
+      <div class="brand-sound-pill">Sound</div>
+    </div>
+    <div class="top-right">
+      <div class="theme-select-wrap">
+        <span>Theme</span>
+        <select id="theme-select">
+          <option value="default">Sulandra Neon (Default)</option>
+          <option value="theme-sl-dark-lab">SL Dark Lab</option>
+          <option value="theme-sl-dark-gray">SL Dark Gray</option>
+          <option value="theme-sl-midnight">SL Midnight Neon</option>
+          <option value="theme-sl-aurora">SL Aurora Sky</option>
+          <option value="theme-sl-sunset">SL Sunset Glow</option>
+          <option value="theme-sl-cyber">SL Cyber Grid</option>
+          <option value="theme-sl-console">SL Vintage Console</option>
+          <option value="custom">Custom Theme (Saved)</option>
+        </select>
+        <button class="theme-custom-btn" id="theme-custom-btn">Customize</button>
+      </div>
+      <div class="session-pill">
+        <div class="session-dot"></div>
+        <span>Session: <span style="color:#ffd77c;">Untitled Track 01</span></span>
+      </div>
+    </div>
+  </div>
+</header>
 
-      const promptRow = document.createElement('div');
-      promptRow.className = 'overlay-row';
-      promptRow.innerHTML = '<div class="overlay-label">Creative Prompt</div>';
-      const promptArea = document.createElement('textarea');
-      promptArea.className = 'overlay-textarea';
-      promptArea.placeholder = isVocal
-        ? 'Describe the lead style, backing harmonies, energy, language...'
-        : 'Describe the instrument, rhythm, groove, mood, sound design...';
-      promptRow.appendChild(promptArea);
-      container.appendChild(promptRow);
+<main>
+  <!-- TOP ICON BAR -->
+  <section class="icon-dock">
+    <div class="icon-row">
+      <div class="dock-icon active" data-panel="browser" title="File / Samples Browser">
+        <span>F</span>
+      </div>
+      <div class="dock-icon" data-panel="rack" title="Channel Rack">
+        <span>R</span>
+      </div>
+      <div class="dock-icon" data-panel="mixer" title="Mixer">
+        <span>M</span>
+      </div>
+      <div class="dock-icon" data-panel="piano" title="Piano Roll">
+        <span>P</span>
+      </div>
+      <div class="dock-icon active" data-panel="plugins" title="Plugins / FX Panel">
+        <span>X</span>
+      </div>
+      <div class="dock-icon active" data-panel="timeline" title="Timeline View">
+        <span>T</span>
+      </div>
+    </div>
+    <div class="dock-icon-labels">
+      <span style="color:#4aa8ff;">File & Samples</span>
+      <span style="color:#7cffc7;">Rack & Patterns</span>
+      <span style="color:#ff7cf1;">Mixer</span>
+      <span style="color:#ffd77c;">Piano Roll</span>
+      <span style="color:#7cbeff;">Plugins</span>
+      <span style="color:#ff8a7c;">Timeline</span>
+    </div>
+  </section>
 
-      if (isVocal) {
-        const lyricsRow = document.createElement('div');
-        lyricsRow.className = 'overlay-row';
-        lyricsRow.innerHTML = '<div class="overlay-label">Lyrics (optional)</div>';
-        const lyricsArea = document.createElement('textarea');
-        lyricsArea.className = 'overlay-textarea';
-        lyricsArea.placeholder = 'Paste or write the lyrics you want SL Assistant to sing or arrange...';
-        lyricsRow.appendChild(lyricsArea);
-        container.appendChild(lyricsRow);
+  <!-- MAIN GRID -->
+  <section class="main-grid">
+    <!-- LEFT BROWSER PANEL -->
+    <aside class="left-browser dock-panel" data-panel-id="browser">
+      <div class="panel-header">
+        <div class="panel-title">Browser</div>
+        <div class="panel-tabs">
+          <div class="panel-tab active">Project</div>
+          <div class="panel-tab">Samples</div>
+        </div>
+      </div>
+      <div class="browser-search">
+        <span>🔍</span>
+        <input type="text" placeholder="Search in project / samples…" />
+      </div>
+      <div class="browser-scroll" id="browser-scroll">
+        <div class="browser-section-title">Project</div>
+        <div class="browser-item"><span>Current project</span><span>.slp</span></div>
+        <div class="browser-item"><span>Recent files</span><span>5</span></div>
+
+        <div class="browser-section-title">Generators & Instruments</div>
+        <div class="browser-item"><span>NebulaKeys – Pads & Keys</span><span>GEN</span></div>
+        <div class="browser-item"><span>QuantumLead – Hyper Synth</span><span>SYN</span></div>
+        <div class="browser-item"><span>PulseDrive – Drum Engine</span><span>DRM</span></div>
+
+        <div class="browser-section-title">Patterns</div>
+        <div id="pattern-list"></div>
+
+        <div class="browser-section-title">Effect Chains</div>
+        <div class="browser-item"><span>Vocal Polaris Chain</span><span>FX</span></div>
+        <div class="browser-item"><span>Master Halo Chain</span><span>FX</span></div>
+      </div>
+    </aside>
+
+    <!-- CENTER TIMELINE -->
+    <section class="center-timeline-wrap dock-panel" data-panel-id="timeline">
+      <div class="timeline-header">
+        <!-- 4-SCREEN DISPLAY -->
+        <div class="timeline-screen">
+          <div class="screen-grid">
+            <div class="screen-box">
+              <div class="screen-label">Time</div>
+              <div class="screen-value" id="screen-time">00:00.000</div>
+            </div>
+            <div class="screen-box" id="screen-key-box" title="Click to set song key">
+              <div class="screen-label">Key</div>
+              <div class="screen-value" id="screen-key">C# MINOR</div>
+            </div>
+            <div class="screen-box">
+              <div class="screen-label">BPM</div>
+              <div class="screen-value" id="screen-bpm">130.0</div>
+            </div>
+            <div class="screen-box mix low" id="screen-mix-box">
+              <div class="screen-label">Mix Level</div>
+              <div class="screen-value" id="screen-mix">-24.0 dB · LOW</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-row-top">
+          <div class="transport-left">
+            <div class="timeline-title" id="timeline-title">
+              Playlist · Arrangement A (Song Mode)
+            </div>
+            <div class="mode-toggles">
+              <button class="mode-btn active" id="mode-song">Song</button>
+              <button class="mode-btn" id="mode-pattern">Pattern</button>
+            </div>
+          </div>
+          <div class="transport-buttons">
+            <button class="transport-btn" id="btn-back">⏮</button>
+            <button class="transport-btn" id="btn-play">▶</button>
+            <button class="transport-btn" id="btn-stop">⏹</button>
+            <button class="transport-btn rec" id="btn-rec">●</button>
+            <button class="transport-btn metro" id="btn-metronome" title="Metronome">♩</button>
+          </div>
+        </div>
+        <div class="tempo-zoom-row">
+          <div class="tempo-pill">
+            <span>Tempo</span>
+            <span class="tempo-value" id="tempo-value">130.0</span>
+            <span>BPM</span>
+          </div>
+          <div class="zoom-pill">
+            <span>Timeline zoom</span>
+            <input type="range" id="zoom-range" min="32" max="140" value="48">
+          </div>
+          <div class="pattern-pill">
+            <span>Active pattern</span>
+            <select id="pattern-select" class="pattern-select"></select>
+            <button id="new-pattern-btn">+ New</button>
+          </div>
+          <div class="record-pill">
+            <span class="record-mode-label">Record</span>
+            <button class="rec-mode-btn active" data-mode="playlist" id="rec-mode-playlist">Playlist</button>
+            <button class="rec-mode-btn" data-mode="step" id="rec-mode-step">Step</button>
+          </div>
+          <div>Double-click empty grid to place active pattern · Pattern mode loops inside one pattern, Song mode plays the full timeline.</div>
+        </div>
+        <div class="timeline-scrollbar">
+          <div class="timeline-scroll-thumb" id="timeline-thumb">
+            <div class="timeline-scroll-handle" id="thumb-left"></div>
+            <div class="timeline-scroll-center" id="thumb-center"></div>
+            <div class="timeline-scroll-handle" id="thumb-right"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-main">
+        <!-- TRACK LIST -->
+        <div class="track-list" id="track-list">
+          <!-- dynamic track headers here -->
+          <div class="add-track-bar">
+            <button class="add-track-btn" id="add-track-btn">+ Add Track</button>
+          </div>
+        </div>
+
+        <!-- GRID -->
+        <div class="timeline-grid-wrap" id="timeline-scroll">
+          <div class="timeline-ruler">
+            <div class="timeline-ruler-inner" id="ruler-inner"></div>
+          </div>
+          <div class="grid-inner" id="grid-inner">
+            <div class="loop-region" id="loop-region"></div>
+            <div class="playhead" id="playhead"></div>
+            <!-- track rows & clips via JS -->
+          </div>
+        </div>
+
+        <!-- RIGHT VERTICAL SCROLLBAR -->
+        <div class="timeline-vscroll-right" id="vscroll-right">
+          <div class="vscroll-arrow" id="vscroll-up">▲</div>
+          <div class="vscroll-track">
+            <div class="timeline-vscroll-thumb" id="vscroll-thumb"></div>
+          </div>
+          <div class="vscroll-arrow" id="vscroll-down">▼</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PLACEHOLDER / PLUGINS -->
+    <aside class="right-placeholder dock-panel" data-panel-id="plugins">
+      <h3>Plugin Slots</h3>
+      <p>Each slot below can later be a dedicated plugin window or an embedded HTML panel:</p>
+      <div class="colored-list">
+        <span>Slot 1 – Vocal Orbit Chain</span>
+        <span>Slot 2 – Drum Gravity Bus</span>
+        <span>Slot 3 – Master Halo FX</span>
+        <span>Slot 4 – Creative Warp FX</span>
+      </div>
+      <p style="margin-top:8px;">Click the colored dots on each track to open track-level plugin windows.</p>
+      <p class="panel-note">Later you can replace this block with an &lt;iframe&gt; or dynamically injected content from your AI engine.</p>
+    </aside>
+  </section>
+
+  <!-- BOTTOM DOCK: MIXER / PIANO / RACK -->
+  <section class="bottom-dock" id="bottom-dock">
+    <div class="bottom-resize-handle" id="bottom-resize"></div>
+    <div class="bottom-tabs">
+      <div class="bottom-tab active" data-bottom-panel="mixer">Mixer</div>
+      <div class="bottom-tab" data-bottom-panel="piano">Piano Roll</div>
+      <div class="bottom-tab" data-bottom-panel="rack">Channel Rack</div>
+    </div>
+    <div class="bottom-panels">
+      <div class="bottom-panel active" id="bottom-mixer">
+        <h4>Mixer</h4>
+        <div id="mixer-strips" class="mixer-strips"></div>
+        <p class="panel-note">Tracks above are mirrored as mixer channels here · resize this panel and the strips stretch like a real console.</p>
+      </div>
+      <div class="bottom-panel" id="bottom-piano">
+        <h4>Piano Roll</h4>
+        <p>Design a full piano roll editor in a separate <code>piano.html</code> and plug it in here.</p>
+        <p class="panel-note">For now this is only a layout slot to keep your DAW navigation feeling complete.</p>
+      </div>
+      <div class="bottom-panel" id="bottom-rack">
+        <h4>Channel Rack Details</h4>
+        <p>Use this area for deeper rack controls, generator previews, AI preset suggestions, step sequencing tools, etc.</p>
+        <p class="panel-note">Record mode <b>Step</b> is intended for channel rack style step-input, while <b>Playlist</b> mode is for live timeline recording.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="hint-bar">
+    <span>Tip: Spacebar toggles play / pause without resetting the playhead · right-click + drag on the bar numbers to set a loop region in Song mode.</span>
+    <span>Use + / – keys or the slider handles to zoom the timeline · Pattern mode loops around the active pattern for quick step-sequencer style preview.</span>
+  </section>
+</main>
+
+<!-- TRACK TYPE POPUP -->
+<div class="track-type-menu" id="track-type-menu">
+  <div class="track-type-menu-item" data-type="Audio">
+    <span>Audio</span><span>Wave clips</span>
+  </div>
+  <div class="track-type-menu-item" data-type="Instrument">
+    <span>Instrument</span><span>Midi / synth</span>
+  </div>
+  <div class="track-type-menu-item" data-type="Create with AI">
+    <span>Create with AI</span><span>AI generator</span>
+  </div>
+</div>
+
+<!-- PLUGIN POPUP -->
+<div class="plugin-overlay" id="plugin-overlay">
+  <div class="plugin-window">
+    <div class="plugin-window-header">
+      <div class="plugin-window-title" id="plugin-title">Plugin Window</div>
+      <button class="plugin-close-btn" id="plugin-close-btn">Close</button>
+    </div>
+    <div class="plugin-window-body" id="plugin-body">
+      <p>This is a placeholder for a plugin or track window.</p>
+      <p>Later, you can embed <code>&lt;iframe src="plugin.html"&gt;</code> or inject your custom HTML per clip / track.</p>
+      <p>For example:</p>
+      <ul>
+        <li>Clip-based editor (stretch, reverse, slice, AI remix)</li>
+        <li>Track-based FX chain (EQ, compressor, reverb controls)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- THEME DESIGNER POPUP -->
+<div class="theme-overlay" id="theme-overlay">
+  <div class="theme-window">
+    <div class="theme-window-header">
+      <div class="theme-window-title">Sound LAB Theme Designer</div>
+      <button class="theme-btn" id="theme-close-btn">Close</button>
+    </div>
+    <div class="theme-window-body">
+      <div class="theme-form" id="theme-form">
+        <!-- rows injected by JS -->
+      </div>
+      <div class="theme-window-actions">
+        <div class="theme-actions-left">
+          <button class="theme-btn" id="theme-reset-btn">Reset Preview</button>
+          <span style="font-size:10px;color:var(--text-muted);">Pick quick colors from the dropdown or use the full spectrum picker for custom shades.</span>
+        </div>
+        <div class="theme-actions-right">
+          <button class="theme-btn primary" id="theme-preview-btn">Apply (Preview)</button>
+          <button class="theme-btn save" id="theme-save-btn">Save & Use</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ========= BASIC DATA ========= */
+  const BEATS_PER_BAR = 4;
+  let beatWidth = 48;
+  let gridBars = 200;
+  const GRID_LEFT_OFFSET = 0;
+
+  let tracks = [];
+  let clips = [];
+  let patterns = [];
+
+  let currentPatternId = null;
+  let nextTrackId = 1;
+  let nextClipId = 1;
+  let nextPatternId = 1;
+
+  // playback
+  let tempo = 130;
+  let isPlaying = false;
+  let playheadBeat = 0;
+  let playStartTime = 0;
+  let playheadBeatAtStart = 0;
+
+  // loop
+  let loopActive = false;
+  let loopStartBeat = 0;
+  let loopEndBeat = 0;
+  let loopSelecting = false;
+  let loopSelectAnchorBeat = 0;
+
+  // mouse zoom
+  let isTimelineMouseDown = false;
+
+  // display
+  let songKey = 'C# MINOR';
+  let mixLevel = 0.2;
+
+  // metronome
+  let metronomeOn = false;
+
+  // bottom dock
+  let bottomVisible = false;
+  let currentBottomPanelKey = 'mixer';
+
+  // mode: 'song' or 'pattern'
+  let playMode = 'song';
+
+  // record mode: 'playlist' or 'step'
+  let recordMode = 'playlist';
+
+  // THEME HANDLING
+  const THEME_CLASS_LIST = [
+    'theme-sl-dark-lab',
+    'theme-sl-dark-gray',
+    'theme-sl-midnight',
+    'theme-sl-aurora',
+    'theme-sl-sunset',
+    'theme-sl-cyber',
+    'theme-sl-console'
+  ];
+  const THEME_STORAGE_KEY = 'sulandra_sound_theme';
+  const CUSTOM_THEME_KEY = 'sulandra_sound_custom_theme';
+
+  const CSS_VAR_KEYS = [
+    '--bg-deep','--bg-surface','--bg-panel','--bg-panel-soft',
+    '--border-soft','--border-strong',
+    '--accent','--accent2','--accent3','--accent4',
+    '--text-main','--text-muted',
+    '--grid-line',
+    '--clip-blue','--clip-purple','--clip-pink','--clip-green',
+    '--timeline-bg','--timeline-grid-bg','--timeline-header-bg','--timeline-ruler-bg',
+    '--header-bg','--icon-dock-bg','--main-grid-bg','--bottom-dock-bg'
+  ];
+
+  const themeSelect = document.getElementById('theme-select');
+  const themeCustomBtn = document.getElementById('theme-custom-btn');
+
+  let activeThemeName = 'default';
+
+  function resetCustomVariables() {
+    CSS_VAR_KEYS.forEach(v => document.documentElement.style.removeProperty(v));
+  }
+
+  function applyCustomTheme(vars) {
+    resetCustomVariables();
+    document.body.classList.remove(...THEME_CLASS_LIST);
+    Object.keys(vars).forEach(k => {
+      if (CSS_VAR_KEYS.includes(k)) {
+        document.documentElement.style.setProperty(k, vars[k]);
       }
+    });
+    activeThemeName = 'custom';
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, 'custom');
+      localStorage.setItem(CUSTOM_THEME_KEY, JSON.stringify(vars));
+    } catch (e) {}
+    if (themeSelect && themeSelect.value !== 'custom') {
+      themeSelect.value = 'custom';
+    }
+  }
 
-      const loopRow = document.createElement('div');
-      loopRow.className = 'overlay-row';
-      loopRow.innerHTML = '<div class="overlay-label">Loop Length</div>';
-      const lengthSelect = document.createElement('select');
-      lengthSelect.className = 'overlay-select';
-      [2, 4, 8, 16].forEach(bars => {
-        const opt = document.createElement('option');
-        opt.value = String(bars);
-        opt.textContent = `${bars} bars`;
-        if (bars === 4) opt.selected = true;
-        lengthSelect.appendChild(opt);
-      });
-      loopRow.appendChild(lengthSelect);
-      container.appendChild(loopRow);
+  function loadCustomTheme() {
+    try {
+      const raw = localStorage.getItem(CUSTOM_THEME_KEY);
+      if (!raw) return false;
+      const vars = JSON.parse(raw);
+      applyCustomTheme(vars);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
-      const vibeRow = document.createElement('div');
-      vibeRow.className = 'overlay-row';
-      vibeRow.innerHTML = '<div class="overlay-label">Vibe Tags</div>';
-      const pillRow = document.createElement('div');
-      pillRow.className = 'overlay-pill-row';
-      const vibes = ['Afrobeat', 'Seductive', 'Choir', 'Hype', 'Soft', 'Classic', 'Modern', 'Experimental'];
-      const activeVibes = new Set();
-      vibes.forEach(v => {
-        const pill = document.createElement('div');
-        pill.className = 'overlay-pill';
-        pill.textContent = v;
-        pill.addEventListener('click', () => {
-          if (activeVibes.has(v)) {
-            activeVibes.delete(v);
-            pill.classList.remove('active');
-          } else {
-            activeVibes.add(v);
-            pill.classList.add('active');
-          }
-        });
-        pillRow.appendChild(pill);
-      });
-      vibeRow.appendChild(pillRow);
-      container.appendChild(vibeRow);
+  function setTheme(themeName) {
+    if (!themeName) themeName = 'default';
 
-      const footer = document.createElement('div');
-      footer.className = 'overlay-footer';
-
-      const cancelBtn = document.createElement('button');
-      cancelBtn.className = 'overlay-btn secondary';
-      cancelBtn.textContent = 'Close';
-      cancelBtn.addEventListener('click', closeOverlay);
-
-      const createBtn = document.createElement('button');
-      createBtn.className = 'overlay-btn primary';
-      createBtn.textContent = 'Generate & Drop to Timeline';
-      createBtn.addEventListener('click', () => {
-        // Placeholder: in real app, we would call backend to generate clip + audio.
-        const clip = {
-          trackId: track.id,
-          name: isVocal ? 'SL Vocal Loop' : 'SL Instrument Loop',
-          start: 0,
-          length: Number(lengthSelect.value) || 4
-        };
-        clips.push(clip);
-        renderTimeline();
-        closeOverlay();
-      });
-
-      footer.appendChild(cancelBtn);
-      footer.appendChild(createBtn);
-      container.appendChild(footer);
-
-      overlayBodyEl.appendChild(container);
+    if (themeName === 'custom') {
+      if (!loadCustomTheme()) {
+        openThemeDesigner();
+      }
+      return;
     }
 
-    // ===== TRACK SETTINGS WINDOW =====
-    function openTrackSettingsForTrack(trackId) {
-      const track = getTrack(trackId);
-      if (!track) return;
+    resetCustomVariables();
+    document.body.classList.remove(...THEME_CLASS_LIST);
 
-      openOverlay('Track Settings', 'trackSettings', trackId, true);
+    if (themeName !== 'default' && THEME_CLASS_LIST.includes(themeName)) {
+      document.body.classList.add(themeName);
+    }
 
-      const container = document.createElement('div');
+    activeThemeName = themeName;
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, themeName);
+    } catch (e) {}
 
-      const nameRow = document.createElement('div');
-      nameRow.className = 'overlay-row';
-      nameRow.innerHTML = '<div class="overlay-label">Track Name</div>';
-      const nameInput = document.createElement('input');
-      nameInput.className = 'overlay-input';
-      nameInput.value = track.name;
-      nameRow.appendChild(nameInput);
-      container.appendChild(nameRow);
+    if (themeSelect) {
+      if (themeName === 'default') themeSelect.value = 'default';
+      else if (THEME_CLASS_LIST.includes(themeName)) themeSelect.value = themeName;
+    }
+  }
 
-      const iconRow = document.createElement('div');
-      iconRow.className = 'overlay-row';
-      iconRow.innerHTML = '<div class="overlay-label">Track Icon</div>';
-      const iconSelect = document.createElement('select');
-      iconSelect.className = 'overlay-select';
-      const iconOptions = [
-        { value: '', label: 'Default' },
-        { value: '🥁', label: 'Drum Kit' },
-        { value: '🌀', label: 'Bass Synth' },
-        { value: '🎹', label: 'Keys' },
-        { value: '☁️', label: 'Pad' },
-        { value: '⚡', label: 'Lead' },
-        { value: '✨', label: 'FX' },
-        { value: '🎙️', label: 'Vocal' },
-        { value: '🎵', label: 'Backing' },
-        { value: '👥', label: 'Choir' }
-      ];
-      iconOptions.forEach(optData => {
+  if (themeSelect) {
+    themeSelect.addEventListener('change', () => {
+      const val = themeSelect.value;
+      if (val === 'custom') {
+        setTheme('custom');
+      } else {
+        setTheme(val);
+      }
+    });
+  }
+
+  if (themeCustomBtn) {
+    themeCustomBtn.addEventListener('click', () => {
+      openThemeDesigner();
+    });
+  }
+
+  const trackListEl = document.getElementById('track-list');
+  const rulerInner = document.getElementById('ruler-inner');
+  const gridInner = document.getElementById('grid-inner');
+  const loopRegionEl = document.getElementById('loop-region');
+  const playheadEl = document.getElementById('playhead');
+  const timelineScroll = document.getElementById('timeline-scroll');
+  const zoomRange = document.getElementById('zoom-range');
+  const addTrackBtn = document.getElementById('add-track-btn');
+  const patternSelect = document.getElementById('pattern-select');
+  const patternListEl = document.getElementById('pattern-list');
+  const newPatternBtn = document.getElementById('new-pattern-btn');
+
+  const pluginOverlay = document.getElementById('plugin-overlay');
+  const pluginTitleEl = document.getElementById('plugin-title');
+  const pluginBodyEl = document.getElementById('plugin-body');
+  const pluginCloseBtn = document.getElementById('plugin-close-btn');
+
+  const thumb = document.getElementById('timeline-thumb');
+  const thumbLeftHandle = document.getElementById('thumb-left');
+  const thumbRightHandle = document.getElementById('thumb-right');
+  const thumbCenter = document.getElementById('thumb-center');
+
+  const playBtn = document.getElementById('btn-play');
+  const stopBtn = document.getElementById('btn-stop');
+  const backBtn = document.getElementById('btn-back');
+  const recBtn = document.getElementById('btn-rec');
+  const metronomeBtn = document.getElementById('btn-metronome');
+  const tempoDisplay = document.getElementById('tempo-value');
+
+  const modeSongBtn = document.getElementById('mode-song');
+  const modePatternBtn = document.getElementById('mode-pattern');
+  const timelineTitleEl = document.getElementById('timeline-title');
+
+  const recModePlaylistBtn = document.getElementById('rec-mode-playlist');
+  const recModeStepBtn = document.getElementById('rec-mode-step');
+
+  const bottomDock = document.getElementById('bottom-dock');
+  const bottomHandle = document.getElementById('bottom-resize');
+  const DEFAULT_BOTTOM_HEIGHT = 220;
+
+  const mixerStripsEl = document.getElementById('mixer-strips');
+
+  const screenTimeEl = document.getElementById('screen-time');
+  const screenKeyEl  = document.getElementById('screen-key');
+  const screenBpmEl  = document.getElementById('screen-bpm');
+  const screenMixEl  = document.getElementById('screen-mix');
+  const screenMixBox = document.getElementById('screen-mix-box');
+  const screenKeyBox = document.getElementById('screen-key-box');
+
+  const vscrollRight = document.getElementById('vscroll-right');
+  const vscrollThumb = document.getElementById('vscroll-thumb');
+  const vscrollUp = document.getElementById('vscroll-up');
+  const vscrollDown = document.getElementById('vscroll-down');
+  const vscrollTrack = document.querySelector('.vscroll-track');
+  let vThumbDragging = false;
+  let vThumbStartY = 0;
+  let vThumbStartTop = 0;
+  let syncingVertical = false;
+
+  const mainGridEl = document.querySelector('.main-grid');
+  const leftBrowserPanel = document.querySelector('.left-browser');
+  const rightPluginsPanel = document.querySelector('.right-placeholder');
+
+  const trackTypeMenu = document.getElementById('track-type-menu');
+  let activeTypeTrackId = null;
+
+  const themeOverlay = document.getElementById('theme-overlay');
+  const themeFormEl = document.getElementById('theme-form');
+  const themeCloseBtn = document.getElementById('theme-close-btn');
+  const themeResetBtn = document.getElementById('theme-reset-btn');
+  const themePreviewBtn = document.getElementById('theme-preview-btn');
+  const themeSaveBtn = document.getElementById('theme-save-btn');
+
+  const THEME_FIELDS = [
+    { var: '--bg-deep', label: 'Global Background' },
+    { var: '--bg-panel', label: 'Panels / Sidebars' },
+    { var: '--timeline-bg', label: 'Timeline Background' },
+    { var: '--timeline-grid-bg', label: 'Timeline Grid' },
+    { var: '--timeline-header-bg', label: 'Timeline Header' },
+    { var: '--timeline-ruler-bg', label: 'Timeline Ruler' },
+    { var: '--accent', label: 'Primary Accent' },
+    { var: '--accent2', label: 'Secondary Accent' },
+    { var: '--accent3', label: 'Highlight Accent' },
+    { var: '--accent4', label: 'Header Accent' },
+    { var: '--text-main', label: 'Main Text' },
+    { var: '--text-muted', label: 'Muted Text' },
+    { var: '--grid-line', label: 'Grid Lines' },
+    { var: '--clip-blue', label: 'Clip Color A' },
+    { var: '--clip-purple', label: 'Clip Color B' },
+    { var: '--clip-pink', label: 'Clip Color C' },
+    { var: '--clip-green', label: 'Clip Color D' }
+  ];
+  const QUICK_COLORS = [
+    { name: 'Mint Neon', value: '#7cffc7' },
+    { name: 'Electric Blue', value: '#4aa8ff' },
+    { name: 'Hot Pink', value: '#ff5aa8' },
+    { name: 'Sunset Gold', value: '#ffd77c' },
+    { name: 'Deep Violet', value: '#5a2dff' },
+    { name: 'Aqua Cyan', value: '#00e0ff' },
+    { name: 'Soft Gray', value: '#808080' },
+    { name: 'Custom…', value: 'custom' }
+  ];
+  const themeFieldControls = {}; // varName -> { colorInput, textInput }
+
+  /* ========= PLUGIN POPUP ========= */
+  function openPluginWindow(title, descriptionHtml) {
+    pluginTitleEl.textContent = title;
+    pluginBodyEl.innerHTML = descriptionHtml;
+    pluginOverlay.style.display = 'flex';
+  }
+  function closePluginWindow() {
+    pluginOverlay.style.display = 'none';
+  }
+  pluginCloseBtn.addEventListener('click', closePluginWindow);
+  pluginOverlay.addEventListener('click', (e) => {
+    if (e.target === pluginOverlay) closePluginWindow();
+  });
+
+  /* ========= THEME DESIGNER ========= */
+  function ensureThemeFormBuilt() {
+    if (!themeFormEl || themeFormEl.children.length > 0) return;
+    const cs = getComputedStyle(document.documentElement);
+
+    THEME_FIELDS.forEach(field => {
+      const row = document.createElement('div');
+      row.className = 'theme-row';
+
+      const label = document.createElement('label');
+      label.textContent = field.label;
+
+      const controls = document.createElement('div');
+      controls.className = 'theme-color-controls';
+
+      const select = document.createElement('select');
+      QUICK_COLORS.forEach(q => {
         const opt = document.createElement('option');
-        opt.value = optData.value;
-        opt.textContent = optData.value ? `${optData.value}  ${optData.label}` : optData.label;
-        if (optData.value === (track.icon || '')) {
-          opt.selected = true;
-        }
-        iconSelect.appendChild(opt);
+        opt.value = q.value;
+        opt.textContent = q.name;
+        select.appendChild(opt);
       });
-      iconRow.appendChild(iconSelect);
-      container.appendChild(iconRow);
+      select.value = 'custom';
 
-      const colorRow = document.createElement('div');
-      colorRow.className = 'overlay-row';
-      colorRow.innerHTML = '<div class="overlay-label">Track Color</div>';
-      const colorInner = document.createElement('div');
-      colorInner.className = 'color-row';
       const colorInput = document.createElement('input');
       colorInput.type = 'color';
-      colorInput.value = track.color || '#ff7b7b';
-      const colorPreview = document.createElement('div');
-      colorPreview.className = 'color-preview';
-      colorPreview.style.background = track.color || '#ff7b7b';
-      colorInput.addEventListener('input', () => {
-        colorPreview.style.background = colorInput.value;
-      });
-      colorInner.appendChild(colorInput);
-      colorInner.appendChild(colorPreview);
-      colorRow.appendChild(colorInner);
-      container.appendChild(colorRow);
 
-      const footer = document.createElement('div');
-      footer.className = 'overlay-footer';
+      const textInput = document.createElement('input');
+      textInput.type = 'text';
+      textInput.maxLength = 9;
 
-      const cancelBtn = document.createElement('button');
-      cancelBtn.className = 'overlay-btn secondary';
-      cancelBtn.textContent = 'Cancel';
-      cancelBtn.addEventListener('click', closeOverlay);
-
-      const applyBtn = document.createElement('button');
-      applyBtn.className = 'overlay-btn primary';
-      applyBtn.textContent = 'Apply';
-      applyBtn.addEventListener('click', () => {
-        track.name = nameInput.value.trim() || track.name;
-        track.icon = iconSelect.value || null;
-        track.color = colorInput.value || track.color;
-        closeOverlay();
-        renderTracks();
-        renderTimeline();
-      });
-
-      footer.appendChild(cancelBtn);
-      footer.appendChild(applyBtn);
-      container.appendChild(footer);
-
-      overlayBodyEl.appendChild(container);
-    }
-
-    // ===== RECORD CONFIG WINDOW =====
-    const recordPresets = [];
-
-    function openRecordConfigForTrack(trackId) {
-      const track = getTrack(trackId);
-      if (!track) return;
-
-      openOverlay('Record Setup', 'recordConfig', trackId, true);
-
-      const container = document.createElement('div');
-
-      const headerRow = document.createElement('div');
-      headerRow.className = 'overlay-row';
-      headerRow.innerHTML = `
-        <div class="overlay-label">Track</div>
-        <div style="font-size:12px;">
-          <strong>${track.name}</strong>
-          <span style="color: var(--sl-text-muted);">(${track.type === 'vocal' ? 'Vocal' : 'Instrument'})</span>
-        </div>
-      `;
-      container.appendChild(headerRow);
-
-      const inputRow = document.createElement('div');
-      inputRow.className = 'overlay-row';
-      inputRow.innerHTML = '<div class="overlay-label">Input Source</div>';
-      const inputSelect = document.createElement('select');
-      inputSelect.className = 'overlay-select';
-      ['System Default Microphone', 'SL Capture Interface 1', 'USB Mic – CrystalVoice'].forEach((label, idx) => {
-        const opt = document.createElement('option');
-        opt.value = label;
-        opt.textContent = label;
-        inputSelect.appendChild(opt);
-      });
-      if (track.recordConfig && track.recordConfig.input) {
-        inputSelect.value = track.recordConfig.input;
+      let currentValue = cs.getPropertyValue(field.var).trim();
+      if (!currentValue || !currentValue.startsWith('#')) {
+        currentValue = '#ffffff';
       }
-      inputRow.appendChild(inputSelect);
-      container.appendChild(inputRow);
+      colorInput.value = currentValue;
+      textInput.value = currentValue;
 
-      const outputRow = document.createElement('div');
-      outputRow.className = 'overlay-row';
-      outputRow.innerHTML = '<div class="overlay-label">Output</div>';
-      const outputSelect = document.createElement('select');
-      outputSelect.className = 'overlay-select';
-      const outputs = [
-        'Project Output (Master)',
-        'Headphones A',
-        'Audio Interface 1–2'
-      ];
-      outputs.forEach(label => {
-        const opt = document.createElement('option');
-        opt.value = label;
-        opt.textContent = label;
-        outputSelect.appendChild(opt);
-      });
-      if (track.recordConfig && track.recordConfig.output) {
-        outputSelect.value = track.recordConfig.output;
-      }
-      outputRow.appendChild(outputSelect);
-      container.appendChild(outputRow);
-
-      const presetRow = document.createElement('div');
-      presetRow.className = 'overlay-row';
-      presetRow.innerHTML = '<div class="overlay-label">Preset</div>';
-      const presetSelect = document.createElement('select');
-      presetSelect.className = 'overlay-select';
-      const blankOpt = document.createElement('option');
-      blankOpt.value = '';
-      blankOpt.textContent = 'None';
-      presetSelect.appendChild(blankOpt);
-      recordPresets.forEach((preset, idx) => {
-        const opt = document.createElement('option');
-        opt.value = preset.name;
-        opt.textContent = preset.name;
-        presetSelect.appendChild(opt);
-      });
-      presetSelect.addEventListener('change', () => {
-        const p = recordPresets.find(p => p.name === presetSelect.value);
-        if (p) {
-          inputSelect.value = p.input;
-          outputSelect.value = p.output;
+      function applyColor(value) {
+        if (!value) return;
+        if (!value.startsWith('#')) {
+          if (/^[0-9a-fA-F]{6}$/.test(value)) value = '#' + value;
+          else return;
         }
-      });
-      presetRow.appendChild(presetSelect);
-      container.appendChild(presetRow);
+        colorInput.value = value;
+        textInput.value = value;
+        document.documentElement.style.setProperty(field.var, value);
+      }
 
-      const newPresetRow = document.createElement('div');
-      newPresetRow.className = 'overlay-row';
-      newPresetRow.innerHTML = '<div class="overlay-label">Save as New Preset</div>';
-      const presetInput = document.createElement('input');
-      presetInput.className = 'overlay-input';
-      presetInput.placeholder = 'Preset name (e.g. “Lead Vocal Chain”)';
-      newPresetRow.appendChild(presetInput);
-      container.appendChild(newPresetRow);
-
-      const footer = document.createElement('div');
-      footer.className = 'overlay-footer';
-
-      const cancelBtn = document.createElement('button');
-      cancelBtn.className = 'overlay-btn secondary';
-      cancelBtn.textContent = 'Cancel';
-      cancelBtn.addEventListener('click', closeOverlay);
-
-      const savePresetBtn = document.createElement('button');
-      savePresetBtn.className = 'overlay-btn secondary';
-      savePresetBtn.textContent = 'Save Preset';
-      savePresetBtn.addEventListener('click', () => {
-        const name = presetInput.value.trim();
-        if (!name) return;
-        const existing = recordPresets.find(p => p.name === name);
-        if (existing) {
-          existing.input = inputSelect.value;
-          existing.output = outputSelect.value;
+      select.addEventListener('change', () => {
+        const v = select.value;
+        if (v === 'custom') {
+          colorInput.focus();
         } else {
-          recordPresets.push({
-            name,
-            input: inputSelect.value,
-            output: outputSelect.value
-          });
+          applyColor(v);
         }
-        closeOverlay();
       });
 
-      const armBtn = document.createElement('button');
-      armBtn.className = 'overlay-btn primary';
-      armBtn.textContent = track.recordArmed ? 'Update & Keep Armed' : 'Apply & Arm Track';
-      armBtn.addEventListener('click', () => {
-        track.recordConfig = {
-          input: inputSelect.value,
-          output: outputSelect.value,
-          presetName: presetSelect.value || null
-        };
-        track.recordArmed = true;
-        closeOverlay();
-        renderTracks();
+      colorInput.addEventListener('input', () => {
+        applyColor(colorInput.value);
       });
 
-      footer.appendChild(cancelBtn);
-      footer.appendChild(savePresetBtn);
-      footer.appendChild(armBtn);
-      container.appendChild(footer);
-
-      overlayBodyEl.appendChild(container);
-    }
-
-    // ===== IMPORT DIALOGS (PLACEHOLDER IMPLEMENTATION) =====
-    function openImportFromDeviceDialog(trackId) {
-      const track = getTrack(trackId);
-      if (!track) return;
-
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'audio/*';
-      input.addEventListener('change', () => {
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
-        track.type = 'import';
-        track.role = null;
-        track.name = file.name.replace(/\.[^/.]+$/, '');
-        track.icon = '🎧';
-        track.color = '#7b9dff';
-        // Add a simple placeholder clip at start
-        clips.push({
-          trackId: track.id,
-          name: track.name,
-          start: 0,
-          length: 4
-        });
-        renderTracks();
-        renderTimeline();
-      });
-      input.click();
-    }
-
-    function openImportFromAudioLibraryDialog(trackId) {
-      const track = getTrack(trackId);
-      if (!track) return;
-
-      openOverlay('Import from SL Audio Library', 'importLibrary', trackId, true);
-
-      const container = document.createElement('div');
-      const row = document.createElement('div');
-      row.className = 'overlay-row';
-      row.innerHTML = `
-        <div class="overlay-label">My Creations</div>
-        <div style="font-size:12px; color: var(--sl-text-muted);">
-          This will connect to your Sound Lab audio library
-          (e.g. <strong>music.html</strong>) and let you drop stems,
-          bounces and loops directly into this track.
-        </div>
-      `;
-      container.appendChild(row);
-
-      const footer = document.createElement('div');
-      footer.className = 'overlay-footer';
-
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'overlay-btn secondary';
-      closeBtn.textContent = 'Close';
-      closeBtn.addEventListener('click', closeOverlay);
-
-      const demoBtn = document.createElement('button');
-      demoBtn.className = 'overlay-btn primary';
-      demoBtn.textContent = 'Simulate Import';
-      demoBtn.addEventListener('click', () => {
-        track.type = 'import';
-        track.role = null;
-        track.icon = '🎧';
-        track.color = '#7b9dff';
-        clips.push({
-          trackId: track.id,
-          name: 'SL Audio – Demo Stem',
-          start: 0,
-          length: 8
-        });
-        renderTracks();
-        renderTimeline();
-        closeOverlay();
+      textInput.addEventListener('change', () => {
+        applyColor(textInput.value.trim());
       });
 
-      footer.appendChild(closeBtn);
-      footer.appendChild(demoBtn);
-      container.appendChild(footer);
+      controls.appendChild(select);
+      controls.appendChild(colorInput);
+      controls.appendChild(textInput);
 
-      overlayBodyEl.appendChild(container);
-    }
+      row.appendChild(label);
+      row.appendChild(controls);
+      themeFormEl.appendChild(row);
 
-    // ===== ADD TRACK BUTTON =====
-    document.getElementById('add-track-btn').addEventListener('click', () => {
-      createTrack(`Track ${nextTrackId}`, {
-        type: 'instrument',
-        icon: null,
-        color: '#ff7b7b'
-      });
+      themeFieldControls[field.var] = { colorInput, textInput };
+    });
+  }
+
+  function collectCurrentThemeVarsFromDesigner() {
+    const vars = {};
+    THEME_FIELDS.forEach(field => {
+      const controls = themeFieldControls[field.var];
+      if (!controls) return;
+      let val = controls.colorInput.value || controls.textInput.value;
+      if (!val) return;
+      if (!val.startsWith('#') && /^[0-9a-fA-F]{6}$/.test(val)) {
+        val = '#' + val;
+      }
+      vars[field.var] = val;
+    });
+    return vars;
+  }
+
+  function openThemeDesigner() {
+    ensureThemeFormBuilt();
+
+    const cs = getComputedStyle(document.documentElement);
+    THEME_FIELDS.forEach(field => {
+      const controls = themeFieldControls[field.var];
+      if (!controls) return;
+      let currentValue = cs.getPropertyValue(field.var).trim();
+      if (!currentValue || !currentValue.startsWith('#')) {
+        currentValue = '#ffffff';
+      }
+      controls.colorInput.value = currentValue;
+      controls.textInput.value = currentValue;
     });
 
-    // ===== INITIAL DEMO TRACKS =====
-    createTrack('Drum Kit', { type: 'instrument', icon: '🥁', color: '#ff7b7b' });
-    createTrack('Bass Synth', { type: 'instrument', icon: '🌀', color: '#7bffb5' });
-    createTrack('Lead Vocal', { type: 'vocal', role: 'lead', icon: '🎙️', color: '#ff6bb8' });
-    setActiveTrack(1);
+    themeOverlay.style.display = 'flex';
+  }
 
-  </script>
+  function closeThemeDesigner() {
+    themeOverlay.style.display = 'none';
+  }
+
+  themeOverlay.addEventListener('click', (e) => {
+    if (e.target === themeOverlay) closeThemeDesigner();
+  });
+  themeCloseBtn.addEventListener('click', closeThemeDesigner);
+
+  themeResetBtn.addEventListener('click', () => {
+    if (activeThemeName === 'custom') {
+      loadCustomTheme();
+    } else {
+      setTheme(activeThemeName || 'default');
+    }
+  });
+
+  themePreviewBtn.addEventListener('click', () => {
+    const vars = collectCurrentThemeVarsFromDesigner();
+    Object.keys(vars).forEach(k => {
+      document.documentElement.style.setProperty(k, vars[k]);
+    });
+  });
+
+  themeSaveBtn.addEventListener('click', () => {
+    const vars = collectCurrentThemeVarsFromDesigner();
+    applyCustomTheme(vars);
+    closeThemeDesigner();
+  });
+
+  /* ========= RULER & GRID ========= */
+  function buildRuler() {
+    rulerInner.innerHTML = '';
+    for (let bar = 1; bar <= gridBars; bar++) {
+      const span = document.createElement('span');
+      span.textContent = bar;
+      rulerInner.appendChild(span);
+    }
+  }
+
+  function updateGridSizes() {
+    document.documentElement.style.setProperty('--beat-width', beatWidth + 'px');
+    const totalBeats = gridBars * BEATS_PER_BAR;
+    const totalWidth = GRID_LEFT_OFFSET + totalBeats * beatWidth + 16;
+    gridInner.style.minWidth = totalWidth + 'px';
+    rulerInner.style.minWidth = totalWidth + 'px';
+  }
+
+  function ensureGridForBeat(beat) {
+    const requiredBar = Math.floor(beat / BEATS_PER_BAR) + 2;
+    if (requiredBar > gridBars) {
+      gridBars = requiredBar + 50;
+      buildRuler();
+      updateGridSizes();
+      updateHorizontalThumb();
+    }
+  }
+
+  /* ========= PATTERNS ========= */
+  function addPattern(name, color) {
+    const id = nextPatternId++;
+    patterns.push({ id, name, color, lengthBeats: 4 });
+    if (!currentPatternId) currentPatternId = id;
+    renderPatterns();
+    return id;
+  }
+
+  function renderPatterns() {
+    patternSelect.innerHTML = '';
+    patterns.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      patternSelect.appendChild(opt);
+    });
+    if (currentPatternId) patternSelect.value = currentPatternId;
+
+    patternListEl.innerHTML = '';
+    patterns.forEach(p => {
+      const item = document.createElement('div');
+      item.className = 'browser-item pattern-item';
+      if (p.id === currentPatternId) item.classList.add('active');
+      item.dataset.patternId = p.id;
+
+      const left = document.createElement('span');
+      left.textContent = p.name;
+      left.style.color = p.color === 'blue' ? '#7cbeff'
+                       : p.color === 'green' ? '#7cffc7'
+                       : p.color === 'purple' ? '#ffb4ff'
+                       : '#ffd7f0';
+      const right = document.createElement('span');
+      right.textContent = 'PAT';
+
+      item.appendChild(left);
+      item.appendChild(right);
+      item.addEventListener('click', () => {
+        currentPatternId = p.id;
+        patternSelect.value = currentPatternId;
+        renderPatterns();
+      });
+      patternListEl.appendChild(item);
+    });
+  }
+
+  patternSelect.addEventListener('change', () => {
+    currentPatternId = parseInt(patternSelect.value, 10) || null;
+    renderPatterns();
+  });
+
+  newPatternBtn.addEventListener('click', () => {
+    const name = prompt('Name of new pattern:', 'New Pattern');
+    if (!name) return;
+    const colors = ['blue','green','purple','pink'];
+    const color = colors[patterns.length % colors.length];
+    const pId = addPattern(name, color);
+    currentPatternId = pId;
+    patternSelect.value = pId;
+    renderPatterns();
+  });
+
+  /* ========= TRACKS ========= */
+  function addTrack(name) {
+    const id = nextTrackId++;
+    tracks.push({ id, name: name || `Track ${id}`, height: 40, type: 'Audio' });
+    renderTracks();
+    return id;
+  }
+
+  function moveTrack(id, dir) {
+    const index = tracks.findIndex(t => t.id === id);
+    if (index === -1) return;
+    const newIndex = index + dir;
+    if (newIndex < 0 || newIndex >= tracks.length) return;
+    const [track] = tracks.splice(index, 1);
+    tracks.splice(newIndex, 0, track);
+    renderTracks();
+  }
+
+  const trackListAddBar = trackListEl.querySelector('.add-track-bar');
+  let trackDragInfo = null;
+
+  function renderTracks() {
+    const headers = Array.from(trackListEl.querySelectorAll('.track-header,.track-resize-handle'));
+    headers.forEach(h => h.remove());
+
+    const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
+    rows.forEach(r => r.remove());
+
+    tracks.forEach((t, idx) => {
+      const header = document.createElement('div');
+      header.className = 'track-header';
+      header.style.height = t.height + 'px';
+      header.dataset.trackId = t.id;
+
+      const dot = document.createElement('div');
+      dot.className = 'track-color-dot';
+      dot.addEventListener('dblclick', () => {
+        openPluginWindow(
+          `Track Plugin – ${t.name}`,
+          `<p>Future plugin window for <b>${t.name}</b>.</p>
+           <p>Later you can load a track plugin UI here (EQ, compressor, reverb, sends).</p>
+           <p>Ideas:</p>
+           <ul>
+             <li>AI-assisted EQ suggestions per track</li>
+             <li>Preset browser tied to genre &amp; tempo</li>
+           </ul>`
+        );
+      });
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'track-name';
+      nameEl.textContent = t.name;
+      nameEl.addEventListener('dblclick', () => {
+        nameEl.contentEditable = 'true';
+        nameEl.focus();
+        document.execCommand('selectAll', false, null);
+      });
+      nameEl.addEventListener('blur', () => {
+        nameEl.contentEditable = 'false';
+        t.name = nameEl.textContent.trim() || t.name;
+        nameEl.textContent = t.name;
+        renderMixer();
+      });
+      nameEl.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
+      });
+
+      const controls = document.createElement('div');
+      controls.className = 'track-controls';
+
+      const mBtn = document.createElement('button');
+      mBtn.className = 'track-btn';
+      mBtn.textContent = 'M';
+      mBtn.title = 'Mute';
+      mBtn.addEventListener('click', () => {
+        mBtn.classList.toggle('active');
+      });
+
+      const sBtn = document.createElement('button');
+      sBtn.className = 'track-btn';
+      sBtn.textContent = 'S';
+      sBtn.title = 'Solo';
+      sBtn.addEventListener('click', () => {
+        sBtn.classList.toggle('active');
+      });
+
+      const upBtn = document.createElement('button');
+      upBtn.className = 'track-btn';
+      upBtn.textContent = '▲';
+      upBtn.title = 'Move up';
+      upBtn.addEventListener('click', () => moveTrack(t.id, -1));
+
+      const downBtn = document.createElement('button');
+      downBtn.className = 'track-btn';
+      downBtn.textContent = '▼';
+      downBtn.title = 'Move down';
+      downBtn.addEventListener('click', () => moveTrack(t.id, +1));
+
+      const optionsBtn = document.createElement('button');
+      optionsBtn.className = 'track-options-btn';
+      optionsBtn.textContent = '⋯';
+      optionsBtn.title = 'Track type / options';
+      optionsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activeTypeTrackId = t.id;
+        showTrackTypeMenu(e.clientX, e.clientY);
+      });
+
+      controls.appendChild(mBtn);
+      controls.appendChild(sBtn);
+      controls.appendChild(upBtn);
+      controls.appendChild(downBtn);
+      controls.appendChild(optionsBtn);
+
+      header.appendChild(dot);
+      header.appendChild(nameEl);
+      header.appendChild(controls);
+
+      const resize = document.createElement('div');
+      resize.className = 'track-resize-handle';
+      resize.dataset.trackId = t.id;
+
+      trackListEl.insertBefore(resize, trackListAddBar);
+      trackListEl.insertBefore(header, resize);
+
+      header.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.track-btn') || e.target.closest('.track-options-btn') || e.target.classList.contains('track-color-dot')) return;
+        if (e.button !== 0) return;
+        trackDragInfo = { id: t.id };
+        header.classList.add('dragging');
+      });
+
+      const gridRow = document.createElement('div');
+      gridRow.className = 'grid-track-row';
+      gridRow.dataset.trackId = t.id;
+      gridRow.style.height = t.height + 'px';
+      gridInner.appendChild(gridRow);
+    });
+
+    gridInner.style.setProperty('--track-height', '40px');
+    renderClips();
+    renderMixer();
+    updatePlayheadPosition(false);
+    updateLoopRegion();
+    updateVerticalThumb();
+    updateHorizontalThumb();
+  }
+
+  addTrackBtn.addEventListener('click', () => {
+    const id = addTrack();
+    if (clips.length === 0 && patterns.length > 0) {
+      const p = patterns[0];
+      createClip(id, 0, 4, p.name, p.color, p.id);
+    }
+  });
+
+  /* ========= TRACK TYPE MENU ========= */
+  function showTrackTypeMenu(clientX, clientY) {
+    const menu = trackTypeMenu;
+    menu.style.display = 'block';
+    const rect = menu.getBoundingClientRect();
+    let x = clientX + 4;
+    let y = clientY + 4;
+    if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 6;
+    if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 6;
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+  }
+
+  function hideTrackTypeMenu() {
+    trackTypeMenu.style.display = 'none';
+    activeTypeTrackId = null;
+  }
+
+  trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const type = item.dataset.type;
+      if (!activeTypeTrackId) return;
+      const t = tracks.find(tr => tr.id === activeTypeTrackId);
+      if (t) t.type = type;
+      hideTrackTypeMenu();
+      renderMixer();
+    });
+  });
+
+  window.addEventListener('click', (e) => {
+    if (!trackTypeMenu.contains(e.target) && !e.target.classList.contains('track-options-btn')) {
+      hideTrackTypeMenu();
+    }
+  });
+
+  /* ========= MIXER ========= */
+  function renderMixer() {
+    if (!mixerStripsEl) return;
+    mixerStripsEl.innerHTML = '';
+    tracks.forEach((t, index) => {
+      const strip = document.createElement('div');
+      strip.className = 'mixer-strip';
+
+      const header = document.createElement('div');
+      header.className = 'mixer-strip-header';
+      const num = document.createElement('div');
+      num.className = 'mixer-strip-num';
+      num.textContent = index === 0 ? 'M' : (index + 1);
+      const name = document.createElement('div');
+      name.className = 'mixer-strip-name';
+      name.textContent = t.name || `Insert ${index+1}`;
+      header.appendChild(num);
+      header.appendChild(name);
+
+      const typeTag = document.createElement('div');
+      typeTag.className = 'mixer-type-tag';
+      typeTag.textContent = (t.type || 'Audio').toUpperCase();
+
+      const knobRow = document.createElement('div');
+      knobRow.className = 'mixer-knob-row';
+      const knob = document.createElement('div');
+      knob.className = 'mixer-knob';
+      const led = document.createElement('div');
+      led.className = 'mixer-led';
+      knobRow.appendChild(knob);
+      knobRow.appendChild(led);
+
+      const center = document.createElement('div');
+      center.className = 'mixer-center';
+      const meter = document.createElement('div');
+      meter.className = 'mixer-meter';
+      const meterInner = document.createElement('div');
+      meterInner.className = 'mixer-meter-inner';
+      const level = 20 + (index * 8) % 60;
+      meterInner.style.height = level + '%';
+      meter.appendChild(meterInner);
+
+      const faderShell = document.createElement('div');
+      faderShell.className = 'mixer-fader-shell';
+      const faderSlot = document.createElement('div');
+      faderSlot.className = 'mixer-fader-slot';
+      const faderKnob = document.createElement('div');
+      faderKnob.className = 'mixer-fader-knob';
+      faderKnob.style.bottom = '25%';
+      faderShell.appendChild(faderSlot);
+      faderShell.appendChild(faderKnob);
+
+      faderKnob.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        let startY = e.clientY;
+        let startBottom = parseFloat(faderKnob.style.bottom) || 25;
+        function onMove(ev) {
+          const dy = ev.clientY - startY;
+          let newBottom = startBottom - dy / 2;
+          newBottom = Math.max(5, Math.min(88, newBottom));
+          faderKnob.style.bottom = newBottom + '%';
+        }
+        function onUp() {
+          window.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', onUp);
+        }
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+      });
+
+      center.appendChild(meter);
+      center.appendChild(faderShell);
+
+      const bottomRow = document.createElement('div');
+      bottomRow.className = 'mixer-bottom-row';
+      const btns = document.createElement('div');
+      btns.className = 'mixer-bottom-btns';
+      const muteBtn = document.createElement('div');
+      muteBtn.className = 'mixer-btn mute';
+      const soloBtn = document.createElement('div');
+      soloBtn.className = 'mixer-btn solo';
+      muteBtn.addEventListener('click', () => muteBtn.classList.toggle('active'));
+      soloBtn.addEventListener('click', () => soloBtn.classList.toggle('active'));
+      btns.appendChild(muteBtn);
+      btns.appendChild(soloBtn);
+      const label = document.createElement('div');
+      label.className = 'mixer-bottom-label';
+      label.textContent = index === 0 ? 'Master' : `Insert ${index}`;
+      bottomRow.appendChild(btns);
+      bottomRow.appendChild(label);
+
+      strip.appendChild(header);
+      strip.appendChild(typeTag);
+      strip.appendChild(knobRow);
+      strip.appendChild(center);
+      strip.appendChild(bottomRow);
+
+      mixerStripsEl.appendChild(strip);
+    });
+  }
+
+  /* ========= CLIPS ========= */
+  function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
+    const id = nextClipId++;
+    clips.push({ id, trackId, startBeat, lengthBeats, label, color, patternId: patternId || null });
+    ensureGridForBeat(startBeat + lengthBeats);
+    renderClips();
+  }
+
+  function renderClips() {
+    gridInner.querySelectorAll('.clip').forEach(c => c.remove());
+
+    clips.forEach(c => {
+      const row = gridInner.querySelector(`.grid-track-row[data-track-id="${c.trackId}"]`);
+      if (!row) return;
+      const top = row.offsetTop;
+
+      const el = document.createElement('div');
+      el.className = 'clip';
+      el.dataset.clipId = c.id;
+      el.dataset.color = c.color || 'blue';
+
+      el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
+      el.style.top = (top + 4) + 'px';
+      el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
+
+      const leftHandle = document.createElement('div');
+      leftHandle.className = 'clip-handle-left';
+      leftHandle.dataset.handle = 'left';
+
+      const label = document.createElement('div');
+      label.className = 'clip-label';
+      label.textContent = c.label;
+
+      const rightHandle = document.createElement('div');
+      rightHandle.className = 'clip-handle-right';
+      rightHandle.dataset.handle = 'right';
+
+      el.appendChild(leftHandle);
+      el.appendChild(label);
+      el.appendChild(rightHandle);
+
+      addClipDragHandlers(el, c);
+
+      el.addEventListener('dblclick', () => {
+        const patternDesc = c.patternId
+          ? `<p>This clip references <b>Pattern ${c.patternId}</b>. In Pattern mode, playback loops within this pattern range.</p>`
+          : `<p>This is a free audio / MIDI clip (no specific pattern bound yet).</p>`;
+        openPluginWindow(
+          `Clip Plugin – ${c.label}`,
+          `<p>You double-clicked clip <b>${c.label}</b> on Track ID ${c.trackId}.</p>
+           ${patternDesc}
+           <p>Ideas for this window:</p>
+           <ul>
+             <li>Audio editing (trim, fade, reverse, time-stretch)</li>
+             <li>AI remix tools (genre swap, stem split, harmony)</li>
+             <li>Per-clip FX chain and automation overview</li>
+           </ul>`
+        );
+      });
+
+      gridInner.appendChild(el);
+    });
+  }
+
+  function addClipDragHandlers(el, clip) {
+    let dragging = false;
+    let resizing = null;
+    let startX = 0;
+    let startLeft = 0;
+    let startWidth = 0;
+
+    el.addEventListener('mousedown', e => {
+      const handle = e.target.dataset.handle;
+      dragging = !handle;
+      resizing = handle || null;
+      startX = e.clientX;
+      startLeft = parseFloat(el.style.left);
+      startWidth = parseFloat(el.style.width);
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (!dragging && !resizing) return;
+      const dx = e.clientX - startX;
+
+      if (dragging) {
+        let newLeft = startLeft + dx;
+        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
+        beatFromZero = Math.max(0, Math.round(beatFromZero));
+        clip.startBeat = beatFromZero;
+        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
+        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
+
+        const rect = gridInner.getBoundingClientRect();
+        const y = e.clientY - rect.top;
+        const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
+        let closestRow = null;
+        let closestDist = Infinity;
+        rows.forEach(r => {
+          const rRect = r.getBoundingClientRect();
+          const mid = rRect.top + rRect.height / 2 - rect.top;
+          const dist = Math.abs(y - mid);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestRow = r;
+          }
+        });
+        if (closestRow) {
+          clip.trackId = parseInt(closestRow.dataset.trackId, 10);
+          el.style.top = (closestRow.offsetTop + 4) + 'px';
+        }
+      } else if (resizing === 'left') {
+        let newLeft = startLeft + dx;
+        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
+        let snappedBeat = Math.round(beatFromZero);
+        let maxBeat = clip.startBeat + clip.lengthBeats - 1;
+        if (snappedBeat < 0) snappedBeat = 0;
+        if (snappedBeat >= maxBeat) snappedBeat = maxBeat - 1;
+        const newLength = clip.startBeat + clip.lengthBeats - snappedBeat;
+        clip.startBeat = snappedBeat;
+        clip.lengthBeats = newLength;
+        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
+        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
+        el.style.width = (clip.lengthBeats * beatWidth - 6) + 'px';
+      } else if (resizing === 'right') {
+        let newWidth = startWidth + dx;
+        let beats = Math.max(1, Math.round((newWidth + 6) / beatWidth));
+        clip.lengthBeats = beats;
+        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
+        el.style.width = (clip.lengthBeats * beatWidth - 6) + 'px';
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      dragging = false;
+      resizing = null;
+    });
+
+    el.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      alert('Later: show a context menu for clip options – normalize, reverse, open detailed editor, etc.');
+    });
+  }
+
+  /* ========= PLACE PATTERN ON GRID (DOUBLE-CLICK) ========= */
+  gridInner.addEventListener('dblclick', (e) => {
+    if (e.target.classList.contains('clip') || e.target.closest('.clip')) return;
+    if (!currentPatternId) {
+      alert('Create or select a pattern first.');
+      return;
+    }
+    const pattern = patterns.find(p => p.id === currentPatternId);
+    if (!pattern) return;
+
+    const rect = gridInner.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
+    if (!rows.length) return;
+    let closestRow = rows[0];
+    let closestDist = Infinity;
+    rows.forEach(r => {
+      const rRect = r.getBoundingClientRect();
+      const mid = rRect.top + rRect.height / 2 - rect.top;
+      const dist = Math.abs(y - mid);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestRow = r;
+      }
+    });
+    const trackId = parseInt(closestRow.dataset.trackId, 10);
+
+    let beatFromZero = (x - GRID_LEFT_OFFSET) / beatWidth;
+    if (beatFromZero < 0) beatFromZero = 0;
+    const snappedBeat = Math.round(beatFromZero);
+    const lengthBeats = pattern.lengthBeats || 4;
+    createClip(trackId, snappedBeat, lengthBeats, pattern.name, pattern.color, pattern.id);
+  });
+
+  /* ========= ZOOM ========= */
+  function updateHorizontalThumb() {
+    const bar = thumb.parentElement;
+    if (!bar) return;
+    const scrollWidth = timelineScroll.scrollWidth;
+    const clientWidth = timelineScroll.clientWidth;
+    const total = bar.clientWidth;
+
+    if (scrollWidth <= 0 || clientWidth <= 0 || total <= 0) {
+      thumb.style.width = total + 'px';
+      thumb.style.left = '0px';
+      return;
+    }
+
+    if (scrollWidth <= clientWidth) {
+      thumb.style.width = total + 'px';
+      thumb.style.left = '0px';
+      return;
+    }
+
+    const ratio = clientWidth / scrollWidth;
+    const width = Math.max(30, total * ratio);
+    const maxLeft = total - width;
+    const maxScroll = scrollWidth - clientWidth;
+    const leftRatio = maxScroll > 0 ? (timelineScroll.scrollLeft / maxScroll) : 0;
+    const left = maxLeft * leftRatio;
+
+    thumb.style.width = width + 'px';
+    thumb.style.left = left + 'px';
+  }
+
+  function zoomAtBeatWidth(newBeatWidth, clientX) {
+    newBeatWidth = Math.max(32, Math.min(140, newBeatWidth));
+    if (newBeatWidth === beatWidth) return;
+
+    const rect = timelineScroll.getBoundingClientRect();
+    const centerX = clientX ?? (rect.left + rect.width / 2);
+    const xInScroll = centerX - rect.left + timelineScroll.scrollLeft;
+    const beatAtCursorBefore = (xInScroll - GRID_LEFT_OFFSET) / beatWidth;
+
+    beatWidth = newBeatWidth;
+    zoomRange.value = beatWidth;
+    updateGridSizes();
+    renderClips();
+    updatePlayheadPosition(false);
+    updateLoopRegion();
+    const xAfter = GRID_LEFT_OFFSET + beatAtCursorBefore * beatWidth;
+    timelineScroll.scrollLeft = Math.max(0, xAfter - (centerX - rect.left));
+    updateHorizontalThumb();
+  }
+
+  zoomRange.addEventListener('input', () => {
+    zoomAtBeatWidth(parseInt(zoomRange.value, 10), null);
+  });
+
+  gridInner.addEventListener('mousedown', (e) => {
+    if (e.button === 0) {
+      isTimelineMouseDown = true;
+    }
+  });
+  window.addEventListener('mouseup', () => { isTimelineMouseDown = false; });
+
+  gridInner.addEventListener('wheel', (e) => {
+    if (!isTimelineMouseDown) return;
+    e.preventDefault();
+    const delta = e.deltaY;
+    const step = 4;
+    const newBeatWidth = beatWidth + (delta < 0 ? step : -step);
+    zoomAtBeatWidth(newBeatWidth, e.clientX);
+  }, { passive: false });
+
+  let thumbDragging = false;
+  let thumbStartX = 0;
+  let thumbScrollStart = 0;
+
+  thumbCenter.addEventListener('mousedown', e => {
+    thumbDragging = true;
+    thumbStartX = e.clientX;
+    thumbScrollStart = timelineScroll.scrollLeft;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (thumbDragging) {
+      const bar = thumb.parentElement;
+      const total = bar.clientWidth;
+      const scrollWidth = timelineScroll.scrollWidth;
+      const clientWidth = timelineScroll.clientWidth;
+      const dx = e.clientX - thumbStartX;
+      const maxScroll = scrollWidth - clientWidth;
+      if (maxScroll <= 0) return;
+
+      const thumbWidth = thumb.clientWidth;
+      const maxLeft = total - thumbWidth;
+      const scrollPerPixel = maxScroll / maxLeft;
+      let newScroll = thumbScrollStart + dx * scrollPerPixel;
+      newScroll = Math.max(0, Math.min(maxScroll, newScroll));
+      timelineScroll.scrollLeft = newScroll;
+      updateHorizontalThumb();
+    }
+  });
+
+  window.addEventListener('mouseup', () => { thumbDragging = false; });
+
+  let thumbResizeMode = null;
+  let thumbResizeStartX = 0;
+  let thumbResizeStartWidth = 0;
+  let thumbResizeInitialBeatWidth = 0;
+
+  function startThumbResize(mode, e) {
+    thumbResizeMode = mode;
+    thumbResizeStartX = e.clientX;
+    thumbResizeStartWidth = thumb.clientWidth;
+    thumbResizeInitialBeatWidth = beatWidth;
+    e.preventDefault();
+  }
+
+  thumbLeftHandle.addEventListener('mousedown', (e) => startThumbResize('left', e));
+  thumbRightHandle.addEventListener('mousedown', (e) => startThumbResize('right', e));
+
+  window.addEventListener('mousemove', (e) => {
+    if (!thumbResizeMode) return;
+    const bar = thumb.parentElement;
+    const total = bar.clientWidth;
+    if (total <= 0) return;
+
+    const dx = e.clientX - thumbResizeStartX;
+    let newWidth = thumbResizeMode === 'right'
+      ? thumbResizeStartWidth + dx
+      : thumbResizeStartWidth - dx;
+
+    newWidth = Math.max(30, Math.min(total, newWidth));
+    const factor = thumbResizeStartWidth / newWidth;
+    let newBeatWidth = thumbResizeInitialBeatWidth * factor;
+    zoomAtBeatWidth(newBeatWidth, window.innerWidth / 2);
+  });
+
+  window.addEventListener('mouseup', () => { thumbResizeMode = null; });
+
+  /* ========= PLAYBACK & MODES ========= */
+  function bpmToSecPerBeat(bpm) { return 60 / bpm; }
+
+  function formatTimeFromBeats(beats, bpm) {
+    const sec = beats * bpmToSecPerBeat(bpm);
+    const totalMs = sec * 1000;
+    const minutes = Math.floor(totalMs / 60000);
+    const remainingMs = totalMs - minutes * 60000;
+    const seconds = Math.floor(remainingMs / 1000);
+    const ms = Math.floor(remainingMs - seconds * 1000);
+    const mm = String(minutes).padStart(2, '0');
+    const ss = String(seconds).padStart(2, '0');
+    const mmm = String(ms).padStart(3, '0');
+    return `${mm}:${ss}.${mmm}`;
+  }
+
+  function updateScreenDisplay(timestampForMix) {
+    screenTimeEl.textContent = formatTimeFromBeats(playheadBeat, tempo);
+    screenKeyEl.textContent = songKey;
+    screenBpmEl.textContent = tempo.toFixed(1);
+
+    const t = (timestampForMix ?? performance.now()) / 600;
+    mixLevel = 0.2 + 0.6 * (0.5 + 0.5 * Math.sin(t + playheadBeat * 0.3));
+    mixLevel = Math.max(0, Math.min(1.2, mixLevel));
+
+    const db = -48 + mixLevel * 51;
+    let status = '';
+    let cls = 'screen-box mix';
+    if (db < -24) { status = 'LOW'; cls += ' low'; }
+    else if (db <= 0) { status = 'NORMAL'; cls += ' normal'; }
+    else { status = 'CLIPPING'; cls += ' clip'; }
+    screenMixEl.textContent = `${db.toFixed(1)} dB · ${status}`;
+    screenMixBox.className = cls;
+  }
+
+  function updatePlayheadPosition(autoScroll) {
+    ensureGridForBeat(playheadBeat + 4);
+    const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
+    playheadEl.style.left = x + 'px';
+
+    if (autoScroll && playMode === 'song') {
+      const marginLeft = 50;
+      const marginRight = 100;
+      const viewLeft = timelineScroll.scrollLeft;
+      const viewRight = viewLeft + timelineScroll.clientWidth;
+
+      if (x < viewLeft + marginLeft) {
+        timelineScroll.scrollLeft = Math.max(0, x - marginLeft);
+      } else if (x > viewRight - marginRight) {
+        timelineScroll.scrollLeft = x - timelineScroll.clientWidth + marginRight;
+      }
+    }
+
+    updateScreenDisplay();
+  }
+
+  function playLoop(ts) {
+    if (!isPlaying) { updateScreenDisplay(ts); return; }
+    const elapsedSec = (ts - playStartTime) / 1000;
+    const secPerBeat = bpmToSecPerBeat(tempo);
+    const elapsedBeats = elapsedSec / secPerBeat;
+
+    if (playMode === 'pattern' && currentPatternId) {
+      const pattern = patterns.find(p => p.id === currentPatternId);
+      const patternLength = pattern ? (pattern.lengthBeats || 4) : 4;
+      let localBeat = (playheadBeatAtStart + elapsedBeats) % patternLength;
+      if (localBeat < 0) localBeat += patternLength;
+      playheadBeat = localBeat;
+    } else {
+      let currentBeat = playheadBeatAtStart + elapsedBeats;
+      if (loopActive && loopEndBeat > loopStartBeat) {
+        if (currentBeat >= loopEndBeat) {
+          currentBeat = loopStartBeat;
+          playheadBeatAtStart = loopStartBeat;
+          playStartTime = ts;
+        }
+      }
+      playheadBeat = Math.max(0, currentBeat);
+    }
+
+    updatePlayheadPosition(true);
+    updateScreenDisplay(ts);
+    requestAnimationFrame(playLoop);
+  }
+
+  function startPlayback() {
+    if (isPlaying) return;
+    isPlaying = true;
+    playBtn.classList.add('active');
+    playheadBeatAtStart = playheadBeat;
+    playStartTime = performance.now();
+    requestAnimationFrame(playLoop);
+  }
+
+  function pausePlayback() {
+    if (!isPlaying) return;
+    isPlaying = false;
+    playBtn.classList.remove('active');
+  }
+
+  playBtn.addEventListener('click', () => {
+    if (isPlaying) pausePlayback();
+    else startPlayback();
+  });
+
+  stopBtn.addEventListener('click', () => {
+    pausePlayback();
+    playheadBeat = 0;
+    updatePlayheadPosition(false);
+  });
+
+  backBtn.addEventListener('click', () => {
+    playheadBeat = 0;
+    updatePlayheadPosition(false);
+  });
+
+  recBtn.addEventListener('click', () => {
+    recBtn.classList.toggle('active');
+    alert(`Record mode is set to "${recordMode.toUpperCase()}". Later this will control whether we capture into the Playlist or into a step-style rack.`);
+  });
+
+  metronomeBtn.addEventListener('click', () => {
+    metronomeOn = !metronomeOn;
+    metronomeBtn.classList.toggle('active', metronomeOn);
+  });
+
+  screenKeyBox.addEventListener('click', () => {
+    const val = prompt('Set song key (example: C# MINOR, A MAJOR):', songKey);
+    if (!val) return;
+    songKey = val.trim().toUpperCase();
+    screenKeyEl.textContent = songKey;
+  });
+
+  window.addEventListener('keydown', (e) => {
+    const active = document.activeElement;
+    const typingInField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+
+    if (e.code === 'Space') {
+      if (typingInField) return;
+      e.preventDefault();
+      if (isPlaying) pausePlayback();
+      else startPlayback();
+      return;
+    }
+    if (typingInField) return;
+
+    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
+      e.preventDefault();
+      zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
+    } else if (e.key === '-' || e.key === '_') {
+      e.preventDefault();
+      zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
+    }
+  });
+
+  /* ========= MODE TOGGLES ========= */
+  function updateModeUI() {
+    if (playMode === 'song') {
+      modeSongBtn.classList.add('active');
+      modePatternBtn.classList.remove('active');
+      timelineTitleEl.textContent = 'Playlist · Arrangement A (Song Mode)';
+    } else {
+      modeSongBtn.classList.remove('active');
+      modePatternBtn.classList.add('active');
+      const pattern = patterns.find(p => p.id === currentPatternId);
+      const pName = pattern ? pattern.name : 'No Pattern Selected';
+      timelineTitleEl.textContent = `Pattern Mode · ${pName}`;
+    }
+  }
+
+  modeSongBtn.addEventListener('click', () => {
+    playMode = 'song';
+    updateModeUI();
+  });
+  modePatternBtn.addEventListener('click', () => {
+    playMode = 'pattern';
+    updateModeUI();
+  });
+
+  recModePlaylistBtn.addEventListener('click', () => {
+    recordMode = 'playlist';
+    recModePlaylistBtn.classList.add('active');
+    recModeStepBtn.classList.remove('active');
+  });
+  recModeStepBtn.addEventListener('click', () => {
+    recordMode = 'step';
+    recModeStepBtn.classList.add('active');
+    recModePlaylistBtn.classList.remove('active');
+  });
+
+  /* ========= LOOP SELECTION ========= */
+  function clientXToBeat(clientX) {
+    const rect = timelineScroll.getBoundingClientRect();
+    const xInScroll = clientX - rect.left + timelineScroll.scrollLeft;
+    let beat = (xInScroll - GRID_LEFT_OFFSET) / beatWidth;
+    if (beat < 0) beat = 0;
+    return beat;
+  }
+
+  function updateLoopRegion() {
+    if ((!loopActive && !loopSelecting) || playMode === 'pattern') {
+      loopRegionEl.style.display = 'none';
+      return;
+    }
+    if (loopEndBeat <= loopStartBeat) {
+      loopRegionEl.style.display = 'none';
+      return;
+    }
+    const left = GRID_LEFT_OFFSET + loopStartBeat * beatWidth;
+    const width = (loopEndBeat - loopStartBeat) * beatWidth;
+    loopRegionEl.style.display = 'block';
+    loopRegionEl.style.left = left + 'px';
+    loopRegionEl.style.width = width + 'px';
+  }
+
+  const rulerEl = document.querySelector('.timeline-ruler');
+  rulerEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  rulerEl.addEventListener('mousedown', (e) => {
+    if (e.button !== 2) return;
+    if (playMode === 'pattern') return; // loop region not used in pattern mode
+    e.preventDefault();
+    const beat = clientXToBeat(e.clientX);
+    loopSelecting = true;
+    loopSelectAnchorBeat = beat;
+    loopStartBeat = beat;
+    loopEndBeat = beat;
+    loopActive = false;
+    updateLoopRegion();
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!loopSelecting) return;
+    const beat = clientXToBeat(e.clientX);
+    loopStartBeat = Math.min(loopSelectAnchorBeat, beat);
+    loopEndBeat = Math.max(loopSelectAnchorBeat, beat);
+    updateLoopRegion();
+  });
+
+  window.addEventListener('mouseup', (e) => {
+    if (loopSelecting && e.button === 2) {
+      loopSelecting = false;
+      if (Math.abs(loopEndBeat - loopStartBeat) < 0.25) {
+        loopActive = false;
+        loopRegionEl.style.display = 'none';
+      } else {
+        loopActive = true;
+        updateLoopRegion();
+      }
+    }
+
+    if (trackDragInfo) {
+      const headers = Array.from(trackListEl.querySelectorAll('.track-header'));
+      let closestIndex = 0;
+      let minDist = Infinity;
+      headers.forEach((h, idx) => {
+        const rect = h.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        const dist = Math.abs(e.clientY - mid);
+        if (dist < minDist) {
+          minDist = dist;
+          closestIndex = idx;
+        }
+        h.classList.remove('dragging');
+      });
+
+      const trackId = trackDragInfo.id;
+      const currentIndex = tracks.findIndex(tr => tr.id === trackId);
+      if (currentIndex !== -1 && closestIndex !== currentIndex) {
+        const [trk] = tracks.splice(currentIndex, 1);
+        tracks.splice(closestIndex, 0, trk);
+        renderTracks();
+      }
+      trackDragInfo = null;
+    }
+  });
+
+  /* ========= TRACK HEIGHT RESIZE ========= */
+  let resizingTrackId = null;
+  let resizeStartY = 0;
+  let originalHeight = 0;
+
+  trackListEl.addEventListener('mousedown', e => {
+    const handle = e.target.closest('.track-resize-handle');
+    if (!handle) return;
+    resizingTrackId = parseInt(handle.dataset.trackId, 10);
+    resizeStartY = e.clientY;
+    const t = tracks.find(tr => tr.id === resizingTrackId);
+    originalHeight = t ? t.height : 40;
+    document.body.style.userSelect = 'none';
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!resizingTrackId) return;
+    const t = tracks.find(tr => tr.id === resizingTrackId);
+    if (!t) return;
+    const dy = e.clientY - resizeStartY;
+    let newH = Math.min(80, Math.max(28, originalHeight + dy));
+    t.height = newH;
+    renderTracks();
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (resizingTrackId) {
+      resizingTrackId = null;
+      document.body.style.userSelect = '';
+    }
+  });
+
+  /* ========= BOTTOM DOCK RESIZE ========= */
+  let bottomResizing = false;
+  let bottomStartY = 0;
+  let bottomStartHeight = 0;
+
+  bottomHandle.addEventListener('mousedown', e => {
+    bottomResizing = true;
+    bottomStartY = e.clientY;
+    bottomStartHeight = bottomDock.offsetHeight;
+    document.body.style.userSelect = 'none';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!bottomResizing) return;
+    const dy = e.clientY - bottomStartY;
+    let newH = bottomStartHeight - dy;
+    const viewportLimit = window.innerHeight - 140;
+    newH = Math.max(12, Math.min(viewportLimit, newH));
+    bottomDock.style.height = newH + 'px';
+    updateVerticalThumb();
+  });
+  window.addEventListener('mouseup', () => {
+    if (bottomResizing) {
+      bottomResizing = false;
+      document.body.style.userSelect = '';
+    }
+  });
+
+  /* ========= BOTTOM PANEL TABS ========= */
+  document.querySelectorAll('.bottom-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const id = tab.dataset.bottomPanel;
+      currentBottomPanelKey = id;
+      document.querySelectorAll('.bottom-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'bottom-' + id);
+      });
+    });
+  });
+
+  /* ========= TOP ICON PANEL TOGGLING ========= */
+  const dockIcons = document.querySelectorAll('.dock-icon');
+  const dockPanels = document.querySelectorAll('.dock-panel');
+
+  function refreshMainGridLayout() {
+    const leftVisible = leftBrowserPanel.style.display !== 'none';
+    const rightVisible = rightPluginsPanel.style.display !== 'none';
+
+    if (leftVisible && rightVisible) {
+      mainGridEl.style.gridTemplateColumns = '260px minmax(0,1fr) 220px';
+    } else if (leftVisible && !rightVisible) {
+      mainGridEl.style.gridTemplateColumns = '260px minmax(0,1fr)';
+    } else if (!leftVisible && rightVisible) {
+      mainGridEl.style.gridTemplateColumns = 'minmax(0,1fr) 220px';
+    } else {
+      mainGridEl.style.gridTemplateColumns = 'minmax(0,1fr)';
+    }
+  }
+
+  dockIcons.forEach(icon => {
+    icon.addEventListener('click', () => {
+      const panel = icon.dataset.panel;
+
+      if (panel === 'mixer' || panel === 'piano' || panel === 'rack') {
+        const mapped = panel === 'rack' ? 'rack' : panel;
+        if (bottomVisible && currentBottomPanelKey === mapped) {
+          bottomDock.style.display = 'none';
+          bottomVisible = false;
+          dockIcons.forEach(ic => {
+            if (['mixer','piano','rack'].includes(ic.dataset.panel)) {
+              ic.classList.remove('active');
+            }
+          });
+        } else {
+          bottomDock.style.display = 'flex';
+          bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
+          bottomVisible = true;
+          currentBottomPanelKey = mapped;
+          const tab = document.querySelector(`.bottom-tab[data-bottom-panel="${mapped}"]`);
+          if (tab) tab.click();
+          dockIcons.forEach(ic => {
+            if (['mixer','piano','rack'].includes(ic.dataset.panel)) {
+              ic.classList.toggle('active', ic.dataset.panel === panel);
+            }
+          });
+        }
+        updateVerticalThumb();
+        return;
+      }
+
+      const relatedPanels = Array.from(dockPanels).filter(p => {
+        const id = p.dataset.panelId;
+        if (panel === 'timeline') return id === 'timeline';
+        if (panel === 'browser') return id === 'browser';
+        if (panel === 'plugins') return id === 'plugins';
+        return false;
+      });
+
+      const currentlyVisible = relatedPanels.some(p => p.style.display !== 'none');
+      relatedPanels.forEach(p => { p.style.display = currentlyVisible ? 'none' : ''; });
+      icon.classList.toggle('active', !currentlyVisible);
+
+      refreshMainGridLayout();
+      updateVerticalThumb();
+      updateHorizontalThumb();
+    });
+  });
+
+  /* ========= VERTICAL SCROLL (TIMELINE ONLY) ========= */
+  function updateVerticalThumb() {
+    if (!vscrollRight || !vscrollThumb) return;
+    const contentHeight = timelineScroll.scrollHeight;
+    const viewportHeight = timelineScroll.clientHeight;
+    const containerHeight = vscrollTrack.clientHeight;
+    const maxScroll = contentHeight - viewportHeight;
+
+    if (maxScroll <= 0 || containerHeight <= 0) {
+      vscrollThumb.style.display = 'none';
+      return;
+    }
+
+    vscrollThumb.style.display = 'block';
+
+    const visibleRatio = viewportHeight / contentHeight;
+    const thumbHeight = Math.max(30, containerHeight * visibleRatio);
+    vscrollThumb.style.height = thumbHeight + 'px';
+
+    const maxTop = containerHeight - thumbHeight;
+    const top = maxTop > 0 ? (timelineScroll.scrollTop / maxScroll) * maxTop : 0;
+    vscrollThumb.style.top = top + 'px';
+  }
+
+  function syncVerticalScrollFrom(sourceEl) {
+    if (syncingVertical) return;
+    syncingVertical = true;
+    const value = sourceEl.scrollTop;
+    trackListEl.scrollTop = value;
+    timelineScroll.scrollTop = value;
+    updateVerticalThumb();
+    syncingVertical = false;
+  }
+
+  trackListEl.addEventListener('scroll', () => syncVerticalScrollFrom(trackListEl));
+  timelineScroll.addEventListener('scroll', () => {
+    updateHorizontalThumb();
+    syncVerticalScrollFrom(timelineScroll);
+  });
+
+  vscrollThumb.addEventListener('mousedown', e => {
+    vThumbDragging = true;
+    vThumbStartY = e.clientY;
+    vThumbStartTop = parseFloat(getComputedStyle(vscrollThumb).top) || 0;
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!vThumbDragging) return;
+    const containerHeight = vscrollTrack.clientHeight;
+    const thumbHeight = vscrollThumb.clientHeight;
+    const maxTop = containerHeight - thumbHeight;
+    let newTop = vThumbStartTop + (e.clientY - vThumbStartY);
+    newTop = Math.max(0, Math.min(maxTop, newTop));
+    vscrollThumb.style.top = newTop + 'px';
+
+    const maxScroll = timelineScroll.scrollHeight - timelineScroll.clientHeight;
+    const ratio = maxTop > 0 ? newTop / maxTop : 0;
+    const newScroll = maxScroll * ratio;
+
+    syncingVertical = true;
+    trackListEl.scrollTop = newScroll;
+    timelineScroll.scrollTop = newScroll;
+    syncingVertical = false;
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (vThumbDragging) {
+      vThumbDragging = false;
+      document.body.style.userSelect = '';
+    }
+  });
+
+  function scrollTimelineBy(delta) {
+    const newScroll = Math.max(0, Math.min(timelineScroll.scrollHeight - timelineScroll.clientHeight, timelineScroll.scrollTop + delta));
+    syncingVertical = true;
+    timelineScroll.scrollTop = newScroll;
+    trackListEl.scrollTop = newScroll;
+    syncingVertical = false;
+    updateVerticalThumb();
+  }
+
+  vscrollUp.addEventListener('click', () => scrollTimelineBy(-40));
+  vscrollDown.addEventListener('click', () => scrollTimelineBy(40));
+
+  vscrollRight.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    scrollTimelineBy(e.deltaY);
+  }, { passive: false });
+
+  window.addEventListener('resize', () => {
+    updateVerticalThumb();
+    updateHorizontalThumb();
+  });
+
+  /* ========= INITIAL SETUP ========= */
+  function init() {
+    document.documentElement.style.setProperty('--beats-per-bar', BEATS_PER_BAR);
+    document.documentElement.style.setProperty('--beat-width', beatWidth + 'px');
+
+    buildRuler();
+    updateGridSizes();
+    refreshMainGridLayout();
+
+    let savedTheme = 'default';
+    try {
+      const fromStorage = localStorage.getItem(THEME_STORAGE_KEY);
+      if (fromStorage) savedTheme = fromStorage;
+    } catch (e) {}
+    if (savedTheme === 'custom') {
+      setTheme('custom');
+    } else {
+      setTheme(savedTheme);
+    }
+
+    bottomDock.style.display = 'none';
+    bottomVisible = false;
+    bottomDock.style.height = DEFAULT_BOTTOM_HEIGHT + 'px';
+
+    const pDrums = addPattern('Pattern 1 – Drums', 'blue');
+    const pBass  = addPattern('Pattern 2 – Bass', 'green');
+    const pChrd  = addPattern('Pattern 3 – Chords', 'purple');
+
+    const t1 = addTrack('Master');
+    const t2 = addTrack('Drums');
+    const t3 = addTrack('Bass');
+    const t4 = addTrack('Chords');
+    const t5 = addTrack('Vocals');
+    const t6 = addTrack('FX');
+    const t7 = addTrack('Strings');
+    const t8 = addTrack('Piano');
+    const t9 = addTrack('Percussion');
+    const t10 = addTrack('Synths');
+
+    createClip(t2, 0, 4, 'Pattern 1 – Drums', 'blue', pDrums);
+    createClip(t3, 4, 4, 'Pattern 2 – Bass', 'green', pBass);
+    createClip(t4, 8, 4, 'Pattern 3 – Chords', 'purple', pChrd);
+
+    playheadBeat = 0;
+    tempoDisplay.textContent = tempo.toFixed(1);
+    screenKeyEl.textContent = songKey;
+    updateModeUI();
+    updatePlayheadPosition(false);
+    updateVerticalThumb();
+    updateHorizontalThumb();
+  }
+
+  init();
+</script>
 </body>
 </html>
