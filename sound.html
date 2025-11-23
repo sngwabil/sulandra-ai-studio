@@ -2636,9 +2636,9 @@ function addTrack(name) {
   tracks.push({
     id,
     name: name || `Track ${id}`,
-    height: 65, // Increased height for new layout
+    height: 65, /* FIXED HEIGHT */
     type: 'Audio',
-    kind: 'audio', 
+    kind: 'audio',
     preset: null,
     color: null,
     icon: ''
@@ -2668,44 +2668,44 @@ function renderTracks() {
     rows.forEach(r => r.remove());
 
     tracks.forEach((t, idx) => {
-      // 1. CONTAINER
+      // 1. Main Container
       const header = document.createElement('div');
       header.className = 'track-header';
       header.style.height = t.height + 'px';
       header.dataset.trackId = t.id;
 
-      // 2. LEFT COLUMN (Dot + Icon)
+      // 2. Left Column (Dot + Icon)
       const leftCol = document.createElement('div');
       leftCol.className = 'track-header-left';
 
       const dot = document.createElement('div');
       dot.className = 'track-color-dot';
       if (t.color) dot.style.background = t.color;
-      // Double click dot -> Open Track Type Menu
-      
-dot.addEventListener('dblclick', () => {
-  openPluginWindow(
-    `Track Plugin – ${t.name}`,
-    `<p>Future plugin window for <b>${t.name}</b>.</p>
-     <p>Later you can load a track plugin UI here (EQ, compressor, reverb, sends).</p>
-     <p>Ideas:</p>
-     <ul>
-       <li>AI-assisted EQ suggestions per track</li>
-       <li>Preset browser tied to genre &amp; tempo</li>
-     </ul>`
-  );
-});
+      dot.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        activeTypeTrackId = t.id;
+        showTrackTypeMenu(e.clientX, e.clientY);
+      });
 
-// NEW: icon next to the color dot
-const iconEl = document.createElement('div');
-iconEl.className = 'track-icon';
-iconEl.textContent = t.icon || '';
+      const iconEl = document.createElement('div');
+      iconEl.className = 'track-icon';
+      iconEl.textContent = t.icon || '';
 
+      leftCol.appendChild(dot);
+      leftCol.appendChild(iconEl);
 
+      // 3. Right Column (Name + Controls)
+      const rightCol = document.createElement('div');
+      rightCol.className = 'track-header-right';
+
+      // Track Name (Top)
       const nameEl = document.createElement('div');
       nameEl.className = 'track-name';
       nameEl.textContent = t.name;
-      nameEl.addEventListener('dblclick', () => {
+      nameEl.title = "Double click to rename";
+      
+      nameEl.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
         nameEl.contentEditable = 'true';
         nameEl.focus();
         document.execCommand('selectAll', false, null);
@@ -2720,6 +2720,7 @@ iconEl.textContent = t.icon || '';
         if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
       });
 
+      // Controls (Bottom)
       const controls = document.createElement('div');
       controls.className = 'track-controls';
 
@@ -2727,34 +2728,18 @@ iconEl.textContent = t.icon || '';
       mBtn.className = 'track-btn';
       mBtn.textContent = 'M';
       mBtn.title = 'Mute';
-      mBtn.addEventListener('click', () => {
-        mBtn.classList.toggle('active');
-      });
+      mBtn.addEventListener('click', () => mBtn.classList.toggle('active'));
 
       const sBtn = document.createElement('button');
       sBtn.className = 'track-btn';
       sBtn.textContent = 'S';
       sBtn.title = 'Solo';
-      sBtn.addEventListener('click', () => {
-        sBtn.classList.toggle('active');
-      });
-
-      const upBtn = document.createElement('button');
-      upBtn.className = 'track-btn';
-      upBtn.textContent = '▲';
-      upBtn.title = 'Move up';
-      upBtn.addEventListener('click', () => moveTrack(t.id, -1));
-
-      const downBtn = document.createElement('button');
-      downBtn.className = 'track-btn';
-      downBtn.textContent = '▼';
-      downBtn.title = 'Move down';
-      downBtn.addEventListener('click', () => moveTrack(t.id, +1));
+      sBtn.addEventListener('click', () => sBtn.classList.toggle('active'));
 
       const optionsBtn = document.createElement('button');
       optionsBtn.className = 'track-options-btn';
-      optionsBtn.textContent = '⋯';
-      optionsBtn.title = 'Track type / options';
+      optionsBtn.textContent = '⋮';
+      optionsBtn.title = 'Options / Upload';
       optionsBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         activeTypeTrackId = t.id;
@@ -2763,15 +2748,16 @@ iconEl.textContent = t.icon || '';
 
       controls.appendChild(mBtn);
       controls.appendChild(sBtn);
-      controls.appendChild(upBtn);
-      controls.appendChild(downBtn);
       controls.appendChild(optionsBtn);
-      
-header.appendChild(dot);
-header.appendChild(iconEl);
-header.appendChild(nameEl);
-header.appendChild(controls);
 
+      rightCol.appendChild(nameEl);
+      rightCol.appendChild(controls);
+
+      // Assemble
+      header.appendChild(leftCol);
+      header.appendChild(rightCol);
+
+      // Resize Handle
       const resize = document.createElement('div');
       resize.className = 'track-resize-handle';
       resize.dataset.trackId = t.id;
@@ -2779,13 +2765,22 @@ header.appendChild(controls);
       trackListEl.insertBefore(resize, trackListAddBar);
       trackListEl.insertBefore(header, resize);
 
+      // Context Menu Handler
+      header.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        activeTypeTrackId = t.id;
+        showTrackTypeMenu(e.clientX, e.clientY);
+      });
+
+      // Drag Start
       header.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.track-btn') || e.target.closest('.track-options-btn') || e.target.classList.contains('track-color-dot')) return;
+        if (e.target.closest('button') || e.target.classList.contains('track-name')) return;
         if (e.button !== 0) return;
         trackDragInfo = { id: t.id };
         header.classList.add('dragging');
       });
 
+      // Create Grid Row
       const gridRow = document.createElement('div');
       gridRow.className = 'grid-track-row';
       gridRow.dataset.trackId = t.id;
@@ -2793,7 +2788,9 @@ header.appendChild(controls);
       gridInner.appendChild(gridRow);
     });
 
-    gridInner.style.setProperty('--track-height', '40px');
+    // IMPORTANT: Update CSS variable so background lines match the new track height
+    gridInner.style.setProperty('--track-height', '65px');
+
     renderClips();
     renderMixer();
     updatePlayheadPosition(false);
@@ -2898,6 +2895,7 @@ window.addEventListener('click', (e) => {
 });
 
 // handle file uploads from "Upload from device…"
+// handle file uploads from "Upload from device…"
 if (trackFileInput) {
   trackFileInput.addEventListener('change', (e) => {
     const files = Array.from(e.target.files || []);
@@ -2920,7 +2918,7 @@ if (trackFileInput) {
         id: newId,
         name: files[0].name, // Name track after file
         height: 65,
-        type: targetTrack.type, // Copy properties from parent
+        type: targetTrack.type, 
         kind: targetTrack.kind,
         preset: targetTrack.preset,
         color: targetTrack.color,
@@ -2940,11 +2938,10 @@ if (trackFileInput) {
     } else {
       // 3. Not occupied: Just rename existing track to file name
       targetTrack.name = files[0].name;
-      renderTracks(); // update name in UI
+      renderTracks(); 
     }
 
-    // 4. Create the Clip on the (potentially new) track
-    // Place at beat 0, default length 8
+    // 4. Create the Clip
     createClip(targetTrackId, 0, 8, files[0].name, targetTrack.color || 'blue', null);
 
     // 5. Store file reference
