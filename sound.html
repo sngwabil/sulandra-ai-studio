@@ -1285,7 +1285,6 @@
   function addClipToTrack(trackId, { label, tag, bars }) {
     const track = getTrackById(trackId);
     if (!track) return;
-    const rowWidth = timelineScrollEl.clientWidth || 1200;
     const pxPerBar = 60; // matches background size
     const clipWidth = (bars || 4) * pxPerBar;
 
@@ -1557,7 +1556,7 @@
     const targetTrackId = slAssistantTargetTrackEl.value;
     const contentType = slAssistantContentTypeEl.value;
     const prompt = slAssistantPromptEl.value.trim();
-    const lyrics = slAssistantLyricsEl.value.trim();
+    const lyrics = slAssistantLyricsEl.value.trim(); // available for future engine
     const bars = Math.max(1, parseInt(slAssistantLengthEl.value || '4', 10));
 
     let track = null;
