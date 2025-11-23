@@ -5,7 +5,7 @@
   <title>Sulandra AI Studio – SOUND DAW</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-:root {
+    :root {
       /* DEFAULT (SULANDRA NEON) THEME VARIABLES */
       --bg-deep: #020419;
       --bg-surface: #050b2a;
@@ -20,6 +20,7 @@
       --text-main: #f7fbff;
       --text-muted: #9cb3ff;
       --grid-line: rgba(167,194,255,0.18);
+      --grid-line-bold: rgba(167,194,255,0.5);
       --clip-blue: #3d7cff;
       --clip-purple: #a96cff;
       --clip-pink: #ff6ca4;
@@ -27,10 +28,11 @@
       --radius: 7px;
       --shadow-soft: 0 0 32px rgba(0,0,0,0.85);
       --beat-width: 48px;
-      --track-height: 65px; /* UPDATED: Changed from 40px to 65px to match new tracks */
+      --track-height: 65px; /* Fixed Track Height */
       --beats-per-bar: 4;
+      --track-col-width: 170px; /* Fixed width for track headers */
 
-      /* Timeline-specific base colors (overridden by themes + custom designer) */
+      /* Timeline-specific base colors */
       --timeline-bg: radial-gradient(circle at 0 0,#253bff,#050a23 45%,#020419 100%);
       --timeline-grid-bg: #050822;
       --timeline-header-bg: linear-gradient(to bottom,#091650,#050a24);
@@ -130,7 +132,6 @@
       justify-content: flex-end;
     }
 
-    /* THEME SELECTOR IN HEADER */
     .theme-select-wrap {
       display: inline-flex;
       align-items: center;
@@ -266,6 +267,7 @@
       background: var(--main-grid-bg);
       box-shadow: var(--shadow-soft);
       display: grid;
+      /* Use var for track column width */
       grid-template-columns: 260px minmax(0,1fr) 220px;
       min-height: 450px;
       overflow: hidden;
@@ -638,7 +640,7 @@
       flex: 1;
       min-height: 0;
       display: grid;
-      grid-template-columns: 170px minmax(0,1fr) 16px;
+      grid-template-columns: var(--track-col-width) minmax(0,1fr) 16px;
     }
 
     /* RIGHT VERTICAL SCROLLBAR */
@@ -687,37 +689,15 @@
       position: relative;
       overflow-y: auto;
     }
-.track-header {
+    .track-header {
       display: grid;
-      grid-template-columns: 24px 1fr; /* Left (Color/Icon) | Right (Data) */
-      padding: 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(7,14,60,0.96);
-      /* Remove fixed height here, controlled by JS/Min-height */
-      gap: 8px;
-      cursor: grab;
-      align-items: center;
-    }
-    .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
-    .track-header.dragging { opacity: 0.7; }
-    
-    .track-header-left {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-    
-.track-header {
-      display: grid;
-      grid-template-columns: 24px 1fr; /* Column 1: Icon/Dot, Column 2: Content */
+      grid-template-columns: 24px 1fr; 
       padding: 4px 6px;
       border-bottom: 1px solid rgba(255,255,255,0.08);
       background: rgba(7,14,60,0.96);
       gap: 8px;
       cursor: grab;
       align-items: center;
-      /* Height is determined by JS, but grid helps align contents */
     }
     .track-header:nth-child(odd) { background: rgba(8,16,70,0.96); }
     .track-header.dragging { opacity: 0.7; }
@@ -795,17 +775,6 @@
       color: #02041b;
       border-color: #fff;
     }
-    .track-options-btn {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #02041b;
-      color: var(--text-muted);
-      font-size: 11px;
-      cursor: pointer;
-      padding: 0;
-    }
     .track-resize-handle {
       height: 4px;
       cursor: row-resize;
@@ -834,22 +803,38 @@
       overflow: auto;
     }
 
-    .timeline-ruler {
+    /* RULER FIX: Split into "TRACKS" and Scrollable Numbers */
+    .timeline-ruler-container {
+      display: flex;
       position: sticky;
       top: 0;
-      height: 22px;
+      height: 24px;
       background: var(--timeline-ruler-bg);
       border-bottom: 1px solid rgba(0,0,0,0.9);
+      z-index: 5;
+    }
+    .ruler-corner {
+      width: var(--track-col-width);
+      flex-shrink: 0;
+      border-right: 1px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      background: rgba(0,0,0,0.2);
+    }
+    .timeline-ruler-scroll-area {
+      flex: 1;
+      overflow: hidden; /* Scrolled via JS sync */
       display: flex;
       align-items: flex-end;
-      z-index: 2;
-      font-size: 9px;
-      color: var(--text-muted);
-      user-select: none;
     }
     .timeline-ruler-inner {
       display: flex;
-      padding: 3px 8px;
+      padding: 3px 0 0; /* removed horizontal padding to align perfectly */
       white-space: nowrap;
       gap: 0;
     }
@@ -857,25 +842,35 @@
       display: inline-block;
       min-width: calc(var(--beat-width,48px) * var(--beats-per-bar,4));
       text-align: left;
+      padding-left: 4px;
+      border-left: 1px solid rgba(255,255,255,0.15);
+      font-size: 9px;
+      color: var(--text-muted);
+      height: 100%;
     }
 
     .grid-inner {
       position: relative;
-      padding: 0 8px 8px;
+      padding: 0 0 8px; /* Remove horizontal padding to align with ruler */
+      /* Vertical Beat Lines + Bold Bar Lines */
       background-image:
-        linear-gradient(to right,var(--grid-line) 1px,transparent 1px),
-        linear-gradient(to right,rgba(124,190,255,0.12) 1px,transparent 1px),
-        linear-gradient(to bottom,var(--grid-line) 1px,transparent 1px);
-      background-size:
-        var(--beat-width,48px) 1px,
-        calc(var(--beat-width,48px) / 4) 1px,
-        1px var(--track-height,40px);
-      background-repeat: repeat;
+        linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), /* Bold Bar Line */
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px);      /* Standard Beat Line */
+      
+      background-size: 
+        calc(var(--beat-width,48px) * 4) 100%,
+        var(--beat-width,48px) 100%;
+      
+      background-position: 0 0;
+      background-repeat: repeat-x;
     }
+    
+    /* Rows handle the horizontal lines via border-bottom */
     .grid-track-row {
-      height: 40px;
+      height: var(--track-height);
       border-bottom: 1px solid rgba(255,255,255,0.08);
       position: relative;
+      box-sizing: border-box;
     }
 
     .playhead {
@@ -886,6 +881,7 @@
       background: linear-gradient(to bottom,#ffd77c,#ff7cf1);
       box-shadow: 0 0 12px rgba(255,215,124,0.9);
       pointer-events: none;
+      z-index: 10;
     }
 
     .loop-region {
@@ -902,11 +898,12 @@
     /* ===== CLIPS ===== */
     .clip {
       position: absolute;
-      top: 6px;
-      height: 28px;
+      top: 4px;
+      /* Calc height based on track height to leave padding */
+      height: calc(var(--track-height) - 8px); 
       border-radius: 6px;
       border: 1px solid rgba(255,255,255,0.6);
-      box-shadow: 0 0 16px rgba(0,0,0,0.9);
+      box-shadow: 0 0 16px rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
       padding: 0 6px;
@@ -915,6 +912,7 @@
       cursor: move;
       user-select: none;
       white-space: nowrap;
+      z-index: 2;
     }
     .clip[data-color="blue"]   { background: linear-gradient(135deg,var(--clip-blue),#7cbeff); }
     .clip[data-color="purple"] { background: linear-gradient(135deg,var(--clip-purple),#ffb4ff); }
@@ -1219,464 +1217,6 @@
       padding-left: 2px;
     }
 
-    /* ===== TRACK-TYPE POPUP MENU ===== */
-    .track-type-menu {
-      position: fixed;
-      z-index: 1000;
-      min-width: 140px;
-      background: #050b24;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 0 18px rgba(0,0,0,0.95);
-      padding: 4px 0;
-      font-size: 11px;
-      color: var(--text-main);
-      display: none;
-    }
-    .track-type-menu-item {
-      padding: 4px 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-    .track-type-menu-item:hover {
-      background: rgba(124,190,255,0.18);
-    }
-    .track-type-menu-item span:last-child {
-      font-size: 9px;
-      color: var(--text-muted);
-    }
-
-    /* ===== HINT BAR ===== */
-    .hint-bar {
-      margin-top: 4px;
-      border-radius: 7px;
-      border: 1px solid rgba(0,0,0,0.85);
-      background: linear-gradient(to right,#050b2b,#020419);
-      font-size: 10px;
-      padding: 4px 8px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    /* ===== PLUGIN POPUP ===== */
-    .plugin-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,15,0.75);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-    .plugin-window {
-      width: min(520px, 95vw);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: radial-gradient(circle at 0 0,#3246ff,#050822 40%,#020419 100%);
-      box-shadow: 0 0 40px rgba(0,0,0,0.95);
-      padding: 10px 12px 12px;
-      color: var(--text-main);
-      font-size: 12px;
-    }
-    .plugin-window-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    .plugin-window-title {
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: 11px;
-      color: var(--accent3);
-    }
-    .plugin-close-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
-      color: #02041b;
-      font-size: 11px;
-      padding: 2px 8px;
-      cursor: pointer;
-    }
-    .plugin-window-body {
-      background: rgba(4,8,40,0.9);
-      border-radius: 8px;
-      border: 1px solid rgba(0,0,0,0.9);
-      padding: 8px;
-      max-height: 260px;
-      overflow: auto;
-    }
-    .plugin-window-body p {
-      margin: 4px 0;
-      color: var(--text-muted);
-    }
-    .plugin-window-body code {
-      background: rgba(0,0,0,0.5);
-      padding: 1px 4px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
-
-    /* ===== THEME DESIGNER OVERLAY ===== */
-    .theme-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,20,0.78);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1001;
-    }
-    .theme-window {
-      width: min(720px, 95vw);
-      max-height: min(520px, 95vh);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.25);
-      background: radial-gradient(circle at 0 0,#4152ff,#050828 40%,#020419 100%);
-      box-shadow: 0 0 40px rgba(0,0,0,0.95);
-      padding: 10px 12px 10px;
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      font-size: 12px;
-    }
-    .theme-window-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    .theme-window-title {
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: 11px;
-      color: var(--accent3);
-    }
-    .theme-window-body {
-      flex: 1;
-      min-height: 0;
-      background: rgba(4,8,40,0.95);
-      border-radius: 8px;
-      border: 1px solid rgba(0,0,0,0.9);
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .theme-form {
-      flex: 1;
-      min-height: 0;
-      overflow: auto;
-      padding-right: 4px;
-    }
-    .theme-row {
-      display: grid;
-      grid-template-columns: 170px minmax(0,1fr);
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-      font-size: 11px;
-    }
-    .theme-row label {
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: var(--text-muted);
-    }
-    .theme-color-controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .theme-color-controls select {
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #02041b;
-      color: var(--text-main);
-      font-size: 10px;
-      padding: 2px 6px;
-    }
-    .theme-color-controls input[type="color"] {
-      width: 32px;
-      height: 18px;
-      border-radius: 4px;
-      border: 1px solid rgba(255,255,255,0.4);
-      background: transparent;
-      padding: 0;
-    }
-    .theme-color-controls input[type="text"] {
-      min-width: 70px;
-      max-width: 90px;
-      border-radius: 4px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #02041b;
-      color: var(--text-main);
-      font-size: 10px;
-      padding: 2px 4px;
-    }
-    .theme-window-actions {
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding-top: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .theme-actions-left,
-    .theme-actions-right {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .theme-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.9);
-      background: #02041b;
-      color: var(--text-main);
-      font-size: 11px;
-      padding: 3px 10px;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-    }
-    .theme-btn.primary {
-      background: radial-gradient(circle at 0 0,#7cffc7,#041a12);
-      color: #02041b;
-    }
-    .theme-btn.save {
-      background: radial-gradient(circle at 0 0,#ffd77c,#3a2605);
-      color: #02041b;
-    }
-
-    /* ===== THEME VARIANTS (SL SOUND LAB THEMES) ===== */
-
-    /* 1) SL Dark Lab (deep studio dark) */
-    body.theme-sl-dark-lab {
-      --bg-deep: #050608;
-      --bg-surface: #12151c;
-      --bg-panel: #181c26;
-      --bg-panel-soft: #1f2430;
-      --border-soft: rgba(255,255,255,0.08);
-      --border-strong: rgba(255,162,78,0.9);
-      --accent: #ff9f1a;
-      --accent2: #00e0ff;
-      --accent3: #ffe66d;
-      --accent4: #a3ff73;
-      --text-main: #f5f6f7;
-      --text-muted: #858ea0;
-      --grid-line: rgba(255,255,255,0.09);
-      --clip-blue: #4a9eff;
-      --clip-purple: #c074ff;
-      --clip-pink: #ff769e;
-      --clip-green: #63ff9c;
-
-      --header-bg: linear-gradient(to bottom,#252933,#181b23);
-      --icon-dock-bg: linear-gradient(to right,#1c202b,#141821);
-      --main-grid-bg: radial-gradient(circle at 0 0,#262b38,#10131c 60%,#05060a 100%);
-      --bottom-dock-bg: linear-gradient(to bottom,#262b38,#10131c);
-
-      --timeline-bg: linear-gradient(to bottom,#151821,#0a0d15);
-      --timeline-grid-bg: #10131b;
-      --timeline-header-bg: linear-gradient(to bottom,#202534,#141821);
-      --timeline-ruler-bg: linear-gradient(to bottom,#202534,#141821);
-    }
-
-    /* 2) SL Dark Gray (modern gray console, requested) */
-    body.theme-sl-dark-gray {
-      --bg-deep: #151618;
-      --bg-surface: #202326;
-      --bg-panel: #26292d;
-      --bg-panel-soft: #2c3035;
-      --border-soft: rgba(0,0,0,0.35);
-      --border-strong: rgba(140,140,160,0.9);
-      --accent: #f0b24a;
-      --accent2: #4dbfe8;
-      --accent3: #e8d47c;
-      --accent4: #9fc5ff;
-      --text-main: #f1f2f4;
-      --text-muted: #9ba0aa;
-      --grid-line: rgba(255,255,255,0.08);
-      --clip-blue: #3f7ad8;
-      --clip-purple: #a566ff;
-      --clip-pink: #f26a9e;
-      --clip-green: #4ecf98;
-
-      --header-bg: linear-gradient(to bottom,#2a2d32,#1b1d22);
-      --icon-dock-bg: linear-gradient(to right,#2a2e34,#1c1f26);
-      --main-grid-bg: linear-gradient(to bottom,#2b2f35,#17191e);
-      --bottom-dock-bg: linear-gradient(to bottom,#292d33,#181a20);
-
-      --timeline-bg: linear-gradient(to bottom,#2a2e34,#181b20);
-      --timeline-grid-bg: #22252b;
-      --timeline-header-bg: linear-gradient(to bottom,#333740,#23262c);
-      --timeline-ruler-bg: linear-gradient(to bottom,#333740,#23262c);
-    }
-
-    /* 3) SL Midnight Neon */
-    body.theme-sl-midnight {
-      --bg-deep: #020013;
-      --bg-surface: #050021;
-      --bg-panel: #070235;
-      --bg-panel-soft: #0b0841;
-      --border-soft: rgba(0,255,204,0.25);
-      --border-strong: rgba(0,255,204,0.9);
-      --accent: #00ffc8;
-      --accent2: #ff3ccf;
-      --accent3: #ffe066;
-      --accent4: #66b3ff;
-      --text-main: #f8fbff;
-      --text-muted: #9da8ff;
-      --grid-line: rgba(70,100,255,0.3);
-      --clip-blue: #4094ff;
-      --clip-purple: #c56cff;
-      --clip-pink: #ff5aa8;
-      --clip-green: #2cffb2;
-
-      --header-bg: linear-gradient(to bottom,#120848,#050020);
-      --icon-dock-bg: linear-gradient(to right,#14084a,#050020);
-      --main-grid-bg: radial-gradient(circle at 0 0,#3b44ff,#050028 55%,#010012 100%);
-      --bottom-dock-bg: radial-gradient(circle at 0 0,#3b44ff,#050028 55%,#010012 100%);
-
-      --timeline-bg: radial-gradient(circle at 0 0,#3940ff,#050028 55%,#010012 100%);
-      --timeline-grid-bg: #050026;
-      --timeline-header-bg: linear-gradient(to bottom,#1b0e60,#080030);
-      --timeline-ruler-bg: linear-gradient(to bottom,#1b0e60,#080030);
-    }
-
-    /* 4) SL Aurora Sky */
-    body.theme-sl-aurora {
-      --bg-deep: #021418;
-      --bg-surface: #04242a;
-      --bg-panel: #052f37;
-      --bg-panel-soft: #073942;
-      --border-soft: rgba(144,255,226,0.25);
-      --border-strong: rgba(144,255,226,0.9);
-      --accent: #9effd8;
-      --accent2: #55f0ff;
-      --accent3: #ffe39a;
-      --accent4: #7dd3ff;
-      --text-main: #f4fffd;
-      --text-muted: #98bfc4;
-      --grid-line: rgba(144,255,226,0.24);
-      --clip-blue: #55c9ff;
-      --clip-purple: #a9a9ff;
-      --clip-pink: #ff8ab9;
-      --clip-green: #71ffc3;
-
-      --header-bg: linear-gradient(to bottom,#06373f,#02181d);
-      --icon-dock-bg: linear-gradient(to right,#053137,#021418);
-      --main-grid-bg: radial-gradient(circle at 0 0,#148ea2,#021418 55%,#010708 100%);
-      --bottom-dock-bg: linear-gradient(to bottom,#05373f,#02181d);
-
-      --timeline-bg: linear-gradient(to bottom,#063941,#02181c);
-      --timeline-grid-bg: #032227;
-      --timeline-header-bg: linear-gradient(to bottom,#084952,#03252b);
-      --timeline-ruler-bg: linear-gradient(to bottom,#084952,#03252b);
-    }
-
-    /* 5) SL Sunset Glow */
-    body.theme-sl-sunset {
-      --bg-deep: #14060c;
-      --bg-surface: #2a1320;
-      --bg-panel: #351824;
-      --bg-panel-soft: #401c29;
-      --border-soft: rgba(255,180,140,0.25);
-      --border-strong: rgba(255,162,120,0.95);
-      --accent: #ff9e64;
-      --accent2: #ff5dac;
-      --accent3: #ffd27a;
-      --accent4: #ff8bb8;
-      --text-main: #fff7f2;
-      --text-muted: #c9a3a6;
-      --grid-line: rgba(255,160,120,0.22);
-      --clip-blue: #ff9e64;
-      --clip-purple: #ff7cd2;
-      --clip-pink: #ff6c9f;
-      --clip-green: #ffc67e;
-
-      --header-bg: linear-gradient(to bottom,#3a1823,#210c14);
-      --icon-dock-bg: linear-gradient(to right,#3a1c26,#220c16);
-      --main-grid-bg: radial-gradient(circle at 0 0,#ff8354,#2a1320 60%,#130509 100%);
-      --bottom-dock-bg: linear-gradient(to bottom,#3d1b26,#200b14);
-
-      --timeline-bg: linear-gradient(to bottom,#3b1c29,#1b0b12);
-      --timeline-grid-bg: #271119;
-      --timeline-header-bg: linear-gradient(to bottom,#492131,#2a101d);
-      --timeline-ruler-bg: linear-gradient(to bottom,#492131,#2a101d);
-    }
-
-    /* 6) SL Cyber Grid */
-    body.theme-sl-cyber {
-      --bg-deep: #030812;
-      --bg-surface: #050b1c;
-      --bg-panel: #071024;
-      --bg-panel-soft: #09142c;
-      --border-soft: rgba(0,255,255,0.24);
-      --border-strong: rgba(0,255,240,0.95);
-      --accent: #00ffe6;
-      --accent2: #ff3df2;
-      --accent3: #ffef80;
-      --accent4: #79c1ff;
-      --text-main: #f4feff;
-      --text-muted: #9fd1d4;
-      --grid-line: rgba(0,255,240,0.28);
-      --clip-blue: #48c8ff;
-      --clip-purple: #d36cff;
-      --clip-pink: #ff66d6;
-      --clip-green: #5dffd6;
-
-      --header-bg: linear-gradient(to bottom,#071630,#040715);
-      --icon-dock-bg: linear-gradient(to right,#071932,#030714);
-      --main-grid-bg: radial-gradient(circle at 0 0,#193c66,#030812 60%,#010309 100%);
-      --bottom-dock-bg: radial-gradient(circle at 0 0,#193c66,#030812 60%,#010309 100%);
-
-      --timeline-bg: linear-gradient(to bottom,#091734,#040712);
-      --timeline-grid-bg: #050b1c;
-      --timeline-header-bg: linear-gradient(to bottom,#0c2142,#050a1a);
-      --timeline-ruler-bg: linear-gradient(to bottom,#0c2142,#050a1a);
-    }
-
-    /* 7) SL Vintage Console */
-    body.theme-sl-console {
-      --bg-deep: #111311;
-      --bg-surface: #191b19;
-      --bg-panel: #202221;
-      --bg-panel-soft: #242726;
-      --border-soft: rgba(180,210,180,0.18);
-      --border-strong: rgba(180,230,180,0.9);
-      --accent: #a6d47b;
-      --accent2: #ffcf64;
-      --accent3: #ffec9e;
-      --accent4: #b5e08a;
-      --text-main: #f2f5f0;
-      --text-muted: #9ca79a;
-      --grid-line: rgba(190,220,190,0.18);
-      --clip-blue: #8bd0ff;
-      --clip-purple: #c5a4ff;
-      --clip-pink: #ff92b5;
-      --clip-green: #a6e67c;
-
-      --header-bg: linear-gradient(to bottom,#242724,#171917);
-      --icon-dock-bg: linear-gradient(to right,#262925,#181b17);
-      --main-grid-bg: linear-gradient(to bottom,#252823,#151814);
-      --bottom-dock-bg: linear-gradient(to bottom,#252823,#151814);
-
-      --timeline-bg: linear-gradient(to bottom,#252924,#171a16);
-      --timeline-grid-bg: #202320;
-      --timeline-header-bg: linear-gradient(to bottom,#2f332d,#1f221e);
-      --timeline-ruler-bg: linear-gradient(to bottom,#2f332d,#1f221e);
-    }
-
   </style>
 </head>
 <body>
@@ -1719,7 +1259,6 @@
 </header>
 
 <main>
-  <!-- TOP ICON BAR -->
   <section class="icon-dock">
     <div class="icon-row">
       <div class="dock-icon active" data-panel="browser" title="File / Samples Browser">
@@ -1751,9 +1290,7 @@
     </div>
   </section>
 
-  <!-- MAIN GRID -->
   <section class="main-grid">
-    <!-- LEFT BROWSER PANEL -->
     <aside class="left-browser dock-panel" data-panel-id="browser">
       <div class="panel-header">
         <div class="panel-title">Browser</div>
@@ -1785,10 +1322,8 @@
       </div>
     </aside>
 
-    <!-- CENTER TIMELINE -->
     <section class="center-timeline-wrap dock-panel" data-panel-id="timeline">
       <div class="timeline-header">
-        <!-- 4-SCREEN DISPLAY -->
         <div class="timeline-screen">
           <div class="screen-grid">
             <div class="screen-box">
@@ -1860,27 +1395,25 @@
       </div>
 
       <div class="timeline-main">
-        <!-- TRACK LIST -->
         <div class="track-list" id="track-list">
-          <!-- dynamic track headers here -->
           <div class="add-track-bar">
             <button class="add-track-btn" id="add-track-btn">+ Add Track</button>
           </div>
         </div>
 
-        <!-- GRID -->
         <div class="timeline-grid-wrap" id="timeline-scroll">
-          <div class="timeline-ruler">
-            <div class="timeline-ruler-inner" id="ruler-inner"></div>
+          <div class="timeline-ruler-container">
+            <div class="ruler-corner">TRACKS</div>
+            <div class="timeline-ruler-scroll-area" id="ruler-scroll-area">
+              <div class="timeline-ruler-inner" id="ruler-inner"></div>
+            </div>
           </div>
           <div class="grid-inner" id="grid-inner">
             <div class="loop-region" id="loop-region"></div>
             <div class="playhead" id="playhead"></div>
-            <!-- track rows & clips via JS -->
-          </div>
+            </div>
         </div>
 
-        <!-- RIGHT VERTICAL SCROLLBAR -->
         <div class="timeline-vscroll-right" id="vscroll-right">
           <div class="vscroll-arrow" id="vscroll-up">▲</div>
           <div class="vscroll-track">
@@ -1891,7 +1424,6 @@
       </div>
     </section>
 
-    <!-- RIGHT PLACEHOLDER / PLUGINS -->
     <aside class="right-placeholder dock-panel" data-panel-id="plugins">
       <h3>Plugin Slots</h3>
       <p>Each slot below can later be a dedicated plugin window or an embedded HTML panel:</p>
@@ -1906,7 +1438,6 @@
     </aside>
   </section>
 
-  <!-- BOTTOM DOCK: MIXER / PIANO / RACK -->
   <section class="bottom-dock" id="bottom-dock">
     <div class="bottom-resize-handle" id="bottom-resize"></div>
     <div class="bottom-tabs">
@@ -1939,9 +1470,7 @@
   </section>
 </main>
 
-<!-- TRACK TYPE POPUP -->
 <div class="track-type-menu" id="track-type-menu">
-  <!-- INSTRUMENTS -->
   <div class="track-type-menu-group">
     <div class="track-type-menu-title">Instruments</div>
 
@@ -2012,7 +1541,6 @@
     </div>
   </div>
 
-  <!-- VOCALS -->
   <div class="track-type-menu-group">
     <div class="track-type-menu-title">Vocals</div>
 
@@ -2050,7 +1578,6 @@
     </div>
   </div>
 
-  <!-- IMPORT -->
   <div class="track-type-menu-group">
     <div class="track-type-menu-title">Import</div>
 
@@ -2065,7 +1592,6 @@
     </div>
   </div>
 
-  <!-- SL ASSISTANT -->
   <div class="track-type-menu-group">
     <div class="track-type-menu-title">Assistant</div>
     <div class="track-type-menu-item"
@@ -2075,10 +1601,8 @@
   </div>
 </div>
 
-<!-- hidden input used for “Upload from device…” -->
 <input type="file" id="track-file-input" accept="audio/*" style="display:none">
 
-<!-- PLUGIN POPUP -->
 <div class="plugin-overlay" id="plugin-overlay">
   <div class="plugin-window">
     <div class="plugin-window-header">
@@ -2097,7 +1621,6 @@
   </div>
 </div>
 
-<!-- THEME DESIGNER POPUP -->
 <div class="theme-overlay" id="theme-overlay">
   <div class="theme-window">
     <div class="theme-window-header">
@@ -2106,8 +1629,7 @@
     </div>
     <div class="theme-window-body">
       <div class="theme-form" id="theme-form">
-        <!-- rows injected by JS -->
-      </div>
+        </div>
       <div class="theme-window-actions">
         <div class="theme-actions-left">
           <button class="theme-btn" id="theme-reset-btn">Reset Preview</button>
@@ -2193,7 +1715,8 @@
     '--grid-line',
     '--clip-blue','--clip-purple','--clip-pink','--clip-green',
     '--timeline-bg','--timeline-grid-bg','--timeline-header-bg','--timeline-ruler-bg',
-    '--header-bg','--icon-dock-bg','--main-grid-bg','--bottom-dock-bg'
+    '--header-bg','--icon-dock-bg','--main-grid-bg','--bottom-dock-bg',
+    '--track-height' /* Added to theme saving */
   ];
 
   const themeSelect = document.getElementById('theme-select');
@@ -2630,22 +2153,22 @@
     renderPatterns();
   });
 
-/* ========= TRACKS ========= */
-function addTrack(name) {
-  const id = nextTrackId++;
-  tracks.push({
-    id,
-    name: name || `Track ${id}`,
-    height: 65, /* FIXED HEIGHT */
-    type: 'Audio',
-    kind: 'audio',
-    preset: null,
-    color: null,
-    icon: ''
-  });
-  renderTracks();
-  return id;
-}
+  /* ========= TRACKS ========= */
+  function addTrack(name) {
+    const id = nextTrackId++;
+    tracks.push({
+      id,
+      name: name || `Track ${id}`,
+      height: 65, // New default height
+      type: 'Audio',
+      kind: 'audio', 
+      preset: null,
+      color: null,
+      icon: ''
+    });
+    renderTracks();
+    return id;
+  }
 
   function moveTrack(id, dir) {
     const index = tracks.findIndex(t => t.id === id);
@@ -2660,7 +2183,7 @@ function addTrack(name) {
   const trackListAddBar = trackListEl.querySelector('.add-track-bar');
   let trackDragInfo = null;
 
-function renderTracks() {
+  function renderTracks() {
     const headers = Array.from(trackListEl.querySelectorAll('.track-header,.track-resize-handle'));
     headers.forEach(h => h.remove());
 
@@ -2788,7 +2311,7 @@ function renderTracks() {
       gridInner.appendChild(gridRow);
     });
 
-    // IMPORTANT: Update CSS variable so background lines match the new track height
+    // Sync grid row height with track height
     gridInner.style.setProperty('--track-height', '65px');
 
     renderClips();
@@ -2807,154 +2330,158 @@ function renderTracks() {
     }
   });
 
-/* ========= TRACK TYPE MENU ========= */
-function showTrackTypeMenu(clientX, clientY) {
-  if (!trackTypeMenu) return;
-  const menu = trackTypeMenu;
-  menu.style.display = 'block';
-  const rect = menu.getBoundingClientRect();
-  let x = clientX + 4;
-  let y = clientY + 4;
-  if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 6;
-  if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 6;
-  menu.style.left = x + 'px';
-  menu.style.top = y + 'px';
-}
-
-function hideTrackTypeMenu() {
-  if (!trackTypeMenu) return;
-  trackTypeMenu.style.display = 'none';
-  activeTypeTrackId = null;
-}
-
-function applyTrackPresetToActive(item) {
-  if (!activeTypeTrackId) return;
-  const t = tracks.find(tr => tr.id === activeTypeTrackId);
-  if (!t) return;
-
-  const kind       = item.dataset.kind || 'audio';
-  const preset     = item.dataset.preset || null;
-  const label      = item.dataset.label || t.name;
-  const mixertype  = item.dataset.mixertype || kind;
-  const color      = item.dataset.color || null;
-  const icon       = item.dataset.icon || '';
-
-  t.kind   = kind;
-  t.preset = preset;
-  t.type   = mixertype;
-  t.name   = label;
-  t.color  = color;
-  t.icon   = icon;
-
-  hideTrackTypeMenu();
-  renderTracks();
-  renderMixer();
-}
-
-// handle clicks on menu items (presets, import, assistant)
-trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
-  item.addEventListener('click', () => {
-    const action = item.dataset.action || 'preset';
-
-    if (action === 'preset') {
-      applyTrackPresetToActive(item);
-
-    } else if (action === 'import-device') {
-      // open file picker, remember which track this is for
-      hideTrackTypeMenu();
-      if (!trackFileInput || !activeTypeTrackId) return;
-      trackFileInput.dataset.trackId = String(activeTypeTrackId);
-      trackFileInput.click();
-
-    } else if (action === 'import-audio') {
-      // jump to your Audio / Creations page
-      hideTrackTypeMenu();
-      window.location.href = 'music.html#creations';
-
-    } else if (action === 'sl-assistant') {
-      hideTrackTypeMenu();
-      const t = tracks.find(tr => tr.id === activeTypeTrackId);
-      const title = t ? `SL Assistant – ${t.name}` : 'SL Assistant';
-      const bodyHtml = `
-        <p>Use SL Assistant to create or refine audio for
-           <b>${t ? t.name : 'this track'}</b>.</p>
-        <p>Later you can connect this to Sulandra AI Studio’s
-           generation pipeline.</p>
-      `;
-      openPluginWindow(title, bodyHtml);
-    }
-  });
-});
-
-// close menu when clicking outside
-window.addEventListener('click', (e) => {
-  if (!trackTypeMenu) return;
-  if (!trackTypeMenu.contains(e.target) && !e.target.classList.contains('track-options-btn')) {
-    hideTrackTypeMenu();
+  /* ========= TRACK TYPE MENU ========= */
+  function showTrackTypeMenu(clientX, clientY) {
+    if (!trackTypeMenu) return;
+    const menu = trackTypeMenu;
+    menu.style.display = 'block';
+    const rect = menu.getBoundingClientRect();
+    let x = clientX + 4;
+    let y = clientY + 4;
+    if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 6;
+    if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 6;
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
   }
-});
 
-// handle file uploads from "Upload from device…"
-// handle file uploads from "Upload from device…"
-if (trackFileInput) {
-  trackFileInput.addEventListener('change', (e) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
+  function hideTrackTypeMenu() {
+    if (!trackTypeMenu) return;
+    trackTypeMenu.style.display = 'none';
+    activeTypeTrackId = null;
+  }
 
-    let targetTrackId = parseInt(trackFileInput.dataset.trackId || '', 10);
-    let targetTrack = tracks.find(tr => tr.id === targetTrackId);
+  function applyTrackPresetToActive(item) {
+    if (!activeTypeTrackId) return;
+    const t = tracks.find(tr => tr.id === activeTypeTrackId);
+    if (!t) return;
 
-    if (!targetTrack) return;
+    const kind       = item.dataset.kind || 'audio';
+    const preset     = item.dataset.preset || null;
+    const label      = item.dataset.label || t.name;
+    const mixertype  = item.dataset.mixertype || kind;
+    const color      = item.dataset.color || null;
+    const icon       = item.dataset.icon || '';
 
-    // 1. Check if target track already has clips
-    const trackHasClips = clips.some(c => c.trackId === targetTrackId);
+    t.kind   = kind;
+    t.preset = preset;
+    t.type   = mixertype;
+    t.name   = label;
+    t.color  = color;
+    t.icon   = icon;
 
-    if (trackHasClips) {
-      // 2. Occupied: Create new track directly below
-      const currentTrackIndex = tracks.findIndex(tr => tr.id === targetTrackId);
-      
-      const newId = nextTrackId++;
-      const newTrack = {
-        id: newId,
-        name: files[0].name, // Name track after file
-        height: 65,
-        type: targetTrack.type, 
-        kind: targetTrack.kind,
-        preset: targetTrack.preset,
-        color: targetTrack.color,
-        icon: targetTrack.icon,
-        importedFiles: []
-      };
+    hideTrackTypeMenu();
+    renderTracks();
+    renderMixer();
+  }
 
-      // Insert into array at index + 1
-      tracks.splice(currentTrackIndex + 1, 0, newTrack);
-      
-      // Update our target references
-      targetTrackId = newId;
-      targetTrack = newTrack;
-      
-      // Re-render immediately so we can place the clip
-      renderTracks();
-    } else {
-      // 3. Not occupied: Just rename existing track to file name
-      targetTrack.name = files[0].name;
-      renderTracks(); 
-    }
+  // handle clicks on menu items (presets, import, assistant)
+  trackTypeMenu.querySelectorAll('.track-type-menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const action = item.dataset.action || 'preset';
 
-    // 4. Create the Clip
-    createClip(targetTrackId, 0, 8, files[0].name, targetTrack.color || 'blue', null);
+      if (action === 'preset') {
+        applyTrackPresetToActive(item);
 
-    // 5. Store file reference
-    if (targetTrack) {
-      targetTrack.importedFiles = files.map(f => f.name);
-      renderMixer();
-    }
+      } else if (action === 'import-device') {
+        // Trigger file upload
+        hideTrackTypeMenu();
+        const fileInput = document.getElementById('track-file-input');
+        if (fileInput && activeTypeTrackId) {
+          fileInput.dataset.trackId = String(activeTypeTrackId);
+          fileInput.click();
+        } else {
+          alert('Error: Cannot find file input or active track ID.');
+        }
 
-    // Cleanup
-    trackFileInput.value = '';
-    trackFileInput.dataset.trackId = '';
+      } else if (action === 'import-audio') {
+        // jump to your Audio / Creations page
+        hideTrackTypeMenu();
+        window.location.href = 'music.html#creations';
+
+      } else if (action === 'sl-assistant') {
+        hideTrackTypeMenu();
+        const t = tracks.find(tr => tr.id === activeTypeTrackId);
+        const title = t ? `SL Assistant – ${t.name}` : 'SL Assistant';
+        const bodyHtml = `
+          <p>Use SL Assistant to create or refine audio for
+             <b>${t ? t.name : 'this track'}</b>.</p>
+          <p>Later you can connect this to Sulandra AI Studio’s
+             generation pipeline.</p>
+        `;
+        openPluginWindow(title, bodyHtml);
+      }
+    });
   });
-}
+
+  // close menu when clicking outside
+  window.addEventListener('click', (e) => {
+    if (!trackTypeMenu) return;
+    if (!trackTypeMenu.contains(e.target) && !e.target.classList.contains('track-options-btn')) {
+      hideTrackTypeMenu();
+    }
+  });
+
+  // handle file uploads from "Upload from device…"
+  if (trackFileInput) {
+    trackFileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+
+      let targetTrackId = parseInt(trackFileInput.dataset.trackId || '', 10);
+      let targetTrack = tracks.find(tr => tr.id === targetTrackId);
+
+      if (!targetTrack) return;
+
+      // 1. Check if target track already has clips
+      const trackHasClips = clips.some(c => c.trackId === targetTrackId);
+
+      if (trackHasClips) {
+        // 2. Occupied: Create new track directly below
+        const currentTrackIndex = tracks.findIndex(tr => tr.id === targetTrackId);
+        
+        const newId = nextTrackId++;
+        const newTrack = {
+          id: newId,
+          name: files[0].name, // Name track after file
+          height: 65,
+          type: targetTrack.type, 
+          kind: targetTrack.kind,
+          preset: targetTrack.preset,
+          color: targetTrack.color,
+          icon: targetTrack.icon,
+          importedFiles: []
+        };
+
+        // Insert into array at index + 1
+        tracks.splice(currentTrackIndex + 1, 0, newTrack);
+        
+        // Update our target references
+        targetTrackId = newId;
+        targetTrack = newTrack;
+        
+        // Re-render immediately so we can place the clip
+        renderTracks();
+      } else {
+        // 3. Not occupied: Just rename existing track to file name
+        targetTrack.name = files[0].name;
+        renderTracks(); // update name in UI
+      }
+
+      // 4. Create the Clip on the (potentially new) track
+      // Place at beat 0, default length 8
+      createClip(targetTrackId, 0, 8, files[0].name, targetTrack.color || 'blue', null);
+
+      // 5. Store file reference
+      if (targetTrack) {
+        targetTrack.importedFiles = files.map(f => f.name);
+        renderMixer();
+      }
+
+      // Cleanup
+      trackFileInput.value = '';
+      trackFileInput.dataset.trackId = '';
+    });
+  }
 
   /* ========= MIXER ========= */
   function renderMixer() {
@@ -3430,6 +2957,10 @@ if (trackFileInput) {
       }
     }
 
+    // Sync Ruler Scroll
+    const rulerScroll = document.getElementById('ruler-scroll-area');
+    if(rulerScroll) rulerScroll.scrollLeft = timelineScroll.scrollLeft;
+
     updateScreenDisplay();
   }
 
@@ -3592,7 +3123,7 @@ if (trackFileInput) {
     loopRegionEl.style.width = width + 'px';
   }
 
-  const rulerEl = document.querySelector('.timeline-ruler');
+  const rulerEl = document.querySelector('.timeline-ruler-container');
   rulerEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
   rulerEl.addEventListener('mousedown', (e) => {
@@ -3832,6 +3363,10 @@ if (trackFileInput) {
   timelineScroll.addEventListener('scroll', () => {
     updateHorizontalThumb();
     syncVerticalScrollFrom(timelineScroll);
+    
+    // Sync ruler
+    const rulerScroll = document.getElementById('ruler-scroll-area');
+    if(rulerScroll) rulerScroll.scrollLeft = timelineScroll.scrollLeft;
   });
 
   vscrollThumb.addEventListener('mousedown', e => {
@@ -3919,19 +3454,17 @@ if (trackFileInput) {
     const pChrd  = addPattern('Pattern 3 – Chords', 'purple');
 
     const t1 = addTrack('Master');
-    const t2 = addTrack('Drums');
-    const t3 = addTrack('Bass');
-    const t4 = addTrack('Chords');
+    const t2 = addTrack('Guitar');
+    const t3 = addTrack('Drums');
+    const t4 = addTrack('Piano');
     const t5 = addTrack('Vocals');
     const t6 = addTrack('FX');
     const t7 = addTrack('Strings');
     const t8 = addTrack('Piano');
-    const t9 = addTrack('Percussion');
-    const t10 = addTrack('Synths');
 
-    createClip(t2, 0, 4, 'Pattern 1 – Drums', 'blue', pDrums);
-    createClip(t3, 4, 4, 'Pattern 2 – Bass', 'green', pBass);
-    createClip(t4, 8, 4, 'Pattern 3 – Chords', 'purple', pChrd);
+    createClip(t2, 0, 4, 'Pattern 2 – Bass', 'green', pBass);
+    createClip(t3, 0, 4, 'Pattern 1 – Drums', 'blue', pDrums);
+    createClip(t4, 4, 4, 'Pattern 3 – Chords', 'purple', pChrd);
 
     playheadBeat = 0;
     tempoDisplay.textContent = tempo.toFixed(1);
@@ -3946,4 +3479,3 @@ if (trackFileInput) {
 </script>
 </body>
 </html>
-
