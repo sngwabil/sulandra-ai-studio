@@ -1689,6 +1689,229 @@
   align-items: center;
   gap: 4px;
 }
+/* ===== TRACK ICON, RECORD & DROPDOWN ===== */
+.track-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  margin-right: 3px;
+  flex-shrink: 0;
+  color: #ffd77c;
+}
+
+.track-rec-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.9);
+  background: radial-gradient(circle at 30% 20%,#ff4a7a,#3a0112);
+  cursor: pointer;
+  position: relative;
+}
+.track-rec-btn::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.track-rec-btn.armed {
+  box-shadow: 0 0 8px rgba(255,108,138,0.95);
+  border-color: #ffd0df;
+}
+
+/* Make the options dropdown button look like a menu */
+.track-options-btn {
+  width: 20px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.9);
+  background: #02041b;
+  color: #9cb3ff;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ===== POPUP OVERLAYS (track settings, SL Assistant, record config) ===== */
+.sl-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,20,0.80);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.sl-window {
+  width: min(640px, 96vw);
+  max-height: 80vh;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: radial-gradient(circle at 0 0,#3246ff,#050822 40%,#020419 100%);
+  box-shadow: 0 0 40px rgba(0,0,0,0.95);
+  padding: 10px 14px 12px;
+  color: var(--text-main);
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sl-window-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.sl-window-title {
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-size: 11px;
+  color: var(--accent3);
+}
+.sl-window-close {
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.9);
+  background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
+  color: #02041b;
+  font-size: 11px;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+
+.sl-window-body {
+  border-radius: 9px;
+  border: 1px solid rgba(0,0,0,0.9);
+  background: rgba(4,8,40,0.95);
+  padding: 8px 10px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sl-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.sl-field-row label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.sl-field-row input[type="text"],
+.sl-field-row select,
+.sl-field-row textarea {
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.9);
+  background: #02041b;
+  color: var(--text-main);
+  font-size: 11px;
+  padding: 3px 6px;
+}
+.sl-field-row textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+.sl-color-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sl-color-input input[type="color"] {
+  width: 26px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: #02041b;
+  padding: 0;
+}
+.sl-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sl-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.8);
+  background: radial-gradient(circle at 0 0,#7cbeff,#050a24);
+  font-size: 10px;
+  cursor: pointer;
+  color: #02041b;
+}
+.sl-chip.active {
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+
+.sl-window-footer {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sl-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.9);
+  background: radial-gradient(circle at 0 0,#7cffc7,#050a24);
+  color: #02041b;
+  font-size: 11px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+.sl-btn.secondary {
+  background: radial-gradient(circle at 0 0,#7cbeff,#050a24);
+}
+.sl-btn.danger {
+  background: radial-gradient(circle at 0 0,#ff7caa,#3a0112);
+  color: #ffe8f2;
+}
+
+.sl-assistant-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 10px;
+}
+.sl-assistant-badge-row span {
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.85);
+  background: linear-gradient(135deg,#7cffc7,#ff7cf1);
+  color: #02041b;
+}
+
+/* Make SL Assistant visually louder */
+.sl-assistant-window {
+  background:
+    radial-gradient(circle at 0 0,#7cffc7 0,transparent 45%),
+    radial-gradient(circle at 100% 0,#ff7cf1 0,transparent 45%),
+    radial-gradient(circle at 50% 100%,#ffd77c 0,transparent 55%),
+    #050822;
+}
+
+/* Track type menu updated for new actions */
+.track-type-menu-item[data-action] {
+  justify-content: flex-start;
+}
+.track-type-menu-item-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.track-type-menu-item-label span.emoji {
+  font-size: 13px;
+}
 
 .track-btn {
   border: none;
