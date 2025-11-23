@@ -1892,16 +1892,142 @@
 
 <!-- TRACK TYPE POPUP -->
 <div class="track-type-menu" id="track-type-menu">
-  <div class="track-type-menu-item" data-type="Audio">
-    <span>Audio</span><span>Wave clips</span>
+  <!-- INSTRUMENTS -->
+  <div class="track-type-menu-group">
+    <div class="track-type-menu-title">Instruments</div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="instrument"
+         data-preset="piano"
+         data-label="Piano"
+         data-color="#7cbeff"
+         data-icon="🎹"
+         data-mixertype="Piano">
+      Piano
+    </div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="instrument"
+         data-preset="guitar"
+         data-label="Guitar"
+         data-color="#ffd77c"
+         data-icon="🎸"
+         data-mixertype="Guitar">
+      Guitar
+    </div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="instrument"
+         data-preset="bass"
+         data-label="Bass"
+         data-color="#7cffc7"
+         data-icon="🎵"
+         data-mixertype="Bass">
+      Bass
+    </div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="instrument"
+         data-preset="drums"
+         data-label="Drums"
+         data-color="#ff8a6a"
+         data-icon="🥁"
+         data-mixertype="Drums">
+      Drums
+    </div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="instrument"
+         data-preset="synth"
+         data-label="Synth"
+         data-color="#ffb4ff"
+         data-icon="🎛️"
+         data-mixertype="Synth">
+      Synth
+    </div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="instrument"
+         data-preset="strings"
+         data-label="Strings"
+         data-color="#9fc5ff"
+         data-icon="🎻"
+         data-mixertype="Strings">
+      Strings
+    </div>
   </div>
-  <div class="track-type-menu-item" data-type="Instrument">
-    <span>Instrument</span><span>Midi / synth</span>
+
+  <!-- VOCALS -->
+  <div class="track-type-menu-group">
+    <div class="track-type-menu-title">Vocals</div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="vocal"
+         data-preset="lead"
+         data-label="Lead Vocal"
+         data-color="#ffb4ff"
+         data-icon="🎙️"
+         data-mixertype="Lead">
+      Lead Vocal
+    </div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="vocal"
+         data-preset="backing"
+         data-label="Backing Vocals"
+         data-color="#7cffc7"
+         data-icon="🎤"
+         data-mixertype="Back">
+      Backing Vocals
+    </div>
+
+    <div class="track-type-menu-item"
+         data-action="preset"
+         data-kind="vocal"
+         data-preset="choir"
+         data-label="Choir"
+         data-color="#ffd77c"
+         data-icon="🎼"
+         data-mixertype="Choir">
+      Choir
+    </div>
   </div>
-  <div class="track-type-menu-item" data-type="Create with AI">
-    <span>Create with AI</span><span>AI generator</span>
+
+  <!-- IMPORT -->
+  <div class="track-type-menu-group">
+    <div class="track-type-menu-title">Import</div>
+
+    <div class="track-type-menu-item"
+         data-action="import-device">
+      Upload from device…
+    </div>
+
+    <div class="track-type-menu-item"
+         data-action="import-audio">
+      Import from Audio (music.html)
+    </div>
+  </div>
+
+  <!-- SL ASSISTANT -->
+  <div class="track-type-menu-group">
+    <div class="track-type-menu-title">Assistant</div>
+    <div class="track-type-menu-item"
+         data-action="sl-assistant">
+      Create with SL Assistant
+    </div>
   </div>
 </div>
+
+<!-- hidden input used for “Upload from device…” -->
+<input type="file" id="track-file-input" accept="audio/*" style="display:none">
 
 <!-- PLUGIN POPUP -->
 <div class="plugin-overlay" id="plugin-overlay">
