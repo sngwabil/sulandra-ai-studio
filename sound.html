@@ -3191,19 +3191,11 @@ function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
       el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
       el.style.top = (top + 4) + 'px';
       el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
-      const el = document.createElement('div');
-el.className = 'clip';
-el.dataset.clipId = c.id;
-el.dataset.color = c.color || 'blue';
-
-el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
-el.style.top = (top + 4) + 'px';
-el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
-
-// apply muted visual state
-if (c.muted) {
-  el.classList.add('clip-muted');
-}
+      
+      // apply muted visual state
+      if (c.muted) {
+        el.classList.add('clip-muted');
+      }
 
       const leftHandle = document.createElement('div');
       leftHandle.className = 'clip-handle-left';
