@@ -462,6 +462,12 @@
       border-color: #ff6c8a;
       box-shadow: 0 0 12px rgba(255,108,138,0.7);
     }
+    .clip.selected {
+  outline: 2px solid #ffffff;
+  box-shadow:
+    0 0 0 1px #000000,
+    0 0 10px rgba(255,255,255,0.7);
+}
 
     .timeline-row-top {
       display: flex;
@@ -1870,12 +1876,13 @@
             </div>
           </div>
           <div class="transport-buttons">
-            <button class="transport-btn" id="btn-back">⏮</button>
-            <button class="transport-btn" id="btn-play">▶</button>
-            <button class="transport-btn" id="btn-stop">⏹</button>
-            <button class="transport-btn rec" id="btn-rec">●</button>
-            <button class="transport-btn metro" id="btn-metronome" title="Metronome">♩</button>
-          </div>
+  <button class="transport-btn" id="btn-back">⏮</button>
+  <button class="transport-btn" id="btn-play">▶</button>
+  <button class="transport-btn" id="btn-stop">⏹</button>
+  <button class="transport-btn rec" id="btn-rec">●</button>
+  <button class="transport-btn metro" id="btn-metronome" title="Metronome">♩</button>
+  <button class="transport-btn" id="btn-follow" title="Toggle follow playhead">▶F</button>
+</div>
         </div>
         <div class="tempo-zoom-row">
           <div class="tempo-pill">
@@ -1885,7 +1892,7 @@
           </div>
           <div class="zoom-pill">
             <span>Timeline zoom</span>
-            <input type="range" id="zoom-range" min="32" max="140" value="48">
+            <input type="range" id="zoom-range" min="12" max="300" value="48">
           </div>
           <div class="pattern-pill">
             <span>Active pattern</span>
@@ -2230,6 +2237,14 @@
 
   // record mode: 'playlist' or 'step'
   let recordMode = 'playlist';
+    // follow playhead auto-scroll
+  let followPlayhead = true;
+
+  // multi-clip drag
+  let dragGroup = null;
+
+  // clipboard for copy/paste of clips
+  let clipboardClips = [];
 
   // THEME HANDLING
   const THEME_CLASS_LIST = [
@@ -2367,6 +2382,7 @@
   const recBtn = document.getElementById('btn-rec');
   const metronomeBtn = document.getElementById('btn-metronome');
   const tempoDisplay = document.getElementById('tempo-value');
+  const followBtn = document.getElementById('btn-follow');
 
   const modeSongBtn = document.getElementById('mode-song');
   const modePatternBtn = document.getElementById('mode-pattern');
@@ -3291,86 +3307,89 @@ function splitClipAtBeat(clipId, splitBeat) {
     let startLeft = 0;
     let startWidth = 0;
 
-el.addEventListener('mousedown', e => {
-  // SPLIT TOOL: click to cut the clip at the nearest beat
-  if (currentEditTool === 'split' && !e.target.dataset.handle) {
-    const beat = clientXToBeat(e.clientX); // global helper used for loop selection as well
-    const snapBeat = Math.round(beat);
-    const clipStart = clip.startBeat;
-    const clipEnd = clip.startBeat + clip.lengthBeats;
+    el.addEventListener('mousedown', e => {
+      const handle = e.target.dataset.handle;
 
-    if (snapBeat > clipStart && snapBeat < clipEnd) {
-      splitClipAtBeat(clip.id, snapBeat);
-    }
+      // selection logic (clicks on clip body, not handles)
+      if (!handle) {
+        if (e.shiftKey) {
+          // toggle selection with Shift
+          el.classList.toggle('selected');
+        } else {
+          // normal click: if this clip not already selected, select only this
+          if (!el.classList.contains('selected')) {
+            clearClipSelection();
+            el.classList.add('selected');
+          }
+        }
+      }
 
-    e.preventDefault();
-    e.stopPropagation();
-    return;
-  }
+      dragging = !handle;
+      resizing = handle || null;
+      startX = e.clientX;
+      startLeft = parseFloat(el.style.left);
+      startWidth = parseFloat(el.style.width);
 
-  // MUTE TOOL: click toggles mute on this clip
-  if (currentEditTool === 'mute' && !e.target.dataset.handle) {
-    toggleClipMute(el);
-    e.preventDefault();
-    e.stopPropagation();
-    return;
-  }
+      // build drag group for multi-drag
+      if (dragging) {
+        const selectedEls = Array.from(gridInner.querySelectorAll('.clip.selected'));
+        const groupEls = selectedEls.length ? selectedEls : [el];
 
-  // SELECT TOOL: basic selection on click
-  if (currentEditTool === 'select') {
-    if (!e.shiftKey) {
-      clearClipSelection();
-    }
-    selectClipElement(el);
-  }
+        if (!selectedEls.length) {
+          clearClipSelection();
+          el.classList.add('selected');
+        }
 
-  // only drag / resize when using select tool
-  if (currentEditTool !== 'select') {
-    e.preventDefault();
-    e.stopPropagation();
-    return;
-  }
+        dragGroup = groupEls.map(domEl => {
+          const id = parseInt(domEl.dataset.clipId, 10);
+          const model = clips.find(c => c.id === id);
+          return {
+            el: domEl,
+            clip: model,
+            startBeat: model.startBeat,
+            top: parseFloat(domEl.style.top)
+          };
+        });
+      } else {
+        dragGroup = null;
+      }
 
-  const handle = e.target.dataset.handle;
-  dragging = !handle;
-  resizing = handle || null;
-  startX = e.clientX;
-  startLeft = parseFloat(el.style.left);
-  startWidth = parseFloat(el.style.width);
-  e.preventDefault();
-  e.stopPropagation();
-});
+      e.preventDefault();
+      e.stopPropagation();
+    });
 
     window.addEventListener('mousemove', e => {
       if (!dragging && !resizing) return;
       const dx = e.clientX - startX;
 
+      // AUTO-SCROLL TIMELINE WHILE DRAGGING
       if (dragging) {
-        let newLeft = startLeft + dx;
-        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
-        beatFromZero = Math.max(0, Math.round(beatFromZero));
-        clip.startBeat = beatFromZero;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
-
-        const rect = gridInner.getBoundingClientRect();
-        const y = e.clientY - rect.top;
-        const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-        let closestRow = null;
-        let closestDist = Infinity;
-        rows.forEach(r => {
-          const rRect = r.getBoundingClientRect();
-          const mid = rRect.top + rRect.height / 2 - rect.top;
-          const dist = Math.abs(y - mid);
-          if (dist < closestDist) {
-            closestDist = dist;
-            closestRow = r;
-          }
-        });
-        if (closestRow) {
-          clip.trackId = parseInt(closestRow.dataset.trackId, 10);
-          el.style.top = (closestRow.offsetTop + 4) + 'px';
+        const rectScroll = timelineScroll.getBoundingClientRect();
+        const margin = 60;
+        if (e.clientX < rectScroll.left + margin) {
+          timelineScroll.scrollLeft = Math.max(0, timelineScroll.scrollLeft - 15);
+          updateHorizontalThumb();
+        } else if (e.clientX > rectScroll.right - margin) {
+          const maxScroll = timelineScroll.scrollWidth - timelineScroll.clientWidth;
+          timelineScroll.scrollLeft = Math.min(maxScroll, timelineScroll.scrollLeft + 15);
+          updateHorizontalThumb();
         }
+      }
+
+      if (dragging && dragGroup && dragGroup.length > 0) {
+        // move a group of clips together
+        let base = dragGroup[0];
+        let newLeft = (GRID_LEFT_OFFSET + base.startBeat * beatWidth) + dx;
+        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
+        let deltaBeats = Math.round(beatFromZero) - base.startBeat;
+
+        dragGroup.forEach(item => {
+          let newStart = item.startBeat + deltaBeats;
+          if (newStart < 0) newStart = 0;
+          item.clip.startBeat = newStart;
+          ensureGridForBeat(item.clip.startBeat + item.clip.lengthBeats);
+          item.el.style.left = (GRID_LEFT_OFFSET + item.clip.startBeat * beatWidth) + 'px';
+        });
       } else if (resizing === 'left') {
         let newLeft = startLeft + dx;
         let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
@@ -3396,11 +3415,12 @@ el.addEventListener('mousedown', e => {
     window.addEventListener('mouseup', () => {
       dragging = false;
       resizing = null;
+      dragGroup = null;
     });
 
     el.addEventListener('contextmenu', e => {
       e.preventDefault();
-      alert('Later: show a context menu for clip options – normalize, reverse, open detailed editor, etc.');
+      alert('Later: show a clip context menu: normalize, reverse, open editor, etc.');
     });
   }
 
@@ -3547,7 +3567,7 @@ window.addEventListener('mouseup', () => {
   }
 
   function zoomAtBeatWidth(newBeatWidth, clientX) {
-    newBeatWidth = Math.max(32, Math.min(140, newBeatWidth));
+        newBeatWidth = Math.max(12, Math.min(300, newBeatWidth));
     if (newBeatWidth === beatWidth) return;
 
     const rect = timelineScroll.getBoundingClientRect();
@@ -3694,7 +3714,7 @@ window.addEventListener('mouseup', () => {
     const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
     playheadEl.style.left = x + 'px';
 
-    if (autoScroll && playMode === 'song') {
+      if (autoScroll && followPlayhead && playMode === 'song') {
       const marginLeft = 50;
       const marginRight = 100;
       const viewLeft = timelineScroll.scrollLeft;
@@ -3708,6 +3728,24 @@ window.addEventListener('mouseup', () => {
     }
 
     updateScreenDisplay();
+  }
+    function clearClipSelection() {
+    gridInner.querySelectorAll('.clip.selected').forEach(el => {
+      el.classList.remove('selected');
+    });
+  }
+
+  function getSelectedClipIds() {
+    const ids = [];
+    gridInner.querySelectorAll('.clip.selected').forEach(el => {
+      ids.push(parseInt(el.dataset.clipId, 10));
+    });
+    return ids;
+  }
+
+  function getSelectedClipModels() {
+    const ids = getSelectedClipIds();
+    return clips.filter(c => ids.includes(c.id));
   }
 
   function playLoop(ts) {
@@ -3758,6 +3796,18 @@ window.addEventListener('mouseup', () => {
     if (isPlaying) pausePlayback();
     else startPlayback();
   });
+  function updateFollowBtnUI() {
+    if (!followBtn) return;
+    followBtn.classList.toggle('active', followPlayhead);
+}
+
+if (followBtn) {
+    followBtn.addEventListener('click', () => {
+        followPlayhead = !followPlayhead;
+        updateFollowBtnUI();
+    });
+    updateFollowBtnUI();
+}
 
   stopBtn.addEventListener('click', () => {
     pausePlayback();
@@ -3788,54 +3838,47 @@ window.addEventListener('mouseup', () => {
   });
 
   window.addEventListener('keydown', (e) => {
-    const active = document.activeElement;
-    const typingInField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+  const active = document.activeElement;
+  const typingInField =
+    active &&
+    (active.tagName === 'INPUT' ||
+     active.tagName === 'TEXTAREA' ||
+     active.isContentEditable);
 
-    if (e.code === 'Space') {
-      if (typingInField) return;
-      e.preventDefault();
-      if (isPlaying) pausePlayback();
-      else startPlayback();
-      return;
-    }
+  // Space: play / pause
+  if (e.code === 'Space') {
     if (typingInField) return;
-
-    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
-    } else if (e.key === '-' || e.key === '_') {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
-    }
-      // ============================
-  // TOOL SHORTCUTS
-  // ============================
-  // S → Select tool
-  if (e.key.toLowerCase() === 's') {
-    currentEditTool = 'select';
-    updateEditToolUI();
+    e.preventDefault();
+    if (isPlaying) pausePlayback();
+    else startPlayback();
     return;
   }
 
-  // X → Split tool
-  if (e.key.toLowerCase() === 'x') {
-    currentEditTool = 'split';
-    updateEditToolUI();
+  // If typing in an input/textarea, ignore everything else
+  if (typingInField) return;
+
+  // + / - : zoom around center
+  if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
+    e.preventDefault();
+    zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
+    return;
+  } else if (e.key === '-' || e.key === '_') {
+    e.preventDefault();
+    zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
     return;
   }
 
-  // M → Mute tool
-  if (e.key.toLowerCase() === 'm') {
-    currentEditTool = 'mute';
-    updateEditToolUI();
-    return;
-  }
-
-  // ============================
-  // DELETE SELECTED CLIPS
-  // ============================
+  // Delete / Backspace: delete selected clips
   if (e.key === 'Delete' || e.key === 'Backspace') {
-    if (selectedClipIds.size > 0) {
+    // Prefer helper if it exists
+    if (typeof getSelectedClipIds === 'function') {
+      const ids = getSelectedClipIds();
+      if (ids && ids.length) {
+        clips = clips.filter(c => !ids.includes(c.id));
+        renderClips();
+      }
+    } else if (typeof selectedClipIds !== 'undefined' && selectedClipIds.size > 0) {
+      // Fallback to Set-based selection
       selectedClipIds.forEach(id => {
         const idx = clips.findIndex(c => c.id === id);
         if (idx !== -1) clips.splice(idx, 1);
@@ -3845,7 +3888,106 @@ window.addEventListener('mouseup', () => {
     }
     return;
   }
-  });
+
+  // Ctrl/Cmd + C: copy selected clips
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+    if (typeof getSelectedClipModels === 'function') {
+      clipboardClips = getSelectedClipModels().map(c => ({ ...c }));
+    }
+    return;
+  }
+
+  // Ctrl/Cmd + V: paste at current playhead
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+    if (!clipboardClips || !clipboardClips.length) return;
+
+    const baseBeat = clipboardClips.reduce(
+      (min, c) => Math.min(min, c.startBeat),
+      Infinity
+    );
+    const offset = playheadBeat - baseBeat;
+
+    if (typeof clearClipSelection === 'function') clearClipSelection();
+    clipboardClips.forEach(c => {
+      const newStart = Math.max(0, c.startBeat + offset);
+      createClip(
+        c.trackId,
+        newStart,
+        c.lengthBeats,
+        c.label,
+        c.color,
+        c.patternId
+      );
+    });
+    return;
+  }
+
+  // Ctrl/Cmd + D: duplicate selection to the right
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D')) {
+    if (typeof getSelectedClipModels === 'function') {
+      const selected = getSelectedClipModels();
+      if (!selected.length) return;
+
+      e.preventDefault();
+
+      const minStart = selected.reduce(
+        (min, c) => Math.min(min, c.startBeat),
+        Infinity
+      );
+      const maxEnd = selected.reduce(
+        (max, c) => Math.max(max, c.startBeat + c.lengthBeats),
+        0
+      );
+      const shift = maxEnd - minStart;
+
+      if (typeof clearClipSelection === 'function') clearClipSelection();
+      selected.forEach(c => {
+        const newStart = c.startBeat + shift;
+        createClip(
+          c.trackId,
+          newStart,
+          c.lengthBeats,
+          c.label,
+          c.color,
+          c.patternId
+        );
+      });
+    }
+    return;
+  }
+
+  // F: toggle follow playhead
+  if (e.key === 'f' || e.key === 'F') {
+    followPlayhead = !followPlayhead;
+    if (typeof updateFollowBtnUI === 'function') updateFollowBtnUI();
+    return;
+  }
+
+  // ============================
+  // TOOL SHORTCUTS
+  // ============================
+
+  // S → Select tool
+  if (e.key.toLowerCase() === 's') {
+    currentEditTool = 'select';
+    if (typeof updateEditToolUI === 'function') updateEditToolUI();
+    return;
+  }
+
+  // X → Split tool
+  if (e.key.toLowerCase() === 'x') {
+    currentEditTool = 'split';
+    if (typeof updateEditToolUI === 'function') updateEditToolUI();
+    return;
+  }
+
+  // M → Mute tool
+  if (e.key.toLowerCase() === 'm') {
+    currentEditTool = 'mute';
+    if (typeof updateEditToolUI === 'function') updateEditToolUI();
+    return;
+  }
+});
 
   /* ========= MODE TOGGLES ========= */
   function updateModeUI() {
@@ -3907,21 +4049,40 @@ window.addEventListener('mouseup', () => {
     loopRegionEl.style.width = width + 'px';
   }
 
-  const rulerEl = document.querySelector('.timeline-ruler');
+    const rulerEl = document.querySelector('.timeline-ruler');
   rulerEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
   rulerEl.addEventListener('mousedown', (e) => {
-    if (e.button !== 2) return;
-    if (playMode === 'pattern') return; // loop region not used in pattern mode
-    e.preventDefault();
-    const beat = clientXToBeat(e.clientX);
-    loopSelecting = true;
-    loopSelectAnchorBeat = beat;
-    loopStartBeat = beat;
-    loopEndBeat = beat;
-    loopActive = false;
-    updateLoopRegion();
+    // LEFT CLICK: move playhead here
+    if (e.button === 0) {
+      const beat = clientXToBeat(e.clientX);
+      jumpPlayheadToBeat(beat, true); // restart playback if currently playing
+      e.preventDefault();
+      return;
+    }
+
+    // RIGHT CLICK: loop region selection (as before)
+    if (e.button === 2) {
+      if (playMode === 'pattern') return; // loop region not used in pattern mode
+      e.preventDefault();
+      const beat = clientXToBeat(e.clientX);
+      loopSelecting = true;
+      loopSelectAnchorBeat = beat;
+      loopStartBeat = beat;
+      loopEndBeat = beat;
+      loopActive = false;
+      updateLoopRegion();
+    }
   });
+    // Mouse wheel zoom on the ruler (number bar)
+  if (rulerEl) {
+    rulerEl.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const step = 4;
+      const newBeatWidth = beatWidth + (e.deltaY < 0 ? step : -step);
+      zoomAtBeatWidth(newBeatWidth, e.clientX);
+    }, { passive: false });
+  }
 
   window.addEventListener('mousemove', (e) => {
     if (!loopSelecting) return;
