@@ -2941,7 +2941,7 @@ function showTrackTypeMenu(clientX, clientY) {
 function hideTrackTypeMenu() {
   if (!trackTypeMenu) return;
   trackTypeMenu.style.display = 'none';
-  activeTypeTrackId = null;
+  // Do NOT clear activeTypeTrackId here – we still need it for uploads
 }
 
 function applyTrackPresetToActive(item) {
