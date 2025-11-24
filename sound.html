@@ -3221,50 +3221,6 @@ if (c.muted) {
       el.appendChild(label);
       el.appendChild(rightHandle);
       
-function splitClipAtBeat(clipId, splitBeat) {
-  const index = clips.findIndex(c => c.id === clipId);
-  if (index === -1) return;
-
-  const clip = clips[index];
-  const clipStart = clip.startBeat;
-  const clipEnd = clip.startBeat + clip.lengthBeats;
-
-  // avoid splitting exactly on edges
-  if (splitBeat <= clipStart + 0.001 || splitBeat >= clipEnd - 0.001) return;
-
-  const leftLength = splitBeat - clipStart;
-  const rightLength = clipEnd - splitBeat;
-
-  const baseProps = {
-    trackId: clip.trackId,
-    label: clip.label,
-    color: clip.color,
-    patternId: clip.patternId || null,
-    muted: !!clip.muted
-  };
-
-  // remove original
-  clips.splice(index, 1);
-
-  const leftId = nextClipId++;
-  const rightId = nextClipId++;
-
-  clips.push({
-    id: leftId,
-    startBeat: clipStart,
-    lengthBeats: leftLength,
-    ...baseProps
-  });
-
-  clips.push({
-    id: rightId,
-    startBeat: splitBeat,
-    lengthBeats: rightLength,
-    ...baseProps
-  });
-
-  renderClips();
-}
       addClipDragHandlers(el, c);
 
       el.addEventListener('dblclick', () => {
