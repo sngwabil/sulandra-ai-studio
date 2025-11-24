@@ -3159,12 +3159,21 @@ if (trackFileInput) {
   }
 
   /* ========= CLIPS ========= */
-  function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
-    const id = nextClipId++;
-    clips.push({ id, trackId, startBeat, lengthBeats, label, color, patternId: patternId || null });
-    ensureGridForBeat(startBeat + lengthBeats);
-    renderClips();
-  }
+function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
+  const id = nextClipId++;
+  clips.push({
+    id,
+    trackId,
+    startBeat,
+    lengthBeats,
+    label,
+    color,
+    patternId: patternId || null,
+    muted: false
+  });
+  ensureGridForBeat(startBeat + lengthBeats);
+  renderClips();
+}
 
   function renderClips() {
     gridInner.querySelectorAll('.clip').forEach(c => c.remove());
