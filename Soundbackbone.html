@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -545,6 +544,54 @@
       color: var(--text-muted);
       flex-wrap: wrap;
     }
+    /* ===== CLIP SELECTION / MUTE STATES ===== */
+.clip.selected {
+  outline: 2px solid #ffffff;
+  box-shadow:
+    0 0 0 1px #000000,
+    0 0 8px rgba(255,255,255,0.35);
+}
+
+.clip-muted {
+  opacity: 0.35;
+}
+
+/* ===== MARQUEE SELECTION BOX ===== */
+.timeline-marquee {
+  position: absolute;
+  border: 1px dashed rgba(200,220,255,0.9);
+  background: rgba(120,160,255,0.15);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ===== EDIT TOOLBAR (SELECT / SPLIT / MUTE) ===== */
+.timeline-edit-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.edit-tool-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.8);
+  background: #02041b;
+  color: var(--text-main);
+  font-size: 10px;
+  padding: 2px 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.edit-tool-btn.active {
+  background: radial-gradient(circle at 0 0, var(--accent), #050a20);
+  color: #02041b;
+}
     .tempo-pill, .zoom-pill, .pattern-pill, .record-pill {
       padding: 2px 6px;
       border-radius: 999px;
@@ -1845,12 +1892,22 @@
             <select id="pattern-select" class="pattern-select"></select>
             <button id="new-pattern-btn">+ New</button>
           </div>
-          <div class="record-pill">
-            <span class="record-mode-label">Record</span>
-            <button class="rec-mode-btn active" data-mode="playlist" id="rec-mode-playlist">Playlist</button>
-            <button class="rec-mode-btn" data-mode="step" id="rec-mode-step">Step</button>
-          </div>
-          <div>Double-click empty grid to place active pattern · Pattern mode loops inside one pattern, Song mode plays the full timeline.</div>
+<div class="record-pill">
+  <span class="record-mode-label">Record</span>
+  <button class="rec-mode-btn active" data-mode="playlist" id="rec-mode-playlist">Playlist</button>
+  <button class="rec-mode-btn" data-mode="step" id="rec-mode-step">Step</button>
+</div>
+<div>
+  Double-click empty grid to place active pattern · Pattern mode loops inside one pattern, Song mode plays the full timeline.
+</div>
+
+<!-- EDIT TOOLS: SELECT / SPLIT / MUTE -->
+<div class="timeline-edit-tools">
+  <span>Tools:</span>
+  <button class="edit-tool-btn active" data-tool="select">Select / Move (S)</button>
+  <button class="edit-tool-btn" data-tool="split">Split (B)</button>
+  <button class="edit-tool-btn" data-tool="mute">Mute (M)</button>
+</div>
         </div>
         <div class="timeline-scrollbar">
           <div class="timeline-scroll-thumb" id="timeline-thumb">
@@ -2400,6 +2457,48 @@
   pluginOverlay.addEventListener('click', (e) => {
     if (e.target === pluginOverlay) closePluginWindow();
   });
+// edit tools: 'select' | 'split' | 'mute'
+let currentEditTool = 'select';
+
+// simple selection / marquee state
+let marqueeEl = null;
+let marqueeSelecting = false;
+let marqueeStart = { x: 0, y: 0 };
+
+// helper: clear and set clip selection
+function clearClipSelection() {
+  if (!gridInner) return;
+  gridInner.querySelectorAll('.clip.selected').forEach(el => {
+    el.classList.remove('selected');
+  });
+}
+
+function selectClipElement(el) {
+  el.classList.add('selected');
+}
+
+function toggleClipMute(el) {
+  const id = parseInt(el.dataset.clipId, 10);
+  const clip = clips.find(c => c.id === id);
+  const nowMuted = !el.classList.contains('clip-muted');
+  el.classList.toggle('clip-muted', nowMuted);
+  if (clip) clip.muted = nowMuted;
+}
+
+// switch tools from buttons / keyboard
+const editToolButtons = document.querySelectorAll('.edit-tool-btn');
+function setCurrentEditTool(tool) {
+  currentEditTool = tool;
+  editToolButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tool === tool);
+  });
+}
+
+editToolButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    setCurrentEditTool(btn.dataset.tool);
+  });
+});
 
   /* ========= THEME DESIGNER ========= */
   function ensureThemeFormBuilt() {
@@ -3060,12 +3159,21 @@ if (trackFileInput) {
   }
 
   /* ========= CLIPS ========= */
-  function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
-    const id = nextClipId++;
-    clips.push({ id, trackId, startBeat, lengthBeats, label, color, patternId: patternId || null });
-    ensureGridForBeat(startBeat + lengthBeats);
-    renderClips();
-  }
+function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
+  const id = nextClipId++;
+  clips.push({
+    id,
+    trackId,
+    startBeat,
+    lengthBeats,
+    label,
+    color,
+    patternId: patternId || null,
+    muted: false
+  });
+  ensureGridForBeat(startBeat + lengthBeats);
+  renderClips();
+}
 
   function renderClips() {
     gridInner.querySelectorAll('.clip').forEach(c => c.remove());
@@ -3083,6 +3191,11 @@ if (trackFileInput) {
       el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
       el.style.top = (top + 4) + 'px';
       el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
+      
+      // apply muted visual state
+      if (c.muted) {
+        el.classList.add('clip-muted');
+      }
 
       const leftHandle = document.createElement('div');
       leftHandle.className = 'clip-handle-left';
@@ -3100,6 +3213,54 @@ if (trackFileInput) {
       el.appendChild(label);
       el.appendChild(rightHandle);
 
+      // =====================
+// SPLIT CLIP HELPER
+// =====================
+function splitClipAtBeat(clipId, splitBeat) {
+  const index = clips.findIndex(c => c.id === clipId);
+  if (index === -1) return;
+
+  const clip = clips[index];
+  const clipStart = clip.startBeat;
+  const clipEnd = clip.startBeat + clip.lengthBeats;
+
+  // avoid splitting at edges
+  if (splitBeat <= clipStart + 0.001 || splitBeat >= clipEnd - 0.001) return;
+
+  const leftLength = splitBeat - clipStart;
+  const rightLength = clipEnd - splitBeat;
+
+  const baseProps = {
+    trackId: clip.trackId,
+    label: clip.label,
+    color: clip.color,
+    patternId: clip.patternId || null,
+    muted: !!clip.muted
+  };
+
+  // delete original & add two new ones
+  clips.splice(index, 1);
+
+  const leftId = nextClipId++;
+  const rightId = nextClipId++;
+
+  clips.push({
+    id: leftId,
+    startBeat: clipStart,
+    lengthBeats: leftLength,
+    ...baseProps
+  });
+
+  clips.push({
+    id: rightId,
+    startBeat: splitBeat,
+    lengthBeats: rightLength,
+    ...baseProps
+  });
+
+  renderClips();
+}
+      
       addClipDragHandlers(el, c);
 
       el.addEventListener('dblclick', () => {
@@ -3130,16 +3291,55 @@ if (trackFileInput) {
     let startLeft = 0;
     let startWidth = 0;
 
-    el.addEventListener('mousedown', e => {
-      const handle = e.target.dataset.handle;
-      dragging = !handle;
-      resizing = handle || null;
-      startX = e.clientX;
-      startLeft = parseFloat(el.style.left);
-      startWidth = parseFloat(el.style.width);
-      e.preventDefault();
-      e.stopPropagation();
-    });
+el.addEventListener('mousedown', e => {
+  // SPLIT TOOL: click to cut the clip at the nearest beat
+  if (currentEditTool === 'split' && !e.target.dataset.handle) {
+    const beat = clientXToBeat(e.clientX); // global helper used for loop selection as well
+    const snapBeat = Math.round(beat);
+    const clipStart = clip.startBeat;
+    const clipEnd = clip.startBeat + clip.lengthBeats;
+
+    if (snapBeat > clipStart && snapBeat < clipEnd) {
+      splitClipAtBeat(clip.id, snapBeat);
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+  }
+
+  // MUTE TOOL: click toggles mute on this clip
+  if (currentEditTool === 'mute' && !e.target.dataset.handle) {
+    toggleClipMute(el);
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+  }
+
+  // SELECT TOOL: basic selection on click
+  if (currentEditTool === 'select') {
+    if (!e.shiftKey) {
+      clearClipSelection();
+    }
+    selectClipElement(el);
+  }
+
+  // only drag / resize when using select tool
+  if (currentEditTool !== 'select') {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+  }
+
+  const handle = e.target.dataset.handle;
+  dragging = !handle;
+  resizing = handle || null;
+  startX = e.clientX;
+  startLeft = parseFloat(el.style.left);
+  startWidth = parseFloat(el.style.width);
+  e.preventDefault();
+  e.stopPropagation();
+});
 
     window.addEventListener('mousemove', e => {
       if (!dragging && !resizing) return;
@@ -3231,6 +3431,81 @@ if (trackFileInput) {
         closestRow = r;
       }
     });
+    /* ========= MARQUEE SELECTION (DRAG EMPTY GRID) ========= */
+gridInner.addEventListener('mousedown', (e) => {
+  // only start marquee from empty space (not on clips / handles / loop / playhead)
+  if (e.button !== 0) return;
+  if (e.target.closest('.clip')) return;
+
+  const rect = gridInner.getBoundingClientRect();
+  marqueeSelecting = true;
+  marqueeStart.x = e.clientX - rect.left;
+  marqueeStart.y = e.clientY - rect.top;
+
+  marqueeEl = document.createElement('div');
+  marqueeEl.className = 'timeline-marquee';
+  marqueeEl.style.left = marqueeStart.x + 'px';
+  marqueeEl.style.top = marqueeStart.y + 'px';
+  marqueeEl.style.width = '0px';
+  marqueeEl.style.height = '0px';
+  gridInner.appendChild(marqueeEl);
+
+  clearClipSelection();
+  e.preventDefault();
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!marqueeSelecting || !marqueeEl) return;
+
+  const rect = gridInner.getBoundingClientRect();
+  const currentX = e.clientX - rect.left;
+  const currentY = e.clientY - rect.top;
+
+  const x = Math.min(currentX, marqueeStart.x);
+  const y = Math.min(currentY, marqueeStart.y);
+  const w = Math.abs(currentX - marqueeStart.x);
+  const h = Math.abs(currentY - marqueeStart.y);
+
+  marqueeEl.style.left = x + 'px';
+  marqueeEl.style.top = y + 'px';
+  marqueeEl.style.width = w + 'px';
+  marqueeEl.style.height = h + 'px';
+
+  const selRect = {
+    left: x,
+    top: y,
+    right: x + w,
+    bottom: y + h
+  };
+
+  // hit-test clips
+  const gridRect = gridInner.getBoundingClientRect();
+  gridInner.querySelectorAll('.clip').forEach(clipEl => {
+    const cr = clipEl.getBoundingClientRect();
+    const gx = cr.left - gridRect.left;
+    const gy = cr.top - gridRect.top;
+    const gr = gx + cr.width;
+    const gb = gy + cr.height;
+
+    const intersects =
+      !(gr < selRect.left ||
+        gx > selRect.right ||
+        gb < selRect.top ||
+        gy > selRect.bottom);
+
+    clipEl.classList.toggle('selected', intersects);
+  });
+});
+
+window.addEventListener('mouseup', () => {
+  if (marqueeSelecting) {
+    marqueeSelecting = false;
+    if (marqueeEl && marqueeEl.parentNode) {
+      marqueeEl.parentNode.removeChild(marqueeEl);
+    }
+    marqueeEl = null;
+  }
+});
     const trackId = parseInt(closestRow.dataset.trackId, 10);
 
     let beatFromZero = (x - GRID_LEFT_OFFSET) / beatWidth;
