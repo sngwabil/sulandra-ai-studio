@@ -3010,64 +3010,86 @@ window.addEventListener('click', (e) => {
     hideTrackTypeMenu();
   }
 });
-
-// handle file uploads from "Upload from device…"
+  
 // handle file uploads from "Upload from device…"
 if (trackFileInput) {
   trackFileInput.addEventListener('change', (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
+    const file = files[0];
+
+    // Track we opened the menu on
     let targetTrackId = parseInt(trackFileInput.dataset.trackId || '', 10);
-    let targetTrack = tracks.find(tr => tr.id === targetTrackId);
+    let targetTrackIndex = tracks.findIndex(tr => tr.id === targetTrackId);
+    if (targetTrackIndex === -1) return;
 
-    if (!targetTrack) return;
+    let targetTrack = tracks[targetTrackIndex];
 
-    // 1. Check if target track already has clips
+    // Does this track already have clips / patterns on the timeline?
     const trackHasClips = clips.some(c => c.trackId === targetTrackId);
 
     if (trackHasClips) {
-      // 2. Occupied: Create new track directly below
-      const currentTrackIndex = tracks.findIndex(tr => tr.id === targetTrackId);
-      
-      const newId = nextTrackId++;
-      const newTrack = {
-        id: newId,
-        name: files[0].name, // Name track after file
-        height: 65,
-        type: targetTrack.type, 
-        kind: targetTrack.kind,
-        preset: targetTrack.preset,
-        color: targetTrack.color,
-        icon: targetTrack.icon,
-        importedFiles: []
-      };
+      // Ask what to do: REPLACE vs NEW TRACK
+      const replace = window.confirm(
+        'This track already has clips.\n\n' +
+        'Click OK to REPLACE everything on this track with the new audio.\n' +
+        'Click Cancel to create a NEW track below and keep existing clips.'
+      );
 
-      // Insert into array at index + 1
-      tracks.splice(currentTrackIndex + 1, 0, newTrack);
-      
-      // Update our target references
-      targetTrackId = newId;
-      targetTrack = newTrack;
-      
-      // Re-render immediately so we can place the clip
-      renderTracks();
+      if (replace) {
+        // Remove all clips on this track, keep the same track
+        clips = clips.filter(c => c.trackId !== targetTrackId);
+        renderClips();
+      } else {
+        // Create a new track directly UNDER the current one
+        const newId = nextTrackId++;
+        const newTrack = {
+          id: newId,
+          name: file.name,               // name new track after file
+          height: targetTrack.height || 65,
+          type: targetTrack.type,
+          kind: targetTrack.kind,
+          preset: targetTrack.preset,
+          color: targetTrack.color,
+          icon: targetTrack.icon,
+          importedFiles: []
+        };
+
+        // Insert in tracks array right after the original track
+        tracks.splice(targetTrackIndex + 1, 0, newTrack);
+
+        // Switch our target to the new track
+        targetTrackId = newId;
+        targetTrackIndex = targetTrackIndex + 1;
+        targetTrack = newTrack;
+
+        renderTracks();
+      }
     } else {
-      // 3. Not occupied: Just rename existing track to file name
-      targetTrack.name = files[0].name;
-      renderTracks(); 
+      // Track is empty → just rename it to the file name
+      targetTrack.name = file.name;
+      renderTracks();
     }
 
-    // 4. Create the Clip
-    createClip(targetTrackId, 0, 8, files[0].name, targetTrack.color || 'blue', null);
+    // Create a clip for this file at bar 1
+    const defaultLengthBeats = 16; // 4 bars (if you want longer, change this)
+    createClip(
+      targetTrackId,
+      0,
+      defaultLengthBeats,
+      file.name,
+      targetTrack.color || 'blue',
+      null
+    );
 
-    // 5. Store file reference
+    // Store file names on the track (for future audio engine / UI)
     if (targetTrack) {
       targetTrack.importedFiles = files.map(f => f.name);
       renderMixer();
     }
 
-    // Cleanup
+    // Reset input so we can upload again later
     trackFileInput.value = '';
     trackFileInput.dataset.trackId = '';
   });
