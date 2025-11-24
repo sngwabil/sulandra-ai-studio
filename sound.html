@@ -3431,6 +3431,81 @@ el.addEventListener('mousedown', e => {
         closestRow = r;
       }
     });
+    /* ========= MARQUEE SELECTION (DRAG EMPTY GRID) ========= */
+gridInner.addEventListener('mousedown', (e) => {
+  // only start marquee from empty space (not on clips / handles / loop / playhead)
+  if (e.button !== 0) return;
+  if (e.target.closest('.clip')) return;
+
+  const rect = gridInner.getBoundingClientRect();
+  marqueeSelecting = true;
+  marqueeStart.x = e.clientX - rect.left;
+  marqueeStart.y = e.clientY - rect.top;
+
+  marqueeEl = document.createElement('div');
+  marqueeEl.className = 'timeline-marquee';
+  marqueeEl.style.left = marqueeStart.x + 'px';
+  marqueeEl.style.top = marqueeStart.y + 'px';
+  marqueeEl.style.width = '0px';
+  marqueeEl.style.height = '0px';
+  gridInner.appendChild(marqueeEl);
+
+  clearClipSelection();
+  e.preventDefault();
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!marqueeSelecting || !marqueeEl) return;
+
+  const rect = gridInner.getBoundingClientRect();
+  const currentX = e.clientX - rect.left;
+  const currentY = e.clientY - rect.top;
+
+  const x = Math.min(currentX, marqueeStart.x);
+  const y = Math.min(currentY, marqueeStart.y);
+  const w = Math.abs(currentX - marqueeStart.x);
+  const h = Math.abs(currentY - marqueeStart.y);
+
+  marqueeEl.style.left = x + 'px';
+  marqueeEl.style.top = y + 'px';
+  marqueeEl.style.width = w + 'px';
+  marqueeEl.style.height = h + 'px';
+
+  const selRect = {
+    left: x,
+    top: y,
+    right: x + w,
+    bottom: y + h
+  };
+
+  // hit-test clips
+  const gridRect = gridInner.getBoundingClientRect();
+  gridInner.querySelectorAll('.clip').forEach(clipEl => {
+    const cr = clipEl.getBoundingClientRect();
+    const gx = cr.left - gridRect.left;
+    const gy = cr.top - gridRect.top;
+    const gr = gx + cr.width;
+    const gb = gy + cr.height;
+
+    const intersects =
+      !(gr < selRect.left ||
+        gx > selRect.right ||
+        gb < selRect.top ||
+        gy > selRect.bottom);
+
+    clipEl.classList.toggle('selected', intersects);
+  });
+});
+
+window.addEventListener('mouseup', () => {
+  if (marqueeSelecting) {
+    marqueeSelecting = false;
+    if (marqueeEl && marqueeEl.parentNode) {
+      marqueeEl.parentNode.removeChild(marqueeEl);
+    }
+    marqueeEl = null;
+  }
+});
     const trackId = parseInt(closestRow.dataset.trackId, 10);
 
     let beatFromZero = (x - GRID_LEFT_OFFSET) / beatWidth;
