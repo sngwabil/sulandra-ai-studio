@@ -2457,6 +2457,48 @@
   pluginOverlay.addEventListener('click', (e) => {
     if (e.target === pluginOverlay) closePluginWindow();
   });
+// edit tools: 'select' | 'split' | 'mute'
+let currentEditTool = 'select';
+
+// simple selection / marquee state
+let marqueeEl = null;
+let marqueeSelecting = false;
+let marqueeStart = { x: 0, y: 0 };
+
+// helper: clear and set clip selection
+function clearClipSelection() {
+  if (!gridInner) return;
+  gridInner.querySelectorAll('.clip.selected').forEach(el => {
+    el.classList.remove('selected');
+  });
+}
+
+function selectClipElement(el) {
+  el.classList.add('selected');
+}
+
+function toggleClipMute(el) {
+  const id = parseInt(el.dataset.clipId, 10);
+  const clip = clips.find(c => c.id === id);
+  const nowMuted = !el.classList.contains('clip-muted');
+  el.classList.toggle('clip-muted', nowMuted);
+  if (clip) clip.muted = nowMuted;
+}
+
+// switch tools from buttons / keyboard
+const editToolButtons = document.querySelectorAll('.edit-tool-btn');
+function setCurrentEditTool(tool) {
+  currentEditTool = tool;
+  editToolButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tool === tool);
+  });
+}
+
+editToolButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    setCurrentEditTool(btn.dataset.tool);
+  });
+});
 
   /* ========= THEME DESIGNER ========= */
   function ensureThemeFormBuilt() {
