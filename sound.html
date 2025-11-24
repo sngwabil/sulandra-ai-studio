@@ -544,6 +544,54 @@
       color: var(--text-muted);
       flex-wrap: wrap;
     }
+    /* ===== CLIP SELECTION / MUTE STATES ===== */
+.clip.selected {
+  outline: 2px solid #ffffff;
+  box-shadow:
+    0 0 0 1px #000000,
+    0 0 8px rgba(255,255,255,0.35);
+}
+
+.clip-muted {
+  opacity: 0.35;
+}
+
+/* ===== MARQUEE SELECTION BOX ===== */
+.timeline-marquee {
+  position: absolute;
+  border: 1px dashed rgba(200,220,255,0.9);
+  background: rgba(120,160,255,0.15);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ===== EDIT TOOLBAR (SELECT / SPLIT / MUTE) ===== */
+.timeline-edit-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.edit-tool-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.8);
+  background: #02041b;
+  color: var(--text-main);
+  font-size: 10px;
+  padding: 2px 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.edit-tool-btn.active {
+  background: radial-gradient(circle at 0 0, var(--accent), #050a20);
+  color: #02041b;
+}
     .tempo-pill, .zoom-pill, .pattern-pill, .record-pill {
       padding: 2px 6px;
       border-radius: 999px;
