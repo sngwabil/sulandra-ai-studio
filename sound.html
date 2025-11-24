@@ -975,7 +975,20 @@
     .clip[data-color="purple"] { background: linear-gradient(135deg,var(--clip-purple),#ffb4ff); }
     .clip[data-color="pink"]   { background: linear-gradient(135deg,var(--clip-pink),#ffd7f0); }
     .clip[data-color="green"]  { background: linear-gradient(135deg,var(--clip-green),#b5ffd8); }
-
+    
+    /* Audio (WAV/MP3) clips – different visual style */
+    .clip.clip-audio {
+      background:
+        linear-gradient(135deg, #0c1830, #1e4880),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,255,255,0.25) 0,
+          rgba(255,255,255,0.25) 2px,
+          transparent 2px,
+          transparent 4px
+        );
+      border-color: #90d2ff;
+    }
     .clip-label {
       flex: 1;
     }
