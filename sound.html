@@ -3291,16 +3291,55 @@ function splitClipAtBeat(clipId, splitBeat) {
     let startLeft = 0;
     let startWidth = 0;
 
-    el.addEventListener('mousedown', e => {
-      const handle = e.target.dataset.handle;
-      dragging = !handle;
-      resizing = handle || null;
-      startX = e.clientX;
-      startLeft = parseFloat(el.style.left);
-      startWidth = parseFloat(el.style.width);
-      e.preventDefault();
-      e.stopPropagation();
-    });
+el.addEventListener('mousedown', e => {
+  // SPLIT TOOL: click to cut the clip at the nearest beat
+  if (currentEditTool === 'split' && !e.target.dataset.handle) {
+    const beat = clientXToBeat(e.clientX); // global helper used for loop selection as well
+    const snapBeat = Math.round(beat);
+    const clipStart = clip.startBeat;
+    const clipEnd = clip.startBeat + clip.lengthBeats;
+
+    if (snapBeat > clipStart && snapBeat < clipEnd) {
+      splitClipAtBeat(clip.id, snapBeat);
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+  }
+
+  // MUTE TOOL: click toggles mute on this clip
+  if (currentEditTool === 'mute' && !e.target.dataset.handle) {
+    toggleClipMute(el);
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+  }
+
+  // SELECT TOOL: basic selection on click
+  if (currentEditTool === 'select') {
+    if (!e.shiftKey) {
+      clearClipSelection();
+    }
+    selectClipElement(el);
+  }
+
+  // only drag / resize when using select tool
+  if (currentEditTool !== 'select') {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+  }
+
+  const handle = e.target.dataset.handle;
+  dragging = !handle;
+  resizing = handle || null;
+  startX = e.clientX;
+  startLeft = parseFloat(el.style.left);
+  startWidth = parseFloat(el.style.width);
+  e.preventDefault();
+  e.stopPropagation();
+});
 
     window.addEventListener('mousemove', e => {
       if (!dragging && !resizing) return;
