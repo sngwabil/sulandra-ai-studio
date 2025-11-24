@@ -2230,6 +2230,14 @@
 
   // record mode: 'playlist' or 'step'
   let recordMode = 'playlist';
+    // follow playhead auto-scroll
+  let followPlayhead = true;
+
+  // multi-clip drag
+  let dragGroup = null;
+
+  // clipboard for copy/paste of clips
+  let clipboardClips = [];
 
   // THEME HANDLING
   const THEME_CLASS_LIST = [
