@@ -3191,6 +3191,19 @@ function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
       el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
       el.style.top = (top + 4) + 'px';
       el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
+      const el = document.createElement('div');
+el.className = 'clip';
+el.dataset.clipId = c.id;
+el.dataset.color = c.color || 'blue';
+
+el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
+el.style.top = (top + 4) + 'px';
+el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
+
+// apply muted visual state
+if (c.muted) {
+  el.classList.add('clip-muted');
+}
 
       const leftHandle = document.createElement('div');
       leftHandle.className = 'clip-handle-left';
@@ -3207,6 +3220,51 @@ function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
       el.appendChild(leftHandle);
       el.appendChild(label);
       el.appendChild(rightHandle);
+
+      function splitClipAtBeat(clipId, splitBeat) {
+  const index = clips.findIndex(c => c.id === clipId);
+  if (index === -1) return;
+
+  const clip = clips[index];
+  const clipStart = clip.startBeat;
+  const clipEnd = clip.startBeat + clip.lengthBeats;
+
+  // avoid splitting exactly on edges
+  if (splitBeat <= clipStart + 0.001 || splitBeat >= clipEnd - 0.001) return;
+
+  const leftLength = splitBeat - clipStart;
+  const rightLength = clipEnd - splitBeat;
+
+  const baseProps = {
+    trackId: clip.trackId,
+    label: clip.label,
+    color: clip.color,
+    patternId: clip.patternId || null,
+    muted: !!clip.muted
+  };
+
+  // remove original
+  clips.splice(index, 1);
+
+  const leftId = nextClipId++;
+  const rightId = nextClipId++;
+
+  clips.push({
+    id: leftId,
+    startBeat: clipStart,
+    lengthBeats: leftLength,
+    ...baseProps
+  });
+
+  clips.push({
+    id: rightId,
+    startBeat: splitBeat,
+    lengthBeats: rightLength,
+    ...baseProps
+  });
+
+  renderClips();
+}
 
       addClipDragHandlers(el, c);
 
