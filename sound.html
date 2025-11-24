@@ -1892,12 +1892,22 @@
             <select id="pattern-select" class="pattern-select"></select>
             <button id="new-pattern-btn">+ New</button>
           </div>
-          <div class="record-pill">
-            <span class="record-mode-label">Record</span>
-            <button class="rec-mode-btn active" data-mode="playlist" id="rec-mode-playlist">Playlist</button>
-            <button class="rec-mode-btn" data-mode="step" id="rec-mode-step">Step</button>
-          </div>
-          <div>Double-click empty grid to place active pattern · Pattern mode loops inside one pattern, Song mode plays the full timeline.</div>
+<div class="record-pill">
+  <span class="record-mode-label">Record</span>
+  <button class="rec-mode-btn active" data-mode="playlist" id="rec-mode-playlist">Playlist</button>
+  <button class="rec-mode-btn" data-mode="step" id="rec-mode-step">Step</button>
+</div>
+<div>
+  Double-click empty grid to place active pattern · Pattern mode loops inside one pattern, Song mode plays the full timeline.
+</div>
+
+<!-- EDIT TOOLS: SELECT / SPLIT / MUTE -->
+<div class="timeline-edit-tools">
+  <span>Tools:</span>
+  <button class="edit-tool-btn active" data-tool="select">Select / Move (S)</button>
+  <button class="edit-tool-btn" data-tool="split">Split (B)</button>
+  <button class="edit-tool-btn" data-tool="mute">Mute (M)</button>
+</div>
         </div>
         <div class="timeline-scrollbar">
           <div class="timeline-scroll-thumb" id="timeline-thumb">
