@@ -3953,21 +3953,40 @@ if (followBtn) {
     loopRegionEl.style.width = width + 'px';
   }
 
-  const rulerEl = document.querySelector('.timeline-ruler');
+    const rulerEl = document.querySelector('.timeline-ruler');
   rulerEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
   rulerEl.addEventListener('mousedown', (e) => {
-    if (e.button !== 2) return;
-    if (playMode === 'pattern') return; // loop region not used in pattern mode
-    e.preventDefault();
-    const beat = clientXToBeat(e.clientX);
-    loopSelecting = true;
-    loopSelectAnchorBeat = beat;
-    loopStartBeat = beat;
-    loopEndBeat = beat;
-    loopActive = false;
-    updateLoopRegion();
+    // LEFT CLICK: move playhead here
+    if (e.button === 0) {
+      const beat = clientXToBeat(e.clientX);
+      jumpPlayheadToBeat(beat, true); // restart playback if currently playing
+      e.preventDefault();
+      return;
+    }
+
+    // RIGHT CLICK: loop region selection (as before)
+    if (e.button === 2) {
+      if (playMode === 'pattern') return; // loop region not used in pattern mode
+      e.preventDefault();
+      const beat = clientXToBeat(e.clientX);
+      loopSelecting = true;
+      loopSelectAnchorBeat = beat;
+      loopStartBeat = beat;
+      loopEndBeat = beat;
+      loopActive = false;
+      updateLoopRegion();
+    }
   });
+    // Mouse wheel zoom on the ruler (number bar)
+  if (rulerEl) {
+    rulerEl.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const step = 4;
+      const newBeatWidth = beatWidth + (e.deltaY < 0 ? step : -step);
+      zoomAtBeatWidth(newBeatWidth, e.clientX);
+    }, { passive: false });
+  }
 
   window.addEventListener('mousemove', (e) => {
     if (!loopSelecting) return;
