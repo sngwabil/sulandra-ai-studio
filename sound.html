@@ -3258,7 +3258,15 @@ function createClip(trackId, startBeat, lengthBeats, label, color, patternId) {
       el.className = 'clip';
       el.dataset.clipId = c.id;
       el.dataset.color = c.color || 'blue';
+          // Mark audio files (wav/mp3/etc) so CSS can style them differently
+    const isAudioFile =
+      !c.patternId &&
+      /\.(wav|mp3|ogg|flac|m4a|aif|aiff)$/i.test(c.label || '');
 
+    if (isAudioFile) {
+      el.classList.add('clip-audio');
+    }
+      
       el.style.left = (GRID_LEFT_OFFSET + c.startBeat * beatWidth) + 'px';
       el.style.top = (top + 4) + 'px';
       el.style.width = (c.lengthBeats * beatWidth - 6) + 'px';
