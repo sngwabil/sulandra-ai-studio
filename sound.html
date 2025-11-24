@@ -3220,8 +3220,8 @@ if (c.muted) {
       el.appendChild(leftHandle);
       el.appendChild(label);
       el.appendChild(rightHandle);
-
-      function splitClipAtBeat(clipId, splitBeat) {
+      
+function splitClipAtBeat(clipId, splitBeat) {
   const index = clips.findIndex(c => c.id === clipId);
   if (index === -1) return;
 
