@@ -2382,6 +2382,7 @@
   const recBtn = document.getElementById('btn-rec');
   const metronomeBtn = document.getElementById('btn-metronome');
   const tempoDisplay = document.getElementById('tempo-value');
+  const followBtn = document.getElementById('btn-follow');
 
   const modeSongBtn = document.getElementById('mode-song');
   const modePatternBtn = document.getElementById('mode-pattern');
@@ -3791,6 +3792,18 @@ window.addEventListener('mouseup', () => {
     if (isPlaying) pausePlayback();
     else startPlayback();
   });
+  function updateFollowBtnUI() {
+    if (!followBtn) return;
+    followBtn.classList.toggle('active', followPlayhead);
+}
+
+if (followBtn) {
+    followBtn.addEventListener('click', () => {
+        followPlayhead = !followPlayhead;
+        updateFollowBtnUI();
+    });
+    updateFollowBtnUI();
+}
 
   stopBtn.addEventListener('click', () => {
     pausePlayback();
