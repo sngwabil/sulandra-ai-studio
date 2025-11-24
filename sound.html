@@ -3838,54 +3838,47 @@ if (followBtn) {
   });
 
   window.addEventListener('keydown', (e) => {
-    const active = document.activeElement;
-    const typingInField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+  const active = document.activeElement;
+  const typingInField =
+    active &&
+    (active.tagName === 'INPUT' ||
+     active.tagName === 'TEXTAREA' ||
+     active.isContentEditable);
 
-    if (e.code === 'Space') {
-      if (typingInField) return;
-      e.preventDefault();
-      if (isPlaying) pausePlayback();
-      else startPlayback();
-      return;
-    }
+  // Space: play / pause
+  if (e.code === 'Space') {
     if (typingInField) return;
-
-    if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
-    } else if (e.key === '-' || e.key === '_') {
-      e.preventDefault();
-      zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
-    }
-      // ============================
-  // TOOL SHORTCUTS
-  // ============================
-  // S → Select tool
-  if (e.key.toLowerCase() === 's') {
-    currentEditTool = 'select';
-    updateEditToolUI();
+    e.preventDefault();
+    if (isPlaying) pausePlayback();
+    else startPlayback();
     return;
   }
 
-  // X → Split tool
-  if (e.key.toLowerCase() === 'x') {
-    currentEditTool = 'split';
-    updateEditToolUI();
+  // If typing in an input/textarea, ignore everything else
+  if (typingInField) return;
+
+  // + / - : zoom around center
+  if (e.key === '+' || (e.key === '=' && e.shiftKey)) {
+    e.preventDefault();
+    zoomAtBeatWidth(beatWidth + 4, window.innerWidth / 2);
+    return;
+  } else if (e.key === '-' || e.key === '_') {
+    e.preventDefault();
+    zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
     return;
   }
 
-  // M → Mute tool
-  if (e.key.toLowerCase() === 'm') {
-    currentEditTool = 'mute';
-    updateEditToolUI();
-    return;
-  }
-
-  // ============================
-  // DELETE SELECTED CLIPS
-  // ============================
+  // Delete / Backspace: delete selected clips
   if (e.key === 'Delete' || e.key === 'Backspace') {
-    if (selectedClipIds.size > 0) {
+    // Prefer helper if it exists
+    if (typeof getSelectedClipIds === 'function') {
+      const ids = getSelectedClipIds();
+      if (ids && ids.length) {
+        clips = clips.filter(c => !ids.includes(c.id));
+        renderClips();
+      }
+    } else if (typeof selectedClipIds !== 'undefined' && selectedClipIds.size > 0) {
+      // Fallback to Set-based selection
       selectedClipIds.forEach(id => {
         const idx = clips.findIndex(c => c.id === id);
         if (idx !== -1) clips.splice(idx, 1);
@@ -3895,7 +3888,106 @@ if (followBtn) {
     }
     return;
   }
-  });
+
+  // Ctrl/Cmd + C: copy selected clips
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+    if (typeof getSelectedClipModels === 'function') {
+      clipboardClips = getSelectedClipModels().map(c => ({ ...c }));
+    }
+    return;
+  }
+
+  // Ctrl/Cmd + V: paste at current playhead
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+    if (!clipboardClips || !clipboardClips.length) return;
+
+    const baseBeat = clipboardClips.reduce(
+      (min, c) => Math.min(min, c.startBeat),
+      Infinity
+    );
+    const offset = playheadBeat - baseBeat;
+
+    if (typeof clearClipSelection === 'function') clearClipSelection();
+    clipboardClips.forEach(c => {
+      const newStart = Math.max(0, c.startBeat + offset);
+      createClip(
+        c.trackId,
+        newStart,
+        c.lengthBeats,
+        c.label,
+        c.color,
+        c.patternId
+      );
+    });
+    return;
+  }
+
+  // Ctrl/Cmd + D: duplicate selection to the right
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D')) {
+    if (typeof getSelectedClipModels === 'function') {
+      const selected = getSelectedClipModels();
+      if (!selected.length) return;
+
+      e.preventDefault();
+
+      const minStart = selected.reduce(
+        (min, c) => Math.min(min, c.startBeat),
+        Infinity
+      );
+      const maxEnd = selected.reduce(
+        (max, c) => Math.max(max, c.startBeat + c.lengthBeats),
+        0
+      );
+      const shift = maxEnd - minStart;
+
+      if (typeof clearClipSelection === 'function') clearClipSelection();
+      selected.forEach(c => {
+        const newStart = c.startBeat + shift;
+        createClip(
+          c.trackId,
+          newStart,
+          c.lengthBeats,
+          c.label,
+          c.color,
+          c.patternId
+        );
+      });
+    }
+    return;
+  }
+
+  // F: toggle follow playhead
+  if (e.key === 'f' || e.key === 'F') {
+    followPlayhead = !followPlayhead;
+    if (typeof updateFollowBtnUI === 'function') updateFollowBtnUI();
+    return;
+  }
+
+  // ============================
+  // TOOL SHORTCUTS
+  // ============================
+
+  // S → Select tool
+  if (e.key.toLowerCase() === 's') {
+    currentEditTool = 'select';
+    if (typeof updateEditToolUI === 'function') updateEditToolUI();
+    return;
+  }
+
+  // X → Split tool
+  if (e.key.toLowerCase() === 'x') {
+    currentEditTool = 'split';
+    if (typeof updateEditToolUI === 'function') updateEditToolUI();
+    return;
+  }
+
+  // M → Mute tool
+  if (e.key.toLowerCase() === 'm') {
+    currentEditTool = 'mute';
+    if (typeof updateEditToolUI === 'function') updateEditToolUI();
+    return;
+  }
+});
 
   /* ========= MODE TOGGLES ========= */
   function updateModeUI() {
