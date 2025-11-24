@@ -3072,16 +3072,36 @@ if (trackFileInput) {
       renderTracks();
     }
 
-    // Create a clip for this file at bar 1
-    const defaultLengthBeats = 16; // 4 bars (if you want longer, change this)
-    createClip(
-      targetTrackId,
-      0,
-      defaultLengthBeats,
-      file.name,
-      targetTrack.color || 'blue',
-      null
-    );
+        // Create a clip for this file at bar 1.
+    // Try to use the real song length based on audio metadata.
+    const objectUrl = URL.createObjectURL(file);
+    const audioProbe = new Audio();
+    audioProbe.src = objectUrl;
+
+    audioProbe.addEventListener('loadedmetadata', () => {
+      // fallback if duration isn't available
+      let lengthBeats = 16; // 4 bars minimum
+
+      const durationSec = audioProbe.duration;
+      if (durationSec && isFinite(durationSec)) {
+        const secPerBeat = bpmToSecPerBeat(tempo); // uses your existing helper + global tempo
+        lengthBeats = Math.max(
+          4,
+          Math.round(durationSec / secPerBeat)
+        );
+      }
+
+      createClip(
+        targetTrackId,
+        0,
+        lengthBeats,
+        file.name,
+        targetTrack.color || 'blue',
+        null   // patternId = null → audio clip, not pattern
+      );
+
+      URL.revokeObjectURL(objectUrl);
+    });
 
     // Store file names on the track (for future audio engine / UI)
     if (targetTrack) {
