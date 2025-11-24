@@ -3710,7 +3710,7 @@ window.addEventListener('mouseup', () => {
     const x = GRID_LEFT_OFFSET + playheadBeat * beatWidth;
     playheadEl.style.left = x + 'px';
 
-    if (autoScroll && playMode === 'song') {
+      if (autoScroll && followPlayhead && playMode === 'song') {
       const marginLeft = 50;
       const marginRight = 100;
       const viewLeft = timelineScroll.scrollLeft;
