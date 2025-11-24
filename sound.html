@@ -3723,6 +3723,24 @@ window.addEventListener('mouseup', () => {
 
     updateScreenDisplay();
   }
+    function clearClipSelection() {
+    gridInner.querySelectorAll('.clip.selected').forEach(el => {
+      el.classList.remove('selected');
+    });
+  }
+
+  function getSelectedClipIds() {
+    const ids = [];
+    gridInner.querySelectorAll('.clip.selected').forEach(el => {
+      ids.push(parseInt(el.dataset.clipId, 10));
+    });
+    return ids;
+  }
+
+  function getSelectedClipModels() {
+    const ids = getSelectedClipIds();
+    return clips.filter(c => ids.includes(c.id));
+  }
 
   function playLoop(ts) {
     if (!isPlaying) { updateScreenDisplay(ts); return; }
