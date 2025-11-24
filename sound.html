@@ -1892,7 +1892,7 @@
           </div>
           <div class="zoom-pill">
             <span>Timeline zoom</span>
-            <input type="range" id="zoom-range" min="32" max="140" value="48">
+            <input type="range" id="zoom-range" min="12" max="300" value="48">
           </div>
           <div class="pattern-pill">
             <span>Active pattern</span>
@@ -3307,86 +3307,89 @@ function splitClipAtBeat(clipId, splitBeat) {
     let startLeft = 0;
     let startWidth = 0;
 
-el.addEventListener('mousedown', e => {
-  // SPLIT TOOL: click to cut the clip at the nearest beat
-  if (currentEditTool === 'split' && !e.target.dataset.handle) {
-    const beat = clientXToBeat(e.clientX); // global helper used for loop selection as well
-    const snapBeat = Math.round(beat);
-    const clipStart = clip.startBeat;
-    const clipEnd = clip.startBeat + clip.lengthBeats;
+    el.addEventListener('mousedown', e => {
+      const handle = e.target.dataset.handle;
 
-    if (snapBeat > clipStart && snapBeat < clipEnd) {
-      splitClipAtBeat(clip.id, snapBeat);
-    }
+      // selection logic (clicks on clip body, not handles)
+      if (!handle) {
+        if (e.shiftKey) {
+          // toggle selection with Shift
+          el.classList.toggle('selected');
+        } else {
+          // normal click: if this clip not already selected, select only this
+          if (!el.classList.contains('selected')) {
+            clearClipSelection();
+            el.classList.add('selected');
+          }
+        }
+      }
 
-    e.preventDefault();
-    e.stopPropagation();
-    return;
-  }
+      dragging = !handle;
+      resizing = handle || null;
+      startX = e.clientX;
+      startLeft = parseFloat(el.style.left);
+      startWidth = parseFloat(el.style.width);
 
-  // MUTE TOOL: click toggles mute on this clip
-  if (currentEditTool === 'mute' && !e.target.dataset.handle) {
-    toggleClipMute(el);
-    e.preventDefault();
-    e.stopPropagation();
-    return;
-  }
+      // build drag group for multi-drag
+      if (dragging) {
+        const selectedEls = Array.from(gridInner.querySelectorAll('.clip.selected'));
+        const groupEls = selectedEls.length ? selectedEls : [el];
 
-  // SELECT TOOL: basic selection on click
-  if (currentEditTool === 'select') {
-    if (!e.shiftKey) {
-      clearClipSelection();
-    }
-    selectClipElement(el);
-  }
+        if (!selectedEls.length) {
+          clearClipSelection();
+          el.classList.add('selected');
+        }
 
-  // only drag / resize when using select tool
-  if (currentEditTool !== 'select') {
-    e.preventDefault();
-    e.stopPropagation();
-    return;
-  }
+        dragGroup = groupEls.map(domEl => {
+          const id = parseInt(domEl.dataset.clipId, 10);
+          const model = clips.find(c => c.id === id);
+          return {
+            el: domEl,
+            clip: model,
+            startBeat: model.startBeat,
+            top: parseFloat(domEl.style.top)
+          };
+        });
+      } else {
+        dragGroup = null;
+      }
 
-  const handle = e.target.dataset.handle;
-  dragging = !handle;
-  resizing = handle || null;
-  startX = e.clientX;
-  startLeft = parseFloat(el.style.left);
-  startWidth = parseFloat(el.style.width);
-  e.preventDefault();
-  e.stopPropagation();
-});
+      e.preventDefault();
+      e.stopPropagation();
+    });
 
     window.addEventListener('mousemove', e => {
       if (!dragging && !resizing) return;
       const dx = e.clientX - startX;
 
+      // AUTO-SCROLL TIMELINE WHILE DRAGGING
       if (dragging) {
-        let newLeft = startLeft + dx;
-        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
-        beatFromZero = Math.max(0, Math.round(beatFromZero));
-        clip.startBeat = beatFromZero;
-        ensureGridForBeat(clip.startBeat + clip.lengthBeats);
-        el.style.left = (GRID_LEFT_OFFSET + clip.startBeat * beatWidth) + 'px';
-
-        const rect = gridInner.getBoundingClientRect();
-        const y = e.clientY - rect.top;
-        const rows = Array.from(gridInner.querySelectorAll('.grid-track-row'));
-        let closestRow = null;
-        let closestDist = Infinity;
-        rows.forEach(r => {
-          const rRect = r.getBoundingClientRect();
-          const mid = rRect.top + rRect.height / 2 - rect.top;
-          const dist = Math.abs(y - mid);
-          if (dist < closestDist) {
-            closestDist = dist;
-            closestRow = r;
-          }
-        });
-        if (closestRow) {
-          clip.trackId = parseInt(closestRow.dataset.trackId, 10);
-          el.style.top = (closestRow.offsetTop + 4) + 'px';
+        const rectScroll = timelineScroll.getBoundingClientRect();
+        const margin = 60;
+        if (e.clientX < rectScroll.left + margin) {
+          timelineScroll.scrollLeft = Math.max(0, timelineScroll.scrollLeft - 15);
+          updateHorizontalThumb();
+        } else if (e.clientX > rectScroll.right - margin) {
+          const maxScroll = timelineScroll.scrollWidth - timelineScroll.clientWidth;
+          timelineScroll.scrollLeft = Math.min(maxScroll, timelineScroll.scrollLeft + 15);
+          updateHorizontalThumb();
         }
+      }
+
+      if (dragging && dragGroup && dragGroup.length > 0) {
+        // move a group of clips together
+        let base = dragGroup[0];
+        let newLeft = (GRID_LEFT_OFFSET + base.startBeat * beatWidth) + dx;
+        let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
+        let deltaBeats = Math.round(beatFromZero) - base.startBeat;
+
+        dragGroup.forEach(item => {
+          let newStart = item.startBeat + deltaBeats;
+          if (newStart < 0) newStart = 0;
+          item.clip.startBeat = newStart;
+          ensureGridForBeat(item.clip.startBeat + item.clip.lengthBeats);
+          item.el.style.left = (GRID_LEFT_OFFSET + item.clip.startBeat * beatWidth) + 'px';
+        });
       } else if (resizing === 'left') {
         let newLeft = startLeft + dx;
         let beatFromZero = (newLeft - GRID_LEFT_OFFSET) / beatWidth;
@@ -3412,11 +3415,12 @@ el.addEventListener('mousedown', e => {
     window.addEventListener('mouseup', () => {
       dragging = false;
       resizing = null;
+      dragGroup = null;
     });
 
     el.addEventListener('contextmenu', e => {
       e.preventDefault();
-      alert('Later: show a context menu for clip options – normalize, reverse, open detailed editor, etc.');
+      alert('Later: show a clip context menu: normalize, reverse, open editor, etc.');
     });
   }
 
@@ -3563,7 +3567,7 @@ window.addEventListener('mouseup', () => {
   }
 
   function zoomAtBeatWidth(newBeatWidth, clientX) {
-    newBeatWidth = Math.max(32, Math.min(140, newBeatWidth));
+        newBeatWidth = Math.max(12, Math.min(300, newBeatWidth));
     if (newBeatWidth === beatWidth) return;
 
     const rect = timelineScroll.getBoundingClientRect();
