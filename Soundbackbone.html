@@ -3807,6 +3807,44 @@ window.addEventListener('mouseup', () => {
       e.preventDefault();
       zoomAtBeatWidth(beatWidth - 4, window.innerWidth / 2);
     }
+      // ============================
+  // TOOL SHORTCUTS
+  // ============================
+  // S → Select tool
+  if (e.key.toLowerCase() === 's') {
+    currentEditTool = 'select';
+    updateEditToolUI();
+    return;
+  }
+
+  // X → Split tool
+  if (e.key.toLowerCase() === 'x') {
+    currentEditTool = 'split';
+    updateEditToolUI();
+    return;
+  }
+
+  // M → Mute tool
+  if (e.key.toLowerCase() === 'm') {
+    currentEditTool = 'mute';
+    updateEditToolUI();
+    return;
+  }
+
+  // ============================
+  // DELETE SELECTED CLIPS
+  // ============================
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (selectedClipIds.size > 0) {
+      selectedClipIds.forEach(id => {
+        const idx = clips.findIndex(c => c.id === id);
+        if (idx !== -1) clips.splice(idx, 1);
+      });
+      selectedClipIds.clear();
+      renderClips();
+    }
+    return;
+  }
   });
 
   /* ========= MODE TOGGLES ========= */
