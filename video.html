@@ -3,44 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sulandra Creative Studio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Sulandra AI Studio - Video Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* --- THEME VARIABLES --- */
     :root {
-      --bg-root: #050505;
-      --bg-panel: #0a0a0a;
-      --bg-card: #121212;
-      --border: #27272a;
+      --bg-root: #09090b;
+      --bg-sidebar: #0c0c0e;
+      --bg-panel: #121217;
+      --bg-card: #1c1c21;
+      --accent: #ccff00; /* Neon Green */
+      --accent-hover: #b3e600;
       --text-main: #ffffff;
-      --text-muted: #a1a1aa;
-      
-      /* Default Theme (Cyber) */
-      --accent: #8b5cf6; 
-      --highlight: #2dd4bf;
-      --brand-gradient: linear-gradient(135deg, #8b5cf6 0%, #2dd4bf 100%);
+      --text-muted: #8e8e93;
+      --border: #27272a;
+      --input-bg: #000000;
     }
 
-    /* THEME DEFINITIONS */
-    [data-theme="ocean"] { --accent: #3b82f6; --highlight: #60a5fa; --brand-gradient: linear-gradient(135deg, #1e40af, #60a5fa); }
-    [data-theme="sunset"] { --accent: #f97316; --highlight: #fbbf24; --brand-gradient: linear-gradient(135deg, #ea580c, #fbbf24); }
-    [data-theme="forest"] { --accent: #10b981; --highlight: #34d399; --brand-gradient: linear-gradient(135deg, #059669, #34d399); }
-    [data-theme="cherry"] { --accent: #db2777; --highlight: #f472b6; --brand-gradient: linear-gradient(135deg, #be185d, #f472b6); }
-    [data-theme="gold"] { --accent: #d97706; --highlight: #fcd34d; --brand-gradient: linear-gradient(135deg, #b45309, #fcd34d); }
-    [data-theme="monochrome"] { --accent: #ffffff; --highlight: #e5e5e5; --brand-gradient: linear-gradient(135deg, #525252, #ffffff); }
-    [data-theme="royal"] { --accent: #4338ca; --highlight: #818cf8; --brand-gradient: linear-gradient(135deg, #312e81, #818cf8); }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      scrollbar-width: thin;
-      scrollbar-color: #3f3f46 transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background-color: #3f3f46; border-radius: 20px; }
+    ::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 20px; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -48,1000 +30,497 @@
       color: var(--text-main);
       height: 100vh;
       display: grid;
-      grid-template-rows: 64px 1fr;
+      grid-template-columns: 60px 1fr 380px; /* Icons | Main Config | Right Panel */
       overflow: hidden;
     }
 
-    /* --- HEADER --- */
-    header {
-      background: rgba(5, 5, 5, 0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      z-index: 50;
-    }
-    
-    .logo-area { display: flex; flex-direction: column; }
-    .company { font-weight: 800; font-size: 16px; letter-spacing: -0.5px; color: white; }
-    .app-name { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
-    
-    .nav-center {
-      display: flex;
-      gap: 8px;
-      background: var(--bg-panel);
-      padding: 4px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-    .nav-btn {
-      padding: 8px 20px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: 0.2s;
-    }
-    .nav-btn.active {
-      background: var(--bg-card);
-      color: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .nav-btn:hover { color: white; }
-
-    .header-actions { display: flex; gap: 15px; align-items: center; }
-    select.theme-select {
-      background: var(--bg-panel);
-      color: white;
-      border: 1px solid var(--border);
-      padding: 6px 10px;
-      border-radius: 6px;
-      outline: none;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    /* --- MAIN LAYOUT --- */
-    .main-container { position: relative; height: 100%; width: 100%; overflow: hidden; }
-    
-    .view-section { display: none; height: 100%; width: 100%; }
-    .view-section.active { display: block; }
-
-    /* --- VIEW 1: HOME FEED --- */
-    #view-home { overflow-y: auto; padding: 30px; }
-    .feed-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 24px;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-    .feed-card {
-      background: var(--bg-card);
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      transition: 0.2s;
-    }
-    .feed-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-    .feed-video { width: 100%; aspect-ratio: 16/9; background: black; display: block; }
-    .feed-meta { padding: 12px; }
-    .feed-user { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--brand-gradient); }
-    .username { font-size: 12px; font-weight: 600; }
-    .feed-prompt { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-
-    /* --- VIEW 2: CREATE LAB --- */
-    #view-create { display: grid; grid-template-columns: 64px 360px 1fr 320px; height: 100%; }
-
-    /* Sidebar icons */
+    /* --- 1. LEFT ICON SIDEBAR --- */
     .sidebar-icons {
-      background: var(--bg-root);
+      background: var(--bg-sidebar);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px 0;
-      gap: 20px;
+      gap: 28px;
     }
     .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--text-muted);
-      font-size: 18px;
-      transition: 0.2s;
+      width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-muted); transition: 0.2s; font-size: 20px;
     }
     .icon-btn:hover { background: var(--bg-card); color: white; }
-    .icon-btn.active {
-      color: white;
-      background: var(--accent);
-      box-shadow: 0 0 15px rgba(255,255,255,0.1);
-    }
+    .icon-btn.active { color: var(--accent); background: rgba(204, 255, 0, 0.05); }
+    .brand-icon { font-size: 24px; color: white; margin-bottom: 20px; }
 
-    /* Control panel */
-    .control-panel {
+    /* --- 2. MAIN CONFIGURATION PANEL --- */
+    .main-config {
       background: var(--bg-panel);
-      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      padding: 20px;
+      padding: 24px;
       gap: 24px;
-    }
-    .panel-section { display: flex; flex-direction: column; gap: 10px; }
-    label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      font-weight: 700;
+      overflow-y: auto;
     }
 
-    /* Small label additions */
-    .label-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .badge-beta {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: #166534;
-      color: #bbf7d0;
-      text-transform: uppercase;
-    }
+    .header-row { display: flex; justify-content: space-between; align-items: center; }
+    .page-title { font-size: 20px; font-weight: 600; }
+    .model-badge { background: var(--bg-card); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 12px; color: var(--text-muted); }
 
-    /* Toggle buttons */
-    .toggles {
-      display: flex;
-      background: #000;
-      padding: 4px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
+    /* Tabs */
+    .tabs-nav {
+      display: flex; border-bottom: 1px solid var(--border); gap: 24px; margin-top: 10px;
     }
-    .toggle-btn {
+    .tab-item {
+      padding: 12px 0; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; position: relative;
+    }
+    .tab-item.active { color: white; }
+    .tab-item.active::after { content:''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent); }
+    .badge-dot { display: inline-block; width: 6px; height: 6px; background: red; border-radius: 50%; margin-left: 4px; position: relative; top: -6px; }
+
+    /* Input Forms */
+    .config-form { display: none; flex-direction: column; gap: 20px; height: 100%; }
+    .config-form.active { display: flex; }
+
+    /* Upload Box */
+    .upload-container {
       flex: 1;
-      text-align: center;
-      padding: 8px;
-      font-size: 12px;
-      cursor: pointer;
-      border-radius: 6px;
-      transition: 0.2s;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-    .toggle-btn.active {
-      background: var(--bg-card);
-      color: var(--highlight);
-      border: 1px solid var(--border);
-      font-weight: 700;
-    }
-
-    /* Upload */
-    .upload-zone {
       border: 2px dashed var(--border);
       border-radius: 12px;
-      height: 160px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: 0.2s;
-      background: rgba(255,255,255,0.02);
-      position: relative;
-      overflow: hidden;
+      background: var(--input-bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
+      min-height: 280px;
     }
-    .upload-zone:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
-    .upload-zone.dragover { border-color: var(--highlight); background: rgba(255,255,255,0.1); }
-    .upload-zone.has-image { border-style: solid; border-color: var(--highlight); }
-    .preview-thumb {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #000;
-      z-index: 1;
-      display: none;
-    }
+    .upload-container:hover { border-color: var(--text-muted); }
+    .upload-container.has-image { border-style: solid; border-color: var(--border); }
+    .preview-img { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; display: none; }
+    .upload-placeholder { text-align: center; color: var(--text-muted); }
+    .upload-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
 
-    textarea,
-    input[type="text"] {
-      width: 100%;
-      background: #000;
-      border: 1px solid var(--border);
-      color: white;
-      padding: 12px;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 13px;
-      outline: none;
-      transition: 0.2s;
+    /* Prompt Inputs */
+    .prompt-group { display: flex; flex-direction: column; gap: 8px; }
+    .prompt-label { font-size: 12px; font-weight: 600; color: var(--text-muted); display: flex; justify-content: space-between; }
+    .prompt-input {
+      width: 100%; background: var(--input-bg); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 13px; outline: none; transition: 0.2s;
     }
-    textarea:focus,
-    input:focus { border-color: var(--accent); }
+    .prompt-input:focus { border-color: var(--text-muted); }
+    .prompt-input.negative { border-color: #3f1a1a; background: #1a0a0a; }
+    .prompt-input.negative:focus { border-color: #ef4444; }
 
-    /* Switch row (Motion, Sound) */
-    .switch-row {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-size:11px;
-      color:var(--text-muted);
-      gap:10px;
+    /* Bottom Settings Bar */
+    .settings-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 20px; border-top: 1px solid var(--border);
     }
-    .switch-label { flex:1; }
-    .ui-switch {
-      width:36px;
-      height:20px;
-      background:#27272a;
-      border-radius:999px;
-      position:relative;
-      cursor:pointer;
-      flex-shrink:0;
+    .settings-left { display: flex; gap: 12px; align-items: center; }
+    .dropdown-btn {
+      background: var(--bg-card); border: 1px solid var(--border); color: white; padding: 10px 16px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
     }
-    .ui-switch::after {
-      content:'';
-      position:absolute;
-      top:2px;
-      left:2px;
-      width:16px;
-      height:16px;
-      border-radius:999px;
-      background:#fff;
-      transition:0.2s;
+    
+    .toggle-wrapper { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+    .toggle-switch {
+      width: 36px; height: 20px; background: var(--border); border-radius: 20px; position: relative; transition: 0.2s;
     }
-    .ui-switch.on { background:var(--accent); }
-    .ui-switch.on::after { transform:translateX(16px); }
+    .toggle-switch::after {
+      content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.2s;
+    }
+    .toggle-wrapper.active .toggle-switch { background: var(--accent); }
+    .toggle-wrapper.active .toggle-switch::after { transform: translateX(16px); }
 
-    /* Generate Button */
-    .btn-gen {
-      background: var(--brand-gradient);
-      color: white;
-      border: none;
-      padding: 16px;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 10px;
-      width: 100%;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    .btn-generate {
+      background: var(--accent); color: black; font-weight: 700; padding: 12px 40px; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s; font-size: 14px;
     }
-    .btn-gen:hover { transform: translateY(-2px); filter: brightness(1.1); }
-    .btn-gen:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-generate:hover { background: var(--accent-hover); }
+    .btn-generate:disabled { opacity: 0.5; cursor: wait; background: var(--text-muted); }
 
-    /* Canvas */
-    .canvas-area {
-      background: radial-gradient(circle at center, #1a1a20 0%, #050505 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      padding: 40px;
-      flex-direction:column;
-      gap:12px;
-    }
-    .video-wrapper {
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-      border: 1px solid var(--border);
-      max-width: 100%;
-      max-height: 80vh;
-      background:#000;
-      position:relative;
-    }
-    video {
-      max-height: 70vh;
-      max-width: 100%;
-      display: block;
-    }
-
-    /* Player top bar (like DeepSeek) */
-    .player-top-bar {
-      position:absolute;
-      left:0;
-      right:0;
-      top:0;
-      height:42px;
-      background:linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 16px;
-      font-size:11px;
-      color:var(--text-muted);
-      pointer-events:none;
-    }
-    .player-top-left { display:flex; align-items:center; gap:8px; }
-    .chip {
-      padding:4px 8px;
-      border-radius:999px;
-      background:rgba(0,0,0,0.7);
-      border:1px solid #3f3f46;
-      color:#e5e5e5;
-      pointer-events:auto;
-    }
-    .chip-accent {
-      border-color:var(--accent);
-      color:var(--accent);
-    }
-
-    .player-toolbar {
-      width:100%;
-      max-width:640px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      font-size:12px;
-      color:var(--text-muted);
-      margin-top:4px;
-    }
-    .player-toolbar-left { display:flex; align-items:center; gap:8px; }
-    .player-toolbar-right { display:flex; align-items:center; gap:8px; }
-    .toolbar-btn {
-      background:rgba(255,255,255,0.05);
-      border:none;
-      border-radius:999px;
-      padding:6px 10px;
-      color:var(--text-muted);
-      font-size:11px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:4px;
-    }
-    .toolbar-btn:hover { background:rgba(255,255,255,0.15); color:#fff; }
-
-    /* Assets Panel */
-    .assets-panel {
-      background: var(--bg-panel);
+    /* --- 3. RIGHT PANEL (RESULTS) --- */
+    .right-panel {
+      background: var(--bg-root);
       border-left: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-    }
-    .assets-header {
-      height: 50px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      gap:10px;
-    }
-    .asset-tabs {
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .asset-tab {
-      padding:6px 10px;
-      border-radius:999px;
-      background:transparent;
-      cursor:pointer;
-      font-size:11px;
-      color:var(--text-muted);
-      border:1px solid transparent;
-    }
-    .asset-tab.active {
-      border-color:var(--accent);
-      color:#fff;
-      background:rgba(255,255,255,0.04);
-    }
-
-    .assets-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .video-card {
-      background: var(--bg-card);
-      border-radius: 10px;
+      display: flex; flex-direction: column;
       overflow: hidden;
-      border: 1px solid var(--border);
-      transition: 0.2s;
     }
-    .video-card:hover { border-color: var(--text-muted); }
-    .mini-video {
+    
+    .assets-header {
+      padding: 16px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .assets-tabs { display: flex; gap: 16px; }
+    .asset-tab { font-size: 13px; color: var(--text-muted); cursor: pointer; }
+    .asset-tab.active { color: white; font-weight: 600; }
+    
+    .assets-content {
+      flex: 1;
+      display: flex; flex-direction: column;
+      padding: 16px;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    /* Main Player */
+    .main-player-container {
       width: 100%;
       aspect-ratio: 16/9;
-      display: block;
       background: black;
-      object-fit: cover;
-      cursor: pointer;
-    }
-    .card-controls {
-      padding: 8px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-    }
-    .mini-btn {
-      background: rgba(255,255,255,0.05);
-      border: none;
-      color: var(--text-muted);
-      padding: 6px;
-      border-radius: 4px;
-      font-size: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .mini-btn:hover { background: white; color: black; }
-    .btn-extend { color: var(--highlight); }
-    .btn-extend:hover { background: var(--highlight); color: black; }
-    .mini-fav.active-fav {
-      color: var(--accent);
-      background: rgba(139,92,246,0.15);
-    }
-
-    /* QUEUE INDICATOR (like notification banner) */
-    .queue-toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--bg-card);
+      border-radius: 12px;
+      overflow: hidden;
       border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      gap: 15px;
-      z-index: 100;
-      width: 300px;
+      position: relative;
     }
-    .queue-toast.show { display: flex; animation: slideIn 0.3s ease; }
-    @keyframes slideIn {
-      from { transform: translateX(100%); }
-      to { transform: translateX(0); }
+    .main-video { width: 100%; height: 100%; object-fit: contain; display: none; }
+    .empty-player { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-direction: column; gap: 10px; }
+
+    /* Gallery List */
+    .gallery-list {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .gallery-item {
+      display: flex; gap: 12px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .gallery-item:hover { border-color: var(--text-muted); }
+    .gallery-thumb {
+      width: 120px; height: 68px; /* 16:9 */
+      background: black; border-radius: 6px; overflow: hidden;
+      flex-shrink: 0;
+    }
+    .gallery-video { width: 100%; height: 100%; object-fit: cover; }
+    
+    .gallery-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0; }
+    .gallery-prompt { font-size: 12px; color: white; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .gallery-meta { font-size: 10px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; }
+
+    .mini-btn {
+      padding: 4px 8px; background: rgba(255,255,255,0.1); border: none; border-radius: 4px; color: var(--text-muted); font-size: 10px; cursor: pointer;
+    }
+    .mini-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+    .btn-extend { color: var(--accent); background: rgba(204,255,0,0.1); }
+    .btn-extend:hover { background: var(--accent); color: black; }
+
+    /* Loader & Overlays */
+    .loader-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100;
+      display: none; align-items: center; justify-content: center; flex-direction: column;
     }
     .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; mb-4;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* MODAL */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(4px);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal {
-      background: #18181b;
-      border: 1px solid var(--border);
-      width: 400px;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-    }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="logo-area">
-    <div class="company">Sulandra Creative Studio</div>
-    <div class="app-name">Video Lab Pro</div>
-  </div>
-  <div class="nav-center">
-    <div class="nav-btn active" onclick="switchView('create', this)">Create</div>
-    <div class="nav-btn" onclick="switchView('home', this)">Home Feed</div>
-  </div>
-  <div class="header-actions">
-    <select class="theme-select" onchange="setTheme(this.value)">
-      <option value="cyber">Cyberpunk</option>
-      <option value="midnight">Midnight</option>
-      <option value="forest">Forest</option>
-      <option value="sunset">Sunset</option>
-      <option value="ocean">Ocean</option>
-      <option value="royal">Royal</option>
-      <option value="cherry">Cherry</option>
-      <option value="gold">Gold</option>
-      <option value="monochrome">Monochrome</option>
-    </select>
-    <div class="avatar" style="width:32px; height:32px; background:var(--brand-gradient); border-radius:50%;"></div>
-  </div>
-</header>
-
-<div class="main-container">
-  
-  <div id="view-home" class="view-section">
-    <div style="max-width:1400px; margin:0 auto 20px auto; font-size:24px; font-weight:700;">Community Creations</div>
-    <div class="feed-grid" id="feed-grid"></div>
-  </div>
-
-  <div id="view-create" class="view-section active">
-    <div style="display: grid; grid-template-columns: 64px 360px 1fr 320px; height: 100%;">
-      
-      <div class="sidebar-icons">
-        <div class="icon-btn active">🎬</div>
-        <div class="icon-btn">📂</div>
-        <div class="icon-btn">⚙️</div>
-      </div>
-
-      <div class="control-panel">
-        <!-- Model selector -->
-        <div class="panel-section">
-          <label>Model</label>
-          <div class="toggles">
-            <div class="toggle-btn active" onclick="setModel('video-2-5', this)">Video 2.5 Turbo</div>
-            <div class="toggle-btn" onclick="setModel('video-1-6', this)">Video 1.6</div>
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <div class="label-row">
-            <label>Source Image</label>
-          </div>
-          <input type="file" id="file-input" accept="image/*" hidden onchange="handleFile(this)">
-          <div class="upload-zone" id="upload-box" onclick="document.getElementById('file-input').click()">
-            <img id="preview-thumb" class="preview-thumb">
-            <div id="upload-ui" style="text-align:center;">
-              <div style="font-size:24px; margin-bottom:8px;">📂</div>
-              <div style="font-size:12px; font-weight:600;">Drag & Drop or Paste</div>
-              <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">JPG / PNG</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <label>Prompt</label>
-          <textarea id="prompt-text" rows="3" placeholder="Describe movement..."></textarea>
-        </div>
-        <div class="panel-section">
-          <label>Negative Prompt</label>
-          <input type="text" id="neg-prompt-text" placeholder="blur, distortion, morphing...">
-        </div>
-
-        <div class="panel-section">
-          <label>Aspect Ratio</label>
-          <div class="toggles">
-            <div class="toggle-btn active" onclick="setAspect('16:9', this)">16:9 Landscape</div>
-            <div class="toggle-btn" onclick="setAspect('9:16', this)">9:16 Vertical</div>
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <label>Duration</label>
-          <div class="toggles">
-            <div class="toggle-btn active" onclick="setDuration(5, this)">5s</div>
-            <div class="toggle-btn" onclick="setDuration(10, this)">10s</div>
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <div class="label-row">
-            <label>Motion Control</label>
-            <span class="badge-beta">Beta</span>
-          </div>
-          <div class="switch-row">
-            <span class="switch-label">Demo only with Video 1.6</span>
-            <div class="ui-switch" onclick="this.classList.toggle('on')"></div>
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <label>Sound Effects</label>
-          <div class="switch-row">
-            <span class="switch-label">Integrated sound with video generation</span>
-            <div class="ui-switch on" onclick="this.classList.toggle('on')"></div>
-          </div>
-        </div>
-
-        <button class="btn-gen" id="gen-btn" onclick="addToQueue()">Add to Queue</button>
-      </div>
-
-      <div class="canvas-area">
-        <div class="video-wrapper">
-          <div class="player-top-bar">
-            <div class="player-top-left">
-              <span class="chip">Video</span>
-              <span class="chip chip-accent" id="model-chip">Video 2.5 Turbo</span>
-              <span class="chip">Professional Mode</span>
-            </div>
-            <div class="chip">Start ▸</div>
-          </div>
-
-          <video id="main-player" controls loop playsinline style="display:none;"></video>
-          <div id="empty-state" style="color:var(--text-muted); font-size:13px; text-align:center; padding:40px;">
-            <div>Select an image and click "Add to Queue".</div>
-            <div style="margin-top:10px; font-size:11px; opacity:0.5;">Shortcuts: Space (Play) | Ctrl+Enter (Generate)</div>
-          </div>
-        </div>
-
-        <div class="player-toolbar">
-          <div class="player-toolbar-left">
-            <span style="font-size:11px; opacity:0.8;">00:00 / 00:10</span>
-          </div>
-          <div class="player-toolbar-right">
-            <button class="toolbar-btn" onclick="downloadCurrent()">
-              ⬇ <span>Download</span>
-            </button>
-            <button class="toolbar-btn">
-              👍
-            </button>
-            <button class="toolbar-btn">
-              👎
-            </button>
-            <button class="toolbar-btn">
-              ⭐
-            </button>
-            <button class="toolbar-btn">
-              ↗
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="assets-panel">
-        <div class="assets-header">
-          <div class="asset-tabs">
-            <div class="asset-tab active" onclick="setFilter('all', this)">All</div>
-            <div class="asset-tab" onclick="setFilter('images', this)">Images</div>
-            <div class="asset-tab" onclick="setFilter('videos', this)">Videos</div>
-            <div class="asset-tab" onclick="setFilter('audio', this)">Audio</div>
-            <div class="asset-tab" onclick="setFilter('favorites', this)">Favorites</div>
-          </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span id="asset-count">0 items</span>
-            <button class="mini-btn" onclick="clearGallery()">🗑</button>
-          </div>
-        </div>
-        <div class="assets-list" id="gallery-list"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="queue-toast" id="queue-toast">
+<div class="loader-overlay" id="global-loader">
   <div class="spinner"></div>
-  <div>
-    <div style="font-weight:600; font-size:13px;">Processing Video...</div>
-    <div style="font-size:11px; color:var(--text-muted);">Turn on notifications for generation updates.</div>
-  </div>
+  <div style="margin-top:16px; font-weight:500;" id="loader-text">Generating...</div>
 </div>
 
-<div class="modal-overlay" id="extend-modal">
-  <div class="modal">
-    <h3 style="margin-bottom:8px; color:white;">Extend Video</h3>
-    <p style="font-size:12px; color:var(--text-muted);">Describe the next action. The system will auto-merge.</p>
-    <input type="text" id="extend-prompt-input" style="margin:15px 0;" placeholder="e.g. Camera pans left...">
-    <div style="display:flex; gap:10px;">
-      <button class="mini-btn" style="flex:1; padding:12px;" onclick="document.getElementById('extend-modal').style.display='none'">Cancel</button>
-      <button class="btn-gen" style="flex:1; margin:0; padding:12px;" onclick="confirmExtend()">Confirm</button>
+<div class="sidebar-icons">
+  <div class="brand-icon">⚡</div>
+  <div class="icon-btn">🏠</div>
+  <div class="icon-btn active">🎬</div>
+  <div class="icon-btn">🖼️</div>
+  <div class="icon-btn">🎵</div>
+  <div style="flex:1;"></div>
+  <div class="icon-btn">⚙️</div>
+  <div class="icon-btn">👤</div>
+</div>
+
+<div class="main-config">
+  <div class="header-row">
+    <div class="page-title">AI Video Generator</div>
+    <div class="model-badge">VIDEO 2.5 Turbo</div>
+  </div>
+
+  <div class="tabs-nav">
+    <div class="tab-item" onclick="switchTab('text')">Text to Video</div>
+    <div class="tab-item active" onclick="switchTab('image')">Image to Video</div>
+    <div class="tab-item">Multi-Elements<span class="badge-dot"></span></div>
+  </div>
+
+  <div class="config-form" id="form-text">
+    <div class="prompt-group" style="flex:1;">
+        <div class="prompt-label">Prompt</div>
+        <textarea class="prompt-input" style="flex:1; resize:none;" placeholder="Describe the video you want to generate..."></textarea>
+    </div>
+     <div class="settings-bar">
+      <div class="settings-left">
+        <button class="dropdown-btn">Standard ▾</button>
+        <button class="dropdown-btn">5s ▾</button>
+      </div>
+      <button class="btn-generate" disabled>Generate (Coming Soon)</button>
+    </div>
+  </div>
+
+  <div class="config-form active" id="form-image">
+    <div class="upload-container" id="upload-box" onclick="document.getElementById('file-input').click()">
+      <img id="preview-img" class="preview-img">
+      <div class="upload-placeholder" id="upload-ui">
+        <div class="upload-icon">📁</div>
+        <div style="font-weight: 600; margin-bottom: 4px;">Click / Drop / Paste</div>
+        <div style="font-size: 12px;">JPG / PNG up to 10MB</div>
+      </div>
+      <input type="file" id="file-input" hidden accept="image/*" onchange="handleFile(this)">
+    </div>
+
+    <div class="prompt-group">
+      <div class="prompt-label">Prompt <span style="font-weight:400; opacity:0.7;">(Optional)</span></div>
+      <input type="text" class="prompt-input" id="prompt-text" placeholder="Describe movement (e.g. The camera slowly zooms in)...">
+    </div>
+
+    <div class="prompt-group">
+      <div class="prompt-label">Negative Prompt <span style="font-weight:400; opacity:0.7;">(Optional)</span></div>
+      <input type="text" class="prompt-input negative" id="neg-prompt-text" placeholder="Things to avoid (e.g. blurry, distorted, shaky)...">
+    </div>
+
+    <div class="settings-bar">
+      <div class="settings-left">
+        <button class="dropdown-btn">Standard ▾</button>
+        <select class="dropdown-btn" id="duration-select" style="appearance:none; padding-right:30px; background-image:url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-13%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2013l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095.2c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.3-5.4-13z%22%2F%3E%3C%2Fsvg%3E'); background-repeat:no-repeat; background-position:right 10px center; background-size:10px;">
+            <option value="5">5s</option>
+            <option value="10">10s</option>
+        </select>
+        <button class="dropdown-btn">1 Output ▾</button>
+        <div class="toggle-wrapper" onclick="this.classList.toggle('active')">
+            <div class="toggle-switch"></div>
+            <span>Unlimited Mode</span>
+        </div>
+      </div>
+      <button class="btn-generate" id="gen-btn" onclick="generateVideo()">Generate</button>
     </div>
   </div>
 </div>
+
+<div class="right-panel">
+  <div class="assets-header">
+    <div class="assets-tabs">
+      <div class="asset-tab active">All</div>
+      <div class="asset-tab">Images</div>
+      <div class="asset-tab">Videos</div>
+      <div class="asset-tab">Audio</div>
+    </div>
+    <button class="dropdown-btn" style="padding: 6px 12px; font-size: 12px;">📁 Assets</button>
+  </div>
+
+  <div class="assets-content">
+    <div class="main-player-container">
+      <video id="main-player" class="main-video" controls loop playsinline></video>
+      <div class="empty-player" id="empty-player-ui">
+        <div style="font-size: 32px;">🎬</div>
+        <div>Your generated video will appear here.</div>
+      </div>
+    </div>
+
+    <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 10px;">History</div>
+    <div class="gallery-list" id="gallery-list">
+      </div>
+  </div>
+</div>
+
 
 <script>
-  const API_URL = "https://j61fbk8b92147l-8000.proxy.runpod.net"; // RUNPOD URL
+  // === CONFIGURATION ===
+  const API_URL = "https://j61fbk8b92147l-8000.proxy.runpod.net"; // YOUR RUNPOD URL
 
-  // STATE
-  let state = { aspect: '16:9', duration: 5, file: null, model: 'video-2-5' };
-  let extendTarget = null;
-  let queueCount = 0;
-  let currentFilter = 'all';
-  let currentMainUrl = null;
+  // === STATE ===
+  let currentFile = null;
+  let isExtending = false;
+  let extendTarget = null; // { filename, url, prompt }
 
-  // DB INIT
+  // === DATABASE INIT ===
   let db;
-  const dbReq = indexedDB.open("SulandraDB", 2);
+  const dbReq = indexedDB.open('SulandraDB', 2); // Incremented version for schema changes if needed
   dbReq.onupgradeneeded = e => {
-    const d = e.target.result;
-    if (!d.objectStoreNames.contains("videos")) d.createObjectStore("videos", { keyPath: "id" });
-    if (!d.objectStoreNames.contains("public_feed")) d.createObjectStore("public_feed", { keyPath: "id" });
+    const db = e.target.result;
+    if (!db.objectStoreNames.contains('videos')) {
+      db.createObjectStore('videos', { keyPath: 'id' });
+    }
   };
-  dbReq.onsuccess = e => { db = e.target.result; loadGallery(); loadPublicFeed(); };
+  dbReq.onsuccess = e => { db = e.target.result; loadGallery(); };
 
-  // --- UI HELPERS ---
-  function setTheme(name) { document.body.setAttribute('data-theme', name); }
-  function switchView(view, btn) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById('view-' + view).classList.add('active');
-    btn.classList.add('active');
-  }
-  function setAspect(val, btn) { state.aspect = val; toggleBtn(btn); }
-  function setDuration(val, btn) { state.duration = val; toggleBtn(btn); }
-  function setModel(val, btn) {
-    state.model = val;
-    toggleBtn(btn);
-    document.getElementById('model-chip').textContent = val === 'video-2-5' ? 'Video 2.5 Turbo' : 'Video 1.6';
-  }
-  function toggleBtn(btn) {
-    btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
+  // === UI FUNCTIONS ===
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.config-form').forEach(f => f.classList.remove('active'));
 
-  function setFilter(type, el) {
-    currentFilter = type;
-    document.querySelectorAll('.asset-tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    loadGallery();
-  }
-
-  // --- INPUT HANDLING (Drag/Drop/Paste) ---
-  function handleFile(input) { if (input.files[0]) setFile(input.files[0]); }
-  function setFile(file) {
-    state.file = file;
-    const url = URL.createObjectURL(file);
-    document.getElementById('preview-thumb').src = url;
-    document.getElementById('preview-thumb').style.display = 'block';
-    document.getElementById('upload-ui').style.display = 'none';
-    document.getElementById('upload-box').classList.add('has-image');
-  }
-
-  // Drag & Drop
-  const dropZone = document.getElementById('upload-box');
-  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-  dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
-  dropZone.addEventListener('drop', (e) => {
-    e.preventDefault(); dropZone.classList.remove('dragover');
-    if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
-  });
-
-  // Paste
-  document.addEventListener('paste', (e) => {
-    if (!e.clipboardData) return;
-    const item = Array.from(e.clipboardData.items).find(i => i.type && i.type.startsWith('image'));
-    if (item) {
-      const file = item.getAsFile();
-      if (file) setFile(file);
-    }
-  });
-
-  // Keyboard
-  document.addEventListener('keydown', (e) => {
-    const tag = (e.target.tagName || '').toUpperCase();
-    if (e.code === 'Space' && tag !== 'TEXTAREA' && tag !== 'INPUT') {
-      e.preventDefault();
-      const v = document.getElementById('main-player');
-      if (!v || v.style.display === 'none') return;
-      v.paused ? v.play() : v.pause();
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-      e.preventDefault();
-      addToQueue();
-    }
-  });
-
-  // --- QUEUE SYSTEM ---
-  function addToQueue() {
-    if (!state.file && !extendTarget) return alert("Please upload an image!");
-    queueCount++;
-    updateQueueUI();
-    
-    processJob(
-      state.file,
-      document.getElementById('prompt-text').value,
-      null
-    );
-  }
-
-  function updateQueueUI() {
-    const toast = document.getElementById('queue-toast');
-    if (queueCount > 0) {
-      toast.classList.add('show');
-      toast.querySelector('div:nth-child(2) div:first-child').textContent = `Processing ${queueCount} Video(s)...`;
+    if (tab === 'text') {
+        document.querySelectorAll('.tab-item')[0].classList.add('active');
+        document.getElementById('form-text').classList.add('active');
     } else {
-      toast.classList.remove('show');
+        document.querySelectorAll('.tab-item')[1].classList.add('active');
+        document.getElementById('form-image').classList.add('active');
     }
   }
 
-  async function processJob(fileBlob, prompt, mergeTargetFilename) {
+  function handleFile(input) {
+    if (input.files[0]) {
+      setFile(input.files[0]);
+      resetExtendMode();
+    }
+  }
+
+  function setFile(file) {
+      currentFile = file;
+      const url = URL.createObjectURL(currentFile);
+      document.getElementById('preview-img').src = url;
+      document.getElementById('preview-img').style.display = 'block';
+      document.getElementById('upload-ui').style.display = 'none';
+      document.getElementById('upload-box').classList.add('has-image');
+  }
+
+  function setLoading(active, text = "Generating...") {
+    document.getElementById('global-loader').style.display = active ? 'flex' : 'none';
+    document.getElementById('loader-text').textContent = text;
+  }
+
+  function playMainVideo(url) {
+    const player = document.getElementById('main-player');
+    player.src = url;
+    player.style.display = 'block';
+    document.getElementById('empty-player-ui').style.display = 'none';
+    player.play();
+  }
+
+  function resetExtendMode() {
+      isExtending = false;
+      extendTarget = null;
+      document.getElementById('gen-btn').textContent = "Generate";
+      document.getElementById('prompt-text').value = "";
+  }
+
+
+  // === GENERATE LOGIC ===
+  async function generateVideo() {
+    if (!currentFile) return alert("Please upload an image first!");
+
+    const prompt = document.getElementById('prompt-text').value;
+    const negPrompt = document.getElementById('neg-prompt-text').value;
+    const duration = document.getElementById('duration-select').value;
+
+    setLoading(true, isExtending ? "Generating extension..." : "Generating video...");
+
     try {
       const formData = new FormData();
-      formData.append("file", fileBlob);
+      formData.append("file", currentFile);
       formData.append("prompt", prompt);
-      formData.append("negative_prompt", document.getElementById('neg-prompt-text').value);
-      formData.append("aspect_ratio", state.aspect);
-      formData.append("duration_sec", state.duration);
-      formData.append("model", state.model);
+      formData.append("negative_prompt", negPrompt); // Send negative prompt
+      formData.append("duration_sec", duration);
+      formData.append("aspect_ratio", "16:9"); // Default for now
 
       // 1. Generate
       const res = await fetch(`${API_URL}/generate-video`, { method: 'POST', body: formData });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) throw new Error("Generation failed");
+      
       const blob = await res.blob();
-      let filename = res.headers.get("X-Filename");
+      const filename = res.headers.get("X-Filename");
 
-      // 2. Merge if needed
-      if (mergeTargetFilename) {
+      // 2. If Extending, Merge
+      if (isExtending && extendTarget) {
+        setLoading(true, "Merging clips...");
         const mergeRes = await fetch(`${API_URL}/merge-videos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify([mergeTargetFilename, filename])
+          body: JSON.stringify([ extendTarget.filename, filename ])
         });
-        if (mergeRes.ok) {
-          const mergedBlob = await mergeRes.blob();
-          filename = mergeRes.headers.get("X-Filename");
-          saveToDB('videos', { id: Date.now(), blob: mergedBlob, filename, prompt, date: new Date(), favorite:false });
-        }
+        if (!mergeRes.ok) throw new Error("Merge failed");
+        const mergedBlob = await mergeRes.blob();
+        const mergedFilename = mergeRes.headers.get("X-Filename");
+        saveToGallery(mergedBlob, mergedFilename, prompt);
       } else {
-        saveToDB('videos', { id: Date.now(), blob, filename, prompt, date: new Date(), favorite:false });
+        saveToGallery(blob, filename, prompt);
       }
 
     } catch (e) {
-      console.error(e);
-      alert("Job Failed");
+      alert("Error: " + e.message);
     } finally {
-      queueCount--;
-      updateQueueUI();
+      setLoading(false);
+      resetExtendMode();
     }
   }
 
-  // --- DATA & GALLERY ---
-  function saveToDB(storeName, data) {
-    const tx = db.transaction(storeName, "readwrite");
-    tx.objectStore(storeName).add(data);
-    tx.oncomplete = () => {
-      if (storeName === 'videos') loadGallery();
-      if (storeName === 'public_feed') loadPublicFeed();
-    };
-  }
-
-  function clearGallery() {
-    if (!db) return;
-    const tx = db.transaction("videos", "readwrite");
-    tx.objectStore("videos").clear();
-    tx.oncomplete = () => loadGallery();
-  }
-
-  function loadGallery() {
-    if (!db) return;
-    const tx = db.transaction("videos", "readonly");
-    tx.objectStore("videos").getAll().onsuccess = (e) => {
-      const list = document.getElementById('gallery-list');
-      list.innerHTML = '';
-      let videos = e.target.result.sort((a,b) => b.id - a.id);
-
-      if (currentFilter === 'favorites') {
-        videos = videos.filter(v => v.favorite);
-      } else if (currentFilter === 'images' || currentFilter === 'audio') {
-        // placeholders – currently no separate image/audio assets
-        videos = [];
-      }
-
-      document.getElementById('asset-count').textContent = `${videos.length} Item${videos.length === 1 ? '' : 's'}`;
-
-      // Auto play newest if nothing playing
-      const player = document.getElementById('main-player');
-      if (videos.length > 0 && player.style.display === 'none') {
-        playMain(URL.createObjectURL(videos[0].blob));
-      }
-
-      videos.forEach(vid => {
-        const url = URL.createObjectURL(vid.blob);
-        const div = document.createElement('div');
-        div.className = 'video-card';
-        div.innerHTML = `
-          <video src="${url}" class="mini-video" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>
-          <div class="card-controls">
-            <button class="mini-btn" onclick="downloadVideo('${url}'); event.stopPropagation();">⬇</button>
-            <button class="mini-btn btn-extend" onclick="setupExtend('${url}', '${vid.filename}'); event.stopPropagation();">✨</button>
-            <button class="mini-btn mini-fav ${vid.favorite ? 'active-fav' : ''}" onclick="toggleFavorite(${vid.id}); event.stopPropagation();">★</button>
-          </div>
-        `;
-        div.querySelector('video').onclick = () => playMain(url);
-        list.appendChild(div);
-      });
-    };
-  }
-
-  function toggleFavorite(id) {
-    if (!db) return;
-    const tx = db.transaction("videos", "readwrite");
-    const store = tx.objectStore("videos");
-    const req = store.get(id);
-    req.onsuccess = (e) => {
-      const vid = e.target.result;
-      if (!vid) return;
-      vid.favorite = !vid.favorite;
-      store.put(vid);
-    };
-    tx.oncomplete = () => loadGallery();
-  }
-
-  function playMain(url) {
-    const v = document.getElementById('main-player');
-    v.src = url;
-    v.style.display = 'block';
-    document.getElementById('empty-state').style.display = 'none';
-    currentMainUrl = url;
-    v.play();
-  }
-
-  function downloadCurrent() {
-    if (!currentMainUrl) return;
-    downloadVideo(currentMainUrl);
-  }
-
-  // --- SOCIAL & EXTEND ---
-  function postToFeed(id) {
-    const tx = db.transaction("videos", "readonly");
-    tx.objectStore("videos").get(id).onsuccess = (e) => {
-      const vid = e.target.result;
-      saveToDB('public_feed', { ...vid, id: Date.now(), user: "You" });
-      alert("Posted to Home Feed!");
-    };
-  }
-
-  function loadPublicFeed() {
-    if (!db) return;
-    const tx = db.transaction("public_feed", "readonly");
-    tx.objectStore("public_feed").getAll().onsuccess = (e) => {
-      const grid = document.getElementById('feed-grid');
-      grid.innerHTML = '';
-      const videos = e.target.result.sort((a,b) => b.id - a.id);
-      
-      videos.forEach(vid => {
-        const url = URL.createObjectURL(vid.blob);
-        grid.innerHTML += `
-          <div class="feed-card">
-            <video src="${url}" class="feed-video" controls loop></video>
-            <div class="feed-meta">
-              <div class="feed-user"><div class="avatar"></div><div class="username">Creator</div></div>
-              <div class="feed-prompt">${vid.prompt || "Creative masterpiece"}</div>
-            </div>
-          </div>
-        `;
-      });
-    };
-  }
-
-  function setupExtend(url, filename) {
-    extendTarget = { url, filename };
-    document.getElementById('extend-modal').style.display = 'flex';
-  }
-
-  async function confirmExtend() {
-    document.getElementById('extend-modal').style.display = 'none';
-    const prompt = document.getElementById('extend-prompt-input').value;
-    if (!extendTarget) return;
+  // === EXTEND LOGIC ===
+  async function triggerExtend(videoUrl, filename, lastPrompt) {
+    setLoading(true, "Preparing extension...");
     
-    // Capture Frame
+    // 1. Capture last frame
     const video = document.createElement('video');
-    video.src = extendTarget.url;
+    video.src = videoUrl;
+    video.crossOrigin = "anonymous";
     await new Promise(r => video.onloadeddata = r);
     video.currentTime = video.duration;
     await new Promise(r => video.onseeked = r);
     
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0);
     
     canvas.toBlob(blob => {
-      queueCount++;
-      updateQueueUI();
-      processJob(new File([blob], "frame.jpg"), prompt, extendTarget.filename);
+      // 2. Set up UI for extension
+      setFile(new File([blob], "last_frame.jpg", { type: "image/jpeg" }));
+      isExtending = true;
+      extendTarget = { filename, url: videoUrl };
+      
+      document.getElementById('gen-btn').textContent = "✨ Extend & Merge";
+      document.getElementById('prompt-text').value = lastPrompt + " (Continued action...)";
+      document.getElementById('prompt-text').focus();
+      
+      setLoading(false);
+      switchTab('image'); // Ensure we are on the image tab
     }, 'image/jpeg');
+  }
+
+
+  // === DATABASE & GALLERY ===
+  function saveToGallery(blob, filename, prompt) {
+    const tx = db.transaction('videos', 'readwrite');
+    const id = Date.now();
+    tx.objectStore('videos').add({ id, blob, filename, prompt, date: new Date() });
+    tx.oncomplete = () => {
+        loadGallery();
+        playMainVideo(URL.createObjectURL(blob)); // Auto-play latest
+    };
+  }
+
+  function loadGallery() {
+    const tx = db.transaction('videos', 'readonly');
+    tx.objectStore('videos').getAll().onsuccess = (e) => {
+      const videos = e.target.result.sort((a, b) => b.id - a.id);
+      const list = document.getElementById('gallery-list');
+      list.innerHTML = '';
+
+      if (videos.length > 0 && document.getElementById('main-player').style.display === 'none') {
+          playMainVideo(URL.createObjectURL(videos[0].blob));
+      }
+
+      videos.forEach(vid => {
+        const url = URL.createObjectURL(vid.blob);
+        const div = document.createElement('div');
+        div.className = 'gallery-item';
+        div.onclick = () => playMainVideo(url);
+        div.innerHTML = `
+          <div class="gallery-thumb">
+            <video src="${url}" class="gallery-video" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>
+          </div>
+          <div class="gallery-info">
+            <div class="gallery-prompt" title="${vid.prompt || 'No prompt'}">${vid.prompt || 'No prompt'}</div>
+            <div class="gallery-meta">
+              <span>Is ${new Date(vid.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+              <div style="display:flex; gap:4px;">
+                <button class="mini-btn" onclick="event.stopPropagation(); downloadVideo('${url}')">⬇</button>
+                <button class="mini-btn btn-extend" onclick="event.stopPropagation(); triggerExtend('${url}', '${vid.filename}', '${vid.prompt}')">✨ Extend</button>
+              </div>
+            </div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    };
   }
 
   function downloadVideo(url) {
