@@ -3,32 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sulandra Creative Studio - Video Lab</title>
+  <title>Sulandra AI Studio - Video Lab</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* --- COLOR PALETTE --- */
-      --bg-root: #050505;
-      --bg-panel: #0a0a0a;
-      --bg-card: #121212;
-      
-      /* VIBRANT GRADIENTS */
-      --brand-gradient: linear-gradient(135deg, #7c3aed 0%, #2dd4bf 100%); /* Violet to Cyan */
-      --accent: #8b5cf6; 
-      --accent-glow: rgba(139, 92, 246, 0.5);
-      --highlight: #2dd4bf; /* Teal/Cyan pop */
-      
+      --bg-root: #09090b;
+      --bg-sidebar: #0c0c0e;
+      --bg-panel: #121217;
+      --bg-card: #1c1c21;
+      --accent: #ccff00; /* Neon Green */
+      --accent-hover: #b3e600;
       --text-main: #ffffff;
-      --text-muted: #a1a1aa;
+      --text-muted: #8e8e93;
       --border: #27272a;
+      --input-bg: #000000;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; scrollbar-width: thin; scrollbar-color: #3f3f46 transparent; }
-    
-    /* Custom Scrollbar */
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background-color: #3f3f46; border-radius: 20px; }
+    ::-webkit-scrollbar-thumb { background-color: var(--border); border-radius: 20px; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -36,473 +30,504 @@
       color: var(--text-main);
       height: 100vh;
       display: grid;
-      grid-template-rows: 60px 1fr; /* Header | Content */
+      grid-template-columns: 60px 1fr 380px; /* Icons | Main Config | Right Panel */
       overflow: hidden;
     }
 
-    /* --- HEADER --- */
-    header {
-      border-bottom: 1px solid var(--border);
-      background: rgba(5, 5, 5, 0.9);
-      backdrop-filter: blur(10px);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px;
-      z-index: 50;
-    }
-    
-    .brand-area { display: flex; align-items: center; gap: 15px; }
-    
-    .company-name { 
-      font-weight: 700; font-size: 18px; letter-spacing: -0.5px; color: white;
-    }
-    
-    .app-badge {
-      background: var(--brand-gradient);
-      -webkit-background-clip: text;
-      color: transparent;
-      font-weight: 800;
-      font-size: 12px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      border: 1px solid #3f3f46;
-      padding: 4px 10px;
-      border-radius: 20px;
-      position: relative;
-    }
-    .app-badge::before { /* Glow effect */
-      content: ''; position: absolute; inset: 0; padding: 1px; border-radius: 20px; 
-      background: var(--brand-gradient); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
-    }
-
-    /* --- MAIN LAYOUT --- */
-    .main-layout {
-      display: grid;
-      grid-template-columns: 64px 340px 1fr 320px; /* Icons | Controls | Canvas | Assets */
-      height: 100%;
-      overflow: hidden;
-    }
-
-    /* 1. ICON BAR */
+    /* --- 1. LEFT ICON SIDEBAR --- */
     .sidebar-icons {
-      background: var(--bg-root);
+      background: var(--bg-sidebar);
       border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; align-items: center;
-      padding-top: 20px; gap: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      gap: 28px;
     }
     .icon-btn {
       width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: var(--text-muted); transition: 0.2s; font-size: 18px;
+      cursor: pointer; color: var(--text-muted); transition: 0.2s; font-size: 20px;
     }
     .icon-btn:hover { background: var(--bg-card); color: white; }
-    .icon-btn.active { color: white; background: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+    .icon-btn.active { color: var(--accent); background: rgba(204, 255, 0, 0.05); }
+    .brand-icon { font-size: 24px; color: white; margin-bottom: 20px; }
 
-    /* 2. CONTROL PANEL (Fixed Scroll Issue) */
-    .control-panel {
+    /* --- 2. MAIN CONFIGURATION PANEL --- */
+    .main-config {
       background: var(--bg-panel);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      overflow-y: auto; /* Crucial for scrolling */
-      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
       gap: 24px;
+      overflow-y: auto;
     }
 
-    .panel-section { display: flex; flex-direction: column; gap: 12px; }
-    label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; display: flex; justify-content: space-between; }
-    
-    /* Fancy Toggles */
-    .toggles { display: flex; background: #000; padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
-    .toggle-btn {
-      flex: 1; text-align: center; padding: 8px; font-size: 12px; cursor: pointer; border-radius: 6px; transition: 0.2s; color: var(--text-muted); font-weight: 500;
-    }
-    .toggle-btn:hover { color: white; }
-    .toggle-btn.active { background: var(--bg-card); color: var(--highlight); border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .header-row { display: flex; justify-content: space-between; align-items: center; }
+    .page-title { font-size: 20px; font-weight: 600; }
+    .model-badge { background: var(--bg-card); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 12px; color: var(--text-muted); }
 
-    /* Upload Area */
-    .upload-zone {
+    /* Tabs */
+    .tabs-nav {
+      display: flex; border-bottom: 1px solid var(--border); gap: 24px; margin-top: 10px;
+    }
+    .tab-item {
+      padding: 12px 0; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; position: relative;
+    }
+    .tab-item.active { color: white; }
+    .tab-item.active::after { content:''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent); }
+    .badge-dot { display: inline-block; width: 6px; height: 6px; background: red; border-radius: 50%; margin-left: 4px; position: relative; top: -6px; }
+
+    /* Input Forms */
+    .config-form { display: none; flex-direction: column; gap: 20px; height: 100%; }
+    .config-form.active { display: flex; }
+
+    /* Upload Box */
+    .upload-container {
+      flex: 1;
       border: 2px dashed var(--border);
       border-radius: 12px;
-      height: 140px;
+      background: var(--input-bg);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; transition: 0.2s; background: rgba(255,255,255,0.01);
-      position: relative; overflow: hidden;
+      cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
+      min-height: 280px;
     }
-    .upload-zone:hover { border-color: var(--accent); background: rgba(139, 92, 246, 0.05); }
-    .upload-zone.has-image { border-style: solid; border-color: var(--highlight); }
-    
-    .preview-thumb { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; display: none; }
+    .upload-container:hover { border-color: var(--text-muted); }
+    .upload-container.has-image { border-style: solid; border-color: var(--border); }
+    .preview-img { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; display: none; }
+    .upload-placeholder { text-align: center; color: var(--text-muted); }
+    .upload-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
 
-    /* Prompt Box */
-    textarea {
-      width: 100%; background: #000; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 13px; resize: none; outline: none; transition: 0.2s;
+    /* Prompt Inputs */
+    .prompt-group { display: flex; flex-direction: column; gap: 8px; }
+    .prompt-label { font-size: 12px; font-weight: 600; color: var(--text-muted); display: flex; justify-content: space-between; }
+    .prompt-input {
+      width: 100%; background: var(--input-bg); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 13px; outline: none; transition: 0.2s;
     }
-    textarea:focus { border-color: var(--accent); }
+    .prompt-input:focus { border-color: var(--text-muted); }
+    .prompt-input.negative { border-color: #3f1a1a; background: #1a0a0a; }
+    .prompt-input.negative:focus { border-color: #ef4444; }
 
-    /* Generate Button */
-    .btn-gen {
-      background: var(--brand-gradient);
-      color: white; border: none; padding: 16px; border-radius: 10px; font-weight: 600; font-size: 14px;
-      cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;
-      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4); margin-top: 10px;
+    /* Bottom Settings Bar */
+    .settings-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 20px; border-top: 1px solid var(--border);
     }
-    .btn-gen:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(45, 212, 191, 0.4); }
-    .btn-gen:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    /* 3. CANVAS AREA */
-    .canvas-area {
-      background: radial-gradient(circle at center, #1a1a20 0%, #050505 100%);
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-      padding: 40px;
+    .settings-left { display: flex; gap: 12px; align-items: center; }
+    .dropdown-btn {
+      background: var(--bg-card); border: 1px solid var(--border); color: white; padding: 10px 16px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
     }
     
-    .video-wrapper {
-      border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.7); border: 1px solid var(--border);
-      max-width: 100%; max-height: 100%; display: flex;
+    .toggle-wrapper { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+    .toggle-switch {
+      width: 36px; height: 20px; background: var(--border); border-radius: 20px; position: relative; transition: 0.2s;
     }
-    video { max-height: 70vh; max-width: 100%; display: block; }
+    .toggle-switch::after {
+      content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.2s;
+    }
+    .toggle-wrapper.active .toggle-switch { background: var(--accent); }
+    .toggle-wrapper.active .toggle-switch::after { transform: translateX(16px); }
 
-    /* 4. ASSETS PANEL */
-    .assets-panel {
-      background: var(--bg-panel);
+    .btn-generate {
+      background: var(--accent); color: black; font-weight: 700; padding: 12px 40px; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s; font-size: 14px;
+    }
+    .btn-generate:hover { background: var(--accent-hover); }
+    .btn-generate:disabled { opacity: 0.5; cursor: wait; }
+
+    /* --- 3. RIGHT PANEL (RESULTS) --- */
+    .right-panel {
+      background: var(--bg-root);
       border-left: 1px solid var(--border);
       display: flex; flex-direction: column;
+      overflow: hidden;
     }
-    .assets-header {
-      height: 50px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 12px; font-weight: 600; color: var(--text-muted);
-    }
-    .assets-list { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-
-    /* Video Card Style */
-    .video-card {
-      background: var(--bg-card); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); transition: 0.2s;
-    }
-    .video-card:hover { border-color: var(--text-muted); }
-    .mini-video { width: 100%; aspect-ratio: 16/9; display: block; background: black; object-fit: cover; }
-    .card-controls { padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     
-    .mini-btn {
-      background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); padding: 6px; border-radius: 4px; font-size: 10px; cursor: pointer; transition: 0.2s;
+    .assets-header {
+      padding: 16px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .mini-btn:hover { background: white; color: black; }
-    .btn-extend { color: var(--highlight); background: rgba(45, 212, 191, 0.1); }
-    .btn-extend:hover { background: var(--highlight); color: black; }
+    .assets-tabs { display: flex; gap: 16px; }
+    .asset-tab { font-size: 13px; color: var(--text-muted); cursor: pointer; }
+    .asset-tab.active { color: white; font-weight: 600; }
+    
+    .assets-content {
+      flex: 1;
+      display: flex; flex-direction: column;
+      padding: 16px;
+      gap: 16px;
+      overflow-y: auto;
+    }
 
-    /* --- MODALS & OVERLAYS --- */
+    /* Main Player */
+    .main-player-container {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: black;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .main-video { width: 100%; height: 100%; object-fit: contain; display: none; }
+    .empty-player { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-direction: column; gap: 10px; }
+
+    /* Gallery List */
+    .gallery-list {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .gallery-item {
+      display: flex; gap: 12px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .gallery-item:hover { border-color: var(--text-muted); }
+    .gallery-thumb {
+      width: 120px; height: 68px; /* 16:9 */
+      background: black; border-radius: 6px; overflow: hidden;
+      flex-shrink: 0;
+    }
+    .gallery-video { width: 100%; height: 100%; object-fit: cover; }
+    
+    .gallery-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0; }
+    .gallery-prompt { font-size: 12px; color: white; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .gallery-meta { font-size: 10px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; }
+
+    .mini-btn {
+      padding: 4px 8px; background: rgba(255,255,255,0.1); border: none; border-radius: 4px; color: var(--text-muted); font-size: 10px; cursor: pointer;
+    }
+    .mini-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+    .btn-extend { color: var(--accent); background: rgba(204,255,0,0.1); }
+    .btn-extend:hover { background: var(--accent); color: black; }
+
+    /* Loader & Overlays */
     .loader-overlay {
-      position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-      display: none; align-items: center; justify-content: center; flex-direction: column; z-index: 20;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100;
+      display: none; align-items: center; justify-content: center; flex-direction: column;
     }
     .spinner {
-      width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--highlight); border-radius: 50%; animation: spin 1s linear infinite;
+      width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; mb-4;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 100;
-      display: none; align-items: center; justify-content: center;
-    }
-    .modal {
-      background: #18181b; border: 1px solid var(--border); width: 400px; padding: 24px; border-radius: 16px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-    }
-    .modal-input {
-      width: 100%; background: #000; border: 1px solid var(--border); padding: 12px; color: white; border-radius: 8px; margin: 15px 0; outline: none;
-    }
-    .modal-input:focus { border-color: var(--highlight); }
   </style>
 </head>
 <body>
 
 <div class="loader-overlay" id="global-loader">
   <div class="spinner"></div>
-  <div style="margin-top:15px; font-size:13px; font-weight:500; color:var(--text-main);" id="loader-text">Initializing...</div>
+  <div style="margin-top:16px; font-weight:500;" id="loader-text">Generating...</div>
 </div>
 
-<header>
-  <div class="brand-area">
-    <div class="company-name">Sulandra Creative Studio</div>
-    <div class="app-badge">Video Lab</div>
-  </div>
-  <div style="font-size:12px; color:var(--text-muted);">
-    <span style="color:#22c55e;">●</span> Server Connected
-  </div>
-</header>
+<div class="sidebar-icons">
+  <div class="brand-icon">⚡</div>
+  <div class="icon-btn">🏠</div>
+  <div class="icon-btn active">🎬</div>
+  <div class="icon-btn">🖼️</div>
+  <div class="icon-btn">🎵</div>
+  <div style="flex:1;"></div>
+  <div class="icon-btn">⚙️</div>
+  <div class="icon-btn">👤</div>
+</div>
 
-<div class="main-layout">
-  <div class="sidebar-icons">
-    <div class="icon-btn">🏠</div>
-    <div class="icon-btn active">✨</div>
-    <div class="icon-btn">📂</div>
-    <div class="icon-btn">⚙️</div>
+<div class="main-config">
+  <div class="header-row">
+    <div class="page-title">AI Video Generator</div>
+    <div class="model-badge">VIDEO 2.5 Turbo</div>
   </div>
 
-  <div class="control-panel">
-    <div class="panel-section">
-      <label>Input Image</label>
-      <input type="file" id="file-input" accept="image/*" hidden onchange="handleFile(this)">
-      <div class="upload-zone" id="upload-box" onclick="document.getElementById('file-input').click()">
-        <img id="preview-thumb" class="preview-thumb">
-        <div id="upload-ui" style="text-align:center;">
-          <div style="font-size:24px; margin-bottom:8px; opacity:0.7;">📂</div>
-          <div style="font-size:12px; font-weight:600;">Click to Upload</div>
-          <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">JPG or PNG</div>
+  <div class="tabs-nav">
+    <div class="tab-item" onclick="switchTab('text')">Text to Video</div>
+    <div class="tab-item active" onclick="switchTab('image')">Image to Video</div>
+    <div class="tab-item">Multi-Elements<span class="badge-dot"></span></div>
+  </div>
+
+  <div class="config-form" id="form-text">
+    <div class="prompt-group" style="flex:1;">
+        <div class="prompt-label">Prompt</div>
+        <textarea class="prompt-input" style="flex:1; resize:none;" placeholder="Describe the video you want to generate..."></textarea>
+    </div>
+     <div class="settings-bar">
+      <div class="settings-left">
+        <button class="dropdown-btn">Standard ▾</button>
+        <button class="dropdown-btn">5s ▾</button>
+      </div>
+      <button class="btn-generate" disabled>Generate (Coming Soon)</button>
+    </div>
+  </div>
+
+  <div class="config-form active" id="form-image">
+    <div class="upload-container" id="upload-box" onclick="document.getElementById('file-input').click()">
+      <img id="preview-img" class="preview-img">
+      <div class="upload-placeholder" id="upload-ui">
+        <div class="upload-icon">📁</div>
+        <div style="font-weight: 600; margin-bottom: 4px;">Click / Drop / Paste</div>
+        <div style="font-size: 12px;">JPG / PNG up to 10MB</div>
+      </div>
+      <input type="file" id="file-input" hidden accept="image/*" onchange="handleFile(this)">
+    </div>
+
+    <div class="prompt-group">
+      <div class="prompt-label">Prompt <span style="font-weight:400; opacity:0.7;">(Optional)</span></div>
+      <input type="text" class="prompt-input" id="prompt-text" placeholder="Describe movement (e.g. The camera slowly zooms in)...">
+    </div>
+
+    <div class="prompt-group">
+      <div class="prompt-label">Negative Prompt <span style="font-weight:400; opacity:0.7;">(Optional)</span></div>
+      <input type="text" class="prompt-input negative" id="neg-prompt-text" placeholder="Things to avoid (e.g. blurry, distorted, shaky)...">
+    </div>
+
+    <div class="settings-bar">
+      <div class="settings-left">
+        <button class="dropdown-btn">Standard ▾</button>
+        <select class="dropdown-btn" id="duration-select" style="appearance:none; padding-right:30px; background-image:url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-13%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2013l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095.2c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.3-5.4-13z%22%2F%3E%3C%2Fsvg%3E'); background-repeat:no-repeat; background-position:right 10px center; background-size:10px;">
+            <option value="5">5s</option>
+            <option value="10">10s</option>
+        </select>
+        <button class="dropdown-btn">1 Output ▾</button>
+        <div class="toggle-wrapper" onclick="this.classList.toggle('active')">
+            <div class="toggle-switch"></div>
+            <span>Unlimited Mode</span>
         </div>
       </div>
-    </div>
-
-    <div class="panel-section">
-      <label>Prompt / Action</label>
-      <textarea id="prompt-text" rows="3" placeholder="Describe the motion (e.g. The girl smiles and turns her head)..."></textarea>
-    </div>
-
-    <div class="panel-section">
-      <label>Aspect Ratio</label>
-      <div class="toggles">
-        <div class="toggle-btn active" onclick="setAspect('16:9', this)">16:9</div>
-        <div class="toggle-btn" onclick="setAspect('9:16', this)">9:16</div>
-      </div>
-    </div>
-
-    <div class="panel-section">
-      <label>Duration</label>
-      <div class="toggles">
-        <div class="toggle-btn active" onclick="setDuration(5, this)">5s</div>
-        <div class="toggle-btn" onclick="setDuration(10, this)">10s</div>
-      </div>
-    </div>
-
-    <button class="btn-gen" id="gen-btn" onclick="generateVideo()">✨ Generate Video</button>
-  </div>
-
-  <div class="canvas-area">
-    <div class="video-wrapper">
-      <video id="main-player" controls loop playsinline style="display:none;"></video>
-      <div id="empty-state" style="color:var(--text-muted); font-size:13px;">
-        Select an image and click Generate to begin.
-      </div>
+      <button class="btn-generate" id="gen-btn" onclick="generateVideo()">Generate</button>
     </div>
   </div>
+</div>
 
-  <div class="assets-panel">
-    <div class="assets-header">
-      <span>MY GALLERY</span>
-      <span id="asset-count">0 items</span>
+<div class="right-panel">
+  <div class="assets-header">
+    <div class="assets-tabs">
+      <div class="asset-tab active">All</div>
+      <div class="asset-tab">Images</div>
+      <div class="asset-tab">Videos</div>
+      <div class="asset-tab">Audio</div>
     </div>
-    <div class="assets-list" id="gallery-list">
+    <button class="dropdown-btn" style="padding: 6px 12px; font-size: 12px;">📁 Assets</button>
+  </div>
+
+  <div class="assets-content">
+    <div class="main-player-container">
+      <video id="main-player" class="main-video" controls loop playsinline></video>
+      <div class="empty-player" id="empty-player-ui">
+        <div style="font-size: 32px;">🎬</div>
+        <div>Your generated video will appear here.</div>
+      </div>
+    </div>
+
+    <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 10px;">History</div>
+    <div class="gallery-list" id="gallery-list">
       </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="extend-modal">
-  <div class="modal">
-    <h3 style="margin-bottom:8px;">Extend & Merge</h3>
-    <p style="font-size:12px; color:var(--text-muted);">Describe what happens next. The system will generate a new clip and seamlessly merge it with the original.</p>
-    
-    <input type="text" class="modal-input" id="extend-prompt-input" placeholder="e.g. Camera pans left...">
-    
-    <div style="display:flex; gap:10px;">
-      <button class="mini-btn" style="flex:1; padding:12px;" onclick="closeModal()">Cancel</button>
-      <button class="btn-gen" style="flex:1; margin:0; font-size:12px; padding:12px;" onclick="confirmExtend()">Confirm</button>
-    </div>
-  </div>
-</div>
 
 <script>
-  // === API CONFIG ===
-  const API_URL = "https://j61fbk8b92147l-8000.proxy.runpod.net"; // RUNPOD URL
+  // === CONFIGURATION ===
+  const API_URL = "https://j61fbk8b92147l-8000.proxy.runpod.net"; // YOUR RUNPOD URL
 
   // === STATE ===
-  let state = { aspect: '16:9', duration: 5, file: null };
-  let extendTarget = null; // { id, filename, url }
+  let currentFile = null;
+  let isExtending = false;
+  let extendTarget = null; // { filename, url, prompt }
 
-  // === DB INIT ===
+  // === DATABASE INIT ===
   let db;
-  const request = indexedDB.open("SulandraDB", 1);
-  request.onupgradeneeded = e => e.target.result.createObjectStore("videos", { keyPath: "id" });
-  request.onsuccess = e => { db = e.target.result; loadGallery(); };
+  const dbReq = indexedDB.open('SulandraDB', 2); // Incremented version for schema changes if needed
+  dbReq.onupgradeneeded = e => {
+    const db = e.target.result;
+    if (!db.objectStoreNames.contains('videos')) {
+      db.createObjectStore('videos', { keyPath: 'id' });
+    }
+  };
+  dbReq.onsuccess = e => { db = e.target.result; loadGallery(); };
 
   // === UI FUNCTIONS ===
-  function handleFile(input) {
-    if (input.files[0]) {
-      state.file = input.files[0];
-      const url = URL.createObjectURL(state.file);
-      document.getElementById('preview-thumb').src = url;
-      document.getElementById('preview-thumb').style.display = 'block';
-      document.getElementById('upload-ui').style.display = 'none';
-      document.getElementById('upload-box').classList.add('has-image');
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.config-form').forEach(f => f.classList.remove('active'));
+
+    if (tab === 'text') {
+        document.querySelectorAll('.tab-item')[0].classList.add('active');
+        document.getElementById('form-text').classList.add('active');
+    } else {
+        document.querySelectorAll('.tab-item')[1].classList.add('active');
+        document.getElementById('form-image').classList.add('active');
     }
   }
 
-  function setAspect(val, btn) {
-    state.aspect = val;
-    document.querySelectorAll('.panel-section:nth-child(3) .toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+  function handleFile(input) {
+    if (input.files[0]) {
+      setFile(input.files[0]);
+      resetExtendMode();
+    }
   }
 
-  function setDuration(val, btn) {
-    state.duration = val;
-    document.querySelectorAll('.panel-section:nth-child(4) .toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+  function setFile(file) {
+      currentFile = file;
+      const url = URL.createObjectURL(currentFile);
+      document.getElementById('preview-img').src = url;
+      document.getElementById('preview-img').style.display = 'block';
+      document.getElementById('upload-ui').style.display = 'none';
+      document.getElementById('upload-box').classList.add('has-image');
   }
 
-  function setLoading(active, msg) {
-    const loader = document.getElementById('global-loader');
-    loader.style.display = active ? 'flex' : 'none';
-    if (msg) document.getElementById('loader-text').textContent = msg;
+  function setLoading(active, text = "Generating...") {
+    document.getElementById('global-loader').style.display = active ? 'flex' : 'none';
+    document.getElementById('loader-text').textContent = text;
   }
 
-  function playVideo(url) {
-    const v = document.getElementById('main-player');
-    v.src = url;
-    v.style.display = 'block';
-    document.getElementById('empty-state').style.display = 'none';
-    v.play();
+  function playMainVideo(url) {
+    const player = document.getElementById('main-player');
+    player.src = url;
+    player.style.display = 'block';
+    document.getElementById('empty-player-ui').style.display = 'none';
+    player.play();
   }
 
-  // === GENERATION ===
+  function resetExtendMode() {
+      isExtending = false;
+      extendTarget = null;
+      document.getElementById('gen-btn').textContent = "Generate";
+      document.getElementById('prompt-text').value = "";
+  }
+
+
+  // === GENERATE LOGIC ===
   async function generateVideo() {
-    if (!state.file) return alert("Please upload an image first.");
-    
-    setLoading(true, "Initializing AI Engine...");
+    if (!currentFile) return alert("Please upload an image first!");
+
     const prompt = document.getElementById('prompt-text').value;
+    const negPrompt = document.getElementById('neg-prompt-text').value;
+    const duration = document.getElementById('duration-select').value;
+
+    setLoading(true, isExtending ? "Generating extension..." : "Generating video...");
 
     try {
       const formData = new FormData();
-      formData.append("file", state.file);
-      formData.append("aspect_ratio", state.aspect);
-      formData.append("duration_sec", state.duration);
+      formData.append("file", currentFile);
       formData.append("prompt", prompt);
+      formData.append("negative_prompt", negPrompt); // Send negative prompt
+      formData.append("duration_sec", duration);
+      formData.append("aspect_ratio", "16:9"); // Default for now
 
+      // 1. Generate
       const res = await fetch(`${API_URL}/generate-video`, { method: 'POST', body: formData });
-      if (!res.ok) throw new Error("Server Error");
-
+      if (!res.ok) throw new Error("Generation failed");
+      
       const blob = await res.blob();
-      const filename = res.headers.get("X-Filename") || `gen_${Date.now()}.mp4`;
+      const filename = res.headers.get("X-Filename");
 
-      // Save & Display
-      const record = {
-        id: Date.now(), blob, filename, timestamp: Date.now()
-      };
-      saveToDB(record);
-      playVideo(URL.createObjectURL(blob));
+      // 2. If Extending, Merge
+      if (isExtending && extendTarget) {
+        setLoading(true, "Merging clips...");
+        const mergeRes = await fetch(`${API_URL}/merge-videos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify([ extendTarget.filename, filename ])
+        });
+        if (!mergeRes.ok) throw new Error("Merge failed");
+        const mergedBlob = await mergeRes.blob();
+        const mergedFilename = mergeRes.headers.get("X-Filename");
+        saveToGallery(mergedBlob, mergedFilename, prompt);
+      } else {
+        saveToGallery(blob, filename, prompt);
+      }
 
     } catch (e) {
       alert("Error: " + e.message);
     } finally {
       setLoading(false);
+      resetExtendMode();
     }
   }
 
-  // === EXTENSION LOGIC ===
-  function triggerExtend(id, filename) {
-    // Find video in DB to get blob URL
-    const tx = db.transaction("videos", "readonly");
-    tx.objectStore("videos").get(id).onsuccess = (e) => {
-      const vid = e.target.result;
-      if (vid) {
-        extendTarget = { id: vid.id, filename: vid.filename, url: URL.createObjectURL(vid.blob) };
-        document.getElementById('extend-modal').style.display = 'flex';
-      }
+  // === EXTEND LOGIC ===
+  async function triggerExtend(videoUrl, filename, lastPrompt) {
+    setLoading(true, "Preparing extension...");
+    
+    // 1. Capture last frame
+    const video = document.createElement('video');
+    video.src = videoUrl;
+    video.crossOrigin = "anonymous";
+    await new Promise(r => video.onloadeddata = r);
+    video.currentTime = video.duration;
+    await new Promise(r => video.onseeked = r);
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    
+    canvas.toBlob(blob => {
+      // 2. Set up UI for extension
+      setFile(new File([blob], "last_frame.jpg", { type: "image/jpeg" }));
+      isExtending = true;
+      extendTarget = { filename, url: videoUrl };
+      
+      document.getElementById('gen-btn').textContent = "✨ Extend & Merge";
+      document.getElementById('prompt-text').value = lastPrompt + " (Continued action...)";
+      document.getElementById('prompt-text').focus();
+      
+      setLoading(false);
+      switchTab('image'); // Ensure we are on the image tab
+    }, 'image/jpeg');
+  }
+
+
+  // === DATABASE & GALLERY ===
+  function saveToGallery(blob, filename, prompt) {
+    const tx = db.transaction('videos', 'readwrite');
+    const id = Date.now();
+    tx.objectStore('videos').add({ id, blob, filename, prompt, date: new Date() });
+    tx.oncomplete = () => {
+        loadGallery();
+        playMainVideo(URL.createObjectURL(blob)); // Auto-play latest
     };
   }
 
-  function closeModal() {
-    document.getElementById('extend-modal').style.display = 'none';
-  }
-
-  async function confirmExtend() {
-    closeModal();
-    const prompt = document.getElementById('extend-prompt-input').value;
-    setLoading(true, "Capturing Last Frame...");
-
-    try {
-      // 1. Capture Frame
-      const video = document.createElement('video');
-      video.src = extendTarget.url;
-      video.crossOrigin = "anonymous";
-      await new Promise(r => video.onloadeddata = r);
-      video.currentTime = video.duration; // Seek end
-      await new Promise(r => video.onseeked = r);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
-      
-      const frameBlob = await new Promise(r => canvas.toBlob(r, 'image/jpeg'));
-
-      // 2. Generate Next Clip
-      setLoading(true, "Generating Extension...");
-      const formData = new FormData();
-      formData.append("file", frameBlob);
-      formData.append("aspect_ratio", state.aspect);
-      formData.append("duration_sec", state.duration);
-      formData.append("prompt", prompt);
-
-      const genRes = await fetch(`${API_URL}/generate-video`, { method: 'POST', body: formData });
-      if (!genRes.ok) throw new Error("Extension Failed");
-      
-      const extBlob = await genRes.blob();
-      const extFilename = genRes.headers.get("X-Filename");
-
-      // 3. Merge
-      setLoading(true, "Merging Clips (FFmpeg)...");
-      const mergeRes = await fetch(`${API_URL}/merge-videos`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify([ extendTarget.filename, extFilename ])
-      });
-
-      if (!mergeRes.ok) throw new Error("Merge Failed");
-      
-      const mergedBlob = await mergeRes.blob();
-      const mergedFilename = mergeRes.headers.get("X-Filename");
-
-      // 4. Save Result
-      const record = {
-        id: Date.now(), blob: mergedBlob, filename: mergedFilename, timestamp: Date.now()
-      };
-      saveToDB(record);
-      playVideo(URL.createObjectURL(mergedBlob));
-
-    } catch (e) {
-      alert(e.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // === DB HELPERS ===
-  function saveToDB(item) {
-    const tx = db.transaction("videos", "readwrite");
-    tx.objectStore("videos").add(item);
-    tx.oncomplete = loadGallery;
-  }
-
   function loadGallery() {
-    const tx = db.transaction("videos", "readonly");
-    const store = tx.objectStore("videos");
-    store.getAll().onsuccess = (e) => {
+    const tx = db.transaction('videos', 'readonly');
+    tx.objectStore('videos').getAll().onsuccess = (e) => {
       const videos = e.target.result.sort((a, b) => b.id - a.id);
-      document.getElementById('asset-count').textContent = `${videos.length} items`;
-      
       const list = document.getElementById('gallery-list');
       list.innerHTML = '';
-      
+
+      if (videos.length > 0 && document.getElementById('main-player').style.display === 'none') {
+          playMainVideo(URL.createObjectURL(videos[0].blob));
+      }
+
       videos.forEach(vid => {
         const url = URL.createObjectURL(vid.blob);
         const div = document.createElement('div');
-        div.className = 'video-card';
+        div.className = 'gallery-item';
+        div.onclick = () => playMainVideo(url);
         div.innerHTML = `
-          <video src="${url}" class="mini-video" onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>
-          <div class="card-controls">
-            <button class="mini-btn" onclick="playVideo('${url}')">▶ Play</button>
-            <button class="mini-btn btn-extend" onclick="triggerExtend(${vid.id}, '${vid.filename}')">✨ Extend</button>
+          <div class="gallery-thumb">
+            <video src="${url}" class="gallery-video" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>
+          </div>
+          <div class="gallery-info">
+            <div class="gallery-prompt" title="${vid.prompt || 'No prompt'}">${vid.prompt || 'No prompt'}</div>
+            <div class="gallery-meta">
+              <span>Is ${new Date(vid.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+              <div style="display:flex; gap:4px;">
+                <button class="mini-btn" onclick="event.stopPropagation(); downloadVideo('${url}')">⬇</button>
+                <button class="mini-btn btn-extend" onclick="event.stopPropagation(); triggerExtend('${url}', '${vid.filename}', '${vid.prompt}')">✨ Extend</button>
+              </div>
+            </div>
           </div>
         `;
         list.appendChild(div);
       });
     };
+  }
+
+  function downloadVideo(url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sulandra_${Date.now()}.mp4`;
+    a.click();
   }
 </script>
 </body>
