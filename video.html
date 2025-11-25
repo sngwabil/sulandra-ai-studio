@@ -1378,38 +1378,41 @@
               </div>
             </div>
 
-            <div class="upload-grid" id="upload-grid">
-              <input type="file" id="real-file-input" style="display: none;" accept="image/*" onchange="fileSelected(this)">
-              <!-- Content varies by mode but we always show these generic entry points -->
-              <div class="upload-box" onclick="handleUpload('images')">
-                <div class="plus-circle">+</div>
-                <strong>Upload images</strong>
-                <div class="upload-note">
-                  For images → video. We’ll pan, zoom and animate between them on beat.
-                </div>
-              </div>
-              <div class="upload-box" onclick="handleUpload('video')">
-                <div class="plus-circle">+</div>
-                <strong>Upload source video</strong>
-                <div class="upload-note">
-                  For video → video. We’ll enhance, stylize or re-cut based on your prompt and style.
-                </div>
-              </div>
-              <div class="upload-box" onclick="handleUpload('audio')">
-                <div class="plus-circle">+</div>
-                <strong>Upload audio</strong>
-                <div class="upload-note">
-                  Custom song or beat. Great for Afrobeats dance, music videos and choreography.
-                </div>
-              </div>
-              <div class="upload-box" onclick="handleUpload('script')">
-                <div class="plus-circle">+</div>
-                <strong>Upload script (PDF / text)</strong>
-                <div class="upload-note">
-                  For script → video. We’ll extract scenes and convert them into a short visual.
-                </div>
-              </div>
-            </div>
+<div class="upload-grid" id="upload-grid">
+  <input type="file" id="real-file-input" style="display: none;" accept="image/*" onchange="fileSelected(this)">
+
+  <div class="upload-box" onclick="handleUpload('images')">
+    <div class="plus-circle" id="upload-icon">+</div>
+    <strong id="upload-text">Upload images</strong>
+    <div class="upload-note">
+      Click here to select an image from your computer.
+    </div>
+  </div>
+
+  <div class="upload-box" onclick="alert('Only Image mode is ready for this test.')">
+    <div class="plus-circle">+</div>
+    <strong>Upload source video</strong>
+    <div class="upload-note">
+      For video → video. We’ll enhance, stylize or re-cut based on your prompt.
+    </div>
+  </div>
+
+  <div class="upload-box" onclick="alert('Only Image mode is ready for this test.')">
+    <div class="plus-circle">+</div>
+    <strong>Upload audio</strong>
+    <div class="upload-note">
+      Custom song or beat. Great for Afrobeats dance and choreography.
+    </div>
+  </div>
+
+  <div class="upload-box" onclick="alert('Only Image mode is ready for this test.')">
+    <div class="plus-circle">+</div>
+    <strong>Upload script</strong>
+    <div class="upload-note">
+      For script → video. We’ll extract scenes and convert them into a visual.
+    </div>
+  </div>
+</div>
 
             <div style="margin-top:6px;">
               <textarea id="prompt-text"
@@ -2037,22 +2040,6 @@ async function runVideoGeneration() {
       btn.style.opacity = "1";
       btn.disabled = false;
     }
-  }
-
-    if (user.credits <= 0) {
-      alert(
-        "You have no credits left in this demo.\n\nIn the real app this button will open the credit purchase flow or suggest upgrading your plan."
-      );
-      return;
-    }
-
-    alert(
-      "Video generation started (simulated).\n\nWe will:\n" +
-        "• Read your prompt and selected mode (Text / Images / Script / Video)\n" +
-        "• Apply style (preset or reference from upload / YouTube ≤4 min)\n" +
-        "• Sync to your audio source and lip sync if selected\n" +
-        "• Return a short video connected to Studio for further editing."
-    );
   }
 
   function remixVideo() {
