@@ -1379,6 +1379,7 @@
             </div>
 
             <div class="upload-grid" id="upload-grid">
+              <input type="file" id="real-file-input" style="display: none;" accept="image/*" onchange="fileSelected(this)">
               <!-- Content varies by mode but we always show these generic entry points -->
               <div class="upload-box" onclick="handleUpload('images')">
                 <div class="plus-circle">+</div>
