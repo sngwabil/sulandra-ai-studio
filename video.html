@@ -1719,6 +1719,20 @@
 </div>
 
 <script>
+  // --- CONNECTION SETTINGS ---
+  // This is your actual RunPod URL
+  const API_URL = "https://j61fbk8b92147l-8000.proxy.runpod.net"; 
+  let selectedImageFile = null;
+
+  function fileSelected(input) {
+    if (input.files && input.files[0]) {
+      selectedImageFile = input.files[0];
+      // Visual feedback
+      alert("Image selected: " + selectedImageFile.name);
+      document.querySelector('.upload-box strong').textContent = selectedImageFile.name;
+      document.querySelector('.upload-box').style.borderColor = "#a855f7";
+    }
+  }
   // USER / PLAN STATE
   let isSignedIn = false;
   let user = {
@@ -1915,20 +1929,14 @@
     );
   }
 
-  function handleUpload(type) {
-    let label = "";
-    if (type === "images") label = "images (for images → video)";
-    else if (type === "video") label = "source video";
-    else if (type === "audio") label = "audio file";
-    else if (type === "script") label = "script file (PDF or text)";
-
-    alert(
-      "Upload placeholder.\n\nHere you’ll open a file picker for " +
-        label +
-        ". On submit, the file is sent to your backend / Runpod pipeline."
-    );
+function handleUpload(type) {
+    if (type === 'images') {
+      // Trigger the invisible file picker
+      document.getElementById('real-file-input').click();
+    } else {
+      alert("For this test, please use 'Upload Images' only. The AI server is running Image-to-Video mode.");
+    }
   }
-
   function importMusic() {
     alert(
       "Music Lab import placeholder.\n\nIn the future this will open your music generations and let you attach a specific track as the audio source."
@@ -1979,15 +1987,57 @@
     return true;
   }
 
-  function runVideoGeneration() {
-    const styleMode = document.querySelector('input[name="style-mode"]:checked').value;
-    const youtubeUrl = document.getElementById("style-youtube-url").value.trim();
-
-    if (styleMode === "youtube") {
-      if (!validateYoutubeUrl(youtubeUrl)) {
-        return;
-      }
+async function runVideoGeneration() {
+    // 1. Check if an image is selected
+    if (!selectedImageFile) {
+      alert("Please upload an image first!");
+      return;
     }
+
+    // 2. Update UI to show loading
+    const btn = document.querySelector('.btn-primary');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "Generating... (Wait ~60s)";
+    btn.style.opacity = "0.7";
+    btn.disabled = true;
+
+    try {
+      // 3. Prepare the data to send
+      const formData = new FormData();
+      formData.append("file", selectedImageFile);
+
+      // 4. Send to RunPod (The Real API Call)
+      const response = await fetch(`${API_URL}/generate-video`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) throw new Error("Server Error: " + response.statusText);
+
+      // 5. Get the video result
+      const videoBlob = await response.blob();
+      const videoUrl = URL.createObjectURL(videoBlob);
+
+      // 6. Display the video in the preview box
+      const videoFrame = document.querySelector('.video-frame');
+      videoFrame.innerHTML = `
+        <video controls autoplay loop style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
+          <source src="${videoUrl}" type="video/mp4">
+        </video>
+      `;
+      
+      document.getElementById('video-meta').textContent = "Generated Successfully · RunPod AI";
+
+    } catch (error) {
+      console.error(error);
+      alert("Generation failed! Make sure your RunPod server is running. Error: " + error.message);
+    } finally {
+      // 7. Reset the button
+      btn.innerHTML = originalText;
+      btn.style.opacity = "1";
+      btn.disabled = false;
+    }
+  }
 
     if (user.credits <= 0) {
       alert(
