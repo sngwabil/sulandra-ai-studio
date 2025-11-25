@@ -3,274 +3,466 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sulandra AI Studio – Video Lab</title>
+  <title>Sulandra AI Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    /* --- CSS STYLES --- */
-    :root { --bg: #050816; --card-bg: #0b1020; --accent: #a855f7; --text-main: #f9fafb; --text-muted: #9ca3af; --border-soft: rgba(148, 163, 184, 0.25); }
+    :root {
+      --bg-dark: #050816;
+      --card: rgba(13, 18, 30, 0.7);
+      --accent: #8b5cf6; /* Violet */
+      --accent-glow: rgba(139, 92, 246, 0.4);
+      --text: #f3f4f6;
+      --text-dim: #9ca3af;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: radial-gradient(circle at top, #111827, #020617 55%), #000; color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
     
-    /* Layout Elements */
-    header { border-bottom: 1px solid var(--border-soft); background: rgba(2, 6, 23, 0.95); padding: 14px 16px; }
-    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-weight: 700; font-size: 18px; color: var(--accent); }
-    
-    main { flex: 1; max-width: 1200px; margin: 20px auto; width: 100%; padding: 0 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    
-    /* Cards */
-    .card { border-radius: 16px; border: 1px solid var(--border-soft); background: rgba(15, 23, 42, 0.6); padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-    h2 { font-size: 16px; margin-bottom: 10px; color: var(--text-main); }
-    
-    /* Inputs */
-    .input-group { display: flex; flex-direction: column; gap: 6px; }
-    label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-    
-    /* Custom Radio Selectors */
-    .radio-group { display: flex; gap: 10px; background: #020617; padding: 4px; border-radius: 8px; border: 1px solid var(--border-soft); width: fit-content; }
-    .radio-option { cursor: pointer; padding: 6px 12px; font-size: 12px; border-radius: 6px; color: var(--text-muted); transition: all 0.2s; }
-    .radio-option.active { background: var(--accent); color: white; font-weight: 600; }
-    
-    /* File Upload */
-    .upload-box { border: 1px dashed var(--border-soft); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; background: rgba(2,6,23,0.5); }
-    .upload-box:hover { border-color: var(--accent); background: rgba(168, 85, 247, 0.05); }
-    .upload-active { border-color: #22c55e !important; background: rgba(34, 197, 94, 0.1) !important; }
-    
-    /* Buttons */
-    .btn { border: none; border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-    .btn-primary { background: linear-gradient(135deg, #a855f7, #3b82f6); color: white; width: 100%; }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border-soft); flex: 1; }
-    .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-    /* Video Player Area */
-    .video-container { background: #000; border-radius: 12px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border-soft); min-height: 300px; position: relative; }
+    /* --- LAYOUT --- */
+    header {
+      padding: 15px 25px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5, 8, 22, 0.8);
+      backdrop-filter: blur(10px);
+    }
+    .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.5px; background: linear-gradient(to right, #fff, #a78bfa); -webkit-background-clip: text; color: transparent; }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* --- SIDEBAR (CONTROLS) --- */
+    .sidebar {
+      padding: 20px;
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .control-group { display: flex; flex-direction: column; gap: 8px; }
+    label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); font-weight: 600; }
+
+    /* Custom Inputs */
+    .toggles { display: flex; background: rgba(255,255,255,0.05); padding: 3px; border-radius: 8px; }
+    .toggle-btn {
+      flex: 1; text-align: center; padding: 8px; font-size: 12px; cursor: pointer; border-radius: 6px; transition: 0.2s; color: var(--text-dim);
+    }
+    .toggle-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 10px var(--accent-glow); }
+
+    .file-drop {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+      background: rgba(255,255,255,0.02);
+    }
+    .file-drop:hover, .file-drop.active { border-color: var(--accent); background: rgba(139, 92, 246, 0.05); }
     
-    /* Dynamic Video Sizing */
-    video { max-width: 100%; max-height: 500px; box-shadow: 0 0 30px rgba(0,0,0,0.5); transition: all 0.3s ease; }
+    .btn-gen {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    }
+    .btn-gen:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); }
+    .btn-gen:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* --- MAIN GALLERY AREA --- */
+    .gallery-area {
+      padding: 25px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; display:flex; align-items:center; gap:10px; }
+    .badge { font-size: 10px; background: var(--accent); padding: 2px 6px; border-radius: 4px; }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .video-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: 0.2s;
+      position: relative;
+    }
+    .video-card:hover { border-color: var(--accent); transform: translateY(-2px); }
     
-    /* Class to force 16:9 shape */
-    .aspect-16-9 { aspect-ratio: 16/9; width: 100%; }
-    /* Class to force 9:16 shape */
-    .aspect-9-16 { aspect-ratio: 9/16; width: auto; height: 500px; }
+    video { width: 100%; display: block; background: #000; }
+    
+    .card-meta {
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+    }
+    .timestamp { font-size: 11px; color: var(--text-dim); }
+    
+    .card-actions { display: flex; gap: 5px; }
+    .mini-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .mini-btn:hover { background: white; color: black; }
+    .btn-extend { color: #a78bfa; background: rgba(139, 92, 246, 0.1); }
+    .btn-extend:hover { background: var(--accent); color: white; }
 
-    .actions-row { display: none; gap: 10px; margin-top: 10px; }
-    .actions-row.show { display: flex; }
+    /* --- MODAL --- */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+      display: none; align-items: center; justify-content: center; z-index: 100;
+    }
+    .modal {
+      background: #0f172a; border: 1px solid var(--border); padding: 25px; border-radius: 16px;
+      width: 400px; max-width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .modal.show { display: flex; }
+    
+    input[type="text"] {
+      width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+      padding: 10px; color: white; border-radius: 6px; margin: 10px 0 20px 0;
+    }
 
-    .loading-bar { height: 4px; background: var(--accent); width: 0%; transition: width 0.3s; position: absolute; bottom: 0; left: 0; }
-
-    /* Hidden inputs */
-    input[type="file"] { display: none; }
+    /* LOADING BAR */
+    .loader { height: 3px; width: 0%; background: var(--accent); position: absolute; top: 0; left: 0; transition: width 0.3s; }
   </style>
 </head>
 <body>
 
+<div class="loader" id="global-loader"></div>
+
 <header>
-  <div class="header-inner">
-    <div class="logo">Sulandra AI Studio</div>
-    <div style="font-size:12px; color:var(--text-muted);">Video Lab</div>
-  </div>
+  <div class="logo">Sulandra AI Studio <span style="font-size:10px; color:var(--text-dim); font-weight:400; margin-left:10px;">PRO BETA</span></div>
+  <div class="badge" id="db-status">Gallery Syncing...</div>
 </header>
 
-<main>
-  <div class="card">
-    <h2>Create Settings</h2>
-
-    <div class="input-group">
-      <label>Aspect Ratio</label>
-      <div class="radio-group">
-        <div class="radio-option active" onclick="setAspect('16:9', this)">16:9 (Horizontal)</div>
-        <div class="radio-option" onclick="setAspect('9:16', this)">9:16 (Vertical)</div>
-      </div>
-    </div>
-
-    <div class="input-group">
-      <label>Duration (Extension Length)</label>
-      <div class="radio-group">
-        <div class="radio-option active" onclick="setDuration(5, this)">5 Seconds</div>
-        <div class="radio-option" onclick="setDuration(10, this)">10 Seconds</div>
-      </div>
-    </div>
-
-    <div class="input-group">
-      <label>Prompt (Optional)</label>
-      <textarea id="prompt-text" style="width:100%; background:#020617; border:1px solid var(--border-soft); color:white; padding:10px; border-radius:8px;" placeholder="Describe the motion..."></textarea>
-    </div>
-
-    <div class="input-group">
-      <label>Source Image</label>
-      <input type="file" id="real-file-input" accept="image/*" onchange="fileSelected(this)">
-      <div class="upload-box" onclick="document.getElementById('real-file-input').click()">
-        <div style="font-size:24px; margin-bottom:5px;">+</div>
-        <strong id="upload-text">Click to Upload Image</strong>
-      </div>
-    </div>
-
-    <button class="btn btn-primary" onclick="runVideoGeneration()">
-      Generate Video
-    </button>
-  </div>
-
-  <div class="card">
-    <h2>Preview & Extend</h2>
+<div class="main-layout">
+  <div class="sidebar">
     
-    <div class="video-container">
-      <video id="main-video" controls loop playsinline></video>
-      <div class="loading-bar" id="loading-bar"></div>
+    <div class="control-group">
+      <label>Format</label>
+      <div class="toggles">
+        <div class="toggle-btn active" onclick="setAspect('16:9', this)">16:9 Cinema</div>
+        <div class="toggle-btn" onclick="setAspect('9:16', this)">9:16 Social</div>
+      </div>
     </div>
 
-    <div class="actions-row" id="actions-row">
-      <button class="btn btn-secondary" onclick="downloadVideo()">Download</button>
-      <button class="btn btn-secondary" onclick="postToMedia()">Post to Media</button>
-      <button class="btn btn-secondary" style="border-color: var(--accent); color: var(--accent);" onclick="extendVideo()">
-        ✨ Extend Video
-      </button>
+    <div class="control-group">
+      <label>Duration Step</label>
+      <div class="toggles">
+        <div class="toggle-btn active" onclick="setDuration(5, this)">5 Sec</div>
+        <div class="toggle-btn" onclick="setDuration(10, this)">10 Sec</div>
+      </div>
     </div>
-    <div id="status-text" style="font-size:11px; color:var(--text-muted); margin-top:5px; text-align:center;">Ready.</div>
+
+    <div class="control-group">
+      <label>Source Image</label>
+      <input type="file" id="file-input" accept="image/*" hidden onchange="handleFileSelect(this)">
+      <div class="file-drop" onclick="document.getElementById('file-input').click()">
+        <div style="font-size: 24px; margin-bottom: 8px;">🖼️</div>
+        <div id="file-label" style="font-size: 12px; color: var(--text-dim);">Click to Upload</div>
+      </div>
+    </div>
+
+    <button class="btn-gen" onclick="generateInitial()">🚀 Generate Video</button>
+    
+    <div style="margin-top:auto; font-size: 11px; color: var(--text-dim); line-height: 1.5;">
+      <strong style="color:white;">Pro Tip:</strong><br>
+      Click "Extend" on any video to create a seamless continuation. The system will auto-merge the new clip with the old one.
+    </div>
   </div>
-</main>
+
+  <div class="gallery-area">
+    <div class="section-title">My Gallery <span class="badge" id="count-badge">0</span></div>
+    <div class="video-grid" id="gallery-grid">
+      </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="extend-modal">
+  <div class="modal">
+    <h3 style="margin-bottom: 5px;">Extend Video</h3>
+    <p style="font-size: 12px; color: var(--text-dim);">Describe how the scene should continue:</p>
+    
+    <input type="text" id="extend-prompt" placeholder="e.g. Camera zooms in, character smiles...">
+    
+    <div style="display: flex; gap: 10px;">
+      <button class="btn-gen" style="flex:1; background: #334155;" onclick="closeModal()">Cancel</button>
+      <button class="btn-gen" style="flex:1;" onclick="confirmExtend()">✨ Generate & Merge</button>
+    </div>
+  </div>
+</div>
 
 <script>
-  // --- CONFIGURATION ---
-  const API_URL = "https://j61fbk8b92147l-8000.proxy.runpod.net"; // REPLACE WITH YOUR RUNPOD URL
+  // === CONFIGURATION ===
+  const API_URL = "https://j61fbk8b92147l-8000.proxy.runpod.net"; // REPLACE WITH YOUR URL
   
-  // State
-  let selectedAspectRatio = "16:9";
-  let selectedDuration = 5;
-  let currentFile = null;
+  // === STATE ===
+  let settings = { aspect: '16:9', duration: 5 };
+  let currentImage = null;
+  let targetVideoForExt = null; // Stores the video object we are extending
 
-  // --- UI FUNCTIONS ---
+  // === INDEXED DB (Persistent Storage) ===
+  const DB_NAME = 'SulandraDB';
+  const DB_VERSION = 1;
+  let db;
 
-  function setAspect(ratio, element) {
-    selectedAspectRatio = ratio;
-    // Update UI buttons
-    document.querySelectorAll('.input-group:nth-child(2) .radio-option').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
+  // Initialize DB
+  const dbReq = indexedDB.open(DB_NAME, DB_VERSION);
+  dbReq.onupgradeneeded = (e) => {
+    const d = e.target.result;
+    if (!d.objectStoreNames.contains('videos')) {
+      d.createObjectStore('videos', { keyPath: 'id' });
+    }
+  };
+  dbReq.onsuccess = (e) => {
+    db = e.target.result;
+    document.getElementById('db-status').textContent = "Gallery Saved";
+    document.getElementById('db-status').style.background = "#22c55e";
+    loadGallery();
+  };
+
+  async function saveVideoToDB(videoData) {
+    // videoData = { id, blob, filename, timestamp, prompt }
+    const tx = db.transaction('videos', 'readwrite');
+    tx.objectStore('videos').add(videoData);
+    return new Promise(resolve => {
+      tx.oncomplete = () => { loadGallery(); resolve(); };
+    });
+  }
+
+  function loadGallery() {
+    const tx = db.transaction('videos', 'readonly');
+    const store = tx.objectStore('videos');
+    const req = store.getAll();
     
-    // Update Player Shape Immediately for preview
-    const videoPlayer = document.getElementById('main-video');
-    videoPlayer.className = (ratio === '16:9') ? 'aspect-16-9' : 'aspect-9-16';
+    req.onsuccess = () => {
+      const videos = req.result.sort((a, b) => b.timestamp - a.timestamp); // Newest first
+      document.getElementById('count-badge').textContent = videos.length;
+      renderGallery(videos);
+    };
   }
 
-  function setDuration(seconds, element) {
-    selectedDuration = seconds;
-    document.querySelectorAll('.input-group:nth-child(3) .radio-option').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
+  // === UI LOGIC ===
+  function renderGallery(videos) {
+    const grid = document.getElementById('gallery-grid');
+    grid.innerHTML = '';
+    
+    videos.forEach(vid => {
+      const url = URL.createObjectURL(vid.blob);
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.innerHTML = `
+        <video src="${url}" controls loop></video>
+        <div class="card-meta">
+          <div>
+            <div style="font-weight:600; font-size:12px;">${new Date(vid.timestamp).toLocaleTimeString()}</div>
+            <div class="timestamp">${(vid.blob.size / 1024 / 1024).toFixed(1)} MB</div>
+          </div>
+          <div class="card-actions">
+            <button class="mini-btn" onclick="downloadBlob('${url}')">⬇</button>
+            <button class="mini-btn btn-extend" onclick="openExtend('${vid.id}', '${url}', '${vid.filename}')">Extend ➝</button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
   }
 
-  function fileSelected(input) {
-    if (input.files && input.files[0]) {
-      currentFile = input.files[0];
-      document.querySelector('.upload-box').classList.add('upload-active');
-      document.getElementById('upload-text').textContent = currentFile.name;
+  function setAspect(val, btn) {
+    settings.aspect = val;
+    document.querySelectorAll('.control-group:nth-child(1) .toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function setDuration(val, btn) {
+    settings.duration = val;
+    document.querySelectorAll('.control-group:nth-child(2) .toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function handleFileSelect(input) {
+    if (input.files[0]) {
+      currentImage = input.files[0];
+      document.getElementById('file-label').textContent = currentImage.name;
+      document.querySelector('.file-drop').classList.add('active');
     }
   }
 
-  // --- GENERATION LOGIC ---
-
-  async function runVideoGeneration() {
-    if (!currentFile) { alert("Please select an image first!"); return; }
-
-    // UI Updates
-    const btn = document.querySelector('.btn-primary');
-    btn.disabled = true;
-    btn.textContent = "Generating... (Wait ~60s)";
-    document.getElementById('loading-bar').style.width = "50%"; // Fake progress
-    document.getElementById('status-text').textContent = "Sending to GPU...";
-    document.getElementById('actions-row').classList.remove('show'); // Hide actions while generating
-
-    try {
-      const formData = new FormData();
-      formData.append("file", currentFile);
-      formData.append("aspect_ratio", selectedAspectRatio);
-      formData.append("duration_sec", selectedDuration);
-
-      const response = await fetch(`${API_URL}/generate-video`, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) throw new Error("Server error");
-
-      const videoBlob = await response.blob();
-      const videoUrl = URL.createObjectURL(videoBlob);
-
-      // Setup Video Player
-      const video = document.getElementById('main-video');
-      video.src = videoUrl;
-      // Apply shape class again to be sure
-      video.className = (selectedAspectRatio === '16:9') ? 'aspect-16-9' : 'aspect-9-16';
-      video.play();
-
-      document.getElementById('status-text').textContent = "Generation Complete!";
-      document.getElementById('loading-bar').style.width = "100%";
-      
-      // Show Action Buttons
-      document.getElementById('actions-row').classList.add('show');
-
-    } catch (error) {
-      alert("Error: " + error.message);
-      document.getElementById('status-text').textContent = "Error.";
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "Generate Video";
-      setTimeout(() => { document.getElementById('loading-bar').style.width = "0%"; }, 1000);
-    }
-  }
-
-  // --- ACTION BUTTONS ---
-
-  function downloadVideo() {
-    const video = document.getElementById('main-video');
-    if (!video.src) return;
+  function downloadBlob(url) {
     const a = document.createElement('a');
-    a.href = video.src;
-    a.download = `sulandra_ai_${Date.now()}.mp4`;
+    a.href = url;
+    a.download = `sulandra_${Date.now()}.mp4`;
     a.click();
   }
 
-  function postToMedia() {
-    alert("Posted to Sulandra Community Feed! (Simulation)");
+  // === API & GENERATION ===
+  
+  function setLoading(percent) {
+    document.getElementById('global-loader').style.width = percent + "%";
   }
 
-  // --- THE MAGIC EXTEND FUNCTION ---
-  async function extendVideo() {
-    const video = document.getElementById('main-video');
-    if (!video.src) return;
-
-    const confirmExtend = confirm(`Extend this clip by another ${selectedDuration} seconds?`);
-    if (!confirmExtend) return;
-
-    document.getElementById('status-text').textContent = "Capturing last frame for extension...";
-
-    // 1. Capture Last Frame
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
+  async function generateInitial() {
+    if (!currentImage) return alert("Please select an image first!");
     
-    // Move video to the very end to capture the last moment
-    video.currentTime = video.duration; 
+    setLoading(30);
+    const btn = document.querySelector('.btn-gen');
+    btn.disabled = true;
+    btn.innerText = "Generating...";
+
+    try {
+      const formData = new FormData();
+      formData.append("file", currentImage);
+      formData.append("aspect_ratio", settings.aspect);
+      formData.append("duration_sec", settings.duration);
+
+      const res = await fetch(`${API_URL}/generate-video`, { method: 'POST', body: formData });
+      if (!res.ok) throw new Error("Server Error");
+
+      const blob = await res.blob();
+      const filename = res.headers.get("X-Filename") || `gen_${Date.now()}.mp4`;
+
+      await saveVideoToDB({
+        id: Date.now(),
+        blob: blob,
+        filename: filename,
+        timestamp: Date.now(),
+        prompt: "Initial generation"
+      });
+
+      setLoading(100);
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "🚀 Generate Video";
+      setTimeout(() => setLoading(0), 500);
+    }
+  }
+
+  // === EXTEND WORKFLOW ===
+
+  function openExtend(id, url, filename) {
+    targetVideoForExt = { id, url, filename };
+    document.getElementById('extend-modal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('extend-modal').classList.remove('show');
+  }
+
+  async function confirmExtend() {
+    closeModal();
+    const prompt = document.getElementById('extend-prompt').value;
+    setLoading(20);
     
-    // Wait a tiny bit for the seek to finish
-    await new Promise(r => setTimeout(r, 200));
-    
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    try {
+      // 1. Capture Last Frame
+      const video = document.createElement('video');
+      video.src = targetVideoForExt.url;
+      await new Promise(r => video.onloadeddata = r);
+      video.currentTime = video.duration; // Seek to end
+      await new Promise(r => video.onseeked = r); // Wait for seek
 
-    // 2. Convert Canvas to File Blob
-    canvas.toBlob((blob) => {
-      // 3. Set this new image as the 'currentFile'
-      const newFile = new File([blob], "extension_frame.png", { type: "image/png" });
-      currentFile = newFile;
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+      
+      // 2. Convert frame to blob
+      const frameBlob = await new Promise(r => canvas.toBlob(r, 'image/jpeg'));
+      
+      // 3. Generate Extension (Video B)
+      const formData = new FormData();
+      formData.append("file", frameBlob);
+      formData.append("aspect_ratio", settings.aspect);
+      formData.append("duration_sec", settings.duration);
+      formData.append("prompt", prompt);
 
-      // 4. Update UI to show we are extending
-      document.getElementById('upload-text').textContent = "Last Frame Captured (Ready to Extend)";
-      document.querySelector('.upload-box').classList.add('upload-active');
+      setLoading(50);
+      const resGen = await fetch(`${API_URL}/generate-video`, { method: 'POST', body: formData });
+      if (!resGen.ok) throw new Error("Generation Failed");
+      
+      const extBlob = await resGen.blob();
+      const extFilename = resGen.headers.get("X-Filename");
 
-      // 5. Run Generation Automatically
-      runVideoGeneration();
-    }, 'image/png');
+      // 4. Auto-Merge (Video A + Video B)
+      setLoading(80);
+      const mergeRes = await fetch(`${API_URL}/merge-videos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify([ targetVideoForExt.filename, extFilename ])
+      });
+      
+      if (!mergeRes.ok) throw new Error("Merge Failed");
+      
+      const mergedBlob = await mergeRes.blob();
+      const mergedFilename = mergeRes.headers.get("X-Filename");
+
+      // 5. Save MERGED result to gallery
+      await saveVideoToDB({
+        id: Date.now(),
+        blob: mergedBlob,
+        filename: mergedFilename,
+        timestamp: Date.now(),
+        prompt: "Extended: " + prompt
+      });
+
+      setLoading(100);
+
+    } catch (e) {
+      console.error(e);
+      alert("Extension failed: " + e.message);
+    } finally {
+      setTimeout(() => setLoading(0), 500);
+    }
   }
 </script>
-
 </body>
 </html>
