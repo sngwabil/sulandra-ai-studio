@@ -226,6 +226,14 @@
       gap: 8px;
       min-height: 150px;
       box-shadow: 0 12px 30px rgba(15, 23, 42, 0.8);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+      border-color: rgba(250, 204, 21, 0.5);
     }
 
     .card-label {
@@ -337,13 +345,13 @@
       </p>
 
       <div class="badge-row">
-        <div class="badge">AI-powered mentor (future)</div>
+        <div class="badge">AI-powered mentor</div>
         <div class="badge">Pro user learning hub</div>
         <div class="badge">Music · Film · Photography · Acting</div>
       </div>
 
       <div class="search-panel">
-        <form onsubmit="event.preventDefault(); alert('Later this will talk to your SIA tutor backend. For now it is just a design.');">
+        <form id="siaForm">
           <label for="search">Ask SIA anything</label>
           <div class="search-row">
             <input
@@ -363,21 +371,18 @@
           </div>
 
           <button type="submit">
-            Ask SIA (UI only for now)
+            Ask SIA Mentor
           </button>
 
           <p class="search-note">
-            Future: this form will call a backend route like
-            <code>/api/sia-mentor</code>, powered by your trained SIA model and
-            curated resources, to give step-by-step guidance, examples, and
-            scene breakdowns.
+            SIA generates a step-by-step practice plan, example prompts, and next actions for the topic you ask about.
           </p>
         </form>
       </div>
     </section>
 
     <section class="grid">
-      <article class="card">
+      <article class="card" data-discipline="lyrics">
         <div class="card-label">Discipline</div>
         <div class="card-title">Lyrics & Song Styles</div>
         <div class="card-body">
@@ -386,11 +391,11 @@
           your lyrics and match them to different rhythmic feels.
         </div>
         <div class="card-footer">
-          <span>Later: guided lyric sessions</span>
+          <span>Click to load a lyric writing roadmap</span>
         </div>
       </article>
 
-      <article class="card">
+      <article class="card" data-discipline="music">
         <div class="card-label">Discipline</div>
         <div class="card-title">Music & Performance</div>
         <div class="card-body">
@@ -399,11 +404,11 @@
           streaming platforms.
         </div>
         <div class="card-footer">
-          <span>Later: style breakdowns + exercises</span>
+          <span>Click to build a performance practice routine</span>
         </div>
       </article>
 
-      <article class="card">
+      <article class="card" data-discipline="scripts">
         <div class="card-label">Discipline</div>
         <div class="card-title">Scriptwriting & Editing</div>
         <div class="card-body">
@@ -412,11 +417,11 @@
           stronger structure for short films and series.
         </div>
         <div class="card-footer">
-          <span>Later: script doctor AI</span>
+          <span>Click for a script revision checklist</span>
         </div>
       </article>
 
-      <article class="card">
+      <article class="card" data-discipline="scene">
         <div class="card-label">Discipline</div>
         <div class="card-title">Scene Setup & Blocking</div>
         <div class="card-body">
@@ -425,11 +430,11 @@
           to make every frame clear and intentional.
         </div>
         <div class="card-footer">
-          <span>Later: scene diagrams + prompts</span>
+          <span>Click for a blocking and camera plan</span>
         </div>
       </article>
 
-      <article class="card">
+      <article class="card" data-discipline="lighting">
         <div class="card-label">Discipline</div>
         <div class="card-title">Lighting & Visual Mood</div>
         <div class="card-body">
@@ -438,11 +443,11 @@
           prompts for images and video.
         </div>
         <div class="card-footer">
-          <span>Later: lighting recipes</span>
+          <span>Click to see lighting recipes and prompts</span>
         </div>
       </article>
 
-      <article class="card">
+      <article class="card" data-discipline="presence">
         <div class="card-label">Discipline</div>
         <div class="card-title">On-Screen Presence & Branding</div>
         <div class="card-body">
@@ -451,33 +456,408 @@
           TV or major platforms.
         </div>
         <div class="card-footer">
-          <span>Later: persona & brand coaching</span>
+          <span>Click for a presence and branding routine</span>
         </div>
       </article>
     </section>
 
     <section class="results-panel">
-      <div class="results-box">
-        <strong>How SIA will work technically (high level):</strong>
+      <div class="results-box" id="resultsBox">
+        <strong>Welcome to SIA Mentor.</strong>
         <br /><br />
-        • This Explore page sends your question + discipline to a backend
-          endpoint such as <code>/api/sia-mentor</code>.<br />
-        • The backend uses your trained SIA model plus curated knowledge
-          sources (guides, notes, examples you trust).<br />
-        • It returns structured answers: explanations, step-by-step plans,
-          prompt suggestions, script edits, shot lists, lighting notes, etc.<br />
-        • Over time, you can add your own curriculum, checklists and templates
-          so SIA becomes the official Sulandra School of Arts.
+        • Type a question above (for example: <em>“Help me design an Afrobeat
+        performance for TikTok and stage”</em>).<br />
+        • Choose a discipline or leave it on <em>All disciplines</em> if you are not sure.<br />
+        • Click <strong>Ask SIA Mentor</strong> to get a step-by-step practice plan,
+          example prompts, and concrete next actions.<br />
+        • Or click any discipline card to instantly load a mini syllabus and a
+          ready-to-use starter question in the search box.
         <br /><br />
-        For now, this page is the front-door and design for that experience,
-        ready for when you connect your AI brain.
+        Everything here runs directly in the browser so you can test the SIA learning
+        flow immediately.
       </div>
     </section>
   </main>
 
   <footer>
-    Explore · Sulandra International Academy (SIA) – School of Arts · Future AI mentor
-    for serious creators.
+    Explore · Sulandra International Academy (SIA) – School of Arts · Active AI-style mentor for serious creators.
   </footer>
+
+  <script>
+    (function () {
+      const form = document.getElementById('siaForm');
+      const questionInput = document.getElementById('search');
+      const categorySelect = document.getElementById('category');
+      const resultsBox = document.getElementById('resultsBox');
+
+      // Core discipline descriptions and example tasks
+      const SIA_DISCIPLINES = {
+        lyrics: {
+          id: 'lyrics',
+          title: 'Lyrics & Song Styles',
+          overview: 'Writing hooks, verses, bridges and arranging songs across Afrobeat, Amapiano, Gospel, R&B, Pop and more.',
+          sampleQuestion: 'Help me write an Afrobeat chorus and verse for a confident party song.',
+          modules: [
+            'Song idea and emotion (story, target audience, platform).',
+            'Hook design (repetition, rhythm, simple language).',
+            'Verse writing (setup, imagery, payoff).',
+            'Pre-chorus and bridge options.',
+            'Polishing: syllable alignment, rhyme tightening, performance notes.'
+          ]
+        },
+        music: {
+          id: 'music',
+          title: 'Music & Performance',
+          overview: 'Groove, delivery, adlibs, breath control and structuring songs that work on stage and on camera.',
+          sampleQuestion: 'Create a performance practice routine for my mid-tempo Afrobeat song.',
+          modules: [
+            'Tempo and groove awareness (clap, step, basic moves).',
+            'Lead vocal delivery drills and mic distance.',
+            'Adlib placement and call-and-response ideas.',
+            'Stage blocking for live performance.',
+            'Camera-friendly variations for reels and TikTok.'
+          ]
+        },
+        scripts: {
+          id: 'scripts',
+          title: 'Scriptwriting & Editing',
+          overview: 'Story beats, character goals, dialogue, pacing and revisions for short films and series.',
+          sampleQuestion: 'Help me tighten a 3-minute short film script about a nurse on night shift.',
+          modules: [
+            'Logline and core conflict.',
+            'Scene-by-scene breakdown and purpose.',
+            'Dialogue tightening and subtext.',
+            'Pacing, transitions and visual beats.',
+            'Final polish checklist before shooting.'
+          ]
+        },
+        scene: {
+          id: 'scene',
+          title: 'Scene Setup & Blocking',
+          overview: 'Where actors stand, how they move and how the camera tracks the emotional focus of the scene.',
+          sampleQuestion: 'Show me how to block a dramatic hospital corridor argument between two doctors.',
+          modules: [
+            'Defining the emotional center of the scene.',
+            'Choosing a primary camera angle and lens style.',
+            'Actor starting positions and first movements.',
+            'Adjusting blocking for coverage (wide, medium, close).',
+            'Practical marks on the floor and continuity notes.'
+          ]
+        },
+        lighting: {
+          id: 'lighting',
+          title: 'Lighting & Visual Mood',
+          overview: 'Lighting recipes for interviews, music videos, portraits and how to translate them to AI prompts.',
+          sampleQuestion: 'Teach me a moody blue-orange lighting setup for a night club performance.',
+          modules: [
+            'Key, fill and back-light basics.',
+            '3-point lighting for talking heads.',
+            'High-contrast setups for drama.',
+            'Color gels and mood (warm vs cool).',
+            'Converting setups into clean AI prompts.'
+          ]
+        },
+        presence: {
+          id: 'presence',
+          title: 'On-Screen Presence & Branding',
+          overview: 'Body language, wardrobe, eye contact and repeatable on-camera habits that look professional.',
+          sampleQuestion: 'Build a daily on-camera confidence routine for an Afrobeat artist.',
+          modules: [
+            'Baseline posture and eye line drills.',
+            'Facial expression and micro-movement practice.',
+            'Wardrobe guidelines per platform and genre.',
+            'Signature moves and gestures.',
+            'Weekly content rhythm that reinforces your brand.'
+          ]
+        },
+        generic: {
+          id: 'generic',
+          title: 'Creative Practice',
+          overview: 'General creative development across music, film, performance and visuals.',
+          sampleQuestion: 'Help me become more consistent with my creative practice.',
+          modules: [
+            'Clarifying one concrete 4-week creative goal.',
+            'Blocking weekly time and environment for practice.',
+            'Defining simple metrics to measure progress.',
+            'Capturing ideas and references consistently.',
+            'Weekly review and adjustment routine.'
+          ]
+        }
+      };
+
+      // Map select value -> discipline id for more precise coaching
+      const CATEGORY_TO_DISCIPLINE = {
+        lyrics: 'lyrics',
+        music: 'music',
+        acting: 'presence',
+        photo: 'lighting',
+        film: 'scene',
+        scripts: 'scripts',
+        all: 'generic'
+      };
+
+      const CARD_TO_CATEGORY = {
+        lyrics: 'lyrics',
+        music: 'music',
+        scripts: 'scripts',
+        scene: 'film',
+        lighting: 'photo',
+        presence: 'acting'
+      };
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function inferDisciplineFromText(text) {
+        const q = text.toLowerCase();
+
+        if (q.match(/\b(lyric|lyrics|hook|chorus|verse|songwriting|bars)\b/)) {
+          return 'lyrics';
+        }
+        if (q.match(/\b(beat|tempo|bpm|mix|stage|performance|adlib|adlibs)\b/)) {
+          return 'music';
+        }
+        if (q.match(/\b(script|screenplay|scene|dialogue|monologue|act)\b/)) {
+          return 'scripts';
+        }
+        if (q.match(/\b(light|lighting|shadow|cinematic|cinema|cinematography)\b/)) {
+          return 'lighting';
+        }
+        if (q.match(/\b(actor|acting|audition|presence|camera shy|on camera)\b/)) {
+          return 'presence';
+        }
+        if (q.match(/\b(blocking|frame|shot list|storyboard|camera move)\b/)) {
+          return 'scene';
+        }
+
+        return 'generic';
+      }
+
+      function buildSteps(disciplineId, question) {
+        const base = SIA_DISCIPLINES[disciplineId] || SIA_DISCIPLINES.generic;
+        const steps = [];
+
+        if (disciplineId === 'lyrics') {
+          steps.push(
+            'Clarify the song goal: genre, mood, target listener and main sentence you want them to remember.',
+            'Define a simple, chantable hook line and two variations that can loop over the beat.',
+            'Write a first verse that sets the scene in 4 lines, keeping language concrete and easy to sing.',
+            'Align syllables with the beat by speaking and clapping the verse over a metronome or your instrumental.',
+            'Record a rough voice note of the hook and verse, then mark lines that feel weak or hard to sing and refine them.'
+          );
+        } else if (disciplineId === 'music') {
+          steps.push(
+            'Set a fixed BPM and practice clapping on 1 and 3, then 2 and 4, until the groove is automatic.',
+            'Run the full song while standing and mark where breath support, adlibs or dance moves feel natural.',
+            'Create a simple choreography map: intro pose, hook move, verse movement and bridge variation.',
+            'Practice performing in front of a camera or mirror three times, adjusting facial expression and energy each run.',
+            'Watch the recording back, choose your strongest moments and lock them in as your default performance choices.'
+          );
+        } else if (disciplineId === 'scripts') {
+          steps.push(
+            'Write a one-sentence logline that clearly states who the main character is, what they want and what is in the way.',
+            'Break the story into 3–5 scenes and write a single, clear purpose for each one.',
+            'Read each line of dialogue aloud and cut any line that repeats information or does not move the scene forward.',
+            'Check that every scene ends with a small change: new information, a decision, a problem or a revealed emotion.',
+            'Create a clean revision pass where you only focus on visuals: actions, props and camera moments the audience can see.'
+          );
+        } else if (disciplineId === 'scene') {
+          steps.push(
+            'Choose the emotional focus of the scene (who the camera should love or fear the most).',
+            'Decide on your master shot: camera height, angle and distance that clearly shows every important action.',
+            'Place starting marks for each actor on the floor and plan 1–2 simple moves that help tell the story.',
+            'Add cutaway positions for close-ups and reaction shots so you can control the rhythm in editing.',
+            'Run the blocking slowly with actors and adjust moves that feel cramped, confusing or unnatural on camera.'
+          );
+        } else if (disciplineId === 'lighting') {
+          steps.push(
+            'Choose the mood: bright and clean, soft and romantic, or high contrast and dramatic.',
+            'Decide which side of the face the key light should hit and set it at roughly 45° to the subject.',
+            'Add a fill light or bounce on the opposite side only as needed so you keep some shadow and depth.',
+            'Place a back light or hair light to separate the subject from the background.',
+            'Take test photos or a short test clip, then adjust intensity and color temperature until skin and background look intentional.'
+          );
+        } else if (disciplineId === 'presence') {
+          steps.push(
+            'Choose one simple posture you can hold comfortably that communicates confidence and ease.',
+            'Practice looking into the lens for 5–10 seconds while saying your name, artist name and one clear promise.',
+            'Record a 30-second talking clip daily, focusing on relaxed shoulders, open chest and natural facial expression.',
+            'Define 1–2 signature gestures or mini dance moves that you can repeat across videos.',
+            'Review your recordings weekly and pick the strongest pieces to reuse, so your brand starts to look consistent.'
+          );
+        } else {
+          steps.push(
+            'Define a specific 4-week goal for this topic (for example, one finished song, one short film or ten practice videos).',
+            'Block 3–5 fixed practice sessions per week in your calendar and treat them as appointments.',
+            'Choose 1–2 core exercises for each session instead of trying to practice everything at once.',
+            'Track a simple metric such as minutes practiced, drafts completed or videos uploaded.',
+            'Review your progress at the end of each week and adjust the next week based on what actually helped.'
+          );
+        }
+
+        // Slightly personalize the first step with the question when available
+        if (question && steps.length > 0) {
+          steps[0] = steps[0] + ' Relate every decision back to your question: "' + question.trim() + '".';
+        }
+
+        return steps;
+      }
+
+      function buildPromptSuggestions(disciplineId) {
+        const prompts = [];
+
+        if (disciplineId === 'lyrics') {
+          prompts.push(
+            'Write 4 hook ideas for an Afrobeat song about success and soft life. Use simple, repeatable lines.',
+            'Turn this verse into shorter, punchier lines that fit a mid-tempo Afrobeat beat.'
+          );
+        } else if (disciplineId === 'music') {
+          prompts.push(
+            'Suggest three adlib patterns I can add around this chorus to make it more energetic.',
+            'Design a 30-second intro performance for this song that works on stage and TikTok.'
+          );
+        } else if (disciplineId === 'scripts') {
+          prompts.push(
+            'Rewrite this dialogue so it sounds more natural for two friends in their twenties.',
+            'Break this 3-minute script into clear beats and mark where to cut for TikTok episodes.'
+          );
+        } else if (disciplineId === 'scene') {
+          prompts.push(
+            'Create a shot list for this scene that covers wide, medium and close-up shots.',
+            'Suggest three variations of blocking that increase tension between the characters.'
+          );
+        } else if (disciplineId === 'lighting') {
+          prompts.push(
+            'Describe a 3-point lighting setup that makes my subject look powerful and sharp.',
+            'Turn this lighting description into a clean AI image prompt for a music video still.'
+          );
+        } else if (disciplineId === 'presence') {
+          prompts.push(
+            'Give me daily on-camera drills to improve my facial expressions and eye contact.',
+            'Suggest three wardrobe concepts for my brand based on Afrobeat and soft luxury.'
+          );
+        } else {
+          prompts.push(
+            'Create a 4-week practice plan that fits into my current schedule.',
+            'Suggest small daily habits that keep me consistent with my creative work.'
+          );
+        }
+
+        return prompts;
+      }
+
+      function renderMentorAnswer(questionRaw, categoryValue) {
+        const question = (questionRaw || '').trim();
+        const category = categoryValue || 'all';
+
+        if (!question) {
+          resultsBox.innerHTML = '<strong>SIA Mentor needs a question.</strong><br><br>' +
+            'Type what you want to achieve (for example: <em>"Build an Afrobeat performance routine for stage and TikTok"</em>) ' +
+            'and then click <strong>Ask SIA Mentor</strong>.';
+          return;
+        }
+
+        const disciplineFromCategory = CATEGORY_TO_DISCIPLINE[category] || 'generic';
+        const inferred = inferDisciplineFromText(question);
+        const disciplineId =
+          disciplineFromCategory !== 'generic' ? disciplineFromCategory : inferred;
+
+        const discipline = SIA_DISCIPLINES[disciplineId] || SIA_DISCIPLINES.generic;
+        const steps = buildSteps(disciplineId, question);
+        const promptSuggestions = buildPromptSuggestions(disciplineId);
+
+        resultsBox.innerHTML = `
+          <div style="font-size:12px; color:#e5e7eb; margin-bottom:4px;">
+            SIA · ${escapeHtml(discipline.title)}
+          </div>
+          <h2 style="font-size:16px; margin-bottom:6px;">Mentor response</h2>
+          <p style="font-size:13px; margin-bottom:8px;">
+            <strong>Your question:</strong> ${escapeHtml(question)}
+          </p>
+          <p style="font-size:13px; margin-bottom:10px;">
+            <strong>Focus:</strong> ${escapeHtml(discipline.overview)}
+          </p>
+          <p style="font-size:13px; margin-bottom:6px;"><strong>Step-by-step practice plan:</strong></p>
+          <ol style="padding-left:18px; margin-bottom:10px;">
+            ${steps.map(s => `<li style="margin-bottom:4px;">${escapeHtml(s)}</li>`).join('')}
+          </ol>
+          <p style="font-size:13px; margin-bottom:6px;"><strong>Example tasks you can do today:</strong></p>
+          <ul style="padding-left:18px; margin-bottom:10px;">
+            <li>Schedule a 30–45 minute session to apply steps 1–3.</li>
+            <li>Record a rough take on your phone to review progress.</li>
+            <li>Note what felt strong and what felt weak, then repeat the plan tomorrow with one improvement.</li>
+          </ul>
+          <p style="font-size:13px; margin-bottom:6px;"><strong>Prompts you can reuse inside Sulandra AI Studio:</strong></p>
+          <ul style="padding-left:18px; margin-bottom:10px;">
+            ${promptSuggestions.map(p => `<li style="margin-bottom:4px;">${escapeHtml(p)}</li>`).join('')}
+          </ul>
+          <p style="font-size:12px; color:#9ca3af;">
+            Tip: ask follow-up questions like <em>"Give me more variations for step 2"</em> or
+            <em>"Show me a simpler version of this plan for busy days."</em>
+          </p>
+        `;
+      }
+
+      function renderDisciplineSyllabus(disciplineId) {
+        const discipline = SIA_DISCIPLINES[disciplineId] || SIA_DISCIPLINES.generic;
+
+        resultsBox.innerHTML = `
+          <div style="font-size:12px; color:#e5e7eb; margin-bottom:4px;">
+            SIA · ${escapeHtml(discipline.title)}
+          </div>
+          <h2 style="font-size:16px; margin-bottom:6px;">Mini syllabus</h2>
+          <p style="font-size:13px; margin-bottom:8px;">
+            <strong>Overview:</strong> ${escapeHtml(discipline.overview)}
+          </p>
+          <p style="font-size:13px; margin-bottom:6px;"><strong>Key modules taught here:</strong></p>
+          <ol style="padding-left:18px; margin-bottom:10px;">
+            ${discipline.modules.map(m => `<li style="margin-bottom:4px;">${escapeHtml(m)}</li>`).join('')}
+          </ol>
+          <p style="font-size:13px; margin-bottom:6px;"><strong>Starter question loaded in the search box:</strong></p>
+          <p style="font-size:13px; margin-bottom:10px;">
+            ${escapeHtml(discipline.sampleQuestion)}
+          </p>
+          <p style="font-size:12px; color:#9ca3af;">
+            You can edit the starter question above or click <strong>Ask SIA Mentor</strong> now
+            to generate a detailed practice plan for this discipline.
+          </p>
+        `;
+      }
+
+      // Form submit handler
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        renderMentorAnswer(questionInput.value, categorySelect.value);
+      });
+
+      // Make cards interactive
+      document.querySelectorAll('.card[data-discipline]').forEach(card => {
+        card.addEventListener('click', () => {
+          const discId = card.getAttribute('data-discipline');
+          const discipline = SIA_DISCIPLINES[discId] || SIA_DISCIPLINES.generic;
+
+          // Map card -> select category for consistency
+          const mappedCategory = CARD_TO_CATEGORY[discId] || 'all';
+          if (categorySelect.querySelector(`option[value="${mappedCategory}"]`)) {
+            categorySelect.value = mappedCategory;
+          } else {
+            categorySelect.value = 'all';
+          }
+
+          // Load sample question into the search box
+          questionInput.value = discipline.sampleQuestion;
+
+          // Render syllabus in the results panel
+          renderDisciplineSyllabus(discId);
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
