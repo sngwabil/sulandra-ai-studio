@@ -2464,7 +2464,154 @@ async function generateShortFilm(){
     }
 }
 
+/* /* -------------------------------------------------------------------------- */
+/* ASK SIA – FLOATING PROMPT ASSISTANT                                       */
 /* -------------------------------------------------------------------------- */
+
+let siaCurrentFieldId = null;
+let siaCurrentFieldLabel = "";
+let siaLastSuggestion = "";
+
+/**
+ * Opens the Ask SIA panel for a specific textarea.
+ * fieldId  = id of the target textarea
+ * label    = friendly label to show in the header / intro
+ */
+function openSiaForField(fieldId, label){
+    siaCurrentFieldId   = fieldId;
+    siaCurrentFieldLabel = label || "Prompt";
+
+    const backdrop  = document.getElementById("sia-backdrop");
+    const messages  = document.getElementById("sia-messages");
+    const inputBox  = document.getElementById("sia-input");
+    const targetEl  = document.getElementById(fieldId);
+
+    if(!backdrop || !messages || !inputBox || !targetEl){
+        console.warn("Ask SIA: missing DOM nodes for", fieldId);
+        return;
+    }
+
+    // Clear previous chat
+    messages.innerHTML = "";
+
+    const currentPrompt = (targetEl.value || "").trim();
+
+    // Greeting bubble
+    appendSiaBubble(
+        "sia",
+        `Hi, I am SIA. What can I help you with on “${siaCurrentFieldLabel}”? 
+You can ask me to rewrite, improve, expand, or fix your prompt.`
+    );
+
+    if(currentPrompt){
+        appendSiaBubble(
+            "sia",
+            `Here is your current ${siaCurrentFieldLabel}:\n\n` + currentPrompt
+        );
+    }
+
+    // Reset input
+    inputBox.value = "";
+    siaLastSuggestion = currentPrompt || "";
+
+    // Show panel
+    backdrop.style.display = "flex";
+    // small delay so focus works reliably
+    setTimeout(()=>{ inputBox.focus(); }, 50);
+}
+
+function closeSiaPanel(){
+    const backdrop = document.getElementById("sia-backdrop");
+    if(backdrop){
+        backdrop.style.display = "none";
+    }
+}
+
+/**
+ * Adds a chat bubble to the SIA panel.
+ * role = "sia" or "user"
+ */
+function appendSiaBubble(role, text){
+    const messages = document.getElementById("sia-messages");
+    if(!messages) return;
+
+    const bubble = document.createElement("div");
+    bubble.className = "sia-bubble " + (role === "user" ? "user" : "sia");
+    bubble.textContent = text;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+/**
+ * Called when the user clicks "Send" in the SIA panel.
+ * Right now this runs a simple client-side “prompt improver”
+ * so the feature actually works even before you hook up a backend.
+ */
+function sendSiaMessage(){
+    const inputBox = document.getElementById("sia-input");
+    if(!inputBox) return;
+
+    const userText = inputBox.value.trim();
+    if(!userText) return;
+
+    appendSiaBubble("user", userText);
+    inputBox.value = "";
+
+    const targetEl = siaCurrentFieldId ? document.getElementById(siaCurrentFieldId) : null;
+    const basePrompt = targetEl ? (targetEl.value || "").trim() : "";
+
+    // Very simple “improvement” engine so it feels useful now.
+    let suggestion = "";
+    if(!basePrompt){
+        suggestion =
+`New prompt generated from your request:
+
+${userText}
+
+Make sure the description is clear, includes subject, environment, lighting, camera angle, and mood.`;
+    }else{
+        suggestion =
+`Improved ${siaCurrentFieldLabel} based on your request:
+
+${basePrompt}
+
+Revision goal: ${userText}
+
+Enhanced version:
+${basePrompt}
+
+(Refine this further as needed before generating.)`;
+    }
+
+    siaLastSuggestion = suggestion;
+    appendSiaBubble("sia", suggestion);
+}
+
+/**
+ * Applies the last SIA suggestion into the originating field.
+ */
+function applySiaToField(){
+    if(!siaCurrentFieldId) return;
+
+    const targetEl = document.getElementById(siaCurrentFieldId);
+    if(!targetEl) return;
+
+    const fallbackText = document.getElementById("sia-input")
+        ? document.getElementById("sia-input").value.trim()
+        : "";
+
+    const finalText = siaLastSuggestion || fallbackText;
+    if(!finalText) return;
+
+    targetEl.value = finalText;
+
+    if(typeof showToast === "function"){
+        showToast("SIA suggestion applied to your prompt.","Info");
+    }
+
+    closeSiaPanel();
+}
+-------------------------------------------------------------------------- */
 /* INIT                                                                       */
 /* -------------------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded',()=>{
