@@ -6,44 +6,270 @@
   <title>Sulandra AI Studio – Image Lab</title>
   <style>
     /* --- STYLES (Kept exactly as you liked them) --- */
-    :root { --bg: #050816; --card-bg: #0b1020; --accent: #a855f7; --accent-soft: rgba(168, 85, 247, 0.18); --text-main: #f9fafb; --text-muted: #9ca3af; --border-soft: rgba(148, 163, 184, 0.25); }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: radial-gradient(circle at top, #111827, #020617 55%), #000; color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
-    a { color: inherit; text-decoration: none; }
-    header { border-bottom: 1px solid var(--border-soft); background: rgba(2, 6, 23, 0.95); position: sticky; top: 0; z-index: 30; }
-    .header-inner { max-width: 1200px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
-    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; text-transform: uppercase; }
-    .logo-circle { width: 32px; height: 32px; border-radius: 999px; background: conic-gradient(from 140deg, #a855f7, #3b82f6, #f97316, #22c55e, #a855f7); }
-    nav { display: flex; gap: 14px; }
-    nav a { color: var(--text-muted); font-size: 14px; padding: 6px 10px; border-radius: 999px; transition: 0.2s; }
-    nav a:hover, nav a.active { color: var(--text-main); background: var(--accent-soft); }
-    .lab-layout { max-width: 1200px; margin: 20px auto; padding: 0 16px; display: grid; grid-template-columns: 210px 1fr; gap: 14px; }
-    .lab-sidebar { background: rgba(15, 23, 42, 0.98); border-radius: 16px; padding: 10px; border: 1px solid var(--border-soft); height: fit-content; }
-    .sidebar-btn { width: 100%; text-align: left; padding: 8px; margin-bottom: 4px; border-radius: 8px; background: transparent; color: var(--text-muted); border: 1px solid transparent; cursor: pointer; }
-    .sidebar-btn:hover, .sidebar-btn.active { background: rgba(168, 85, 247, 0.1); color: #fff; border-color: rgba(168, 85, 247, 0.3); }
-    .lab-main { background: radial-gradient(circle at top, #111827, #020617); border: 1px solid var(--border-soft); border-radius: 18px; padding: 16px; min-height: 500px; }
-    .lab-main-columns { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
-    .input-card, .output-card { background: rgba(2, 6, 23, 0.6); border: 1px solid var(--border-soft); border-radius: 12px; padding: 12px; }
-    .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-    
-    /* REAL UPLOAD STYLES */
-    .upload-box { 
-        border: 1px dashed rgba(148, 163, 184, 0.5); border-radius: 10px; padding: 16px; 
-        text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.2);
-        display: flex; flex-direction: column; align-items: center; justify-content: center; height: 120px;
-        background-size: cover; background-position: center; position: relative;
+    :root {
+      --bg: #050816;
+      --card-bg: #0b1020;
+      --accent: #a855f7;
+      --accent-soft: rgba(168, 85, 247, 0.18);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148, 163, 184, 0.25);
     }
-    .upload-box:hover { border-color: #a855f7; background: rgba(168, 85, 247, 0.05); }
-    .upload-box.has-image { border-style: solid; border-color: #a855f7; }
-    .upload-box.has-image div { display: none; } /* Hide text when image loaded */
-    
-    textarea { width: 100%; background: #0b1020; border: 1px solid var(--border-soft); color: white; padding: 10px; border-radius: 8px; margin-top: 10px; min-height: 80px; }
-    .btn-primary { width: 100%; padding: 10px; background: linear-gradient(135deg, #a855f7, #3b82f6); color: white; border: none; border-radius: 999px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #111827, #020617 55%), #000;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: inherit; text-decoration: none; }
+    header {
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(2, 6, 23, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 17px;
+      text-transform: uppercase;
+    }
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: conic-gradient(
+        from 140deg,
+        #a855f7,
+        #3b82f6,
+        #f97316,
+        #22c55e,
+        #a855f7
+      );
+    }
+    nav { display: flex; gap: 14px; }
+    nav a {
+      color: var(--text-muted);
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      transition: 0.2s;
+    }
+    nav a:hover,
+    nav a.active {
+      color: var(--text-main);
+      background: var(--accent-soft);
+    }
+    .lab-layout {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 14px;
+    }
+    .lab-sidebar {
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 16px;
+      padding: 10px;
+      border: 1px solid var(--border-soft);
+      height: fit-content;
+    }
+    .sidebar-btn {
+      width: 100%;
+      text-align: left;
+      padding: 8px;
+      margin-bottom: 4px;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .sidebar-btn:hover,
+    .sidebar-btn.active {
+      background: rgba(168, 85, 247, 0.1);
+      color: #fff;
+      border-color: rgba(168, 85, 247, 0.3);
+    }
+    .lab-main {
+      background: radial-gradient(circle at top, #111827, #020617);
+      border: 1px solid var(--border-soft);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 500px;
+    }
+    .lab-main-columns {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+    }
+    .input-card,
+    .output-card {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* REAL UPLOAD STYLES */
+    .upload-box {
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 120px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .upload-box:hover {
+      border-color: #a855f7;
+      background: rgba(168, 85, 247, 0.05);
+    }
+    .upload-box.has-image {
+      border-style: solid;
+      border-color: #a855f7;
+    }
+    .upload-box.has-image div { display: none; }
+
+    textarea {
+      width: 100%;
+      background: #0b1020;
+      border: 1px solid var(--border-soft);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      min-height: 80px;
+      font-size: 13px;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 14px;
+    }
     .btn-primary:disabled { opacity: 0.7; cursor: wait; }
-    .gen-card { background: #0b1020; border-radius: 10px; padding: 10px; border: 1px solid var(--border-soft); }
-    .gen-thumb { width: 100%; height: 200px; background: #000; border-radius: 8px; object-fit: cover; }
-    .slider-container { margin-top: 10px; font-size: 11px; color: var(--text-muted); }
+
+    .gen-card {
+      background: #0b1020;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid var(--border-soft);
+    }
+    .gen-thumb {
+      width: 100%;
+      height: 240px;
+      background: #020617;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .slider-container {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
     input[type=range] { width: 100%; margin-top: 4px; }
+
+    .row-inline {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .field-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    select {
+      width: 100%;
+      background: #0b1020;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      color: var(--text-main);
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    .result-toolbar {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .small-btn {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.8);
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .small-btn:hover {
+      border-color: #a855f7;
+      color: #fff;
+    }
+
+    .gallery-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 6px;
+    }
+    .gallery-thumb {
+      width: 100%;
+      height: 70px;
+      border-radius: 6px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 1px solid rgba(15, 23, 42, 0.9);
+    }
+    .gallery-thumb:hover {
+      border-color: #a855f7;
+    }
   </style>
 </head>
 <body>
@@ -64,49 +290,110 @@
   <aside class="lab-sidebar">
     <button class="sidebar-btn active" onclick="setMode('txt2img')">Text → Image</button>
     <button class="sidebar-btn" onclick="setMode('img2img')">Image → Image (Style)</button>
-    <button class="sidebar-btn" onclick="setMode('outfit')">Outfit & Pose</button>
-    <div style="margin-top: 20px; font-size: 11px; color: #666;">System Status: <span style="color:#22c55e">● Online (H200)</span></div>
+    <button class="sidebar-btn" onclick="setMode('outfit')">Outfit & Pose (Image → Image)</button>
+    <div style="margin-top: 20px; font-size: 11px; color: #666;">
+      System Status: <span style="color:#22c55e">● Online (H200)</span>
+    </div>
   </aside>
 
   <section class="lab-main">
-    <div style="margin-bottom: 10px; font-size: 18px; font-weight: 600;" id="mode-title">Create · Text → Image</div>
+    <div style="margin-bottom: 10px; font-size: 18px; font-weight: 600;" id="mode-title">
+      Create · Text → Image
+    </div>
     
     <div class="lab-main-columns">
       
+      <!-- LEFT: INPUTS -->
       <div>
         <div class="input-card">
           <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">INPUTS</div>
           
-          <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(this)">
-
-          <div class="upload-grid">
+          <!-- Hidden real file input -->
+          <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="handleFileSelect(this)">
+          
+          <!-- Upload section (only visible for image→image modes) -->
+          <div id="upload-section" class="upload-grid" style="display:none;">
             <div class="upload-box" id="upload-box" onclick="document.getElementById('file-input').click()">
               <div style="font-size: 24px;">+</div>
               <div style="font-size: 11px; margin-top: 4px;">Upload Reference Image</div>
             </div>
           </div>
 
+          <!-- Prompts -->
+          <div class="field-label">Main Prompt</div>
           <textarea id="prompt-text" placeholder="Describe what you want to generate..."></textarea>
 
-          <div class="slider-container" id="strength-container" style="display:none;">
-            <label>Change Strength (0% = Same, 100% = New Image)</label>
-            <input type="range" id="strength-slider" min="0" max="100" value="75">
+          <div class="field-label">Negative Prompt (things to avoid)</div>
+          <textarea id="neg-prompt-text" placeholder="blurry, watermark, text, distorted, extra limbs..."></textarea>
+
+          <!-- Size + Controls -->
+          <div class="row-inline">
+            <div style="flex:1;">
+              <div class="field-label">Canvas / Aspect</div>
+              <select id="size-select">
+                <option value="square_1024">Square – 1024 × 1024</option>
+                <option value="landscape_16_9">Landscape – 1280 × 720 (16:9)</option>
+                <option value="portrait_9_16">Portrait – 720 × 1280 (9:16)</option>
+                <option value="album_300">Album Cover – 300 × 300</option>
+                <option value="yt_thumb">YouTube Thumbnail – 1280 × 720</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <div class="field-label">Steps</div>
+              <div class="slider-container">
+                <label>Steps: <span id="steps-value">28</span></label>
+                <input type="range" id="steps-slider" min="10" max="50" value="28" oninput="updateStepsLabel()">
+              </div>
+            </div>
+          </div>
+
+          <div class="row-inline">
+            <div style="flex:1;">
+              <div class="field-label">Guidance</div>
+              <div class="slider-container">
+                <label>Guidance: <span id="guidance-value">4.0</span></label>
+                <input type="range" id="guidance-slider" min="1" max="10" step="0.1" value="4.0" oninput="updateGuidanceLabel()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Strength only for image→image -->
+          <div class="slider-container" id="strength-container" style="display:none; margin-top:12px;">
+            <label>Image Influence: <span id="strength-value">0.75</span></label>
+            <input type="range" id="strength-slider" min="0" max="100" value="75" oninput="updateStrengthLabel()">
+            <div style="font-size:10px; margin-top:2px;">
+              0% = keep original image • 100% = fully new image with your prompt
+            </div>
           </div>
 
           <button class="btn-primary" id="gen-btn" onclick="runGeneration()">Generate Image</button>
         </div>
       </div>
 
+      <!-- RIGHT: OUTPUT -->
       <div>
         <div class="output-card">
           <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">RESULT</div>
+          
           <div class="gen-card" id="result-area" style="display:none;">
-            <img src="" id="result-img" class="gen-thumb">
-            <div style="margin-top: 8px; font-size: 11px; color: #aaa;" id="result-meta">Generated by Flux 2</div>
+            <img src="" id="result-img" class="gen-thumb" alt="Generation result">
+            <div class="result-toolbar">
+              <div id="result-meta">Generated by Flux 2</div>
+              <div>
+                <button class="small-btn" onclick="openInNewTab()">Open</button>
+                <button class="small-btn" onclick="downloadCurrent()">Download</button>
+              </div>
+            </div>
           </div>
+
           <div id="result-placeholder" style="text-align:center; padding: 40px; color: #444; font-size: 12px;">
             Your generation will appear here.
           </div>
+
+          <div style="margin-top: 14px; font-size: 11px; color:#9ca3af;">
+            My Images (this session)
+          </div>
+          <div id="gallery-grid" class="gallery-grid"></div>
         </div>
       </div>
 
@@ -115,108 +402,215 @@
 </main>
 
 <script>
-  // --- CONNECTED TO RUNPOD H200 ---
-  const API_BASE_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net"; 
-  
-  let currentImageBase64 = null;
-  let currentMode = "txt2img";
+  // --- CONFIG ---
+  // If you are hitting the RunPod proxy, replace with:
+  // const API_BASE_URL = "https://YOURPODID-9000.proxy.runpod.net";
+  const API_BASE_URL = "http://127.0.0.1:9000";
 
-  // 1. HANDLE FILE UPLOAD (Real logic)
+  const SIZE_PRESETS = {
+    square_1024: { width: 1024, height: 1024 },
+    landscape_16_9: { width: 1280, height: 720 },
+    portrait_9_16: { width: 720, height: 1280 },
+    album_300: { width: 300, height: 300 },
+    yt_thumb: { width: 1280, height: 720 }
+  };
+
+  let currentImageDataUrl = null;   // data:image/...;base64,...
+  let currentMode = "txt2img";
+  let currentResultSrc = null;
+  const gallery = [];
+
+  // --- UI HELPERS ---
+  function updateStepsLabel() {
+    const v = document.getElementById("steps-slider").value;
+    document.getElementById("steps-value").innerText = v;
+  }
+  function updateGuidanceLabel() {
+    const v = document.getElementById("guidance-slider").value;
+    document.getElementById("guidance-value").innerText = parseFloat(v).toFixed(1);
+  }
+  function updateStrengthLabel() {
+    const v = document.getElementById("strength-slider").value;
+    document.getElementById("strength-value").innerText = (v / 100).toFixed(2);
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    const title = document.getElementById("mode-title");
+    const slider = document.getElementById("strength-container");
+    const uploadSection = document.getElementById("upload-section");
+
+    document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
+    const btnMap = {
+      txt2img: 0,
+      img2img: 1,
+      outfit: 2
+    };
+    const buttons = document.querySelectorAll(".sidebar-btn");
+    if (buttons[btnMap[mode]]) buttons[btnMap[mode]].classList.add("active");
+
+    if (mode === "txt2img") {
+      title.innerText = "Create · Text → Image";
+      slider.style.display = "none";
+      uploadSection.style.display = "none";
+    } else if (mode === "img2img") {
+      title.innerText = "Remix · Image → Image (Style)";
+      slider.style.display = "block";
+      uploadSection.style.display = "block";
+    } else if (mode === "outfit") {
+      title.innerText = "Outfit & Pose · Fashion Remix";
+      slider.style.display = "block";
+      uploadSection.style.display = "block";
+    }
+  }
+
+  // --- FILE UPLOAD HANDLER ---
   function handleFileSelect(input) {
     if (input.files && input.files[0]) {
       const reader = new FileReader();
-      
       reader.onload = function(e) {
-        // Save the base64 string
-        currentImageBase64 = e.target.result;
-        
-        // Update UI to show the image
+        currentImageDataUrl = e.target.result;
         const box = document.getElementById("upload-box");
-        box.style.backgroundImage = `url(${currentImageBase64})`;
+        box.style.backgroundImage = "url(" + currentImageDataUrl + ")";
         box.classList.add("has-image");
-        
-        // Auto-switch mode if they upload something
-        setMode('img2img');
-      }
-      
+        // If user was in txt2img, auto-switch to img2img
+        if (currentMode === "txt2img") setMode("img2img");
+      };
       reader.readAsDataURL(input.files[0]);
     }
   }
 
-  // 2. SEND GENERATION REQUEST
+  function dataUrlToPureBase64(dataUrl) {
+    if (!dataUrl) return null;
+    const parts = dataUrl.split(",");
+    if (parts.length === 2) return parts[1];
+    return dataUrl;
+  }
+
+  // --- MAIN GENERATION CALL ---
   async function runGeneration() {
-    const prompt = document.getElementById("prompt-text").value;
-    if (!prompt) return alert("Please enter a prompt.");
+    const prompt = document.getElementById("prompt-text").value.trim();
+    const negPrompt = document.getElementById("neg-prompt-text").value.trim();
+    if (!prompt) {
+      alert("Please enter a prompt.");
+      return;
+    }
 
     const btn = document.getElementById("gen-btn");
     const resultArea = document.getElementById("result-area");
     const placeholder = document.getElementById("result-placeholder");
-    
-    // UI Loading State
+
     btn.innerHTML = "⏳ Sending to GPU...";
     btn.disabled = true;
     resultArea.style.display = "none";
     placeholder.style.display = "block";
-    placeholder.innerText = "Processing on H200... (Takes ~10-20s)";
+    placeholder.innerText = "Processing on Flux 2...";
 
-    // Prepare Payload
+    const sizeKey = document.getElementById("size-select").value;
+    const preset = SIZE_PRESETS[sizeKey] || SIZE_PRESETS.square_1024;
+    const steps = parseInt(document.getElementById("steps-slider").value, 10);
+    const guidanceScale = parseFloat(document.getElementById("guidance-slider").value);
+
     const payload = {
+      mode: currentMode,
       prompt: prompt,
-      width: 1024,
-      height: 1024,
-      steps: 25,
-      guidance: 3.5
+      negative_prompt: negPrompt,
+      width: preset.width,
+      height: preset.height,
+      steps: steps,
+      guidance_scale: guidanceScale
     };
 
-    // If image exists, add it to payload
-    if (currentImageBase64) {
-      payload.image_base64 = currentImageBase64;
-      // Get strength from slider (0.0 to 1.0)
-      payload.strength = document.getElementById("strength-slider").value / 100;
+    // If we are in any image→image mode, require an image
+    if (currentMode !== "txt2img") {
+      if (!currentImageDataUrl) {
+        alert("Please upload a reference image for Image → Image mode.");
+        btn.innerHTML = "Generate Image";
+        btn.disabled = false;
+        return;
+      }
+      payload.image_base64 = dataUrlToPureBase64(currentImageDataUrl);
+      payload.strength = parseFloat(document.getElementById("strength-slider").value) / 100;
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/generate`, {
+      const res = await fetch(API_BASE_URL + "/api/image/txt2img", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
-
-      if (data.status === "success") {
-        // Success! Show image (assuming RunPod file serving is active, 
-        // usually we need a specific 'view' endpoint, but for now we confirm completion)
-        btn.innerHTML = "✅ Done!";
-        alert(`Success! Saved to server as: ${data.filename}\n\n(Note: To view it here, we need to add a 'view' endpoint to the python script. Check Jupyter for now!)`);
-      } else {
-        alert("Error: " + data.message);
+      if (!res.ok) {
+        throw new Error("HTTP " + res.status);
       }
 
-    } catch (e) {
-      alert("Connection Failed. Is the RunPod API running?");
-      console.error(e);
+      const data = await res.json();
+      console.log("API response:", data);
+
+      if (!data.image_base64) {
+        throw new Error("No image_base64 in response.");
+      }
+
+      const imgSrc = "data:image/png;base64," + data.image_base64;
+      currentResultSrc = imgSrc;
+
+      const imgEl = document.getElementById("result-img");
+      const metaEl = document.getElementById("result-meta");
+
+      imgEl.src = imgSrc;
+      metaEl.innerText = `Seed: ${data.seed ?? "N/A"} · ${preset.width}×${preset.height} · Steps: ${steps}`;
+
+      resultArea.style.display = "block";
+      placeholder.style.display = "none";
+
+      addToGallery(imgSrc);
+
+      btn.innerHTML = "Generate Again";
+    } catch (err) {
+      console.error(err);
+      placeholder.innerText = "Error talking to the API. Check console / server.";
+      alert("Generation failed: " + err.message);
     } finally {
-      btn.innerHTML = "Generate Image";
       btn.disabled = false;
     }
   }
 
-  // 3. UI HELPERS
-  function setMode(mode) {
-    currentMode = mode;
-    const title = document.getElementById("mode-title");
-    const slider = document.getElementById("strength-container");
-    
-    document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
-    
-    if (mode === 'txt2img') {
-      title.innerText = "Create · Text → Image";
-      slider.style.display = "none";
-    } else {
-      title.innerText = "Create · Image → Image (Style/Outfit)";
-      slider.style.display = "block";
-    }
+  // --- GALLERY ---
+  function addToGallery(src) {
+    gallery.unshift(src);
+    const grid = document.getElementById("gallery-grid");
+    grid.innerHTML = "";
+    gallery.slice(0, 20).forEach((gSrc, idx) => {
+      const img = document.createElement("img");
+      img.src = gSrc;
+      img.className = "gallery-thumb";
+      img.title = "Click to view";
+      img.onclick = () => {
+        currentResultSrc = gSrc;
+        const imgEl = document.getElementById("result-img");
+        imgEl.src = gSrc;
+        document.getElementById("result-area").style.display = "block";
+        document.getElementById("result-placeholder").style.display = "none";
+      };
+      grid.appendChild(img);
+    });
+  }
+
+  function openInNewTab() {
+    if (!currentResultSrc) return;
+    const win = window.open();
+    win.document.write('<img src="' + currentResultSrc + '" style="max-width:100%;">');
+  }
+
+  function downloadCurrent() {
+    if (!currentResultSrc) return;
+    const a = document.createElement("a");
+    a.href = currentResultSrc;
+    const ts = Date.now();
+    a.download = "sulandra_flux2_" + ts + ".png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 </script>
 
