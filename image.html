@@ -733,9 +733,17 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
             </div>
 
             <div class="input-group">
-                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Required</span></div>
-                <textarea id="prompt-input" class="text-area" placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
-            </div>
+    <div class="label">
+        <span>Prompt</span>
+        <span style="font-size:10px;opacity:.6;">Required</span>
+        <button type="button"
+                class="btn btn-ask-sia"
+                onclick="openSiaForField('prompt-input','Image Prompt')">
+            Ask SIA
+        </button>
+    </div>
+    <textarea id="prompt-input" class="text-area" placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
+</div>
 
             <div class="input-group">
                 <div class="label"><span>Aspect Ratio & Presets</span></div>
