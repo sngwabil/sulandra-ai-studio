@@ -3,615 +3,440 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sulandra AI Studio – Image Lab</title>
+  <title>Sulandra AI Studio</title>
   <style>
-    /* --- STYLES (Kept exactly as you liked them) --- */
     :root {
-      --bg: #050816;
-      --card-bg: #0b1020;
-      --accent: #a855f7;
-      --accent-soft: rgba(168, 85, 247, 0.18);
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --border-soft: rgba(148, 163, 184, 0.25);
+      --bg-root: #09090b;
+      --bg-panel: #121216;
+      --bg-card: #18181b;
+      --accent: #8b5cf6;
+      --accent-hover: #7c3aed;
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --border: #27272a;
+      --radius: 12px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+    
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at top, #111827, #020617 55%), #000;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-root);
       color: var(--text-main);
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
-    a { color: inherit; text-decoration: none; }
+
+    /* HEADER */
     header {
-      border-bottom: 1px solid var(--border-soft);
-      background: rgba(2, 6, 23, 0.95);
-      position: sticky;
-      top: 0;
-      z-index: 30;
-    }
-    .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 14px 16px;
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-panel);
       display: flex;
       align-items: center;
+      padding: 0 20px;
       justify-content: space-between;
+      flex-shrink: 0;
     }
-    .logo {
+
+    .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       font-weight: 700;
-      font-size: 17px;
-      text-transform: uppercase;
+      font-size: 18px;
+      letter-spacing: -0.5px;
     }
-    .logo-circle {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      background: conic-gradient(
-        from 140deg,
-        #a855f7,
-        #3b82f6,
-        #f97316,
-        #22c55e,
-        #a855f7
-      );
-    }
-    nav { display: flex; gap: 14px; }
-    nav a {
-      color: var(--text-muted);
-      font-size: 14px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      transition: 0.2s;
-    }
-    nav a:hover,
-    nav a.active {
-      color: var(--text-main);
-      background: var(--accent-soft);
-    }
-    .lab-layout {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 16px;
-      display: grid;
-      grid-template-columns: 210px 1fr;
-      gap: 14px;
-    }
-    .lab-sidebar {
-      background: rgba(15, 23, 42, 0.98);
-      border-radius: 16px;
-      padding: 10px;
-      border: 1px solid var(--border-soft);
-      height: fit-content;
-    }
-    .sidebar-btn {
-      width: 100%;
-      text-align: left;
-      padding: 8px;
-      margin-bottom: 4px;
+
+    .brand-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
       border-radius: 8px;
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid transparent;
-      cursor: pointer;
+    }
+
+    .nav { display: flex; gap: 4px; background: #27272a; padding: 4px; border-radius: 8px; }
+    .nav-item {
+      padding: 6px 16px;
       font-size: 13px;
-    }
-    .sidebar-btn:hover,
-    .sidebar-btn.active {
-      background: rgba(168, 85, 247, 0.1);
-      color: #fff;
-      border-color: rgba(168, 85, 247, 0.3);
-    }
-    .lab-main {
-      background: radial-gradient(circle at top, #111827, #020617);
-      border: 1px solid var(--border-soft);
-      border-radius: 18px;
-      padding: 16px;
-      min-height: 500px;
-    }
-    .lab-main-columns {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
-    }
-    .input-card,
-    .output-card {
-      background: rgba(2, 6, 23, 0.6);
-      border: 1px solid var(--border-soft);
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .upload-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    /* REAL UPLOAD STYLES */
-    .upload-box {
-      border: 1px dashed rgba(148, 163, 184, 0.5);
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
-      cursor: pointer;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 6px;
       transition: 0.2s;
-      background: rgba(0, 0, 0, 0.2);
+    }
+    .nav-item:hover { color: white; }
+    .nav-item.active { background: #3f3f46; color: white; font-weight: 500; }
+
+    /* LAYOUT */
+    .workspace {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* LEFT SIDEBAR (Controls) */
+    .sidebar {
+      width: 340px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    .control-group { display: flex; flex-direction: column; gap: 8px; }
+    .label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* TABS (Text / Image) */
+    .tabs { display: flex; background: var(--bg-card); padding: 4px; border-radius: 8px; gap: 4px; }
+    .tab {
+      flex: 1; text-align: center; padding: 8px; font-size: 13px; cursor: pointer;
+      border-radius: 6px; color: var(--text-muted); transition: 0.2s;
+    }
+    .tab.active { background: #27272a; color: white; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+    /* PROMPT BOX */
+    .prompt-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      font-family: inherit;
+      color: white;
+      resize: none;
+      height: 120px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .prompt-box:focus { border-color: var(--accent); }
+
+    /* UPLOAD ZONE */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      height: 140px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 120px;
-      background-size: cover;
-      background-position: center;
+      cursor: pointer;
+      background: rgba(255,255,255,0.02);
+      transition: 0.2s;
       position: relative;
+      overflow: hidden;
     }
-    .upload-box:hover {
-      border-color: #a855f7;
-      background: rgba(168, 85, 247, 0.05);
+    .upload-zone:hover { border-color: var(--accent); background: rgba(139, 92, 246, 0.05); }
+    .upload-zone.has-image { border-style: solid; border-color: var(--accent); }
+    
+    .upload-preview {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover;
+      display: none;
     }
-    .upload-box.has-image {
-      border-style: solid;
-      border-color: #a855f7;
-    }
-    .upload-box.has-image div { display: none; }
 
-    textarea {
-      width: 100%;
-      background: #0b1020;
-      border: 1px solid var(--border-soft);
-      color: white;
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 10px;
-      min-height: 80px;
-      font-size: 13px;
-    }
-    .btn-primary {
-      width: 100%;
-      padding: 10px;
-      background: linear-gradient(135deg, #a855f7, #3b82f6);
+    .upload-text { text-align: center; pointer-events: none; }
+    .upload-icon { font-size: 24px; margin-bottom: 8px; color: var(--text-muted); }
+    .upload-hint { font-size: 12px; color: var(--text-muted); }
+
+    /* SLIDERS */
+    .slider-container { display: none; } /* Hidden by default */
+    .slider-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; color: var(--text-muted); }
+    input[type=range] { width: 100%; accent-color: var(--accent); }
+
+    /* GENERATE BUTTON */
+    .btn-generate {
+      background: linear-gradient(135deg, #8b5cf6, #d946ef);
       color: white;
       border: none;
-      border-radius: 999px;
+      padding: 14px;
+      border-radius: var(--radius);
       font-weight: 600;
+      font-size: 15px;
       cursor: pointer;
-      margin-top: 10px;
-      font-size: 14px;
+      transition: 0.2s;
+      margin-top: auto;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
     }
-    .btn-primary:disabled { opacity: 0.7; cursor: wait; }
+    .btn-generate:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-generate:disabled { opacity: 0.7; cursor: wait; transform: none; }
 
-    .gen-card {
-      background: #0b1020;
-      border-radius: 10px;
-      padding: 10px;
-      border: 1px solid var(--border-soft);
-    }
-    .gen-thumb {
-      width: 100%;
-      height: 240px;
-      background: #020617;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-    .slider-container {
-      margin-top: 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    input[type=range] { width: 100%; margin-top: 4px; }
-
-    .row-inline {
+    /* MAIN GALLERY AREA */
+    .gallery-area {
+      flex: 1;
+      background: #000;
+      padding: 20px;
+      overflow-y: auto;
       display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-    .field-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-    select {
-      width: 100%;
-      background: #0b1020;
-      border-radius: 8px;
-      border: 1px solid var(--border-soft);
-      color: var(--text-main);
-      padding: 8px;
-      font-size: 12px;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .result-toolbar {
-      margin-top: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      color: #9ca3af;
+    .gallery-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
     }
-    .small-btn {
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: rgba(15, 23, 42, 0.8);
-      color: #e5e7eb;
-      cursor: pointer;
-      font-size: 11px;
-    }
-    .small-btn:hover {
-      border-color: #a855f7;
-      color: #fff;
-    }
+    .gallery-title { font-size: 16px; font-weight: 600; }
 
-    .gallery-grid {
-      margin-top: 10px;
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
     }
-    .gallery-thumb {
-      width: 100%;
-      height: 70px;
-      border-radius: 6px;
-      object-fit: cover;
-      cursor: pointer;
-      border: 1px solid rgba(15, 23, 42, 0.9);
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: 0.2s;
+      position: relative;
+      aspect-ratio: 1; /* Square cards */
     }
-    .gallery-thumb:hover {
-      border-color: #a855f7;
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    
+    .card-img {
+      width: 100%; height: 100%; object-fit: cover; cursor: pointer;
     }
+    
+    .card-actions {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      padding: 10px;
+      display: flex; justify-content: flex-end; gap: 8px;
+      opacity: 0; transition: 0.2s;
+    }
+    .card:hover .card-actions { opacity: 1; }
+
+    .action-btn {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px; padding: 4px 8px; font-size: 11px; color: white; cursor: pointer;
+    }
+    .action-btn:hover { background: white; color: black; }
+
+    /* STATUS BANNER */
+    .status-bar {
+      margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 12px;
+      background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #4ade80; display: flex; align-items: center; gap: 8px;
+    }
+    .status-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
+
   </style>
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <div class="logo"><div class="logo-circle"></div> SULANDRA AI STUDIO</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="image.html" class="active">Image</a>
-      <a href="video.html">Video</a>
-      <a href="music.html">Music</a>
+  <header>
+    <div class="brand">
+      <div class="brand-icon"></div>
+      Sulandra Studio
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-item">Home</a>
+      <a href="image.html" class="nav-item active">Image Lab</a>
+      <a href="video.html" class="nav-item">Video Lab</a>
+      <a href="music.html" class="nav-item">Music Lab</a>
     </nav>
-  </div>
-</header>
+    <div style="width: 32px; height: 32px; background: #3f3f46; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size:12px;">JS</div>
+  </header>
 
-<main class="lab-layout">
-  <aside class="lab-sidebar">
-    <button class="sidebar-btn active" onclick="setMode('txt2img')">Text → Image</button>
-    <button class="sidebar-btn" onclick="setMode('img2img')">Image → Image (Style)</button>
-    <button class="sidebar-btn" onclick="setMode('outfit')">Outfit & Pose (Image → Image)</button>
-    <div style="margin-top: 20px; font-size: 11px; color: #666;">
-      System Status: <span style="color:#22c55e">● Online (H200)</span>
-    </div>
-  </aside>
-
-  <section class="lab-main">
-    <div style="margin-bottom: 10px; font-size: 18px; font-weight: 600;" id="mode-title">
-      Create · Text → Image
-    </div>
-    
-    <div class="lab-main-columns">
+  <div class="workspace">
+    <aside class="sidebar">
       
-      <!-- LEFT: INPUTS -->
-      <div>
-        <div class="input-card">
-          <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">INPUTS</div>
-          
-          <!-- Hidden real file input -->
-          <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="handleFileSelect(this)">
-          
-          <!-- Upload section (only visible for image→image modes) -->
-          <div id="upload-section" class="upload-grid" style="display:none;">
-            <div class="upload-box" id="upload-box" onclick="document.getElementById('file-input').click()">
-              <div style="font-size: 24px;">+</div>
-              <div style="font-size: 11px; margin-top: 4px;">Upload Reference Image</div>
-            </div>
-          </div>
-
-          <!-- Prompts -->
-          <div class="field-label">Main Prompt</div>
-          <textarea id="prompt-text" placeholder="Describe what you want to generate..."></textarea>
-
-          <div class="field-label">Negative Prompt (things to avoid)</div>
-          <textarea id="neg-prompt-text" placeholder="blurry, watermark, text, distorted, extra limbs..."></textarea>
-
-          <!-- Size + Controls -->
-          <div class="row-inline">
-            <div style="flex:1;">
-              <div class="field-label">Canvas / Aspect</div>
-              <select id="size-select">
-                <option value="square_1024">Square – 1024 × 1024</option>
-                <option value="landscape_16_9">Landscape – 1280 × 720 (16:9)</option>
-                <option value="portrait_9_16">Portrait – 720 × 1280 (9:16)</option>
-                <option value="album_300">Album Cover – 300 × 300</option>
-                <option value="yt_thumb">YouTube Thumbnail – 1280 × 720</option>
-              </select>
-            </div>
-            <div style="flex:1;">
-              <div class="field-label">Steps</div>
-              <div class="slider-container">
-                <label>Steps: <span id="steps-value">28</span></label>
-                <input type="range" id="steps-slider" min="10" max="50" value="28" oninput="updateStepsLabel()">
-              </div>
-            </div>
-          </div>
-
-          <div class="row-inline">
-            <div style="flex:1;">
-              <div class="field-label">Guidance</div>
-              <div class="slider-container">
-                <label>Guidance: <span id="guidance-value">4.0</span></label>
-                <input type="range" id="guidance-slider" min="1" max="10" step="0.1" value="4.0" oninput="updateGuidanceLabel()">
-              </div>
-            </div>
-          </div>
-
-          <!-- Strength only for image→image -->
-          <div class="slider-container" id="strength-container" style="display:none; margin-top:12px;">
-            <label>Image Influence: <span id="strength-value">0.75</span></label>
-            <input type="range" id="strength-slider" min="0" max="100" value="75" oninput="updateStrengthLabel()">
-            <div style="font-size:10px; margin-top:2px;">
-              0% = keep original image • 100% = fully new image with your prompt
-            </div>
-          </div>
-
-          <button class="btn-primary" id="gen-btn" onclick="runGeneration()">Generate Image</button>
+      <div class="control-group">
+        <div class="tabs">
+          <div class="tab active" onclick="setMode('txt2img', this)">Text to Image</div>
+          <div class="tab" onclick="setMode('img2img', this)">Image to Image</div>
         </div>
       </div>
 
-      <!-- RIGHT: OUTPUT -->
-      <div>
-        <div class="output-card">
-          <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">RESULT</div>
-          
-          <div class="gen-card" id="result-area" style="display:none;">
-            <img src="" id="result-img" class="gen-thumb" alt="Generation result">
-            <div class="result-toolbar">
-              <div id="result-meta">Generated by Flux 2</div>
-              <div>
-                <button class="small-btn" onclick="openInNewTab()">Open</button>
-                <button class="small-btn" onclick="downloadCurrent()">Download</button>
-              </div>
-            </div>
-          </div>
+      <div class="control-group">
+        <div class="label">Prompt</div>
+        <textarea id="prompt-input" class="prompt-box" placeholder="Describe your image... (e.g. A futuristic city in Nigeria, neon lights, 8k, cinematic)"></textarea>
+      </div>
 
-          <div id="result-placeholder" style="text-align:center; padding: 40px; color: #444; font-size: 12px;">
-            Your generation will appear here.
+      <div class="control-group" id="upload-group" style="display:none;">
+        <div class="label">Reference Image</div>
+        <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFile(this)">
+        <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <img id="upload-preview" class="upload-preview">
+          <div class="upload-text" id="upload-text">
+            <div class="upload-icon">📂</div>
+            <div>Click to Upload</div>
+            <div class="upload-hint">JPG, PNG, WEBP</div>
           </div>
-
-          <div style="margin-top: 14px; font-size: 11px; color:#9ca3af;">
-            My Images (this session)
-          </div>
-          <div id="gallery-grid" class="gallery-grid"></div>
         </div>
       </div>
 
-    </div>
-  </section>
-</main>
+      <div class="control-group">
+        <div class="label">Settings</div>
+        
+        <div class="slider-container" id="strength-slider-box">
+          <div class="slider-row"><span>Change Strength</span><span id="strength-val">0.75</span></div>
+          <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
+        </div>
+
+        <div class="slider-container" style="display:block;">
+          <div class="slider-row"><span>Guidance Scale</span><span id="guidance-val">3.5</span></div>
+          <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        <span>System Online (H200 GPU)</span>
+      </div>
+
+      <button class="btn-generate" id="gen-btn" onclick="generate()">
+        Generate
+      </button>
+
+    </aside>
+
+    <section class="gallery-area">
+      <div class="gallery-header">
+        <div class="gallery-title">Creation History</div>
+        <div style="font-size:12px; color:#666;">Images saved to server storage</div>
+      </div>
+      
+      <div class="grid" id="gallery-grid">
+        </div>
+    </section>
+  </div>
 
 <script>
-  // --- CONFIG ---
-  // If you are hitting the RunPod proxy, replace with:
-  // const API_BASE_URL = "https://YOURPODID-9000.proxy.runpod.net";
-  const API_BASE_URL = "http://127.0.0.1:9000";
+  // --- CONFIGURATION ---
+  // 1. Go to RunPod > Connect > Port 9000
+  // 2. Paste URL here (No trailing slash)
+  const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
 
-  const SIZE_PRESETS = {
-    square_1024: { width: 1024, height: 1024 },
-    landscape_16_9: { width: 1280, height: 720 },
-    portrait_9_16: { width: 720, height: 1280 },
-    album_300: { width: 300, height: 300 },
-    yt_thumb: { width: 1280, height: 720 }
-  };
+  let currentMode = 'txt2img';
+  let imageBase64 = null;
 
-  let currentImageDataUrl = null;   // data:image/...;base64,...
-  let currentMode = "txt2img";
-  let currentResultSrc = null;
-  const gallery = [];
-
-  // --- UI HELPERS ---
-  function updateStepsLabel() {
-    const v = document.getElementById("steps-slider").value;
-    document.getElementById("steps-value").innerText = v;
-  }
-  function updateGuidanceLabel() {
-    const v = document.getElementById("guidance-slider").value;
-    document.getElementById("guidance-value").innerText = parseFloat(v).toFixed(1);
-  }
-  function updateStrengthLabel() {
-    const v = document.getElementById("strength-slider").value;
-    document.getElementById("strength-value").innerText = (v / 100).toFixed(2);
-  }
-
-  function setMode(mode) {
+  // 1. SWITCH MODES
+  function setMode(mode, el) {
     currentMode = mode;
-    const title = document.getElementById("mode-title");
-    const slider = document.getElementById("strength-container");
-    const uploadSection = document.getElementById("upload-section");
+    
+    // Update tabs
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    if(el) el.classList.add('active');
 
-    document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
-    const btnMap = {
-      txt2img: 0,
-      img2img: 1,
-      outfit: 2
-    };
-    const buttons = document.querySelectorAll(".sidebar-btn");
-    if (buttons[btnMap[mode]]) buttons[btnMap[mode]].classList.add("active");
+    // Toggle UI elements
+    const uploadGroup = document.getElementById('upload-group');
+    const strengthBox = document.getElementById('strength-slider-box');
 
-    if (mode === "txt2img") {
-      title.innerText = "Create · Text → Image";
-      slider.style.display = "none";
-      uploadSection.style.display = "none";
-    } else if (mode === "img2img") {
-      title.innerText = "Remix · Image → Image (Style)";
-      slider.style.display = "block";
-      uploadSection.style.display = "block";
-    } else if (mode === "outfit") {
-      title.innerText = "Outfit & Pose · Fashion Remix";
-      slider.style.display = "block";
-      uploadSection.style.display = "block";
+    if (mode === 'img2img') {
+      uploadGroup.style.display = 'flex';
+      strengthBox.style.display = 'block';
+    } else {
+      uploadGroup.style.display = 'none';
+      strengthBox.style.display = 'none';
     }
   }
 
-  // --- FILE UPLOAD HANDLER ---
-  function handleFileSelect(input) {
+  // 2. HANDLE FILE UPLOAD
+  function handleFile(input) {
     if (input.files && input.files[0]) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        currentImageDataUrl = e.target.result;
-        const box = document.getElementById("upload-box");
-        box.style.backgroundImage = "url(" + currentImageDataUrl + ")";
-        box.classList.add("has-image");
-        // If user was in txt2img, auto-switch to img2img
-        if (currentMode === "txt2img") setMode("img2img");
+        imageBase64 = e.target.result; // Store for API
+        
+        // Update Preview
+        const preview = document.getElementById('upload-preview');
+        const text = document.getElementById('upload-text');
+        const zone = document.getElementById('drop-zone');
+        
+        preview.src = imageBase64;
+        preview.style.display = 'block';
+        text.style.display = 'none';
+        zone.classList.add('has-image');
+        
+        // Auto switch mode
+        if (currentMode !== 'img2img') {
+          setMode('img2img', document.querySelectorAll('.tab')[1]);
+        }
       };
       reader.readAsDataURL(input.files[0]);
     }
   }
 
-  function dataUrlToPureBase64(dataUrl) {
-    if (!dataUrl) return null;
-    const parts = dataUrl.split(",");
-    if (parts.length === 2) return parts[1];
-    return dataUrl;
-  }
+  // 3. GENERATE FUNCTION
+  async function generate() {
+    const prompt = document.getElementById('prompt-input').value;
+    const btn = document.getElementById('gen-btn');
 
-  // --- MAIN GENERATION CALL ---
-  async function runGeneration() {
-    const prompt = document.getElementById("prompt-text").value.trim();
-    const negPrompt = document.getElementById("neg-prompt-text").value.trim();
-    if (!prompt) {
-      alert("Please enter a prompt.");
-      return;
-    }
+    if (!prompt) return alert("Please enter a prompt");
 
-    const btn = document.getElementById("gen-btn");
-    const resultArea = document.getElementById("result-area");
-    const placeholder = document.getElementById("result-placeholder");
-
-    btn.innerHTML = "⏳ Sending to GPU...";
+    // UI Loading State
+    const originalText = btn.innerText;
+    btn.innerText = "✨ Generating...";
     btn.disabled = true;
-    resultArea.style.display = "none";
-    placeholder.style.display = "block";
-    placeholder.innerText = "Processing on Flux 2...";
 
-    const sizeKey = document.getElementById("size-select").value;
-    const preset = SIZE_PRESETS[sizeKey] || SIZE_PRESETS.square_1024;
-    const steps = parseInt(document.getElementById("steps-slider").value, 10);
-    const guidanceScale = parseFloat(document.getElementById("guidance-slider").value);
-
+    // Prepare Payload
     const payload = {
-      mode: currentMode,
       prompt: prompt,
-      negative_prompt: negPrompt,
-      width: preset.width,
-      height: preset.height,
-      steps: steps,
-      guidance_scale: guidanceScale
+      steps: 25,
+      guidance: parseFloat(document.getElementById('guidance').value),
+      width: 1024,
+      height: 1024
     };
 
-    // If we are in any image→image mode, require an image
-    if (currentMode !== "txt2img") {
-      if (!currentImageDataUrl) {
-        alert("Please upload a reference image for Image → Image mode.");
-        btn.innerHTML = "Generate Image";
-        btn.disabled = false;
-        return;
-      }
-      payload.image_base64 = dataUrlToPureBase64(currentImageDataUrl);
-      payload.strength = parseFloat(document.getElementById("strength-slider").value) / 100;
+    // Add Img2Img data if needed
+    if (currentMode === 'img2img' && imageBase64) {
+      payload.image_base64 = imageBase64;
+      payload.strength = parseFloat(document.getElementById('strength').value);
     }
 
     try {
-      const res = await fetch(API_BASE_URL + "/api/image/txt2img", {
+      // Call API
+      const res = await fetch(`${API_URL}/api/image/txt2img`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) {
-        throw new Error("HTTP " + res.status);
-      }
-
       const data = await res.json();
-      console.log("API response:", data);
 
-      if (!data.image_base64) {
-        throw new Error("No image_base64 in response.");
+      if (data.status === "success") {
+        addCardToGallery(data.image_url, prompt);
+      } else {
+        alert("Error: " + data.message);
       }
 
-      const imgSrc = "data:image/png;base64," + data.image_base64;
-      currentResultSrc = imgSrc;
-
-      const imgEl = document.getElementById("result-img");
-      const metaEl = document.getElementById("result-meta");
-
-      imgEl.src = imgSrc;
-      metaEl.innerText = `Seed: ${data.seed ?? "N/A"} · ${preset.width}×${preset.height} · Steps: ${steps}`;
-
-      resultArea.style.display = "block";
-      placeholder.style.display = "none";
-
-      addToGallery(imgSrc);
-
-      btn.innerHTML = "Generate Again";
-    } catch (err) {
-      console.error(err);
-      placeholder.innerText = "Error talking to the API. Check console / server.";
-      alert("Generation failed: " + err.message);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to connect to RunPod. Is the API running?");
     } finally {
+      btn.innerText = originalText;
       btn.disabled = false;
     }
   }
 
-  // --- GALLERY ---
-  function addToGallery(src) {
-    gallery.unshift(src);
-    const grid = document.getElementById("gallery-grid");
-    grid.innerHTML = "";
-    gallery.slice(0, 20).forEach((gSrc, idx) => {
-      const img = document.createElement("img");
-      img.src = gSrc;
-      img.className = "gallery-thumb";
-      img.title = "Click to view";
-      img.onclick = () => {
-        currentResultSrc = gSrc;
-        const imgEl = document.getElementById("result-img");
-        imgEl.src = gSrc;
-        document.getElementById("result-area").style.display = "block";
-        document.getElementById("result-placeholder").style.display = "none";
-      };
-      grid.appendChild(img);
-    });
+  // 4. ADD TO GALLERY
+  function addCardToGallery(url, prompt) {
+    const grid = document.getElementById('gallery-grid');
+    const fullUrl = `${API_URL}${url}`;
+    
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <img src="${fullUrl}" class="card-img" onclick="window.open('${fullUrl}', '_blank')">
+      <div class="card-actions">
+        <button class="action-btn" onclick="window.open('${fullUrl}', '_blank')">Download</button>
+        <button class="action-btn">Use in Video</button>
+      </div>
+    `;
+    
+    // Add to top
+    grid.prepend(div);
   }
 
-  function openInNewTab() {
-    if (!currentResultSrc) return;
-    const win = window.open();
-    win.document.write('<img src="' + currentResultSrc + '" style="max-width:100%;">');
-  }
-
-  function downloadCurrent() {
-    if (!currentResultSrc) return;
-    const a = document.createElement("a");
-    a.href = currentResultSrc;
-    const ts = Date.now();
-    a.download = "sulandra_flux2_" + ts + ".png";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
+  // Initialize
+  setMode('txt2img');
 </script>
 
 </body>
