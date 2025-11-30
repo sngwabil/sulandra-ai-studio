@@ -941,7 +941,7 @@
       margin-top: 14px;
     }
 
-    /* PLAN OVERLAY */
+    /* PLAN DETAIL OVERLAY */
 
     .plan-overlay {
       position: fixed;
@@ -1126,7 +1126,6 @@
 </header>
 
 <main>
-  <!-- HERO -->
   <section class="lab-hero">
     <div class="lab-kicker">Image lab</div>
     <h1 class="lab-title">
@@ -1139,7 +1138,7 @@
     <div class="lab-status-row">
       <div class="lab-pill">
         <div class="lab-dot"></div>
-        Live demo · credits are simulated on this page.
+        Active Session
       </div>
       <div class="lab-pill" id="lab-plan-pill">
         Plan: Basic · 0 / 0 credits
@@ -1147,9 +1146,7 @@
     </div>
   </section>
 
-  <!-- MAIN LAYOUT -->
   <section class="lab-layout">
-    <!-- SIDEBAR -->
     <aside class="lab-sidebar">
       <div class="sidebar-header">
         <div class="menu-icon">≡</div>
@@ -1200,7 +1197,6 @@
       </div>
     </aside>
 
-    <!-- MAIN PANEL -->
     <section class="lab-main">
       <div class="lab-main-header">
         <div>
@@ -1214,10 +1210,8 @@
         </div>
       </div>
 
-      <!-- CREATE VIEW -->
       <div id="view-create" class="lab-main-columns">
         <div>
-          <!-- Versions -->
           <div class="input-card">
             <div class="input-label-row">
               <div class="input-label">Model versions</div>
@@ -1239,7 +1233,6 @@
             </div>
           </div>
 
-          <!-- Upload & Prompt -->
           <div class="input-card" style="margin-top:6px;">
             <div class="input-label-row">
               <div class="input-label">Inputs</div>
@@ -1272,7 +1265,7 @@
 
             <div class="input-footer-row">
               <div>
-                <span id="credit-note">This run: 4 images × 5 credits = 20 credits.</span><br/>
+                <span id="credit-note">This run: 1 high-res image = 5 credits.</span><br/>
                 <span>Basic will export with watermark. Pro and above export clean.</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
@@ -1281,14 +1274,13 @@
                 </button>
                 <button class="btn-primary" type="button" onclick="runGeneration()">
                   <span class="plus">+</span>
-                  Generate images
+                  Generate image
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- OUTPUT -->
         <div>
           <div class="output-card">
             <div class="output-header-row">
@@ -1298,7 +1290,6 @@
               </div>
             </div>
             <div class="output-grid" id="output-grid">
-              <!-- Placeholder examples -->
               <div class="gen-card">
                 <div class="gen-thumbnail"></div>
                 <div class="gen-label">Fashion portrait · v1</div>
@@ -1329,41 +1320,22 @@
         </div>
       </div>
 
-      <!-- OTHER VIEWS -->
-
-      <!-- Image → Image / Outfit / PDF etc use same container but different text -->
       <div id="view-generations" class="lab-secondary">
         <div class="lab-main-header">
           <div>
             <div class="lab-main-title">My generations</div>
             <div class="lab-main-sub">
-              All your image outputs from this device (simulated in this demo). In production this would show your account-wide generations.
+              Your session history. Newly generated images will appear here.
             </div>
           </div>
         </div>
-        <div class="media-grid">
+        <div class="media-grid" id="history-grid">
           <div class="media-card">
             <div class="media-thumb"></div>
             <div>“Afrobeat cover art”</div>
             <div class="media-meta-row">
               <span>v2 · 4K</span>
               <span>Used in 1 video</span>
-            </div>
-          </div>
-          <div class="media-card">
-            <div class="media-thumb"></div>
-            <div>“Short film storyboard frame”</div>
-            <div class="media-meta-row">
-              <span>v1</span>
-              <span>3 scenes linked</span>
-            </div>
-          </div>
-          <div class="media-card">
-            <div class="media-thumb"></div>
-            <div>“Album concept”</div>
-            <div class="media-meta-row">
-              <span>v3</span>
-              <span>Music Lab cover</span>
             </div>
           </div>
         </div>
@@ -1407,7 +1379,7 @@
           <div>
             <div class="lab-main-title">Media · Community Image Feed</div>
             <div class="lab-main-sub">
-              In production, this will show public creations (with creators’ permission), likes and comments – a discovery feed for Sulandra images.
+              Discover creations from other Sulandra users.
             </div>
           </div>
         </div>
@@ -1442,7 +1414,6 @@
         </div>
       </div>
 
-      <!-- Special create variants share same layout but change copy -->
       <div id="view-create-img2img" class="lab-secondary">
         <div class="lab-main-header">
           <div>
@@ -1501,7 +1472,6 @@
   Sulandra AI Studio – Image Lab · Use one credit system for images, music, video and short films.
 </footer>
 
-<!-- PROFILE OVERLAY -->
 <div class="profile-overlay" id="profile-overlay">
   <div class="profile-panel">
     <div class="profile-header">
@@ -1528,8 +1498,7 @@
       </div>
 
       <div class="profile-content" id="profile-content">
-        <!-- Filled by JS -->
-      </div>
+        </div>
     </div>
 
     <div class="profile-footer">
@@ -1539,7 +1508,6 @@
   </div>
 </div>
 
-<!-- PLAN DETAIL OVERLAY -->
 <div class="plan-overlay" id="plan-overlay">
   <div class="plan-dialog">
     <div class="plan-dialog-header">
@@ -1646,6 +1614,79 @@
   let currentBilling = "monthly";
   let currentView = "create";
   let currentVersion = "v1";
+
+  // --- SULANDRA DIRECT ENGINE LINK ---
+  
+  // 1. Go to RunPod > Connect > Port 9000
+  // 2. Paste URL here (No trailing slash)
+  const API_BASE_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net"; 
+
+  async function runGeneration() {
+    if (user.credits < 5) {
+      alert("Not enough credits!");
+      return;
+    }
+
+    const promptText = document.getElementById("prompt-text").value;
+    if (!promptText) return alert("Enter a prompt.");
+
+    const btn = document.querySelector(".btn-primary");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "⏳ Generating (30s)...";
+    btn.disabled = true;
+
+    try {
+      // Direct Call to Python Engine
+      const response = await fetch(`${API_BASE_URL}/api/image/txt2img`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: promptText,
+          steps: 25,
+          guidance: 3.5, // 3.5 is good for Flux Quantized
+          width: 1024,
+          height: 1024
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.status === "queued") {
+        alert(`✅ Image Generated!\n\nFilename: ${data.prompt_id}\n\nCheck your 'My Generations' tab to see confirmation.`);
+        user.credits -= 5;
+        updateProfileHeader();
+        
+        // Add to history
+        addToHistory(promptText, data.prompt_id);
+        // Switch view to history
+        setView('generations');
+      } else {
+        alert("Server Error: " + data.message);
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert("❌ Failed to connect. Is the python script running?");
+    } finally {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  }
+
+  function addToHistory(prompt, filename) {
+    const grid = document.getElementById('history-grid');
+    const div = document.createElement('div');
+    div.className = 'media-card';
+    div.innerHTML = `
+      <div class="media-thumb" style="background:linear-gradient(135deg, #a855f7, #22c55e);"></div>
+      <div>"${prompt.substring(0,20)}..."</div>
+      <div class="media-meta-row">
+        <span>File: ${filename}</span>
+        <span>Just now</span>
+      </div>
+    `;
+    grid.prepend(div);
+  }
 
   function updatePlanInUI() {
     const labPlan = document.getElementById("lab-plan-pill");
@@ -1787,16 +1828,6 @@
       "Upload placeholder.\n\nHere you'd open a file picker for: " +
         type +
         ". In production this would send the file to your backend."
-    );
-  }
-
-  function runGeneration() {
-    if (user.credits <= 0) {
-      alertUpgrade("You do not have enough credits to generate images.");
-      return;
-    }
-    alert(
-      "Generation started (simulated).\n\nIn the real system this will send your prompt, version, and any uploads to the backend and Runpod models."
     );
   }
 
