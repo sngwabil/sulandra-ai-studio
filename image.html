@@ -2406,5 +2406,24 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
 });
 </script>
+   <!-- ASK SIA – floating chat assistant -->
+<div id="sia-backdrop" class="sia-backdrop" style="display:none;">
+    <div class="sia-panel">
+        <div class="sia-panel-header">
+            <span>Ask SIA · Prompt Assistant</span>
+            <button type="button" class="btn-ghost" onclick="closeSiaPanel()">×</button>
+        </div>
+        <div id="sia-messages" class="sia-messages">
+            <!-- Messages appear here -->
+        </div>
+        <div class="sia-footer">
+            <textarea id="sia-input" class="text-area" placeholder="Tell SIA what you need help with... rewrite my prompt, make it more cinematic, fix grammar..."></textarea>
+            <div class="sia-footer-actions">
+                <button type="button" class="btn btn-primary" onclick="sendSiaMessage()">Send</button>
+                <button type="button" class="btn btn-accent" onclick="applySiaToField()">Apply to Prompt</button>
+            </div>
+        </div>
+    </div>
+</div> 
 </body>
 </html>
