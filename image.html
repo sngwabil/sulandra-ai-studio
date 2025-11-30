@@ -18,14 +18,14 @@
     --bg-card: #071133;
     --bg-element: #0a1540;
     --bg-hover: #111c4f;
-    
+
     --accent-primary: #8b5cf6;   /* violet */
     --accent-secondary: #3b82f6; /* royal blue */
     --accent-tertiary: #ec4899;  /* pink */
     --accent-success: #22c55e;
     --accent-warning: #facc15;
     --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
-    
+
     --text-primary: #ffffff;
     --text-secondary: #c7d2fe;
     --text-tertiary: #818cf8;
@@ -260,8 +260,8 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .upload-dropzone:hover{border-color:#60a5fa;background:#020617}
 .upload-dropzone.has-file{border-style:solid;border-color:#a5b4fc}
 .preview-layer{
-    position:absolute;inset:0;width:100%;height:100%;object-fit:contain; /* Show full image */
-    background:#000; /* Fallback for padding */
+    position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.97;
+    background:#020617;
 }
 
 /* Video specific small controls */
@@ -320,7 +320,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     border-color:#a5b4fc;
 }
 .card img,.card video{
-    width:100%;height:100%;object-fit:cover;display:block;
+    width:100%;height:100%;object-fit:contain;display:block;
 }
 .card video{background:#020617}
 .card-overlay{
@@ -393,10 +393,34 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     background:rgba(15,23,42,.9);
 }
 .tier-item strong{display:block;font-size:13px;margin-bottom:4px}
+
+/* Preview mode toggle buttons (extra feature) */
+.preview-toggle-row{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+.preview-toggle-row .btn{
+    flex:1;
+    font-size:11px;
+    padding-inline:8px;
+}
+.preview-toggle-row .btn.active{
+    border-color:#60a5fa;
+    color:#e5e7eb;
+}
+
+/* Small helper text style */
+.helper-text{
+    font-size:11px;
+    color:var(--text-secondary);
+    opacity:.8;
+}
 </style>
 </head>
 <body>
 
+<!-- LEFT NAV RAIL -->
 <div class="nav-rail">
     <div class="brand-logo">S</div>
 
@@ -419,6 +443,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="sidebar-header">
         <div>
@@ -431,11 +456,13 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
     <div class="sidebar-scroll" id="sidebar-scroll">
 
+        <!-- Lab mode switch (Image / Video) -->
         <div class="lab-mode-switch">
             <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">Image</div>
             <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">Video</div>
         </div>
 
+        <!-- IMAGE CONTROLS -->
         <div id="image-controls">
 
             <div class="mode-switch">
@@ -443,6 +470,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div class="mode-option" id="img-mode-img2img" onclick="setImageMode('img2img', this)">Image → Image</div>
             </div>
 
+            <!-- UPLOAD FIRST: Image Lab -->
             <div class="input-group" id="upload-group-img" style="display:none;">
                 <div class="label"><span>Reference Image</span></div>
                 <input type="file" id="file-input-img" hidden accept="image/*" onchange="handleImgFile(this)">
@@ -452,12 +480,30 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                     <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload reference</span>
                 </div>
 
+                <!-- Preview mode toggle (extra feature) -->
+                <div class="preview-toggle-row">
+                    <button type="button" class="btn btn-ghost active" id="img-preview-fit" onclick="setPreviewMode('img','fit')">
+                        Fit · Show full image
+                    </button>
+                    <button type="button" class="btn btn-ghost" id="img-preview-fill" onclick="setPreviewMode('img','fill')">
+                        Fill · Crop to frame
+                    </button>
+                </div>
+
+                <!-- Clear reference (extra feature) -->
+                <button type="button" class="btn btn-ghost" style="margin-top:6px;justify-content:flex-start;font-size:11px;" onclick="clearImageReference()">
+                    <svg style="width:16px;height:16px;"><path d="M3 6h18"/><path d="M8 6v12"/><path d="M16 6v12"/><rect x="9" y="2" width="6" height="3" rx="1"/></svg>
+                    Clear reference image
+                </button>
+
                 <div class="label" style="margin-top:12px;">
                     <span>Influence Strength</span><span id="strength-val">0.75</span>
                 </div>
                 <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
+                <div class="helper-text">Higher values make the output closer to the uploaded reference.</div>
             </div>
 
+            <!-- Prompt AFTER upload in Image Lab -->
             <div class="input-group">
                 <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Required</span></div>
                 <textarea id="prompt-input" class="text-area" placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
@@ -486,6 +532,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
             </button>
         </div>
 
+        <!-- VIDEO CONTROLS -->
         <div id="video-controls" style="display:none;">
 
             <div class="mode-switch">
@@ -494,8 +541,9 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div class="mode-option" id="vid-mode-extend" onclick="setVideoMode('extend',this)">Extend Video</div>
             </div>
 
-             <div class="input-group" id="video-ref-group">
-                <div class="label"><span>Primary Reference</span></div>
+            <!-- UPLOAD FIRST: Video Lab main reference -->
+            <div class="input-group" id="video-ref-group">
+                <div class="label"><span>Primary Upload</span><span style="font-size:10px;opacity:.6;">Image or Video</span></div>
                 <input type="file" id="video-ref-image" hidden accept="image/*" onchange="handleVideoRefImage(this)">
                 <input type="file" id="video-ref-video" hidden accept="video/*" onchange="handleVideoRefVideo(this)">
                 <div class="upload-dropzone" id="drop-zone-video-main" onclick="triggerVideoMainUpload()">
@@ -504,8 +552,38 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                     <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                     <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload image or video (depends on mode)</span>
                 </div>
+
+                <!-- Preview mode toggle (extra feature) -->
+                <div class="preview-toggle-row">
+                    <button type="button" class="btn btn-ghost active" id="video-main-fit" onclick="setPreviewMode('video-main','fit')">
+                        Fit · Show full frame
+                    </button>
+                    <button type="button" class="btn btn-ghost" id="video-main-fill" onclick="setPreviewMode('video-main','fill')">
+                        Fill · Crop to frame
+                    </button>
+                </div>
+
+                <!-- Clear main reference (extra feature) -->
+                <button type="button" class="btn btn-ghost" style="margin-top:6px;justify-content:flex-start;font-size:11px;" onclick="clearVideoMainReference()">
+                    <svg style="width:16px;height:16px;"><path d="M3 6h18"/><path d="M8 6v12"/><path d="M16 6v12"/><rect x="9" y="2" width="6" height="3" rx="1"/></svg>
+                    Clear primary upload
+                </button>
+
+                <div class="helper-text">In Extend mode, upload a clip to add more seconds. In Image → Video, upload a still frame to animate.</div>
             </div>
 
+            <!-- Prompt AFTER main upload in Video Lab -->
+            <div class="input-group">
+                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
+                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
+                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
+            </div>
+
+            <!-- Uploads for reference / start-end / video extension -->
             <div class="input-group" id="start-end-group">
                 <div class="label"><span>Start & End Frames</span><span style="font-size:10px;opacity:.6;">Optional morph</span></div>
                 <div class="inline-row">
@@ -526,6 +604,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 </div>
             </div>
 
+            <!-- Elements / consistency -->
             <div class="input-group">
                 <div class="label"><span>Elements / Consistency</span><span style="font-size:10px;opacity:.6;">Character · Style · Scene</span></div>
                 <input type="file" id="elements-input" hidden accept="image/*" multiple onchange="handleElements(this)">
@@ -535,16 +614,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div id="elements-count" style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:none;"></div>
             </div>
 
-            <div class="input-group">
-                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
-                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
-            </div>
-
-            <div class="input-group">
-                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
-                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
-            </div>
-
+            <!-- Durations / resolution / model mode -->
             <div class="input-group">
                 <div class="label"><span>Duration & Resolution</span></div>
                 <div class="inline-row">
@@ -582,6 +652,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 </div>
             </div>
 
+            <!-- Camera + motion + lipsync + sfx -->
             <div class="input-group">
                 <div class="label"><span>Camera & Motion</span></div>
                 <div class="inline-row">
@@ -632,6 +703,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
+<!-- MAIN STAGE -->
 <div class="stage">
     <div class="stage-header">
         <div class="gallery-tabs">
@@ -661,6 +733,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast-container">
     <div id="toast" class="toast">
         <div class="spinner"></div>
@@ -671,6 +744,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
+<!-- PLAN MODAL -->
 <div id="plan-modal" class="modal-backdrop">
     <div class="modal">
         <h3>Membership Tiers</h3>
@@ -780,11 +854,58 @@ function handleImgFile(input){
             img.src = imageBase64;
             img.style.display = 'block';
             zone.classList.add('has-file');
+            // Ensure preview respects orientation
+            img.style.objectFit = (document.getElementById('img-preview-fill').classList.contains('active') ? 'cover' : 'contain');
             if(currentImageMode !== 'img2img'){
                 setImageMode('img2img', document.getElementById('img-mode-img2img'));
             }
         };
         reader.readAsDataURL(input.files[0]);
+    }
+}
+
+/* Clear reference image (extra feature) */
+function clearImageReference(){
+    imageBase64 = null;
+    const img = document.getElementById('preview-img');
+    const zone = document.getElementById('drop-zone-img');
+    const input = document.getElementById('file-input-img');
+    if(img){
+        img.src = "";
+        img.style.display = 'none';
+    }
+    if(zone){
+        zone.classList.remove('has-file');
+    }
+    if(input){
+        input.value = "";
+    }
+    showToast("Reference image cleared.","Info");
+}
+
+/* Preview mode toggle for image / video main (extra feature) */
+function setPreviewMode(context,mode){
+    if(context === 'img'){
+        const fitBtn  = document.getElementById('img-preview-fit');
+        const fillBtn = document.getElementById('img-preview-fill');
+        fitBtn.classList.toggle('active', mode === 'fit');
+        fillBtn.classList.toggle('active', mode === 'fill');
+        const img = document.getElementById('preview-img');
+        if(img){
+            img.style.objectFit = (mode === 'fit') ? 'contain' : 'cover';
+        }
+    }else if(context === 'video-main'){
+        const fitBtn  = document.getElementById('video-main-fit');
+        const fillBtn = document.getElementById('video-main-fill');
+        fitBtn.classList.toggle('active', mode === 'fit');
+        fillBtn.classList.toggle('active', mode === 'fill');
+        const v   = document.getElementById('preview-video-main');
+        const img = document.getElementById('preview-video-main-img');
+        [v,img].forEach(el=>{
+            if(el){
+                el.style.objectFit = (mode === 'fit') ? 'contain' : 'cover';
+            }
+        });
     }
 }
 
@@ -888,6 +1009,7 @@ function handleVideoRefImage(input){
             v.style.display = 'none';
             img.style.display = 'block';
             img.src = videoRefs.image;
+            img.style.objectFit = (document.getElementById('video-main-fill').classList.contains('active') ? 'cover' : 'contain');
             document.getElementById('drop-zone-video-main').classList.add('has-file');
         };
         reader.readAsDataURL(input.files[0]);
@@ -905,10 +1027,39 @@ function handleVideoRefVideo(input){
             v.style.display = 'block';
             v.src = videoRefs.video;
             v.loop = true; v.muted = true; v.play();
+            v.style.objectFit = (document.getElementById('video-main-fill').classList.contains('active') ? 'cover' : 'contain');
             document.getElementById('drop-zone-video-main').classList.add('has-file');
         };
         reader.readAsDataURL(input.files[0]);
     }
+}
+
+/* Clear main video/image reference (extra feature) */
+function clearVideoMainReference(){
+    videoRefs.image = null;
+    videoRefs.video = null;
+    const v   = document.getElementById('preview-video-main');
+    const img = document.getElementById('preview-video-main-img');
+    const zone = document.getElementById('drop-zone-video-main');
+    const imgInput = document.getElementById('video-ref-image');
+    const vidInput = document.getElementById('video-ref-video');
+
+    if(v){
+        v.pause();
+        v.src = "";
+        v.style.display = 'none';
+    }
+    if(img){
+        img.src = "";
+        img.style.display = 'none';
+    }
+    if(zone){
+        zone.classList.remove('has-file');
+    }
+    if(imgInput){ imgInput.value = ""; }
+    if(vidInput){ vidInput.value = ""; }
+
+    showToast("Primary upload cleared.","Info");
 }
 
 function handleStartEnd(kind,input){
@@ -1058,6 +1209,20 @@ async function generateSfx(){
 /* -------------------------------------------------------------------------- */
 /* GALLERY / COMMUNITY / FAVORITES                                           */
 /* -------------------------------------------------------------------------- */
+
+/* Helper: set card aspect ratio from loaded image (portrait vs landscape) */
+function handleCardImageLoad(img){
+    try{
+        const card = img.closest('.card');
+        if(card && img.naturalWidth && img.naturalHeight){
+            card.style.aspectRatio = img.naturalWidth + "/" + img.naturalHeight;
+        }
+        img.style.objectFit = "contain";
+    }catch(e){
+        console.warn("handleCardImageLoad error:",e);
+    }
+}
+
 function addToGallery(item){
     const grid = document.getElementById('gallery-grid');
     document.getElementById('empty-state').style.display = 'none';
@@ -1068,7 +1233,7 @@ function addToGallery(item){
     if(item.type === 'image'){
         const url = item.url;
         card.innerHTML = `
-            <img src="${url}" alt="">
+            <img src="${url}" alt="" onload="handleCardImageLoad(this)">
             <div class="card-overlay">
                 <div class="card-meta">${item.prompt || ''}</div>
                 <div class="card-actions">
@@ -1175,6 +1340,15 @@ function openPlanModal(){
 function closePlanModal(){
     document.getElementById('plan-modal').classList.remove('active');
 }
+
+/* -------------------------------------------------------------------------- */
+/* OPTIONAL: initial preview mode defaults                                    */
+/* -------------------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+    // Ensure preview modes start in "fit" mode
+    setPreviewMode('img','fit');
+    setPreviewMode('video-main','fit');
+});
 </script>
 </body>
 </html>
