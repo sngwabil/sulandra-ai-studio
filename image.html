@@ -401,7 +401,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .tier-item strong{display:block;font-size:13px;margin-bottom:4px}
 
 /* -------------------------------------------------------------------------- */
-/* SHORT FILM – NEW STYLES                                                    */
+/* SHORT FILM – BOARD                                                         */
 /* -------------------------------------------------------------------------- */
 
 .shortfilm-board{
@@ -417,8 +417,8 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .shortfilm-board-inner{
     flex:1;
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-    grid-auto-rows:110px;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    grid-auto-rows:140px;
     gap:8px;
     overflow-y:auto;
     padding:4px;
@@ -476,6 +476,24 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     font-size:9px;
     background:rgba(56,189,248,.9);
     color:#020617;
+}
+.shortfilm-shot-delete{
+    position:absolute;
+    top:4px;
+    right:4px;
+    width:18px;
+    height:18px;
+    border-radius:999px;
+    border:none;
+    font-size:12px;
+    line-height:18px;
+    text-align:center;
+    background:rgba(15,23,42,.9);
+    color:#f9fafb;
+    cursor:pointer;
+}
+.shortfilm-shot-delete:hover{
+    background:#ef4444;
 }
 
 /* Short Film video/script/audio bits */
@@ -549,6 +567,58 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .audio-track span{
     pointer-events:none;
 }
+
+/* -------------------------------------------------------------------------- */
+/* SHORT FILM – TIMELINE (NEW)                                               */
+/* -------------------------------------------------------------------------- */
+.shortfilm-timeline{
+    width:100%;
+    height:36px;
+    border-radius:999px;
+    background:rgba(15,23,42,0.9);
+    border:1px solid rgba(51,65,85,0.9);
+    display:flex;
+    overflow:hidden;
+    position:relative;
+}
+.shortfilm-timeline-empty{
+    font-size:11px;
+    color:var(--text-secondary);
+    opacity:.7;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+}
+.shortfilm-timeline-segment{
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    color:#e5e7eb;
+    white-space:nowrap;
+    border-right:1px solid rgba(15,23,42,0.9);
+    background:linear-gradient(135deg,#1d4ed8,#4c1d95);
+    position:relative;
+}
+.shortfilm-timeline-segment.selected{
+    background:linear-gradient(135deg,#f97316,#ec4899);
+}
+.shortfilm-timeline-segment span{
+    padding:0 6px;
+}
+.shortfilm-timeline-metadata{
+    font-size:11px;
+    color:var(--text-secondary);
+    margin-top:4px;
+    display:flex;
+    justify-content:space-between;
+}
+
+/* -------------------------------------------------------------------------- */
+/* AUDIO PLAYER FOOTER (BROWSER)                                             */
+/* -------------------------------------------------------------------------- */
 </style>
 </head>
 <body>
@@ -600,7 +670,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
     <div class="sidebar-scroll" id="sidebar-scroll">
 
-        <!-- Lab mode switch (Image / Video / Short Film) -->
+        <!-- Lab mode switch -->
         <div class="lab-mode-switch">
             <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">
                 Image
@@ -677,17 +747,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div class="mode-option" id="vid-mode-extend" onclick="setVideoMode('extend',this)">Extend Video</div>
             </div>
 
-            <div class="input-group">
-                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
-                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
-            </div>
-
-            <div class="input-group">
-                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
-                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
-            </div>
-
-            <!-- Primary ref: HIDDEN in Text → Video, visible in other modes -->
+            <!-- UPLOAD + START/END FIRST -->
             <div class="input-group" id="video-ref-group">
                 <div class="label"><span>Primary Reference</span></div>
                 <input type="file" id="video-ref-image" hidden accept="image/*" onchange="handleVideoRefImage(this)">
@@ -695,12 +755,11 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div class="upload-dropzone" id="drop-zone-video-main" onclick="triggerVideoMainUpload()">
                     <video id="preview-video-main" class="preview-layer" style="display:none;" muted loop></video>
                     <img id="preview-video-main-img" class="preview-layer" style="display:none;">
-                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                     <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload image or video (depends on mode)</span>
                 </div>
             </div>
 
-            <!-- Start & End frames: HIDDEN in Text → Video -->
             <div class="input-group" id="start-end-group">
                 <div class="label"><span>Start & End Frames</span><span style="font-size:10px;opacity:.6;">Optional morph</span></div>
                 <div class="inline-row">
@@ -721,7 +780,17 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 </div>
             </div>
 
-            <!-- Elements (multi-ref): still here, but visually hidden and reused by Short Film if needed -->
+            <div class="input-group">
+                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
+                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
+                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
+            </div>
+
+            <!-- Elements (multi-ref) – hidden from UI but kept logically -->
             <div class="input-group" id="elements-group">
                 <div class="label"><span>Elements / Consistency</span><span style="font-size:10px;opacity:.6;">Character · Style · Scene</span></div>
                 <input type="file" id="elements-input" hidden accept="image/*" multiple onchange="handleElements(this)">
@@ -829,17 +898,40 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <input type="file" id="shortfilm-images-input" hidden multiple accept="image/*" onchange="handleShortFilmImages(this)">
                 <!-- for replacing a specific shot -->
                 <input type="file" id="shortfilm-replace-image-input" hidden accept="image/*" onchange="handleShortFilmReplaceImage(this)">
-                <div class="shortfilm-board upload-dropzone" id="shortfilm-board" onclick="document.getElementById('shortfilm-images-input').click()">
+                <div class="shortfilm-board upload-dropzone" id="shortfilm-board">
                     <div id="shortfilm-board-inner" class="shortfilm-board-inner">
                         <div class="shortfilm-empty-hint">
-                            Click to upload your storyboard images.<br>
+                            Use the + button below to add storyboard images.<br>
                             Single-click selects, double-click replaces, drag to reorder.
                         </div>
                     </div>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px;color:var(--text-secondary);">
                     <span id="shortfilm-count">0 / 20 shots</span>
-                    <button type="button" class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="document.getElementById('shortfilm-images-input').click()">Add more images</button>
+                    <div style="display:flex;gap:6px;">
+                        <button type="button" class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="document.getElementById('shortfilm-images-input').click()">
+                            <svg style="width:14px;height:14px;"><path d="M12 5v14M5 12h14"/></svg>
+                            Shots
+                        </button>
+                        <button type="button" class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="importFromImageLab()">
+                            Import from Image Lab
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Shot Duration Timeline -->
+            <div class="input-group">
+                <div class="label">
+                    <span>Shot Duration Timeline</span>
+                    <span style="font-size:10px;opacity:.7;">Proportional to per-shot seconds</span>
+                </div>
+                <div class="shortfilm-timeline" id="shortfilm-timeline">
+                    <div class="shortfilm-timeline-empty">Add storyboard shots to see the timeline.</div>
+                </div>
+                <div class="shortfilm-timeline-metadata" id="shortfilm-timeline-meta">
+                    <span>Total timeline: 0 s</span>
+                    <span>Shots: 0</span>
                 </div>
             </div>
 
@@ -849,6 +941,18 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                     <span id="shortfilm-selected-label" style="font-size:10px;opacity:.7;">None selected</span>
                 </div>
                 <textarea id="shortfilm-shot-prompt" class="text-area" placeholder="Describe this specific shot (camera move, emotion, action...)" oninput="updateShortFilmShotPrompt()"></textarea>
+            </div>
+
+            <!-- NEW: Selected Shot Duration Slider -->
+            <div class="input-group">
+                <div class="label">
+                    <span>Selected Shot Duration</span>
+                    <span id="shortfilm-shot-duration-label" style="font-size:10px;opacity:.7;">No shot selected</span>
+                </div>
+                <input type="range" id="shortfilm-shot-duration" min="1" max="12" step="0.5" value="3" oninput="updateShortFilmShotDuration(this.value)">
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">
+                    Adjust how long this shot stays on screen (in seconds).
+                </div>
             </div>
 
             <div class="input-group">
@@ -1525,7 +1629,7 @@ function closePlanModal(){
 }
 
 /* -------------------------------------------------------------------------- */
-/* SHORT FILM LOGIC – STORYBOARD, PROMPTS, AUDIO                              */
+/* SHORT FILM LOGIC – STORYBOARD, PROMPTS, DURATIONS, AUDIO                   */
 /* -------------------------------------------------------------------------- */
 
 let shortFilmShots = [];
@@ -1564,7 +1668,8 @@ function handleShortFilmImages(input){
             shortFilmShots.push({
                 id,
                 src: e.target.result,
-                prompt: ""
+                prompt: "",
+                durationSeconds: 3   // default per shot
             });
             shortFilmSelectedId = id; // highlight last uploaded
             loaded++;
@@ -1580,7 +1685,18 @@ function handleShortFilmImages(input){
     input.value = "";
 }
 
+/* Ensure each shot has durationSeconds even for older data */
+function ensureShortFilmDurations(){
+    shortFilmShots.forEach(shot=>{
+        if(typeof shot.durationSeconds !== 'number' || isNaN(shot.durationSeconds)){
+            shot.durationSeconds = 3;
+        }
+    });
+}
+
 function renderShortFilmBoard(){
+    ensureShortFilmDurations();
+
     const inner = document.getElementById('shortfilm-board-inner');
     if(!inner) return;
 
@@ -1588,7 +1704,7 @@ function renderShortFilmBoard(){
     if(!shortFilmShots.length){
         const empty = document.createElement('div');
         empty.className = "shortfilm-empty-hint";
-        empty.innerHTML = "Click to upload your storyboard images.<br>Single-click selects, double-click replaces, drag to reorder.";
+        empty.innerHTML = "Use the + button below to add storyboard images.<br>Single-click selects, double-click replaces, drag to reorder.";
         inner.appendChild(empty);
     }else{
         shortFilmShots.forEach((shot, index)=>{
@@ -1614,9 +1730,18 @@ function renderShortFilmBoard(){
                 promptTag.style.color = "#e5e7eb";
             }
 
+            const delBtn = document.createElement('button');
+            delBtn.className = "shortfilm-shot-delete";
+            delBtn.innerHTML = "&times;";
+            delBtn.addEventListener('click',(e)=>{
+                e.stopPropagation();
+                deleteShortFilmShot(shot.id);
+            });
+
             card.appendChild(img);
             card.appendChild(label);
             card.appendChild(promptTag);
+            card.appendChild(delBtn);
 
             card.addEventListener('click', ()=>selectShortFilmShot(shot.id));
             card.addEventListener('dblclick', ()=>startShortFilmReplace(shot.id));
@@ -1643,10 +1768,42 @@ function renderShortFilmBoard(){
         if(shot){
             document.getElementById('shortfilm-shot-prompt').value = shot.prompt || "";
             document.getElementById('shortfilm-selected-label').textContent = "Shot " + (shortFilmShots.indexOf(shot)+1);
+
+            const durSlider = document.getElementById('shortfilm-shot-duration');
+            const durLabel = document.getElementById('shortfilm-shot-duration-label');
+            if(durSlider && durLabel){
+                durSlider.value = shot.durationSeconds;
+                durLabel.textContent = `Shot ${shortFilmShots.indexOf(shot)+1} · ${shot.durationSeconds.toFixed(1)} s`;
+            }
         }
     }else{
         document.getElementById('shortfilm-shot-prompt').value = "";
         document.getElementById('shortfilm-selected-label').textContent = "None selected";
+
+        const durLabel = document.getElementById('shortfilm-shot-duration-label');
+        if(durLabel){
+            durLabel.textContent = "No shot selected";
+        }
+    }
+
+    renderShortFilmTimeline();
+}
+
+function deleteShortFilmShot(id){
+    const idx = shortFilmShots.findIndex(s => s.id === id);
+    if(idx === -1) return;
+    shortFilmShots.splice(idx,1);
+    if(shortFilmSelectedId === id){
+        if(shortFilmShots.length){
+            const newIdx = Math.max(0, idx-1);
+            shortFilmSelectedId = shortFilmShots[newIdx].id;
+        }else{
+            shortFilmSelectedId = null;
+        }
+    }
+    renderShortFilmBoard();
+    if(shortFilmSelectedId){
+        selectShortFilmShot(shortFilmSelectedId);
     }
 }
 
@@ -1660,13 +1817,25 @@ function selectShortFilmShot(id){
 
     const promptArea = document.getElementById('shortfilm-shot-prompt');
     const label = document.getElementById('shortfilm-selected-label');
+    const durSlider = document.getElementById('shortfilm-shot-duration');
+    const durLabel = document.getElementById('shortfilm-shot-duration-label');
+
     if(shot){
         promptArea.value = shot.prompt || "";
         label.textContent = "Shot " + (shortFilmShots.indexOf(shot)+1);
+        if(durSlider && durLabel){
+            durSlider.value = shot.durationSeconds;
+            durLabel.textContent = `Shot ${shortFilmShots.indexOf(shot)+1} · ${shot.durationSeconds.toFixed(1)} s`;
+        }
     }else{
         promptArea.value = "";
         label.textContent = "None selected";
+        if(durLabel){
+            durLabel.textContent = "No shot selected";
+        }
     }
+
+    renderShortFilmTimeline();
 }
 
 function updateShortFilmShotPrompt(){
@@ -1677,6 +1846,78 @@ function updateShortFilmShotPrompt(){
     shot.prompt = document.getElementById('shortfilm-shot-prompt').value;
     renderShortFilmBoard();
     selectShortFilmShot(shortFilmSelectedId);
+}
+
+/* NEW: update selected shot duration */
+function updateShortFilmShotDuration(val){
+    if(!shortFilmSelectedId) return;
+    const shot = shortFilmShots.find(s => s.id === shortFilmSelectedId);
+    if(!shot) return;
+
+    const seconds = parseFloat(val);
+    shot.durationSeconds = isNaN(seconds) ? 3 : seconds;
+
+    const idx = shortFilmShots.indexOf(shot);
+    const durLabel = document.getElementById('shortfilm-shot-duration-label');
+    if(durLabel){
+        durLabel.textContent = `Shot ${idx+1} · ${shot.durationSeconds.toFixed(1)} s`;
+    }
+
+    renderShortFilmTimeline();
+}
+
+/* NEW: timeline visual */
+function renderShortFilmTimeline(){
+    const timeline = document.getElementById('shortfilm-timeline');
+    const meta = document.getElementById('shortfilm-timeline-meta');
+    if(!timeline || !meta) return;
+
+    timeline.innerHTML = "";
+
+    if(!shortFilmShots.length){
+        const empty = document.createElement('div');
+        empty.className = 'shortfilm-timeline-empty';
+        empty.textContent = 'Add storyboard shots to see the timeline.';
+        timeline.appendChild(empty);
+        meta.innerHTML = `<span>Total timeline: 0 s</span><span>Shots: 0</span>`;
+        return;
+    }
+
+    let total = 0;
+    shortFilmShots.forEach(shot => {
+        if(typeof shot.durationSeconds !== 'number' || isNaN(shot.durationSeconds)){
+            shot.durationSeconds = 3;
+        }
+        total += shot.durationSeconds;
+    });
+
+    if(total <= 0){
+        const empty = document.createElement('div');
+        empty.className = 'shortfilm-timeline-empty';
+        empty.textContent = 'Set durations above to build a timeline.';
+        timeline.appendChild(empty);
+        meta.innerHTML = `<span>Total timeline: 0 s</span><span>Shots: ${shortFilmShots.length}</span>`;
+        return;
+    }
+
+    shortFilmShots.forEach((shot, index)=>{
+        const seg = document.createElement('div');
+        seg.className = 'shortfilm-timeline-segment';
+        const pct = (shot.durationSeconds / total) * 100;
+        seg.style.width = pct + "%";
+
+        if(shot.id === shortFilmSelectedId){
+            seg.classList.add('selected');
+        }
+
+        const label = document.createElement('span');
+        label.textContent = `S${index+1} · ${shot.durationSeconds.toFixed(1)}s`;
+        seg.appendChild(label);
+
+        timeline.appendChild(seg);
+    });
+
+    meta.innerHTML = `<span>Total timeline: ${total.toFixed(1)} s</span><span>Shots: ${shortFilmShots.length}</span>`;
 }
 
 /* Drag & drop reordering */
@@ -1815,6 +2056,45 @@ function handleShortFilmAudioFile(input){
     reader.readAsDataURL(file);
 }
 
+/* Import images from Image Lab (from gallery) into storyboard */
+function importFromImageLab(){
+    const maxShots = 20;
+    const remainingSlots = maxShots - shortFilmShots.length;
+    if(remainingSlots <= 0){
+        showToast("Storyboard already has 20 shots. Delete some to import more.","Notice");
+        return;
+    }
+    const imageCards = document.querySelectorAll('.card.media-image img');
+    if(!imageCards.length){
+        showToast("No images in gallery yet. Generate or upload in Image lab first.","Notice");
+        return;
+    }
+
+    let added = 0;
+    for(const img of imageCards){
+        if(added >= remainingSlots) break;
+        const src = img.getAttribute('src');
+        if(!src) continue;
+        const id = "sf_import_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        shortFilmShots.push({
+            id,
+            src,
+            prompt: "",
+            durationSeconds: 3
+        });
+        shortFilmSelectedId = id;
+        added++;
+    }
+
+    if(added){
+        renderShortFilmBoard();
+        selectShortFilmShot(shortFilmSelectedId);
+        showToast(`Imported ${added} shot(s) from Image lab into storyboard.`,"Success");
+    }else{
+        showToast("No importable images found.","Notice");
+    }
+}
+
 /* Audio Browser – mock data */
 const audioLibraryData = {
     "audio-html":[
@@ -1947,6 +2227,8 @@ async function generateShortFilm(){
     const scriptText = document.getElementById('shortfilm-script-text').value.trim();
     const videoUrl = document.getElementById('shortfilm-video-url').value.trim();
 
+    ensureShortFilmDurations();
+
     const payload = {
         mode: "shortfilm",
         duration_seconds: duration,
@@ -1954,7 +2236,8 @@ async function generateShortFilm(){
         storyboard: shortFilmShots.map((shot, index)=>({
             index,
             image: shot.src,
-            prompt: shot.prompt || ""
+            prompt: shot.prompt || "",
+            duration_seconds: shot.durationSeconds
         })),
         global_prompt: globalPrompt,
         script_text: scriptText,
@@ -2007,7 +2290,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('video-ref-group').style.display = 'none';
     document.getElementById('start-end-group').style.display = 'none';
 
-    // hide Elements group visually (still available internally if needed)
+    // hide Elements group visually
     const elementsGroup = document.getElementById('elements-group');
     if(elementsGroup){
         elementsGroup.style.display = 'none';
