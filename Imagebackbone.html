@@ -62,6 +62,20 @@ body{
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#111827;border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#1f2937}
+/* Override global font to match cinematic panel look */
+body{
+    font-family:'Cinzel','Inter',serif;
+}
+
+/* Make headings bold and elegant */
+.sidebar-title,
+.label span:first-child,
+.gallery-tab,
+.audio-album-title{
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+}
 
 /* Buttons */
 .btn{
@@ -111,6 +125,13 @@ body{
     border-color:var(--border-focus);
     box-shadow:0 0 0 1px rgba(79,70,229,.7);
     background:#020617;
+}
+/* Make gray example text in prompt boxes italic */
+.text-area::placeholder,
+.shortfilm-input::placeholder{
+    font-style:italic;
+    color:var(--text-secondary);
+    opacity:0.8;
 }
 
 /* Sliders */
@@ -712,9 +733,17 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
             </div>
 
             <div class="input-group">
-                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Required</span></div>
-                <textarea id="prompt-input" class="text-area" placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
-            </div>
+    <div class="label">
+        <span>Prompt</span>
+        <span style="font-size:10px;opacity:.6;">Required</span>
+        <button type="button"
+                class="btn btn-ask-sia"
+                onclick="openSiaForField('prompt-input','Image Prompt')">
+            Ask SIA
+        </button>
+    </div>
+    <textarea id="prompt-input" class="text-area" placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
+</div>
 
             <div class="input-group">
                 <div class="label"><span>Aspect Ratio & Presets</span></div>
