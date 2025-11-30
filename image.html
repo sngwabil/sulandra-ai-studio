@@ -827,14 +827,29 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
             </div>
 
             <div class="input-group">
-                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
-                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
-            </div>
+    <div class="label">
+        <span>Prompt</span>
+        <span style="font-size:10px;opacity:.6;">Describe the full scene</span>
+        <button type="button"
+                class="btn btn-ask-sia"
+                onclick="openSiaForField('video-prompt','Video Prompt')">
+            Ask SIA
+        </button>
+    </div>
+    <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
+</div>
 
-            <div class="input-group">
-                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
-                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
-            </div>
+            <div class="label">
+    <span>Negative Prompt</span>
+    <span style="font-size:10px;opacity:.6;">
+        <!-- keep your existing helper words here -->
+    </span>
+    <button type="button"
+            class="btn btn-ask-sia"
+            onclick="openSiaForField('video-negative','Video Negative Prompt')">
+        Ask SIA
+    </button>
+</div>
 
             <!-- Elements (multi-ref) – hidden from UI but kept logically -->
             <div class="input-group" id="elements-group">
