@@ -47,6 +47,7 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0;outline:none;-webkit-font-smoothing:antialiased;}
+<body>
 body{
     font-family:'Inter',sans-serif;
     background:radial-gradient(circle at top,#0b1120 0%,#020617 40%,#02021a 100%);
@@ -401,7 +402,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .tier-item strong{display:block;font-size:13px;margin-bottom:4px}
 
 /* -------------------------------------------------------------------------- */
-/* SHORT FILM – BOARD                                                         */
+/* SHORT FILM – NEW STYLES                                                    */
 /* -------------------------------------------------------------------------- */
 
 .shortfilm-board{
@@ -567,58 +568,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .audio-track span{
     pointer-events:none;
 }
-
-/* -------------------------------------------------------------------------- */
-/* SHORT FILM – TIMELINE (NEW)                                               */
-/* -------------------------------------------------------------------------- */
-.shortfilm-timeline{
-    width:100%;
-    height:36px;
-    border-radius:999px;
-    background:rgba(15,23,42,0.9);
-    border:1px solid rgba(51,65,85,0.9);
-    display:flex;
-    overflow:hidden;
-    position:relative;
-}
-.shortfilm-timeline-empty{
-    font-size:11px;
-    color:var(--text-secondary);
-    opacity:.7;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:100%;
-}
-.shortfilm-timeline-segment{
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:10px;
-    color:#e5e7eb;
-    white-space:nowrap;
-    border-right:1px solid rgba(15,23,42,0.9);
-    background:linear-gradient(135deg,#1d4ed8,#4c1d95);
-    position:relative;
-}
-.shortfilm-timeline-segment.selected{
-    background:linear-gradient(135deg,#f97316,#ec4899);
-}
-.shortfilm-timeline-segment span{
-    padding:0 6px;
-}
-.shortfilm-timeline-metadata{
-    font-size:11px;
-    color:var(--text-secondary);
-    margin-top:4px;
-    display:flex;
-    justify-content:space-between;
-}
-
-/* -------------------------------------------------------------------------- */
-/* AUDIO PLAYER FOOTER (BROWSER)                                             */
-/* -------------------------------------------------------------------------- */
 </style>
 </head>
 <body>
@@ -670,7 +619,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
     <div class="sidebar-scroll" id="sidebar-scroll">
 
-        <!-- Lab mode switch -->
+        <!-- Lab mode switch (Image / Video / Short Film) -->
         <div class="lab-mode-switch">
             <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">
                 Image
@@ -755,7 +704,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div class="upload-dropzone" id="drop-zone-video-main" onclick="triggerVideoMainUpload()">
                     <video id="preview-video-main" class="preview-layer" style="display:none;" muted loop></video>
                     <img id="preview-video-main-img" class="preview-layer" style="display:none;">
-                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                     <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload image or video (depends on mode)</span>
                 </div>
             </div>
@@ -790,7 +739,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
             </div>
 
-            <!-- Elements (multi-ref) – hidden from UI but kept logically -->
+            <!-- Elements (multi-ref) – still hidden and reserved for internal use -->
             <div class="input-group" id="elements-group">
                 <div class="label"><span>Elements / Consistency</span><span style="font-size:10px;opacity:.6;">Character · Style · Scene</span></div>
                 <input type="file" id="elements-input" hidden accept="image/*" multiple onchange="handleElements(this)">
@@ -920,39 +869,12 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 </div>
             </div>
 
-            <!-- NEW: Shot Duration Timeline -->
-            <div class="input-group">
-                <div class="label">
-                    <span>Shot Duration Timeline</span>
-                    <span style="font-size:10px;opacity:.7;">Proportional to per-shot seconds</span>
-                </div>
-                <div class="shortfilm-timeline" id="shortfilm-timeline">
-                    <div class="shortfilm-timeline-empty">Add storyboard shots to see the timeline.</div>
-                </div>
-                <div class="shortfilm-timeline-metadata" id="shortfilm-timeline-meta">
-                    <span>Total timeline: 0 s</span>
-                    <span>Shots: 0</span>
-                </div>
-            </div>
-
             <div class="input-group">
                 <div class="label">
                     <span>Selected Shot Prompt</span>
                     <span id="shortfilm-selected-label" style="font-size:10px;opacity:.7;">None selected</span>
                 </div>
                 <textarea id="shortfilm-shot-prompt" class="text-area" placeholder="Describe this specific shot (camera move, emotion, action...)" oninput="updateShortFilmShotPrompt()"></textarea>
-            </div>
-
-            <!-- NEW: Selected Shot Duration Slider -->
-            <div class="input-group">
-                <div class="label">
-                    <span>Selected Shot Duration</span>
-                    <span id="shortfilm-shot-duration-label" style="font-size:10px;opacity:.7;">No shot selected</span>
-                </div>
-                <input type="range" id="shortfilm-shot-duration" min="1" max="12" step="0.5" value="3" oninput="updateShortFilmShotDuration(this.value)">
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">
-                    Adjust how long this shot stays on screen (in seconds).
-                </div>
             </div>
 
             <div class="input-group">
@@ -1629,7 +1551,7 @@ function closePlanModal(){
 }
 
 /* -------------------------------------------------------------------------- */
-/* SHORT FILM LOGIC – STORYBOARD, PROMPTS, DURATIONS, AUDIO                   */
+/* SHORT FILM LOGIC – STORYBOARD, PROMPTS, AUDIO                              */
 /* -------------------------------------------------------------------------- */
 
 let shortFilmShots = [];
@@ -1668,8 +1590,7 @@ function handleShortFilmImages(input){
             shortFilmShots.push({
                 id,
                 src: e.target.result,
-                prompt: "",
-                durationSeconds: 3   // default per shot
+                prompt: ""
             });
             shortFilmSelectedId = id; // highlight last uploaded
             loaded++;
@@ -1685,18 +1606,7 @@ function handleShortFilmImages(input){
     input.value = "";
 }
 
-/* Ensure each shot has durationSeconds even for older data */
-function ensureShortFilmDurations(){
-    shortFilmShots.forEach(shot=>{
-        if(typeof shot.durationSeconds !== 'number' || isNaN(shot.durationSeconds)){
-            shot.durationSeconds = 3;
-        }
-    });
-}
-
 function renderShortFilmBoard(){
-    ensureShortFilmDurations();
-
     const inner = document.getElementById('shortfilm-board-inner');
     if(!inner) return;
 
@@ -1768,25 +1678,11 @@ function renderShortFilmBoard(){
         if(shot){
             document.getElementById('shortfilm-shot-prompt').value = shot.prompt || "";
             document.getElementById('shortfilm-selected-label').textContent = "Shot " + (shortFilmShots.indexOf(shot)+1);
-
-            const durSlider = document.getElementById('shortfilm-shot-duration');
-            const durLabel = document.getElementById('shortfilm-shot-duration-label');
-            if(durSlider && durLabel){
-                durSlider.value = shot.durationSeconds;
-                durLabel.textContent = `Shot ${shortFilmShots.indexOf(shot)+1} · ${shot.durationSeconds.toFixed(1)} s`;
-            }
         }
     }else{
         document.getElementById('shortfilm-shot-prompt').value = "";
         document.getElementById('shortfilm-selected-label').textContent = "None selected";
-
-        const durLabel = document.getElementById('shortfilm-shot-duration-label');
-        if(durLabel){
-            durLabel.textContent = "No shot selected";
-        }
     }
-
-    renderShortFilmTimeline();
 }
 
 function deleteShortFilmShot(id){
@@ -1817,25 +1713,13 @@ function selectShortFilmShot(id){
 
     const promptArea = document.getElementById('shortfilm-shot-prompt');
     const label = document.getElementById('shortfilm-selected-label');
-    const durSlider = document.getElementById('shortfilm-shot-duration');
-    const durLabel = document.getElementById('shortfilm-shot-duration-label');
-
     if(shot){
         promptArea.value = shot.prompt || "";
         label.textContent = "Shot " + (shortFilmShots.indexOf(shot)+1);
-        if(durSlider && durLabel){
-            durSlider.value = shot.durationSeconds;
-            durLabel.textContent = `Shot ${shortFilmShots.indexOf(shot)+1} · ${shot.durationSeconds.toFixed(1)} s`;
-        }
     }else{
         promptArea.value = "";
         label.textContent = "None selected";
-        if(durLabel){
-            durLabel.textContent = "No shot selected";
-        }
     }
-
-    renderShortFilmTimeline();
 }
 
 function updateShortFilmShotPrompt(){
@@ -1846,78 +1730,6 @@ function updateShortFilmShotPrompt(){
     shot.prompt = document.getElementById('shortfilm-shot-prompt').value;
     renderShortFilmBoard();
     selectShortFilmShot(shortFilmSelectedId);
-}
-
-/* NEW: update selected shot duration */
-function updateShortFilmShotDuration(val){
-    if(!shortFilmSelectedId) return;
-    const shot = shortFilmShots.find(s => s.id === shortFilmSelectedId);
-    if(!shot) return;
-
-    const seconds = parseFloat(val);
-    shot.durationSeconds = isNaN(seconds) ? 3 : seconds;
-
-    const idx = shortFilmShots.indexOf(shot);
-    const durLabel = document.getElementById('shortfilm-shot-duration-label');
-    if(durLabel){
-        durLabel.textContent = `Shot ${idx+1} · ${shot.durationSeconds.toFixed(1)} s`;
-    }
-
-    renderShortFilmTimeline();
-}
-
-/* NEW: timeline visual */
-function renderShortFilmTimeline(){
-    const timeline = document.getElementById('shortfilm-timeline');
-    const meta = document.getElementById('shortfilm-timeline-meta');
-    if(!timeline || !meta) return;
-
-    timeline.innerHTML = "";
-
-    if(!shortFilmShots.length){
-        const empty = document.createElement('div');
-        empty.className = 'shortfilm-timeline-empty';
-        empty.textContent = 'Add storyboard shots to see the timeline.';
-        timeline.appendChild(empty);
-        meta.innerHTML = `<span>Total timeline: 0 s</span><span>Shots: 0</span>`;
-        return;
-    }
-
-    let total = 0;
-    shortFilmShots.forEach(shot => {
-        if(typeof shot.durationSeconds !== 'number' || isNaN(shot.durationSeconds)){
-            shot.durationSeconds = 3;
-        }
-        total += shot.durationSeconds;
-    });
-
-    if(total <= 0){
-        const empty = document.createElement('div');
-        empty.className = 'shortfilm-timeline-empty';
-        empty.textContent = 'Set durations above to build a timeline.';
-        timeline.appendChild(empty);
-        meta.innerHTML = `<span>Total timeline: 0 s</span><span>Shots: ${shortFilmShots.length}</span>`;
-        return;
-    }
-
-    shortFilmShots.forEach((shot, index)=>{
-        const seg = document.createElement('div');
-        seg.className = 'shortfilm-timeline-segment';
-        const pct = (shot.durationSeconds / total) * 100;
-        seg.style.width = pct + "%";
-
-        if(shot.id === shortFilmSelectedId){
-            seg.classList.add('selected');
-        }
-
-        const label = document.createElement('span');
-        label.textContent = `S${index+1} · ${shot.durationSeconds.toFixed(1)}s`;
-        seg.appendChild(label);
-
-        timeline.appendChild(seg);
-    });
-
-    meta.innerHTML = `<span>Total timeline: ${total.toFixed(1)} s</span><span>Shots: ${shortFilmShots.length}</span>`;
 }
 
 /* Drag & drop reordering */
@@ -2079,8 +1891,7 @@ function importFromImageLab(){
         shortFilmShots.push({
             id,
             src,
-            prompt: "",
-            durationSeconds: 3
+            prompt: ""
         });
         shortFilmSelectedId = id;
         added++;
@@ -2227,8 +2038,6 @@ async function generateShortFilm(){
     const scriptText = document.getElementById('shortfilm-script-text').value.trim();
     const videoUrl = document.getElementById('shortfilm-video-url').value.trim();
 
-    ensureShortFilmDurations();
-
     const payload = {
         mode: "shortfilm",
         duration_seconds: duration,
@@ -2236,8 +2045,7 @@ async function generateShortFilm(){
         storyboard: shortFilmShots.map((shot, index)=>({
             index,
             image: shot.src,
-            prompt: shot.prompt || "",
-            duration_seconds: shot.durationSeconds
+            prompt: shot.prompt || ""
         })),
         global_prompt: globalPrompt,
         script_text: scriptText,
