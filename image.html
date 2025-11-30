@@ -18,14 +18,14 @@
     --bg-card: #071133;
     --bg-element: #0a1540;
     --bg-hover: #111c4f;
-
+    
     --accent-primary: #8b5cf6;   /* violet */
     --accent-secondary: #3b82f6; /* royal blue */
     --accent-tertiary: #ec4899;  /* pink */
     --accent-success: #22c55e;
     --accent-warning: #facc15;
     --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
-
+    
     --text-primary: #ffffff;
     --text-secondary: #c7d2fe;
     --text-tertiary: #818cf8;
@@ -260,7 +260,8 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .upload-dropzone:hover{border-color:#60a5fa;background:#020617}
 .upload-dropzone.has-file{border-style:solid;border-color:#a5b4fc}
 .preview-layer{
-    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7;
+    position:absolute;inset:0;width:100%;height:100%;object-fit:contain; /* Show full image */
+    background:#000; /* Fallback for padding */
 }
 
 /* Video specific small controls */
@@ -396,7 +397,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 </head>
 <body>
 
-<!-- LEFT NAV RAIL -->
 <div class="nav-rail">
     <div class="brand-logo">S</div>
 
@@ -419,7 +419,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="sidebar-header">
         <div>
@@ -432,23 +431,16 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
     <div class="sidebar-scroll" id="sidebar-scroll">
 
-        <!-- Lab mode switch (Image / Video) -->
         <div class="lab-mode-switch">
             <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">Image</div>
             <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">Video</div>
         </div>
 
-        <!-- IMAGE CONTROLS -->
         <div id="image-controls">
 
             <div class="mode-switch">
                 <div class="mode-option active" id="img-mode-txt2img" onclick="setImageMode('txt2img', this)">Text → Image</div>
                 <div class="mode-option" id="img-mode-img2img" onclick="setImageMode('img2img', this)">Image → Image</div>
-            </div>
-
-            <div class="input-group">
-                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Required</span></div>
-                <textarea id="prompt-input" class="text-area" placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
             </div>
 
             <div class="input-group" id="upload-group-img" style="display:none;">
@@ -464,6 +456,11 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                     <span>Influence Strength</span><span id="strength-val">0.75</span>
                 </div>
                 <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Required</span></div>
+                <textarea id="prompt-input" class="text-area" placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
             </div>
 
             <div class="input-group">
@@ -489,7 +486,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
             </button>
         </div>
 
-        <!-- VIDEO CONTROLS -->
         <div id="video-controls" style="display:none;">
 
             <div class="mode-switch">
@@ -498,18 +494,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div class="mode-option" id="vid-mode-extend" onclick="setVideoMode('extend',this)">Extend Video</div>
             </div>
 
-            <div class="input-group">
-                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
-                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
-            </div>
-
-            <div class="input-group">
-                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
-                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
-            </div>
-
-            <!-- Uploads for reference / start-end / video extension -->
-            <div class="input-group" id="video-ref-group">
+             <div class="input-group" id="video-ref-group">
                 <div class="label"><span>Primary Reference</span></div>
                 <input type="file" id="video-ref-image" hidden accept="image/*" onchange="handleVideoRefImage(this)">
                 <input type="file" id="video-ref-video" hidden accept="video/*" onchange="handleVideoRefVideo(this)">
@@ -541,7 +526,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 </div>
             </div>
 
-            <!-- Elements / consistency -->
             <div class="input-group">
                 <div class="label"><span>Elements / Consistency</span><span style="font-size:10px;opacity:.6;">Character · Style · Scene</span></div>
                 <input type="file" id="elements-input" hidden accept="image/*" multiple onchange="handleElements(this)">
@@ -551,7 +535,16 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div id="elements-count" style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:none;"></div>
             </div>
 
-            <!-- Durations / resolution / model mode -->
+            <div class="input-group">
+                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
+                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
+                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
+            </div>
+
             <div class="input-group">
                 <div class="label"><span>Duration & Resolution</span></div>
                 <div class="inline-row">
@@ -589,7 +582,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 </div>
             </div>
 
-            <!-- Camera + motion + lipsync + sfx -->
             <div class="input-group">
                 <div class="label"><span>Camera & Motion</span></div>
                 <div class="inline-row">
@@ -640,7 +632,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
-<!-- MAIN STAGE -->
 <div class="stage">
     <div class="stage-header">
         <div class="gallery-tabs">
@@ -670,7 +661,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast-container">
     <div id="toast" class="toast">
         <div class="spinner"></div>
@@ -681,7 +671,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
-<!-- PLAN MODAL -->
 <div id="plan-modal" class="modal-backdrop">
     <div class="modal">
         <h3>Membership Tiers</h3>
