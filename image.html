@@ -1,343 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sulandra AI Studio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-root: #050505;
-      --bg-panel: #0a0a0a;
-      --bg-card: #121212;
-      --border: #27272a;
-      --accent: #8b5cf6;
+      --bg-body: #0a0a0a;
+      --bg-panel: #121212;
+      --bg-element: #1e1e1e;
+      --border: #2a2a2a;
       --text-main: #ffffff;
-      --text-muted: #a1a1aa;
-      --radius: 12px;
+      --text-muted: #888888;
+      --accent: #5eff7c; /* The Green from your screenshot */
+      --accent-hover: #4de068;
+      --accent-text: #000000;
+      --font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-    
+
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-root);
+      font-family: var(--font-family);
+      background-color: var(--bg-body);
       color: var(--text-main);
       height: 100vh;
       display: flex;
-      flex-direction: column;
       overflow: hidden;
     }
 
-    /* HEADER */
-    header {
-      height: 60px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(10,10,10,0.8);
-      backdrop-filter: blur(12px);
+    /* --- 1. FAR LEFT NAVIGATION ICONS --- */
+    .nav-rail {
+      width: 64px;
+      background: #000000;
+      border-right: 1px solid var(--border);
       display: flex;
+      flex-direction: column;
       align-items: center;
-      padding: 0 24px;
-      justify-content: space-between;
+      padding: 16px 0;
+      gap: 24px;
       flex-shrink: 0;
-      z-index: 50;
+      z-index: 20;
     }
 
-    .brand { font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 10px; }
-    .brand-icon { width: 28px; height: 28px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 8px; }
-
-    .nav-center { display: flex; gap: 6px; background: #18181b; padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
-    .nav-item {
-      padding: 6px 16px; font-size: 13px; color: var(--text-muted); text-decoration: none; border-radius: 6px; transition: 0.2s; font-weight: 500;
+    .nav-icon {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      transition: 0.2s;
     }
-    .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
-    .nav-item.active { background: #27272a; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .nav-icon:hover { color: white; background: var(--bg-element); }
+    .nav-icon.active { background: rgba(94, 255, 124, 0.1); color: var(--accent); border: 1px solid rgba(94, 255, 124, 0.2); }
+    .nav-logo { font-weight: 900; font-size: 20px; color: white; margin-bottom: 10px; }
 
-    /* MAIN WORKSPACE */
-    .workspace { display: flex; flex: 1; overflow: hidden; }
-
-    /* SIDEBAR (CONTROLS) */
-    .sidebar {
+    /* --- 2. CONTROL PANEL (Middle Sidebar) --- */
+    .control-panel {
       width: 360px;
       background: var(--bg-panel);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .panel-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .panel-title { font-size: 16px; font-weight: 600; }
+    .model-selector {
+      background: var(--bg-element); padding: 4px 12px; border-radius: 6px;
+      font-size: 12px; color: var(--text-muted); border: 1px solid var(--border);
+    }
+
+    /* Tabs (Text/Image/Restyle) */
+    .tabs-row {
+      display: flex;
+      padding: 0 16px;
+      margin-top: 16px;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding-bottom: 12px;
+      font-size: 13px; font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+    }
+    .tab:hover { color: white; }
+    .tab.active { color: white; }
+    .tab.active::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 2px; background: white;
+    }
+
+    .controls-scroll {
+      flex: 1; overflow-y: auto; padding: 20px;
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    /* Upload Zone (Reference) */
+    .upload-section { display: none; flex-direction: column; gap: 8px; }
+    .upload-box {
+      background: var(--bg-element);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      height: 140px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: 0.2s;
+    }
+    .upload-box:hover { border-color: var(--text-muted); }
+    .upload-box.has-image { border-style: solid; border-color: var(--accent); }
+    .preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+    .plus-icon { font-size: 24px; color: var(--text-muted); margin-bottom: 8px; }
+    .upload-label { font-size: 12px; color: var(--text-muted); }
+
+    /* Prompt Box */
+    .prompt-container { display: flex; flex-direction: column; gap: 8px; }
+    .input-label { font-size: 12px; font-weight: 600; color: #ccc; display: flex; justify-content: space-between; }
+    .prompt-area {
+      width: 100%;
+      background: var(--bg-element);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: white;
+      padding: 12px;
+      font-family: inherit; font-size: 13px; line-height: 1.5;
+      min-height: 120px;
+      resize: vertical;
+    }
+    .prompt-area:focus { border-color: #444; }
+
+    /* Settings (Aspect Ratio, etc) */
+    .settings-grid { display: flex; flex-direction: column; gap: 16px; }
+    .ratio-row { display: flex; gap: 8px; }
+    .ratio-btn {
+      flex: 1;
+      background: var(--bg-element);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+      font-size: 11px; color: var(--text-muted);
+      cursor: pointer; transition: 0.2s;
+    }
+    .ratio-btn:hover { background: #2a2a2a; }
+    .ratio-btn.active { background: #333; color: white; border-color: #555; }
+
+    /* Generate Button Footer */
+    .panel-footer {
       padding: 20px;
-      gap: 20px;
-      overflow-y: auto;
+      border-top: 1px solid var(--border);
+      background: var(--bg-panel);
     }
-
-    .control-section { display: flex; flex-direction: column; gap: 12px; }
-    .section-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-
-    /* MODE TABS */
-    .mode-tabs { display: flex; background: var(--bg-card); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
-    .mode-tab {
-      flex: 1; text-align: center; padding: 8px; font-size: 12px; cursor: pointer; border-radius: 6px; color: var(--text-muted); transition: 0.2s; font-weight: 500;
-    }
-    .mode-tab.active { background: #27272a; color: white; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-
-    /* PROMPT */
-    textarea {
-      width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: white; padding: 12px; border-radius: var(--radius);
-      font-family: inherit; font-size: 13px; min-height: 100px; resize: vertical; line-height: 1.5; transition: 0.2s;
-    }
-    textarea:focus { border-color: var(--accent); }
-
-    /* UPLOAD */
-    .upload-area {
-      border: 2px dashed var(--border); border-radius: var(--radius); height: 160px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: 0.2s; position: relative; overflow: hidden;
-    }
-    .upload-area:hover { border-color: var(--accent); background: rgba(139, 92, 246, 0.05); }
-    .upload-area.has-image { border-style: solid; border-color: var(--accent); }
-    
-    .upload-preview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
-    .upload-icon { font-size: 24px; color: var(--text-muted); margin-bottom: 8px; }
-    .upload-text { font-size: 12px; color: var(--text-muted); pointer-events: none; }
-
-    /* SLIDERS */
-    .slider-box { display: none; } /* Hidden by default */
-    .slider-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-    input[type=range] { width: 100%; accent-color: var(--accent); height: 4px; background: #333; border-radius: 2px; }
-
-    /* GENERATE BUTTON */
     .btn-generate {
-      background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; border: none; padding: 14px; border-radius: var(--radius);
-      font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; margin-top: auto; text-transform: uppercase; letter-spacing: 0.5px;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      width: 100%;
+      background: var(--accent);
+      color: var(--accent-text);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: 0.2s;
     }
-    .btn-generate:hover { transform: translateY(-1px); filter: brightness(1.1); }
-    .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-generate:hover { background: var(--accent-hover); }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* RIGHT PANEL (GALLERY) */
-    .main-view { flex: 1; display: flex; flex-direction: column; background: #000; position: relative; }
-    
-    .view-tabs {
-      height: 50px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 20px; background: rgba(10,10,10,0.5);
+    /* --- 3. MAIN CANVAS (Right Side) --- */
+    .main-canvas {
+      flex: 1;
+      background: var(--bg-body);
+      display: flex; flex-direction: column;
+      position: relative;
     }
-    .view-btn { font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 14px 0; position: relative; }
-    .view-btn.active { color: white; font-weight: 600; }
-    .view-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); }
 
-    .content-area { flex: 1; padding: 20px; overflow-y: auto; }
+    .top-bar {
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
+    .top-filters { display: flex; gap: 4px; background: var(--bg-panel); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
+    .filter-btn { padding: 6px 12px; border-radius: 6px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+    .filter-btn.active { background: #333; color: white; }
 
-    /* GALLERY GRID */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .gallery-scroll {
+      flex: 1; padding: 24px; overflow-y: auto;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
     
     .card {
-      background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); transition: 0.2s; position: relative;
-      aspect-ratio: 1; /* Square */
+      background: var(--bg-panel);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+      transition: 0.2s;
     }
-    .card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .card-img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
-    
-    .card-overlay {
-      position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-      padding: 16px; opacity: 0; transition: 0.2s; display: flex; justify-content: flex-end; gap: 8px;
+    .card:hover { transform: translateY(-4px); border-color: #444; }
+    .card-img { width: 100%; aspect-ratio: 1; object-fit: cover; background: #111; }
+    .card-info { padding: 12px; }
+    .card-prompt { font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-actions { 
+      margin-top: 8px; display: flex; gap: 8px; 
     }
-    .card:hover .card-overlay { opacity: 1; }
-    
-    .icon-btn {
-      width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
-      display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 14px;
+    .mini-btn { 
+      background: #222; border: 1px solid #333; color: #ccc; 
+      padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; 
     }
-    .icon-btn:hover { background: white; color: black; }
+    .mini-btn:hover { background: white; color: black; }
 
-    /* EMPTY STATE */
-    .empty-state {
-      display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #333;
-    }
-    .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.2; }
-
-    /* TOAST NOTIFICATION */
+    /* Toast */
     .toast {
-      position: fixed; bottom: 20px; right: 20px; background: #18181b; border: 1px solid var(--border); border-left: 4px solid var(--accent);
-      padding: 16px; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateY(100px); transition: 0.3s;
-      display: flex; align-items: center; gap: 12px; font-size: 13px; z-index: 100;
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--bg-element); border: 1px solid var(--accent); color: var(--accent);
+      padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600;
+      transition: 0.3s; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    .toast.show { transform: translateY(0); }
-    .spinner { width: 16px; height: 16px; border: 2px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast.show { transform: translateX(-50%) translateY(0); }
 
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">
-      <div class="brand-icon"></div>
-      Sulandra Studio
-    </div>
-    <div class="nav-center">
-      <a href="index.html" class="nav-item">Home</a>
-      <a href="image.html" class="nav-item active">Image Lab</a>
-      <a href="video.html" class="nav-item">Video Lab</a>
-      <a href="music.html" class="nav-item">Music Lab</a>
-    </div>
-    <div style="width: 32px; height: 32px; background: #27272a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">S</div>
-  </header>
+  <div class="nav-rail">
+    <div class="nav-logo">S</div>
+    <div class="nav-icon" title="Home">🏠</div>
+    <div class="nav-icon active" title="Image Lab">🖼️</div>
+    <div class="nav-icon" title="Video Lab">🎬</div>
+    <div class="nav-icon" title="Music Lab">🎵</div>
+    <div class="nav-icon" style="margin-top:auto;" title="Settings">⚙️</div>
+    <div class="nav-icon" title="Profile">👤</div>
+  </div>
 
-  <div class="workspace">
-    <aside class="sidebar">
+  <div class="control-panel">
+    <div class="panel-header">
+      <div class="panel-title">AI Image Generator</div>
+      <div class="model-selector">FLUX 2 (H200)</div>
+    </div>
+
+    <div class="tabs-row">
+      <div class="tab active" onclick="switchMode('txt2img', this)">Text to Image</div>
+      <div class="tab" onclick="switchMode('img2img', this)">Image Reference</div>
+      <div class="tab">Restyle</div>
+    </div>
+
+    <div class="controls-scroll">
       
-      <div class="control-section">
-        <div class="mode-tabs">
-          <div class="mode-tab active" onclick="setMode('txt2img', this)">Text to Image</div>
-          <div class="mode-tab" onclick="setMode('img2img', this)">Image to Image</div>
+      <div class="upload-section" id="upload-ui">
+        <div class="input-label">Reference Image <span style="color:var(--accent)">*</span></div>
+        <input type="file" id="file-input" hidden accept="image/*" onchange="handleUpload(this)">
+        <div class="upload-box" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <img id="preview-img" class="preview-img">
+          <div class="plus-icon">+</div>
+          <div class="upload-label">Click / Drop Image</div>
+        </div>
+        <div class="slider-container">
+          <div class="input-label" style="margin-top:8px;">Influence Strength</div>
+          <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" style="width:100%; margin-top:4px; accent-color:var(--accent);">
         </div>
       </div>
 
-      <div class="control-section">
-        <div class="section-label">Prompt</div>
-        <textarea id="prompt-input" placeholder="Describe your image... (e.g. A cyberpunk street in Lagos, neon rain, 8k resolution, cinematic lighting)"></textarea>
+      <div class="prompt-container">
+        <div class="input-label">Prompt <span style="color:#666">(Required)</span></div>
+        <textarea id="prompt-input" class="prompt-area" placeholder="Describe your creative ideas..."></textarea>
       </div>
 
-      <div class="control-section" id="upload-group" style="display:none;">
-        <div class="section-label">Reference Image</div>
-        <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFile(this)">
-        <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
-          <img id="upload-preview" class="upload-preview">
-          <div class="upload-icon">📂</div>
-          <div class="upload-text">Click to Upload Image</div>
-        </div>
-      </div>
-
-      <div class="control-section">
-        <div class="section-label">Settings</div>
-        
-        <div class="slider-box" id="strength-box">
-          <div class="slider-header"><span>Change Strength</span><span id="strength-val">0.75</span></div>
-          <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
-        </div>
-
-        <div class="slider-box" style="display:block;">
-          <div class="slider-header"><span>Guidance Scale</span><span id="guidance-val">3.5</span></div>
-          <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
-        </div>
-      </div>
-
-      <button class="btn-generate" id="gen-btn" onclick="generate()">Generate</button>
-
-    </aside>
-
-    <div class="main-view">
-      <div class="view-tabs">
-        <div class="view-btn active" onclick="switchTab('gallery')">My Generations</div>
-        <div class="view-btn" onclick="switchTab('feed')">Community Feed</div>
-        <div class="view-btn" onclick="switchTab('liked')">Liked</div>
-      </div>
-
-      <div class="content-area" id="gallery-view">
-        <div class="grid" id="gallery-grid">
-          </div>
-        <div class="empty-state" id="empty-msg">
-          <div class="empty-icon">🖼️</div>
-          <div>No images yet. Start creating!</div>
-        </div>
-      </div>
-
-      <div class="content-area" id="feed-view" style="display:none;">
-        <div class="grid">
-          <div class="card"><img src="https://via.placeholder.com/500x500/111/333?text=Community+1" class="card-img"></div>
-          <div class="card"><img src="https://via.placeholder.com/500x500/111/333?text=Community+2" class="card-img"></div>
+      <div class="settings-grid">
+        <div class="input-label">Aspect Ratio</div>
+        <div class="ratio-row">
+          <div class="ratio-btn active" onclick="setRatio(1024, 1024, this)">1:1</div>
+          <div class="ratio-btn" onclick="setRatio(1280, 720, this)">16:9</div>
+          <div class="ratio-btn" onclick="setRatio(720, 1280, this)">9:16</div>
+          <div class="ratio-btn" onclick="setRatio(1024, 1280, this)">4:5</div>
         </div>
       </div>
 
     </div>
+
+    <div class="panel-footer">
+      <button class="btn-generate" id="gen-btn" onclick="generate()">Generate</button>
+    </div>
   </div>
 
-  <div class="toast" id="toast">
-    <div class="spinner"></div>
-    <div id="toast-msg">Generating on H200...</div>
+  <div class="main-canvas">
+    <div class="top-bar">
+      <div style="font-weight:600;">My Generations</div>
+      <div class="top-filters">
+        <div class="filter-btn active">All</div>
+        <div class="filter-btn">Images</div>
+        <div class="filter-btn">Videos</div>
+        <div class="filter-btn">Favorites</div>
+      </div>
+    </div>
+
+    <div class="gallery-scroll">
+      <div class="gallery-grid" id="gallery-grid">
+        </div>
+      
+      <div id="empty-state" style="text-align:center; margin-top:100px; color:#333;">
+        <div style="font-size:40px; margin-bottom:10px;">🎨</div>
+        <div>Create something amazing.</div>
+      </div>
+    </div>
   </div>
+
+  <div class="toast" id="toast">Generating...</div>
 
 <script>
   // --- CONFIGURATION ---
-  // 1. Go to RunPod > Connect > Port 9000
-  // 2. Paste URL here (No trailing slash)
+  // PASTE YOUR RUNPOD URL HERE
   const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
 
+  // STATE
   let currentMode = 'txt2img';
   let imageBase64 = null;
+  let currentWidth = 1024;
+  let currentHeight = 1024;
 
-  // 1. SWITCH MODES
-  function setMode(mode, el) {
+  // 1. UI SWITCHING
+  function switchMode(mode, el) {
     currentMode = mode;
     
-    // Update tabs UI
-    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    // Tabs visual
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     if(el) el.classList.add('active');
 
-    // Toggle UI elements
-    const uploadGroup = document.getElementById('upload-group');
-    const strengthBox = document.getElementById('strength-box');
-
+    // Show/Hide Upload
+    const uploadUI = document.getElementById('upload-ui');
     if (mode === 'img2img') {
-      uploadGroup.style.display = 'flex';
-      strengthBox.style.display = 'block';
+      uploadUI.style.display = 'flex';
     } else {
-      uploadGroup.style.display = 'none';
-      strengthBox.style.display = 'none';
+      uploadUI.style.display = 'none';
     }
   }
 
-  // 2. SWITCH MAIN TABS
-  function switchTab(tabName) {
-    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-
-    document.getElementById('gallery-view').style.display = 'none';
-    document.getElementById('feed-view').style.display = 'none';
-
-    if (tabName === 'gallery') document.getElementById('gallery-view').style.display = 'block';
-    if (tabName === 'feed') document.getElementById('feed-view').style.display = 'block';
+  function setRatio(w, h, el) {
+    currentWidth = w;
+    currentHeight = h;
+    document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
   }
 
-  // 3. HANDLE FILE UPLOAD
-  function handleFile(input) {
+  // 2. UPLOAD HANDLER
+  function handleUpload(input) {
     if (input.files && input.files[0]) {
       const reader = new FileReader();
       reader.onload = function(e) {
         imageBase64 = e.target.result;
         
-        const preview = document.getElementById('upload-preview');
-        const zone = document.getElementById('drop-zone');
+        // Show Preview
+        const img = document.getElementById('preview-img');
+        const box = document.getElementById('drop-zone');
+        img.src = imageBase64;
+        img.style.display = 'block';
+        box.classList.add('has-image');
         
-        preview.src = imageBase64;
-        preview.style.display = 'block';
-        zone.classList.add('has-image');
-        
-        // Auto switch mode
-        if (currentMode !== 'img2img') {
-          setMode('img2img', document.querySelectorAll('.mode-tab')[1]);
+        // Auto-switch mode
+        if(currentMode !== 'img2img') {
+          switchMode('img2img', document.querySelectorAll('.tab')[1]);
         }
       };
       reader.readAsDataURL(input.files[0]);
     }
   }
 
-  // 4. GENERATE FUNCTION
+  // 3. GENERATE LOGIC
   async function generate() {
     const prompt = document.getElementById('prompt-input').value;
     const btn = document.getElementById('gen-btn');
 
-    if (!prompt) return alert("Please enter a prompt");
+    if (!prompt) return showToast("Please enter a prompt!");
 
-    // UI Loading State
-    btn.innerText = "Generating...";
+    // UI Loading
+    const originalText = btn.innerText;
+    btn.innerText = "GENERATING...";
     btn.disabled = true;
-    showToast("Processing on H200...");
+    showToast("Sending to H200 GPU...");
 
+    // Build Payload
     const payload = {
       prompt: prompt,
+      width: currentWidth,
+      height: currentHeight,
       steps: 25,
-      guidance: parseFloat(document.getElementById('guidance').value),
-      width: 1024,
-      height: 1024
+      guidance: 3.5
     };
 
+    // Attach Image if in Image Mode
     if (currentMode === 'img2img' && imageBase64) {
       payload.image_base64 = imageBase64;
       payload.strength = parseFloat(document.getElementById('strength').value);
@@ -353,58 +416,51 @@
       const data = await res.json();
 
       if (data.status === "success") {
-        hideToast();
-        addCardToGallery(data.image_url);
-        switchTab('gallery');
+        showToast("Done!");
+        addToGallery(data.image_url, prompt);
       } else {
-        hideToast();
         alert("Error: " + data.message);
       }
 
     } catch (e) {
       console.error(e);
-      hideToast();
-      alert("Failed to connect. Is the API running?");
+      alert("Connection failed. Is the API running?");
     } finally {
-      btn.innerText = "Generate";
+      btn.innerText = originalText;
       btn.disabled = false;
     }
   }
 
-  // 5. GALLERY LOGIC
-  function addCardToGallery(url) {
+  // 4. GALLERY LOGIC
+  function addToGallery(url, prompt) {
     const grid = document.getElementById('gallery-grid');
-    const emptyMsg = document.getElementById('empty-msg');
+    const empty = document.getElementById('empty-state');
+    if(empty) empty.style.display = 'none';
+
     const fullUrl = `${API_URL}${url}`;
     
-    if(emptyMsg) emptyMsg.style.display = 'none';
-
     const div = document.createElement('div');
     div.className = 'card';
     div.innerHTML = `
-      <img src="${fullUrl}" class="card-img" onclick="window.open('${fullUrl}', '_blank')">
-      <div class="card-overlay">
-        <div class="icon-btn" title="Download" onclick="window.open('${fullUrl}', '_blank')">⬇</div>
-        <div class="icon-btn" title="Use as Reference">🎨</div>
+      <img src="${fullUrl}" class="card-img" onclick="window.open('${fullUrl}')">
+      <div class="card-info">
+        <div class="card-prompt">${prompt}</div>
+        <div class="card-actions">
+          <button class="mini-btn" onclick="window.open('${fullUrl}')">Download</button>
+          <button class="mini-btn">Reuse</button>
+        </div>
       </div>
     `;
-    
     grid.prepend(div);
   }
 
-  // 6. TOAST UTILS
   function showToast(msg) {
     const t = document.getElementById('toast');
-    document.getElementById('toast-msg').innerText = msg;
+    t.innerText = msg;
     t.classList.add('show');
-  }
-  function hideToast() {
-    document.getElementById('toast').classList.remove('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  // Init
-  setMode('txt2img');
 </script>
-
 </body>
 </html>
