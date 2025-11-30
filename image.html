@@ -3,281 +3,319 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sulandra AI Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Sulandra AI Studio | Pro Image Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
 /* -------------------------------------------------------------------------- */
-/* CORE LAYOUT & VARIABLES */
+/* 1. DESIGN SYSTEM - SULANDRA DARK                                           */
 /* -------------------------------------------------------------------------- */
 :root {
     --bg-app: #050505;
     --bg-panel: #0a0a0a;
-    --bg-card: #121212;
-    --bg-element: #1a1a1a;
-    --border: #27272a;
+    --bg-element: #141414;
+    --bg-hover: #1f1f1f;
+    --bg-active: #2a2a2a;
+    
+    --border-light: #27272a;
+    --border-focus: #52525b;
+    
     --accent: #8b5cf6;
+    --accent-glow: rgba(139, 92, 246, 0.3);
+    --success: #10b981;
+    --error: #ef4444;
+    
     --text-main: #ffffff;
     --text-muted: #a1a1aa;
-    --radius: 12px;
+    
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    
+    --font-ui: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
 
 body {
-    font-family: 'Inter', sans-serif;
     background-color: var(--bg-app);
     color: var(--text-main);
-    height: 100vh; /* Full viewport height */
+    font-family: var(--font-ui);
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Stop whole page from scrolling */
+    overflow: hidden;
 }
 
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
 /* -------------------------------------------------------------------------- */
-/* HEADER */
+/* 2. LAYOUT ENGINE                                                           */
 /* -------------------------------------------------------------------------- */
 header {
-    height: 60px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-panel);
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    justify-content: space-between;
-    flex-shrink: 0; /* Never shrink */
-    z-index: 50;
+    height: 56px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; background: var(--bg-panel); flex-shrink: 0; z-index: 50;
 }
 
-.brand-logo { 
-    width: 32px; height: 32px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); 
-    border-radius: 8px; display: flex; align-items: center; justify-content: center; 
-    font-weight: 800; font-size: 18px; 
-}
-
-/* -------------------------------------------------------------------------- */
-/* MAIN WORKSPACE LAYOUT */
-/* -------------------------------------------------------------------------- */
 .workspace {
     display: flex;
-    flex: 1; /* Fill remaining height */
-    height: calc(100vh - 60px); /* Exact height minus header */
+    height: calc(100vh - 56px);
     overflow: hidden;
 }
 
-/* 1. LEFT NAV RAIL (Icons) */
-.nav-rail {
-    width: 64px;
-    background: #000;
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-    gap: 24px;
-    flex-shrink: 0;
-}
-.nav-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); cursor: pointer; transition: 0.2s;
-}
-.nav-icon:hover { color: white; background: var(--bg-element); }
-.nav-icon.active { color: var(--accent); background: rgba(139, 92, 246, 0.15); }
-.nav-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; }
-
-/* 2. CONTROL SIDEBAR */
+/* Sidebar (Settings) */
 .sidebar {
-    width: 340px;
+    width: 380px;
     background: var(--bg-panel);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    height: 100%; /* Fill workspace height */
+    border-right: 1px solid var(--border-light);
+    display: flex; flex-direction: column;
+    flex-shrink: 0; z-index: 40;
 }
 
-/* Sidebar Header */
-.sidebar-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    font-weight: 600;
-    font-size: 14px;
-    display: flex; justify-content: space-between;
-}
-
-/* Sidebar SCROLL AREA (The inputs) */
 .sidebar-scroll {
-    flex: 1; /* Take all available space */
-    overflow-y: auto; /* Enable scroll inside this box */
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    min-height: 0; /* Crucial for nested flex scrolling */
+    flex: 1; overflow-y: auto; padding: 20px;
+    display: flex; flex-direction: column; gap: 24px;
 }
 
-/* Sidebar FOOTER (Pinned Generate Button) */
-.sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid var(--border);
-    background: var(--bg-panel);
-    z-index: 10;
-}
-
-/* 3. MAIN STAGE (Gallery) */
+/* Main Stage (Canvas/Gallery) */
 .stage {
     flex: 1;
-    background: #050505;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    background: var(--bg-app);
+    display: flex; flex-direction: column;
     position: relative;
-}
-.stage-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px;
+    overflow: hidden;
 }
 
 /* -------------------------------------------------------------------------- */
-/* UI COMPONENTS */
+/* 3. COMPONENT LIBRARY                                                       */
 /* -------------------------------------------------------------------------- */
 
-/* Tabs */
-.tabs { display: flex; background: var(--bg-element); padding: 4px; border-radius: 8px; }
-.tab { 
-    flex: 1; text-align: center; padding: 8px; font-size: 12px; cursor: pointer; 
-    border-radius: 6px; color: var(--text-muted); font-weight: 500; 
-}
-.tab.active { background: var(--bg-card); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+/* Branding */
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+.brand-mark { width: 24px; height: 24px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 6px; }
 
-/* Textarea */
-textarea {
-    width: 100%; background: var(--bg-element); border: 1px solid var(--border);
-    border-radius: 8px; color: white; padding: 12px; font-family: inherit; font-size: 13px;
-    min-height: 120px; resize: vertical; line-height: 1.5;
+/* Navigation */
+.nav-links { display: flex; gap: 4px; background: var(--bg-element); padding: 3px; border-radius: 8px; border: 1px solid var(--border-light); }
+.nav-item { 
+    padding: 6px 12px; font-size: 12px; color: var(--text-muted); text-decoration: none; 
+    border-radius: 6px; font-weight: 500; transition: 0.2s; 
 }
-textarea:focus { border-color: var(--accent); }
+.nav-item:hover { color: white; }
+.nav-item.active { background: var(--bg-active); color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
-/* Upload Zone */
-.upload-zone {
-    width: 100%; height: 140px; border: 2px dashed var(--border);
-    border-radius: 8px; background: rgba(255,255,255,0.02);
+/* Buttons */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white; width: 100%; text-transform: uppercase; letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+    background: var(--bg-element); border-color: var(--border-light); color: var(--text-main);
+}
+.btn-secondary:hover { border-color: var(--text-muted); background: var(--bg-hover); }
+
+/* Inputs */
+.group-label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 8px;
+}
+.text-area {
+    width: 100%; background: var(--bg-element); border: 1px solid var(--border-light);
+    border-radius: var(--radius-md); color: white; padding: 12px;
+    font-family: inherit; font-size: 13px; line-height: 1.5; min-height: 100px; resize: vertical;
+}
+.text-area:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+/* Upload & Canvas Zone */
+.canvas-wrapper {
+    position: relative; width: 100%; height: 240px;
+    background: var(--bg-element); border: 2px dashed var(--border-light);
+    border-radius: var(--radius-md); overflow: hidden;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    cursor: pointer; position: relative; overflow: hidden;
+    cursor: pointer; transition: 0.2s;
 }
-.upload-zone:hover { border-color: var(--accent); background: rgba(139, 92, 246, 0.05); }
-.upload-zone.has-file { border-style: solid; border-color: var(--accent); }
-.preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+.canvas-wrapper:hover { border-color: var(--accent); background: rgba(139, 92, 246, 0.05); }
+.canvas-wrapper.active { border-style: solid; cursor: default; }
 
-/* Sliders */
-.slider-group { display: flex; flex-direction: column; gap: 8px; }
-.slider-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-input[type=range] { width: 100%; accent-color: var(--accent); }
+.preview-img {
+    max-width: 100%; max-height: 100%; display: none; object-fit: contain; pointer-events: none;
+}
+.drawing-canvas {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    cursor: crosshair; display: none;
+}
 
 /* Aspect Ratio Grid */
 .ratio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .ratio-box {
-    background: var(--bg-element); border: 1px solid var(--border); border-radius: 6px;
-    padding: 8px; text-align: center; font-size: 11px; color: var(--text-muted); cursor: pointer;
+    background: var(--bg-element); border: 1px solid var(--border-light);
+    border-radius: 6px; padding: 10px; text-align: center; font-size: 11px;
+    color: var(--text-muted); cursor: pointer; transition: 0.2s;
 }
-.ratio-box:hover { background: var(--bg-card); color: white; }
-.ratio-box.active { background: white; color: black; border-color: white; font-weight: 700; }
+.ratio-box:hover { color: white; border-color: var(--border-focus); }
+.ratio-box.active { background: white; color: black; font-weight: 700; border-color: white; }
 
-/* Generate Button */
-.btn-gen {
-    width: 100%; padding: 14px; border-radius: 8px; border: none;
-    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-    color: white; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
-    cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+/* Sliders */
+input[type=range] {
+    width: 100%; -webkit-appearance: none; background: transparent;
 }
-.btn-gen:hover { transform: translateY(-2px); filter: brightness(1.1); }
-.btn-gen:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%; height: 4px; background: var(--bg-element); border-radius: 2px;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+    background: white; margin-top: -6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Accordion (Advanced Settings) */
+.accordion { border: 1px solid var(--border-light); border-radius: var(--radius-md); overflow: hidden; }
+.accordion-header {
+    background: var(--bg-element); padding: 10px 12px; font-size: 12px; font-weight: 600;
+    cursor: pointer; display: flex; justify-content: space-between;
+}
+.accordion-content { padding: 12px; display: none; background: var(--bg-panel); }
+.accordion.open .accordion-content { display: flex; flex-direction: column; gap: 12px; }
 
 /* Gallery Grid */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-.card {
-    background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
-    position: relative; aspect-ratio: 1; transition: 0.2s;
+.gallery-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px; padding: 24px; overflow-y: auto; height: 100%;
 }
-.card:hover { transform: translateY(-4px); border-color: var(--text-muted); }
-.card img { width: 100%; height: 100%; object-fit: cover; }
+.card {
+    background: var(--bg-card); border: 1px solid var(--border-light);
+    border-radius: var(--radius-md); overflow: hidden; position: relative;
+    aspect-ratio: 1; transition: 0.2s;
+}
+.card:hover { transform: translateY(-4px); border-color: var(--text-muted); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.card img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
 .card-overlay {
     position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    opacity: 0; transition: 0.2s; display: flex; align-items: flex-end; justify-content: flex-end; padding: 16px;
+    opacity: 0; transition: 0.2s; display: flex; align-items: flex-end; justify-content: flex-end; padding: 12px; gap: 8px;
 }
 .card:hover .card-overlay { opacity: 1; }
+
 .icon-btn {
-    width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 6px;
-    display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; backdrop-filter: blur(4px);
+    width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: white; border: 1px solid rgba(255,255,255,0.2);
 }
 .icon-btn:hover { background: white; color: black; }
 
+/* Tabs */
+.tabs { display: flex; border-bottom: 1px solid var(--border-light); background: var(--bg-panel); }
+.tab-btn {
+    flex: 1; text-align: center; padding: 12px; font-size: 13px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent;
+}
+.tab-btn:hover { color: white; }
+.tab-btn.active { color: white; border-bottom-color: var(--accent); }
+
 /* Status Toast */
 .toast {
-    position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border: 1px solid var(--border);
-    border-left: 4px solid var(--accent); padding: 16px; border-radius: 8px;
-    display: flex; align-items: center; gap: 12px; font-size: 13px;
-    transform: translateY(100px); transition: 0.3s; z-index: 100;
+    position: fixed; bottom: 24px; right: 24px; background: var(--bg-card);
+    border: 1px solid var(--border-light); border-left: 4px solid var(--accent);
+    padding: 16px; border-radius: 8px; display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(100px); transition: 0.3s; z-index: 100;
 }
-.toast.active { transform: translateY(0); }
-.spinner { width: 16px; height: 16px; border: 2px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+.toast.show { transform: translateY(0); }
+.spinner {
+    width: 18px; height: 18px; border: 2px solid #333; border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+}
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Utility */
+.hidden { display: none !important; }
+.flex-row { display: flex; gap: 12px; align-items: center; }
+.w-full { width: 100%; }
 
 </style>
 </head>
 <body>
 
 <header>
-    <div style="display:flex; align-items:center; gap:12px; font-weight:700; font-size:18px;">
-        <div class="brand-logo">S</div> Sulandra Studio
+    <div class="brand">
+        <div class="brand-mark"></div>
+        Sulandra Studio
     </div>
-    <div style="font-size:12px; color:#666;">H200 GPU: <span style="color:#10b981">● ONLINE</span></div>
+    
+    <div class="nav-links">
+        <a href="index.html" class="nav-item">Dashboard</a>
+        <a href="image.html" class="nav-item active">Image Lab</a>
+        <a href="video.html" class="nav-item">Video Lab</a>
+        <a href="music.html" class="nav-item">Music Lab</a>
+    </div>
+
+    <div style="display:flex; gap:12px; align-items:center;">
+        <div style="font-size:11px; color:var(--success);">● H200 Connected</div>
+        <div style="width:32px; height:32px; background:#333; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;">JS</div>
+    </div>
 </header>
 
 <div class="workspace">
     
-    <div class="nav-rail">
-        <div class="nav-icon active" title="Image Lab"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div class="nav-icon" title="Video Lab" onclick="window.location.href='video.html'"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
-        <div class="nav-icon" title="Music Lab" onclick="window.location.href='music.html'"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-    </div>
-
     <div class="sidebar">
-        <div class="sidebar-header">
-            <span>IMAGE SETTINGS</span>
+        
+        <div class="tabs">
+            <div class="tab-btn active" onclick="setMode('txt2img', this)">Generate</div>
+            <div class="tab-btn" onclick="setMode('img2img', this)">Edit / Refine</div>
+            <div class="tab-btn" onclick="setMode('inpaint', this)">Inpaint</div>
         </div>
 
         <div class="sidebar-scroll">
             
-            <div class="tabs">
-                <div class="tab active" onclick="setMode('txt2img', this)">Text to Image</div>
-                <div class="tab" onclick="setMode('img2img', this)">Image Reference</div>
-            </div>
-
             <div>
-                <div class="slider-label" style="margin-bottom:8px;">PROMPT</div>
-                <textarea id="prompt-input" placeholder="Describe your image... (e.g. A cinematic shot of a futuristic Lagos street, neon rain, 8k resolution)"></textarea>
+                <div class="group-label">
+                    <span>Prompt</span>
+                    <span style="font-size:10px; cursor:pointer; color:var(--accent);" onclick="magicPrompt()">✨ Enhance</span>
+                </div>
+                <textarea id="prompt" class="text-area" placeholder="A cinematic shot of a futuristic Lagos street, wet pavement, neon lights, 8k resolution..."></textarea>
             </div>
 
-            <div id="upload-group" style="display:none;">
-                <div class="slider-label" style="margin-bottom:8px;">REFERENCE IMAGE</div>
+            <div id="upload-group" class="hidden">
+                <div class="group-label">Source Image</div>
                 <input type="file" id="file-input" hidden accept="image/*" onchange="handleFile(this)">
-                <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
-                    <img id="preview-img" class="preview-img">
-                    <div style="font-size:24px; color:#444; margin-bottom:4px;">📂</div>
-                    <div style="font-size:11px; color:#666;">Click to Upload</div>
-                </div>
                 
-                <div class="slider-group" style="margin-top:16px;">
-                    <div class="slider-label"><span>Influence Strength</span><span id="strength-val">0.75</span></div>
-                    <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
+                <div class="canvas-wrapper" id="drop-zone">
+                    <div id="upload-placeholder" style="text-align:center;">
+                        <div style="font-size:24px; color:#444; margin-bottom:8px;">📂</div>
+                        <div style="font-size:12px; color:#666;">Click to Upload</div>
+                    </div>
+                    
+                    <img id="preview-img" class="preview-img">
+                    
+                    <canvas id="mask-canvas" class="drawing-canvas"></canvas>
+                </div>
+
+                <div id="canvas-tools" class="flex-row hidden" style="margin-top:8px;">
+                    <button class="btn btn-secondary" onclick="clearCanvas()" style="font-size:11px; padding:4px 8px;">Clear Mask</button>
+                    <div style="font-size:11px; color:#666; margin-left:auto;">Draw over area to change</div>
+                </div>
+
+                <div style="margin-top:16px;">
+                    <div class="group-label"><span>Influence Strength</span><span id="strength-val">0.75</span></div>
+                    <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="updateVal('strength-val', this.value)">
                 </div>
             </div>
 
             <div>
-                <div class="slider-label" style="margin-bottom:8px;">ASPECT RATIO</div>
+                <div class="group-label">Aspect Ratio</div>
                 <div class="ratio-grid">
                     <div class="ratio-box active" onclick="setRatio(1024, 1024, this)">1:1</div>
                     <div class="ratio-box" onclick="setRatio(1280, 720, this)">16:9</div>
@@ -286,32 +324,50 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
                 </div>
             </div>
 
-            <div class="slider-group">
-                <div class="slider-label"><span>Guidance Scale</span><span id="guidance-val">3.5</span></div>
-                <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
+            <div>
+                <div class="group-label"><span>Guidance Scale (CFG)</span><span id="cfg-val">3.5</span></div>
+                <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="updateVal('cfg-val', this.value)">
+            </div>
+
+            <div class="accordion" id="adv-accordion">
+                <div class="accordion-header" onclick="toggleAccordion()">
+                    <span>Advanced Settings</span>
+                    <span>▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div>
+                        <div class="group-label"><span>Steps</span><span id="steps-val">25</span></div>
+                        <input type="range" id="steps" min="10" max="50" step="1" value="25" oninput="updateVal('steps-val', this.value)">
+                    </div>
+                    <div>
+                        <div class="group-label">Seed (Empty = Random)</div>
+                        <input type="number" id="seed" class="text-area" style="min-height:40px; padding:8px;" placeholder="-1">
+                    </div>
+                    <div>
+                        <div class="group-label">Sampler</div>
+                        <select id="sampler" class="text-area" style="min-height:40px; padding:8px;">
+                            <option value="euler">Euler</option>
+                            <option value="euler_ancestral">Euler A</option>
+                            <option value="dpmpp_2m">DPM++ 2M</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
         </div>
 
-        <div class="sidebar-footer">
-            <button id="gen-btn" class="btn-gen" onclick="generate()">GENERATE IMAGE</button>
+        <div style="padding:20px; border-top:1px solid var(--border-light); background:var(--bg-panel);">
+            <button id="gen-btn" class="btn btn-primary" onclick="generate()">Generate Image</button>
         </div>
     </div>
 
     <div class="stage">
-        <div class="stage-content">
-            <div style="font-size:16px; font-weight:700; margin-bottom:20px; display:flex; justify-content:space-between;">
-                My Generations
-                <div style="font-size:12px; font-weight:400; color:#666;">Images saved to server</div>
+        <div class="gallery-grid" id="gallery-grid">
             </div>
 
-            <div class="grid" id="gallery-grid">
-                </div>
-
-            <div id="empty-state" style="height:60%; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0.3;">
-                <div style="font-size:48px; margin-bottom:16px;">🎨</div>
-                <div>Start creating.</div>
-            </div>
+        <div id="empty-state" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; opacity:0.3;">
+            <div style="font-size:48px; margin-bottom:16px;">🖼️</div>
+            <div style="font-size:16px; font-weight:600;">Your creations will appear here.</div>
         </div>
     </div>
 
@@ -319,7 +375,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
 
 <div id="toast" class="toast">
     <div class="spinner"></div>
-    <div id="toast-msg">Processing...</div>
+    <div id="toast-text">Processing...</div>
 </div>
 
 <script>
@@ -329,15 +385,41 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
     // STATE
     let currentMode = 'txt2img';
     let imageBase64 = null;
+    let maskBase64 = null;
     let currentWidth = 1024;
     let currentHeight = 1024;
+    let isDrawing = false;
 
-    // 1. UI SWITCHING
+    // --- INIT ---
+    window.onload = () => {
+        loadHistory();
+        setupCanvas();
+    };
+
+    // --- UI LOGIC ---
     function setMode(mode, el) {
         currentMode = mode;
-        document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
-        if(el) el.classList.add('active');
-        document.getElementById('upload-group').style.display = (mode === 'img2img') ? 'block' : 'none';
+        document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+        el.classList.add('active');
+
+        const uploadGroup = document.getElementById('upload-group');
+        const canvasTools = document.getElementById('canvas-tools');
+        const maskCanvas = document.getElementById('mask-canvas');
+
+        if (mode === 'txt2img') {
+            uploadGroup.classList.add('hidden');
+        } else {
+            uploadGroup.classList.remove('hidden');
+        }
+
+        // Inpaint specific UI
+        if (mode === 'inpaint') {
+            canvasTools.classList.remove('hidden');
+            maskCanvas.style.display = 'block';
+        } else {
+            canvasTools.classList.add('hidden');
+            maskCanvas.style.display = 'none';
+        }
     }
 
     function setRatio(w, h, el) {
@@ -347,46 +429,97 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
         el.classList.add('active');
     }
 
-    // 2. FILE HANDLING
+    function toggleAccordion() {
+        document.getElementById('adv-accordion').classList.toggle('open');
+    }
+
+    function updateVal(id, val) {
+        document.getElementById(id).innerText = val;
+    }
+
+    function magicPrompt() {
+        const p = document.getElementById('prompt');
+        const extras = ", highly detailed, 8k resolution, cinematic lighting, photorealistic, trending on artstation, sharp focus";
+        if(p.value && !p.value.includes("detailed")) p.value += extras;
+    }
+
+    // --- FILE & CANVAS LOGIC ---
     function handleFile(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 imageBase64 = e.target.result;
+                
+                // Show UI
+                document.getElementById('upload-placeholder').classList.add('hidden');
                 const img = document.getElementById('preview-img');
-                const zone = document.getElementById('drop-zone');
                 img.src = imageBase64;
                 img.style.display = 'block';
-                zone.classList.add('has-file');
+                document.getElementById('drop-zone').classList.add('active');
                 
-                if(currentMode !== 'img2img') {
-                    setMode('img2img', document.querySelectorAll('.tab')[1]);
-                }
+                // Clicking wrapper triggers file input ONLY if no image loaded
+                document.getElementById('drop-zone').onclick = null; 
             };
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // 3. GENERATE LOGIC
+    function setupCanvas() {
+        const canvas = document.getElementById('mask-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Resize canvas to match container (rough approx for UI)
+        canvas.width = 340;
+        canvas.height = 240;
+
+        // Drawing logic
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mousemove', draw);
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineWidth = 20;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; // Visual mask
+            
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+    }
+
+    function clearCanvas() {
+        const canvas = document.getElementById('mask-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // --- API & GENERATION ---
     async function generate() {
-        const prompt = document.getElementById('prompt-input').value;
+        const prompt = document.getElementById('prompt').value;
         const btn = document.getElementById('gen-btn');
 
-        if (!prompt) return showToast("⚠️ Please enter a prompt description");
+        if (!prompt) return showToast("⚠️ Please enter a prompt", "error");
 
-        btn.innerHTML = "GENERATING...";
+        // UI Loading
+        btn.innerHTML = `<div class="spinner"></div> PROCESSING`;
         btn.disabled = true;
-        showToast("🚀 Sending to H200 GPU...");
+        showToast("🚀 Sending to H200 Engine...", "info");
 
+        // Payload
         const payload = {
             prompt: prompt,
+            steps: parseInt(document.getElementById('steps').value),
+            guidance: parseFloat(document.getElementById('guidance').value),
             width: currentWidth,
-            height: currentHeight,
-            steps: 25,
-            guidance: parseFloat(document.getElementById('guidance').value)
+            height: currentHeight
         };
 
-        if (currentMode === 'img2img' && imageBase64) {
+        // Attach Image if needed
+        if (currentMode !== 'txt2img' && imageBase64) {
             payload.image_base64 = imageBase64;
             payload.strength = parseFloat(document.getElementById('strength').value);
         }
@@ -401,55 +534,69 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
             const data = await res.json();
 
             if (data.status === "success") {
-                showToast("✅ Image Generated!");
-                addToGallery(data.image_url, prompt);
+                showToast("✅ Image Generated!", "success");
+                addCard(data.image_url, prompt);
+                saveToHistory(data.image_url, prompt);
             } else {
-                showToast("❌ Error: " + data.message);
+                showToast("❌ Error: " + data.message, "error");
             }
 
         } catch (e) {
             console.error(e);
-            showToast("❌ Connection Failed. Check API.");
+            showToast("❌ Connection Failed. Check API.", "error");
         } finally {
             btn.innerHTML = "GENERATE IMAGE";
             btn.disabled = false;
         }
     }
 
-    // 4. GALLERY LOGIC
-    function addToGallery(url, prompt) {
+    // --- GALLERY & HISTORY ---
+    function addCard(url, prompt) {
+        document.getElementById('empty-state').classList.add('hidden');
         const grid = document.getElementById('gallery-grid');
-        const empty = document.getElementById('empty-state');
-        if(empty) empty.style.display = 'none';
-
         const fullUrl = `${API_URL}${url}`;
-        
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
             <img src="${fullUrl}" onclick="window.open('${fullUrl}')">
             <div class="card-overlay">
                 <div class="icon-btn" onclick="window.open('${fullUrl}')">⬇</div>
             </div>
         `;
-        
-        // Add to top
-        grid.prepend(div);
+        grid.prepend(card);
     }
 
-    // 5. TOAST
-    let toastTimeout;
-    function showToast(msg) {
+    function saveToHistory(url, prompt) {
+        const history = JSON.parse(localStorage.getItem('sulandra_history') || '[]');
+        history.push({ url, prompt, date: Date.now() });
+        localStorage.setItem('sulandra_history', JSON.stringify(history));
+    }
+
+    function loadHistory() {
+        const history = JSON.parse(localStorage.getItem('sulandra_history') || '[]');
+        if (history.length > 0) {
+            history.forEach(item => addCard(item.url, item.prompt));
+        }
+    }
+
+    // --- TOASTS ---
+    let toastTimer;
+    function showToast(msg, type) {
         const t = document.getElementById('toast');
-        document.getElementById('toast-msg').innerText = msg;
-        t.classList.add('active');
-        clearTimeout(toastTimeout);
-        toastTimeout = setTimeout(() => t.classList.remove('active'), 3000);
+        document.getElementById('toast-text').innerText = msg;
+        t.classList.add('show');
+        
+        const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#8b5cf6';
+        t.style.borderLeftColor = color;
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
     }
 
     // Init
-    setMode('txt2img', document.querySelectorAll('.tab')[0]);
-</script>
+    document.getElementById('drop-zone').onclick = () => document.getElementById('file-input').click();
 
+</script>
 </body>
 </html>
