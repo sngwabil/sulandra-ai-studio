@@ -3,381 +3,482 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sulandra AI Studio | Royal Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Sulandra AI Studio | Professional Image Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
 /* -------------------------------------------------------------------------- */
-/* 1. DESIGN SYSTEM - ROYAL MIDNIGHT                                          */
+/* DESIGN SYSTEM                              */
 /* -------------------------------------------------------------------------- */
 :root {
-    /* Color Palette - Royal Blue Theme */
-    --bg-app: #020410;       /* Deepest Royal Background */
-    --bg-panel: #05081a;     /* Dark Blue Panel */
-    --bg-element: #0e1226;   /* Input/Card Background */
-    --bg-hover: #1a1f38;     /* Hover State */
-    --bg-active: #252b48;    /* Active State */
+    /* Dark Royal Blue Theme */
+    --bg-app: #02041a;
+    --bg-panel: #050a24;
+    --bg-card: #07102d;
+    --bg-element: #0a1433;
+    --bg-hover: #10204a;
     
-    /* Borders - Tinted Blue */
-    --border-light: #1f243d;
-    --border-focus: #4f5b8c;
+    /* Brand Accents - Sulandra Neon */
+    --accent-primary: #8b5cf6;       /* Violet */
+    --accent-secondary: #ec4899;     /* Pink */
+    --accent-tertiary: #3b82f6;      /* Blue */
+    --accent-success: #10b981;       /* Emerald */
+    --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
     
-    /* Accents */
-    --accent: #8b5cf6;       /* Violet */
-    --accent-glow: rgba(139, 92, 246, 0.4);
-    --success: #10b981;
-    --error: #ef4444;
-    
-    --text-main: #ffffff;
-    --text-muted: #94a3b8;   /* Cool Gray/Blue Text */
-    
+    /* Text Colors */
+    --text-primary: #ffffff;
+    --text-secondary: #a1a1ff;
+    --text-tertiary: #7c7cff;
+    --text-disabled: #3f3f66;
+
+    /* Borders & Shadows */
+    --border-subtle: #1f2a5c;
+    --border-focus: #3b4a9e;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 6px -1px rgba(3, 7, 35, 0.8), 0 2px 4px -1px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.4);
+
+    /* Spacing & Layout */
+    --header-height: 64px;
+    --sidebar-width: 320px;
+    --nav-rail-width: 72px;
     --radius-sm: 6px;
-    --radius-md: 10px;
+    --radius-md: 12px;
     --radius-lg: 16px;
-    
-    --font-ui: 'Inter', sans-serif;
+    --radius-full: 9999px;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+* { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-font-smoothing: antialiased; }
 
 body {
-    background-color: var(--bg-app);
-    color: var(--text-main);
-    font-family: var(--font-ui);
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top, #0b1120, #02041a);
+    color: var(--text-primary);
     height: 100vh;
     display: flex;
-    flex-direction: column;
     overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
-/* Scrollbar */
+/* Scrollbar Customization */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #1f243d; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #4f5b8c; }
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }
 
 /* -------------------------------------------------------------------------- */
-/* 2. LAYOUT ENGINE                                                           */
+/* COMPONENT LIB                              */
 /* -------------------------------------------------------------------------- */
-header {
-    height: 56px;
-    border-bottom: 1px solid var(--border-light);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px; background: var(--bg-panel); flex-shrink: 0; z-index: 50;
-}
-
-.workspace {
-    display: flex;
-    height: calc(100vh - 56px);
-    overflow: hidden;
-}
-
-/* Sidebar (Settings) */
-.sidebar {
-    width: 380px;
-    background: var(--bg-panel);
-    border-right: 1px solid var(--border-light);
-    display: flex; flex-direction: column;
-    flex-shrink: 0; z-index: 40;
-}
-
-.sidebar-scroll {
-    flex: 1; overflow-y: auto; padding: 20px;
-    display: flex; flex-direction: column; gap: 24px;
-}
-
-/* Main Stage (Canvas/Gallery) */
-.stage {
-    flex: 1;
-    background: var(--bg-app);
-    display: flex; flex-direction: column;
-    position: relative;
-    overflow: hidden;
-}
-
-/* -------------------------------------------------------------------------- */
-/* 3. COMPONENT LIBRARY                                                       */
-/* -------------------------------------------------------------------------- */
-
-/* Branding */
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
-.brand-mark { width: 24px; height: 24px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 6px; }
-
-/* Navigation */
-.nav-links { display: flex; gap: 4px; background: var(--bg-element); padding: 3px; border-radius: 8px; border: 1px solid var(--border-light); }
-.nav-item { 
-    padding: 6px 12px; font-size: 12px; color: var(--text-muted); text-decoration: none; 
-    border-radius: 6px; font-weight: 500; transition: 0.2s; 
-}
-.nav-item:hover { color: white; background: var(--bg-hover); }
-.nav-item.active { background: var(--bg-active); color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
 /* Buttons */
 .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+    padding: 8px 16px; border-radius: var(--radius-md); font-weight: 600;
+    font-size: 13px; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent;
+    user-select: none;
 }
 .btn-primary {
-    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-    color: white; width: 100%; text-transform: uppercase; letter-spacing: 0.5px;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+    background: var(--text-primary); color: #02041a;
 }
-.btn-primary:hover { filter: brightness(1.2); transform: translateY(-1px); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-primary:hover {
+    background: #e5e7eb; transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(148, 163, 255, 0.3);
+}
+.btn-accent {
+    background: var(--accent-gradient); color: white; border: none;
+    box-shadow: var(--shadow-glow);
+}
+.btn-accent:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-ghost {
+    background: rgba(15,23,42,0.6); color: var(--text-secondary);
+    border: 1px solid rgba(148,163,255,0.25);
+}
+.btn-ghost:hover {
+    background: rgba(30,64,175,0.7); color: var(--text-primary);
+    border-color: rgba(191,219,254,0.6);
+}
+.btn-icon {
+    width: 36px; height: 36px; padding: 0; border-radius: var(--radius-sm);
+    background: var(--bg-element); color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+}
+.btn-icon:hover {
+    background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-focus);
+}
 
-.btn-secondary {
-    background: var(--bg-element); border-color: var(--border-light); color: var(--text-main);
+/* Star button */
+.star-btn {
+    border-radius: 999px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(148,163,255,0.4);
+    background: rgba(15,23,42,0.8);
+    color: #e5e7eb;
+    cursor: pointer;
+    transition: 0.2s;
 }
-.btn-secondary:hover { border-color: var(--text-muted); background: var(--bg-hover); }
+.star-btn.star-active {
+    background: radial-gradient(circle at top, #facc15, #b45309);
+    color: #1f2933;
+    border-color: #facc15;
+    box-shadow: 0 0 16px rgba(250, 204, 21, 0.6);
+}
 
 /* Inputs */
-.group-label {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted);
-    margin-bottom: 8px;
+.input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.label {
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between;
 }
 .text-area {
-    width: 100%; background: var(--bg-element); border: 1px solid var(--border-light);
-    border-radius: var(--radius-md); color: white; padding: 12px;
-    font-family: inherit; font-size: 13px; line-height: 1.5; min-height: 100px; resize: vertical;
+    width: 100%; min-height: 120px;
+    background: var(--bg-element); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md); padding: 12px;
+    color: var(--text-primary); font-family: inherit; font-size: 14px;
+    resize: vertical; transition: 0.2s;
 }
-.text-area:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); background: #13172d; }
-
-/* Upload & Canvas Zone */
-.canvas-wrapper {
-    position: relative; width: 100%; height: 240px;
-    background: var(--bg-element); border: 2px dashed var(--border-light);
-    border-radius: var(--radius-md); overflow: hidden;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    cursor: pointer; transition: 0.2s;
+.text-area:focus {
+    border-color: var(--accent-primary); background: var(--bg-card);
+    box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.5);
 }
-.canvas-wrapper:hover { border-color: var(--accent); background: rgba(139, 92, 246, 0.05); }
-.canvas-wrapper.active { border-style: solid; cursor: default; }
-
-.preview-img {
-    max-width: 100%; max-height: 100%; display: none; object-fit: contain; pointer-events: none;
-}
-.drawing-canvas {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    cursor: crosshair; display: none;
-}
-
-/* Aspect Ratio Grid */
-.ratio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.ratio-box {
-    background: var(--bg-element); border: 1px solid var(--border-light);
-    border-radius: 6px; padding: 10px; text-align: center; font-size: 11px;
-    color: var(--text-muted); cursor: pointer; transition: 0.2s;
-}
-.ratio-box:hover { color: white; border-color: var(--border-focus); background: var(--bg-hover); }
-.ratio-box.active { background: white; color: black; font-weight: 700; border-color: white; }
 
 /* Sliders */
 input[type=range] {
-    width: 100%; -webkit-appearance: none; background: transparent;
+    -webkit-appearance: none; width: 100%; background: transparent; height: 24px; cursor: pointer;
 }
 input[type=range]::-webkit-slider-runnable-track {
     width: 100%; height: 4px; background: var(--bg-element); border-radius: 2px;
 }
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
-    background: white; margin-top: -6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    background: #e5e7eb; margin-top: -6px; box-shadow: 0 2px 4px rgba(15,23,42,0.9);
+    transition: 0.2s;
+}
+input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.2); }
+
+/* SVG Icons */
+svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* -------------------------------------------------------------------------- */
+/* LAYOUT ENGINE                              */
+/* -------------------------------------------------------------------------- */
+
+/* 1. Navigation Rail (Far Left) */
+.nav-rail {
+    width: var(--nav-rail-width);
+    background: linear-gradient(to bottom, #020617, #02041a);
+    border-right: 1px solid rgba(37, 99, 235, 0.4);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px 0; gap: 24px; flex-shrink: 0; z-index: 50;
+}
+.brand-logo {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: conic-gradient(from 130deg, #3b82f6, #8b5cf6, #ec4899, #22c55e, #3b82f6);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 20px; color: white;
+}
+.nav-btn {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); transition: 0.2s; cursor: pointer;
+    position: relative;
+}
+.nav-btn:hover { background: rgba(30, 64, 175, 0.7); color: var(--text-primary); }
+.nav-btn.active { background: radial-gradient(circle at top, #1d4ed8, #020617); color: #e0f2fe; }
+.nav-btn.active::after {
+    content: ''; position: absolute; left: -14px; top: 10px; bottom: 10px;
+    width: 3px; background: #60a5fa; border-radius: 0 4px 4px 0;
 }
 
-/* Accordion (Advanced Settings) */
-.accordion { border: 1px solid var(--border-light); border-radius: var(--radius-md); overflow: hidden; }
-.accordion-header {
-    background: var(--bg-element); padding: 10px 12px; font-size: 12px; font-weight: 600;
-    cursor: pointer; display: flex; justify-content: space-between;
+/* 2. Control Sidebar (Middle) */
+.sidebar {
+    width: var(--sidebar-width);
+    background: radial-gradient(circle at top, #0b1120, #02041a);
+    border-right: 1px solid rgba(37, 99, 235, 0.3);
+    display: flex; flex-direction: column;
+    z-index: 40; flex-shrink: 0;
+    box-shadow: 12px 0 40px rgba(15, 23, 42, 0.9);
 }
-.accordion-content { padding: 12px; display: none; background: var(--bg-panel); }
-.accordion.open .accordion-content { display: flex; flex-direction: column; gap: 12px; }
+.sidebar-header {
+    height: var(--header-height); padding: 0 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex; align-items: center; justify-content: space-between;
+}
+.sidebar-title { font-weight: 800; font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; color: #e5e7ff; }
+.sidebar-scroll {
+    flex: 1; overflow-y: auto; padding: 20px;
+    display: flex; flex-direction: column; gap: 24px;
+}
+
+/* Tabs inside Sidebar */
+.mode-switch {
+    background: rgba(15,23,42,0.8); padding: 4px; border-radius: var(--radius-md);
+    display: flex; gap: 2px; border: 1px solid rgba(37, 99, 235, 0.5);
+}
+.mode-option {
+    flex: 1; text-align: center; padding: 8px; font-size: 12px; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer; border-radius: var(--radius-sm);
+    transition: 0.2s;
+}
+.mode-option:hover { color: var(--text-primary); background: rgba(30,64,175,0.5); }
+.mode-option.active {
+    background: radial-gradient(circle at top, #2563eb, #1e293b);
+    color: var(--text-primary); box-shadow: var(--shadow-sm);
+    font-weight: 600;
+}
+
+/* 3. Main Stage (Right) */
+.stage {
+    flex: 1; display: flex; flex-direction: column;
+    background: radial-gradient(circle at top, #020617, #02041a);
+    position: relative;
+    overflow: hidden;
+}
+.stage-header {
+    height: var(--header-height);
+    border-bottom: 1px solid rgba(37, 99, 235, 0.35);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+    background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(30,64,175,0.7));
+    backdrop-filter: blur(24px);
+    z-index: 30;
+}
+.gallery-tabs { display: flex; gap: 24px; height: 100%; }
+.gallery-tab {
+    height: 100%; display: flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 500; color: var(--text-secondary);
+    cursor: pointer; border-bottom: 2px solid transparent; transition: 0.2s;
+}
+.gallery-tab:hover { color: var(--text-primary); }
+.gallery-tab.active { color: #bfdbfe; border-bottom-color: #60a5fa; }
+
+.stage-content {
+    flex: 1; padding: 32px; overflow-y: auto;
+}
 
 /* Gallery Grid */
-.gallery-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px; padding: 24px; overflow-y: auto; height: 100%;
+.grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px; padding-bottom: 100px;
 }
 .card {
-    background: var(--bg-element); border: 1px solid var(--border-light);
-    border-radius: var(--radius-md); overflow: hidden; position: relative;
-    aspect-ratio: 1; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    background: var(--bg-card); border-radius: var(--radius-lg);
+    border: 1px solid rgba(37, 99, 235, 0.5); overflow: hidden;
+    position: relative; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.9);
+    aspect-ratio: 1;
 }
-.card:hover { transform: translateY(-4px); border-color: var(--text-muted); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
-.card img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+.card:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: #93c5fd;
+    box-shadow: 0 30px 70px rgba(15, 23, 42, 1);
+}
+.card-image {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: 0.5s; cursor: zoom-in;
+}
+.card:hover .card-image { transform: scale(1.05); }
+
+/* Card Overlay Actions */
 .card-overlay {
-    position: absolute; inset: 0; background: linear-gradient(to top, rgba(2,4,16,0.9), transparent);
-    opacity: 0; transition: 0.2s; display: flex; align-items: flex-end; justify-content: flex-end; padding: 12px; gap: 8px;
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, transparent 65%);
+    opacity: 0; transition: 0.2s;
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 16px;
 }
 .card:hover .card-overlay { opacity: 1; }
+.card-meta { font-size: 12px; color: rgba(226,232,240,0.9); margin-bottom: 10px; line-height: 1.4; }
+.card-actions { display: flex; gap: 8px; align-items: center; }
 
-.icon-btn {
-    width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: white; border: 1px solid rgba(255,255,255,0.2);
+/* Upload Zone */
+.upload-dropzone {
+    width: 100%; height: 180px;
+    border: 2px dashed var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: radial-gradient(circle at top, rgba(30,64,175,0.25), rgba(15,23,42,0.8));
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
 }
-.icon-btn:hover { background: white; color: black; }
+.upload-dropzone:hover { border-color: #60a5fa; background: rgba(37,99,235,0.4); }
+.upload-dropzone.has-file { border-style: solid; border-color: #93c5fd; }
+.preview-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
 
-/* Tabs */
-.tabs { display: flex; border-bottom: 1px solid var(--border-light); background: var(--bg-panel); }
-.tab-btn {
-    flex: 1; text-align: center; padding: 12px; font-size: 13px; font-weight: 500;
-    color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent;
+/* Aspect Ratio Grid */
+.ratio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ratio-option {
+    background: var(--bg-element); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm); padding: 10px; text-align: center;
+    font-size: 11px; color: var(--text-secondary); cursor: pointer; transition: 0.2s;
 }
-.tab-btn:hover { color: white; }
-.tab-btn.active { color: white; border-bottom-color: var(--accent); }
+.ratio-option:hover { background: var(--bg-hover); color: var(--text-primary); }
+.ratio-option.active {
+    background: radial-gradient(circle at top, #3b82f6, #0f172a);
+    color: #e5e7eb; border-color: #93c5fd; font-weight: 700;
+}
 
 /* Status Toast */
-.toast {
-    position: fixed; bottom: 24px; right: 24px; background: var(--bg-panel);
-    border: 1px solid var(--border-light); border-left: 4px solid var(--accent);
-    padding: 16px; border-radius: 8px; display: flex; align-items: center; gap: 12px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6); transform: translateY(100px); transition: 0.3s; z-index: 100;
+.toast-container {
+    position: fixed; bottom: 32px; right: 32px; z-index: 100;
 }
-.toast.show { transform: translateY(0); }
+.toast {
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    border-left: 4px solid var(--accent-success);
+    padding: 16px 24px; border-radius: var(--radius-md);
+    box-shadow: 0 20px 50px rgba(15,23,42,0.95);
+    display: flex; align-items: center; gap: 16px;
+    transform: translateY(100px); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background-image: radial-gradient(circle at top left, rgba(59,130,246,0.35), transparent 55%);
+}
+.toast.active { transform: translateY(0); opacity: 1; }
 .spinner {
-    width: 18px; height: 18px; border: 2px solid #333; border-top-color: var(--accent);
-    border-radius: 50%; animation: spin 0.8s linear infinite;
+    width: 20px; height: 20px; border: 2px solid var(--border-subtle);
+    border-top-color: var(--accent-success); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* Utility */
-.hidden { display: none !important; }
-.flex-row { display: flex; gap: 12px; align-items: center; }
-.w-full { width: 100%; }
 
 </style>
 </head>
 <body>
 
-<header>
-    <div class="brand">
-        <div class="brand-mark"></div>
-        Sulandra Studio
+<div class="nav-rail">
+    <div class="brand-logo">S</div>
+    
+    <div class="nav-btn active" title="Image Lab">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
     </div>
     
-    <div class="nav-links">
-        <a href="index.html" class="nav-item">Dashboard</a>
-        <a href="image.html" class="nav-item active">Image Lab</a>
-        <a href="video.html" class="nav-item">Video Lab</a>
-        <a href="music.html" class="nav-item">Music Lab</a>
+    <div class="nav-btn" onclick="window.location.href='video.html'" title="Video Lab">
+        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
     </div>
-
-    <div style="display:flex; gap:12px; align-items:center;">
-        <div style="font-size:11px; color:var(--success);">● H200 Connected</div>
-        <div style="width:32px; height:32px; background:#1e223f; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;">JS</div>
-    </div>
-</header>
-
-<div class="workspace">
     
-    <div class="sidebar">
-        
-        <div class="tabs">
-            <div class="tab-btn active" onclick="setMode('txt2img', this)">Generate</div>
-            <div class="tab-btn" onclick="setMode('img2img', this)">Edit / Refine</div>
-            <div class="tab-btn" onclick="setMode('inpaint', this)">Inpaint</div>
-        </div>
-
-        <div class="sidebar-scroll">
-            
-            <div>
-                <div class="group-label">
-                    <span>Prompt</span>
-                    <span style="font-size:10px; cursor:pointer; color:var(--accent);" onclick="magicPrompt()">✨ Enhance</span>
-                </div>
-                <textarea id="prompt" class="text-area" placeholder="A cinematic shot of a futuristic Lagos street, wet pavement, neon lights, 8k resolution..."></textarea>
-            </div>
-
-            <div id="upload-group" class="hidden">
-                <div class="group-label">Source Image</div>
-                <input type="file" id="file-input" hidden accept="image/*" onchange="handleFile(this)">
-                
-                <div class="canvas-wrapper" id="drop-zone">
-                    <div id="upload-placeholder" style="text-align:center;">
-                        <div style="font-size:24px; color:#444; margin-bottom:8px;">📂</div>
-                        <div style="font-size:12px; color:#666;">Click to Upload</div>
-                    </div>
-                    
-                    <img id="preview-img" class="preview-img">
-                    
-                    <canvas id="mask-canvas" class="drawing-canvas"></canvas>
-                </div>
-
-                <div id="canvas-tools" class="flex-row hidden" style="margin-top:8px;">
-                    <button class="btn btn-secondary" onclick="clearCanvas()" style="font-size:11px; padding:4px 8px;">Clear Mask</button>
-                    <div style="font-size:11px; color:#666; margin-left:auto;">Draw over area to change</div>
-                </div>
-
-                <div style="margin-top:16px;">
-                    <div class="group-label"><span>Influence Strength</span><span id="strength-val">0.75</span></div>
-                    <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="updateVal('strength-val', this.value)">
-                </div>
-            </div>
-
-            <div>
-                <div class="group-label">Aspect Ratio</div>
-                <div class="ratio-grid">
-                    <div class="ratio-box active" onclick="setRatio(1024, 1024, this)">1:1</div>
-                    <div class="ratio-box" onclick="setRatio(1280, 720, this)">16:9</div>
-                    <div class="ratio-box" onclick="setRatio(720, 1280, this)">9:16</div>
-                    <div class="ratio-box" onclick="setRatio(1024, 1280, this)">4:5</div>
-                </div>
-            </div>
-
-            <div>
-                <div class="group-label"><span>Guidance Scale (CFG)</span><span id="cfg-val">3.5</span></div>
-                <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="updateVal('cfg-val', this.value)">
-            </div>
-
-            <div class="accordion" id="adv-accordion">
-                <div class="accordion-header" onclick="toggleAccordion()">
-                    <span>Advanced Settings</span>
-                    <span>▼</span>
-                </div>
-                <div class="accordion-content">
-                    <div>
-                        <div class="group-label"><span>Steps</span><span id="steps-val">25</span></div>
-                        <input type="range" id="steps" min="10" max="50" step="1" value="25" oninput="updateVal('steps-val', this.value)">
-                    </div>
-                    <div>
-                        <div class="group-label">Seed (Empty = Random)</div>
-                        <input type="number" id="seed" class="text-area" style="min-height:40px; padding:8px;" placeholder="-1">
-                    </div>
-                    <div>
-                        <div class="group-label">Sampler</div>
-                        <select id="sampler" class="text-area" style="min-height:40px; padding:8px;">
-                            <option value="euler">Euler</option>
-                            <option value="euler_ancestral">Euler A</option>
-                            <option value="dpmpp_2m">DPM++ 2M</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div style="padding:20px; border-top:1px solid var(--border-light); background:var(--bg-panel);">
-            <button id="gen-btn" class="btn btn-primary" onclick="generate()">Generate Image</button>
-        </div>
+    <div class="nav-btn" onclick="window.location.href='music.html'" title="Music Lab">
+        <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
     </div>
 
-    <div class="stage">
-        <div class="gallery-grid" id="gallery-grid">
-            </div>
-
-        <div id="empty-state" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; opacity:0.3;">
-            <div style="font-size:48px; margin-bottom:16px;">🖼️</div>
-            <div style="font-size:16px; font-weight:600;">Your creations will appear here.</div>
-        </div>
+    <div style="margin-top:auto;"></div>
+    
+    <div class="nav-btn" title="Settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </div>
-
 </div>
 
-<div id="toast" class="toast">
-    <div class="spinner"></div>
-    <div id="toast-text">Processing...</div>
+<div class="sidebar">
+    <div class="sidebar-header">
+        <span class="sidebar-title">SULANDRA CREATIVE STUDIO IMAGE LAB</span>
+        <div style="font-size:11px; font-weight:600; color:var(--accent-success);">● H200 ONLINE</div>
+    </div>
+
+    <div class="sidebar-scroll">
+        
+        <div class="mode-switch">
+            <div class="mode-option active" onclick="setMode('txt2img', this)">Text to Image</div>
+            <div class="mode-option" onclick="setMode('img2img', this)">Image to Image</div>
+        </div>
+
+        <div class="input-group">
+            <div class="label">
+                <span>Prompt</span>
+                <span style="font-size:10px; opacity:0.5;">Required</span>
+            </div>
+            <textarea id="prompt-input" class="text-area" placeholder="Describe your imagination... A futuristic cyberpunk Lagos street, neon lights, wet pavement, 8k, afrobeat album cover..."></textarea>
+        </div>
+
+        <div class="input-group">
+            <div class="label">
+                <span>Negative Prompt</span>
+                <span style="font-size:10px; opacity:0.5;">Optional</span>
+            </div>
+            <textarea id="negative-input" class="text-area" style="min-height:70px;" placeholder="Things to avoid: low quality, blurry, deformed, watermark, text, extra limbs..."></textarea>
+        </div>
+
+        <div class="input-group" id="upload-group" style="display:none;">
+            <div class="label">Reference Image</div>
+            <input type="file" id="file-input" hidden accept="image/*" onchange="handleFile(this)">
+            <div class="upload-dropzone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                <img id="preview-img" class="preview-layer" style="display:none;">
+                <svg style="margin-bottom:12px; color:var(--text-secondary);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span style="font-size:12px; font-weight:600; color:var(--text-secondary);">Click to Upload Reference</span>
+            </div>
+            
+            <div class="label" style="margin-top:12px;">
+                <span>Influence Strength</span>
+                <span id="strength-val">0.75</span>
+            </div>
+            <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
+        </div>
+
+        <div class="input-group">
+            <div class="label">Aspect Ratio</div>
+            <div class="ratio-grid">
+                <div class="ratio-option active" onclick="setRatio(1024, 1024, this)">1:1</div>
+                <div class="ratio-option" onclick="setRatio(1280, 720, this)">16:9</div>
+                <div class="ratio-option" onclick="setRatio(720, 1280, this)">9:16</div>
+                <div class="ratio-option" onclick="setRatio(1024, 1280, this)">4:5</div>
+                <div class="ratio-option" onclick="setRatio(300, 300, this)">Album 300×300</div>
+                <div class="ratio-option" onclick="setRatio(1280, 720, this)">YouTube 1280×720</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="label">
+                <span>Guidance Scale</span>
+                <span id="guidance-val">3.5</span>
+            </div>
+            <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
+        </div>
+
+        <button id="gen-btn" class="btn btn-accent" style="width:100%; height:48px; font-size:14px; text-transform:uppercase; letter-spacing:1px;" onclick="generate()">
+            <svg style="width:18px; margin-right:4px;"><path d="M12 2v20M2 12h20"/></svg>
+            GENERATE
+        </button>
+
+    </div>
+</div>
+
+<div class="stage">
+    <div class="stage-header">
+        <div class="gallery-tabs">
+            <div class="gallery-tab active" onclick="switchTab('history', this)">History</div>
+            <div class="gallery-tab" onclick="switchTab('community', this)">Community Feed</div>
+            <div class="gallery-tab" onclick="switchTab('favorites', this)">Favorites</div>
+        </div>
+        
+        <div style="display:flex; gap:12px;">
+            <button class="btn btn-icon" onclick="reloadHistory()" title="Reload History">
+                <svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
+            <button class="btn btn-icon"><svg><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        </div>
+    </div>
+
+    <div class="stage-content" id="gallery-container">
+        
+        <div class="grid" id="gallery-grid"></div>
+
+        <div id="empty-state" style="height:60%; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0.36;">
+            <svg style="width:64px; height:64px; margin-bottom:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div style="font-size:16px; font-weight:600;">Start creating something amazing.</div>
+        </div>
+
+    </div>
+</div>
+
+<div class="toast-container">
+    <div id="toast" class="toast">
+        <div class="spinner"></div>
+        <div style="display:flex; flex-direction:column;">
+            <span style="font-weight:700; font-size:13px;">Processing...</span>
+            <span style="font-size:12px; opacity:0.8;" id="toast-msg">Sending request to H200 Engine</span>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -387,141 +488,92 @@ input[type=range]::-webkit-slider-thumb {
     // STATE
     let currentMode = 'txt2img';
     let imageBase64 = null;
-    let maskBase64 = null;
     let currentWidth = 1024;
     let currentHeight = 1024;
-    let isDrawing = false;
+    let toastTimeout;
+    let historyItems = [];
+    let currentTab = 'history';
 
-    // --- INIT ---
-    window.onload = () => {
-        loadHistory();
-        setupCanvas();
-    };
-
-    // --- UI LOGIC ---
+    // 1. UI SWITCHING
     function setMode(mode, el) {
         currentMode = mode;
-        document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-        el.classList.add('active');
+        document.querySelectorAll('.mode-option').forEach(e => e.classList.remove('active'));
+        if (el) el.classList.add('active');
 
         const uploadGroup = document.getElementById('upload-group');
-        const canvasTools = document.getElementById('canvas-tools');
-        const maskCanvas = document.getElementById('mask-canvas');
-
-        if (mode === 'txt2img') {
-            uploadGroup.classList.add('hidden');
-        } else {
-            uploadGroup.classList.remove('hidden');
-        }
-
-        // Inpaint specific UI
-        if (mode === 'inpaint') {
-            canvasTools.classList.remove('hidden');
-            maskCanvas.style.display = 'block';
-        } else {
-            canvasTools.classList.add('hidden');
-            maskCanvas.style.display = 'none';
-        }
+        uploadGroup.style.display = (mode === 'img2img') ? 'flex' : 'none';
     }
 
     function setRatio(w, h, el) {
         currentWidth = w;
         currentHeight = h;
-        document.querySelectorAll('.ratio-box').forEach(e => e.classList.remove('active'));
+        document.querySelectorAll('.ratio-option').forEach(e => e.classList.remove('active'));
         el.classList.add('active');
     }
 
-    function toggleAccordion() {
-        document.getElementById('adv-accordion').classList.toggle('open');
-    }
-
-    function updateVal(id, val) {
-        document.getElementById(id).innerText = val;
-    }
-
-    function magicPrompt() {
-        const p = document.getElementById('prompt');
-        const extras = ", highly detailed, 8k resolution, cinematic lighting, photorealistic, trending on artstation, sharp focus";
-        if(p.value && !p.value.includes("detailed")) p.value += extras;
-    }
-
-    // --- FILE & CANVAS LOGIC ---
+    // 2. FILE HANDLING
     function handleFile(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                imageBase64 = e.target.result;
-                
-                // Show UI
-                document.getElementById('upload-placeholder').classList.add('hidden');
+                imageBase64 = e.target.result; // data URL
                 const img = document.getElementById('preview-img');
+                const zone = document.getElementById('drop-zone');
                 img.src = imageBase64;
                 img.style.display = 'block';
-                document.getElementById('drop-zone').classList.add('active');
+                zone.classList.add('has-file');
                 
-                // Clicking wrapper triggers file input ONLY if no image loaded
-                document.getElementById('drop-zone').onclick = null; 
+                if (currentMode !== 'img2img') {
+                    setMode('img2img', document.querySelectorAll('.mode-option')[1]);
+                }
             };
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    function setupCanvas() {
-        const canvas = document.getElementById('mask-canvas');
-        const ctx = canvas.getContext('2d');
+    // 3. TOAST
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = msg;
+        t.classList.add('active');
         
-        // Resize canvas to match container (rough approx for UI)
-        canvas.width = 340;
-        canvas.height = 240;
-
-        // Drawing logic
-        canvas.addEventListener('mousedown', () => isDrawing = true);
-        canvas.addEventListener('mouseup', () => isDrawing = false);
-        canvas.addEventListener('mousemove', draw);
-
-        function draw(e) {
-            if (!isDrawing) return;
-            const rect = canvas.getBoundingClientRect();
-            ctx.lineWidth = 20;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; // Visual mask
-            
-            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        if (msg.includes("Error") || msg.includes("Failed")) {
+            t.style.borderLeftColor = "#ef4444";
+        } else {
+            t.style.borderLeftColor = "#10b981";
         }
+
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            t.classList.remove('active');
+        }, 4000);
     }
 
-    function clearCanvas() {
-        const canvas = document.getElementById('mask-canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    // --- API & GENERATION ---
+    // 4. GENERATE
     async function generate() {
-        const prompt = document.getElementById('prompt').value;
+        const prompt = document.getElementById('prompt-input').value.trim();
+        const negative = document.getElementById('negative-input').value.trim();
         const btn = document.getElementById('gen-btn');
 
-        if (!prompt) return showToast("⚠️ Please enter a prompt", "error");
+        if (!prompt) {
+            showToast("⚠️ Please enter a prompt first!");
+            return;
+        }
 
-        // UI Loading
-        btn.innerHTML = `<div class="spinner"></div> PROCESSING`;
+        btn.innerHTML = `<div class="spinner" style="width:16px; height:16px; border-width:2px; border-top-color:white;"></div> GENERATING...`;
         btn.disabled = true;
-        showToast("🚀 Sending to H200 Engine...", "info");
+        showToast("🚀 Sending job to H200 GPU...");
 
-        // Payload
         const payload = {
             prompt: prompt,
-            steps: parseInt(document.getElementById('steps').value),
-            guidance: parseFloat(document.getElementById('guidance').value),
+            negative_prompt: negative,
             width: currentWidth,
-            height: currentHeight
+            height: currentHeight,
+            steps: 25,
+            guidance_scale: parseFloat(document.getElementById('guidance').value),
         };
 
-        // Attach Image if needed
-        if (currentMode !== 'txt2img' && imageBase64) {
+        if (currentMode === 'img2img' && imageBase64) {
             payload.image_base64 = imageBase64;
             payload.strength = parseFloat(document.getElementById('strength').value);
         }
@@ -535,70 +587,216 @@ input[type=range]::-webkit-slider-thumb {
 
             const data = await res.json();
 
-            if (data.status === "success") {
-                showToast("✅ Image Generated!", "success");
-                addCard(data.image_url, prompt);
-                saveToHistory(data.image_url, prompt);
+            if (data.status === "ok" && data.image_base64) {
+                const imgUrl = `data:image/png;base64,${data.image_base64}`;
+                showToast("✅ Image Generated Successfully!");
+
+                // Add to in-memory history & gallery immediately
+                const newItem = {
+                    id: data.id,
+                    prompt: prompt,
+                    negative_prompt: negative,
+                    favorite: false,
+                    isDataUrl: true,
+                    url: imgUrl
+                };
+                historyItems.unshift(newItem);
+                renderHistory(currentTab);
             } else {
-                showToast("❌ Error: " + data.message, "error");
+                console.error(data);
+                showToast("❌ Error from API");
             }
 
         } catch (e) {
             console.error(e);
-            showToast("❌ Connection Failed. Check API.", "error");
+            showToast("❌ Connection Failed. Check API / tunnel.");
         } finally {
-            btn.innerHTML = "GENERATE IMAGE";
+            btn.innerHTML = `<svg style="width:18px; margin-right:4px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE`;
             btn.disabled = false;
         }
     }
 
-    // --- GALLERY & HISTORY ---
-    function addCard(url, prompt) {
-        document.getElementById('empty-state').classList.add('hidden');
-        const grid = document.getElementById('gallery-grid');
-        const fullUrl = `${API_URL}${url}`;
+    // 5. HISTORY & GALLERY
 
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <img src="${fullUrl}" onclick="window.open('${fullUrl}')">
-            <div class="card-overlay">
-                <div class="icon-btn" onclick="window.open('${fullUrl}')">⬇</div>
-            </div>
-        `;
-        grid.prepend(card);
-    }
-
-    function saveToHistory(url, prompt) {
-        const history = JSON.parse(localStorage.getItem('sulandra_history') || '[]');
-        history.push({ url, prompt, date: Date.now() });
-        localStorage.setItem('sulandra_history', JSON.stringify(history));
-    }
-
-    function loadHistory() {
-        const history = JSON.parse(localStorage.getItem('sulandra_history') || '[]');
-        if (history.length > 0) {
-            history.forEach(item => addCard(item.url, item.prompt));
+    async function fetchHistoryFromServer() {
+        try {
+            const res = await fetch(`${API_URL}/api/image/history?limit=80`);
+            const data = await res.json();
+            if (data.status === "ok") {
+                // Map server items into local structure
+                historyItems = data.history.map(item => ({
+                    id: item.id,
+                    prompt: item.prompt,
+                    negative_prompt: item.negative_prompt || "",
+                    favorite: item.favorite || false,
+                    isDataUrl: false,
+                    url: `${API_URL}/api/image/file/${item.id}`
+                }));
+                renderHistory('history');
+            }
+        } catch (e) {
+            console.error("Failed to load history:", e);
         }
     }
 
-    // --- TOASTS ---
-    let toastTimer;
-    function showToast(msg, type) {
-        const t = document.getElementById('toast');
-        document.getElementById('toast-text').innerText = msg;
-        t.classList.add('show');
-        
-        const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#8b5cf6';
-        t.style.borderLeftColor = color;
+    function renderHistory(mode) {
+        currentTab = mode;
+        const grid = document.getElementById('gallery-grid');
+        const empty = document.getElementById('empty-state');
+        grid.innerHTML = "";
 
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
+        let itemsToShow = historyItems;
+        if (mode === 'favorites') {
+            itemsToShow = historyItems.filter(i => i.favorite);
+        }
+
+        if (!itemsToShow.length) {
+            if (empty) empty.style.display = 'flex';
+            return;
+        } else {
+            if (empty) empty.style.display = 'none';
+        }
+
+        itemsToShow.forEach(item => addToGallery(item));
     }
 
-    // Init
-    document.getElementById('drop-zone').onclick = () => document.getElementById('file-input').click();
+    function addToGallery(item) {
+        const grid = document.getElementById('gallery-grid');
 
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.dataset.id = item.id;
+
+        const imgUrl = item.url;
+
+        div.innerHTML = `
+            <img src="${imgUrl}" class="card-image">
+            <div class="card-overlay">
+                <div class="card-meta">${item.prompt}</div>
+                <div class="card-actions">
+                    <button class="star-btn ${item.favorite ? 'star-active' : ''}" onclick="toggleFavorite(${item.id}, this, event)" title="Favorite">
+                        ★
+                    </button>
+                    <button class="btn btn-primary" onclick="window.open('${imgUrl}', '_blank'); event.stopPropagation();">Download</button>
+                    <button class="btn btn-ghost" onclick="useAsReference(${item.id}, event)">Use as reference</button>
+                </div>
+            </div>
+        `;
+
+        div.style.opacity = '0';
+        div.style.transform = 'translateY(20px)';
+        grid.appendChild(div);
+
+        setTimeout(() => {
+            div.style.opacity = '1';
+            div.style.transform = 'translateY(0)';
+        }, 40);
+    }
+
+    async function reloadHistory() {
+        document.getElementById('gallery-grid').innerHTML = '';
+        const empty = document.getElementById('empty-state');
+        if (empty) empty.style.display = 'flex';
+        await fetchHistoryFromServer();
+        showToast("⟳ Reloaded server history.");
+    }
+
+    // 6. FAVORITES
+
+    async function toggleFavorite(id, btn, evt) {
+        evt.stopPropagation();
+        const item = historyItems.find(i => i.id === id);
+        if (!item) return;
+
+        const newVal = !item.favorite;
+        item.favorite = newVal;
+
+        // optimistic UI
+        if (newVal) {
+            btn.classList.add('star-active');
+        } else {
+            btn.classList.remove('star-active');
+        }
+
+        try {
+            await fetch(`${API_URL}/api/image/favorite`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: id, favorite: newVal })
+            });
+        } catch (e) {
+            console.error("Favorite API failed:", e);
+        }
+
+        if (currentTab === 'favorites') {
+            renderHistory('favorites');
+        }
+    }
+
+    // 7. USE AS REFERENCE (Image → Image)
+
+    async function useAsReference(id, evt) {
+        evt.stopPropagation();
+        const item = historyItems.find(i => i.id === id);
+        if (!item) return;
+
+        showToast("🎨 Loading image as reference...");
+
+        try {
+            // If we already have data URL, use it directly
+            if (item.isDataUrl) {
+                imageBase64 = item.url;
+                applyReferencePreview(item.url);
+            } else {
+                // Fetch binary and convert to data URL
+                const res = await fetch(item.url);
+                const blob = await res.blob();
+
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    imageBase64 = reader.result;
+                    applyReferencePreview(imageBase64);
+                };
+                reader.readAsDataURL(blob);
+            }
+        } catch (e) {
+            console.error("Use as reference failed:", e);
+            showToast("❌ Failed to load reference image.");
+        }
+    }
+
+    function applyReferencePreview(dataUrl) {
+        const img = document.getElementById('preview-img');
+        const zone = document.getElementById('drop-zone');
+        img.src = dataUrl;
+        img.style.display = 'block';
+        zone.classList.add('has-file');
+        setMode('img2img', document.querySelectorAll('.mode-option')[1]);
+        showToast("✅ Reference image loaded. Adjust prompt & generate.");
+    }
+
+    // 8. TABS
+
+    function switchTab(name, el) {
+        document.querySelectorAll('.gallery-tab').forEach(e => e.classList.remove('active'));
+        if (el) el.classList.add('active');
+
+        if (name === 'history') {
+            renderHistory('history');
+        } else if (name === 'favorites') {
+            renderHistory('favorites');
+        } else if (name === 'community') {
+            // Placeholder: same as history for now
+            renderHistory('history');
+            showToast("🌍 Community feed coming soon.");
+        }
+    }
+
+    // INIT
+    window.addEventListener('DOMContentLoaded', () => {
+        fetchHistoryFromServer();
+    });
 </script>
+
 </body>
 </html>
