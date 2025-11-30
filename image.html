@@ -3,800 +3,1189 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sulandra AI Studio | Professional Image Lab</title>
+<title>Sulandra Creative Studio · Image & Video Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
 /* -------------------------------------------------------------------------- */
-/* DESIGN SYSTEM                              */
+/* DESIGN SYSTEM – DARK ROYAL BLUE THEME                                      */
 /* -------------------------------------------------------------------------- */
 :root {
-    /* Dark Royal Blue Theme */
-    --bg-app: #02041a;
-    --bg-panel: #050a24;
-    --bg-card: #07102d;
-    --bg-element: #0a1433;
-    --bg-hover: #10204a;
-    
-    /* Brand Accents - Sulandra Neon */
-    --accent-primary: #8b5cf6;       /* Violet */
-    --accent-secondary: #ec4899;     /* Pink */
-    --accent-tertiary: #3b82f6;      /* Blue */
-    --accent-success: #10b981;       /* Emerald */
+    --bg-app: #02061b;           /* deep royal blue base */
+    --bg-panel: #050b25;
+    --bg-card: #071133;
+    --bg-element: #0a1540;
+    --bg-hover: #111c4f;
+
+    --accent-primary: #8b5cf6;   /* violet */
+    --accent-secondary: #3b82f6; /* royal blue */
+    --accent-tertiary: #ec4899;  /* pink */
+    --accent-success: #22c55e;
+    --accent-warning: #facc15;
     --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
-    
-    /* Text Colors */
+
     --text-primary: #ffffff;
-    --text-secondary: #a1a1ff;
-    --text-tertiary: #7c7cff;
-    --text-disabled: #3f3f66;
+    --text-secondary: #c7d2fe;
+    --text-tertiary: #818cf8;
+    --text-disabled: #4b5563;
 
-    /* Borders & Shadows */
-    --border-subtle: #1f2a5c;
-    --border-focus: #3b4a9e;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
-    --shadow-md: 0 4px 6px -1px rgba(3, 7, 35, 0.8), 0 2px 4px -1px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.4);
+    --border-subtle: #1d2a63;
+    --border-focus: #4f46e5;
+    --shadow-sm: 0 1px 2px 0 rgba(15,23,42,0.5);
+    --shadow-md: 0 10px 20px rgba(15,23,42,0.75);
+    --shadow-glow: 0 0 25px rgba(59,130,246,0.4);
 
-    /* Spacing & Layout */
     --header-height: 64px;
-    --sidebar-width: 320px;
-    --nav-rail-width: 72px;
+    --sidebar-width: 360px;
+    --nav-rail-width: 76px;
     --radius-sm: 6px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-full: 9999px;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-font-smoothing: antialiased; }
-
-body {
-    font-family: 'Inter', sans-serif;
-    background: radial-gradient(circle at top, #0b1120, #02041a);
-    color: var(--text-primary);
-    height: 100vh;
-    display: flex;
-    overflow: hidden;
-    font-size: 14px;
-    line-height: 1.5;
+*{box-sizing:border-box;margin:0;padding:0;outline:none;-webkit-font-smoothing:antialiased;}
+body{
+    font-family:'Inter',sans-serif;
+    background:radial-gradient(circle at top,#0b1120 0%,#020617 40%,#02021a 100%);
+    color:var(--text-primary);
+    height:100vh;
+    display:flex;
+    overflow:hidden;
+    font-size:14px;
+    line-height:1.5;
 }
-
-/* Scrollbar Customization */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #334155; }
-
-/* -------------------------------------------------------------------------- */
-/* COMPONENT LIB                              */
-/* -------------------------------------------------------------------------- */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#111827;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#1f2937}
 
 /* Buttons */
-.btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 8px 16px; border-radius: var(--radius-md); font-weight: 600;
-    font-size: 13px; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent;
-    user-select: none;
+.btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:8px 16px;border-radius:var(--radius-md);
+    border:1px solid transparent;
+    font-size:13px;font-weight:600;cursor:pointer;
+    transition:all .18s ease-out;user-select:none;
 }
-.btn-primary {
-    background: var(--text-primary); color: #02041a;
+.btn-primary{
+    background:#f9fafb;color:#020617;
+    box-shadow:0 6px 16px rgba(15,23,42,.45);
 }
-.btn-primary:hover {
-    background: #e5e7eb; transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(148, 163, 255, 0.3);
+.btn-primary:hover{background:#e5e7eb;transform:translateY(-1px)}
+.btn-accent{
+    background:var(--accent-gradient);color:#fff;border:none;
+    box-shadow:var(--shadow-glow);
 }
-.btn-accent {
-    background: var(--accent-gradient); color: white; border: none;
-    box-shadow: var(--shadow-glow);
+.btn-accent:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-ghost{
+    background:transparent;color:var(--text-secondary);border-color:transparent;
 }
-.btn-accent:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.btn-ghost {
-    background: rgba(15,23,42,0.6); color: var(--text-secondary);
-    border: 1px solid rgba(148,163,255,0.25);
+.btn-ghost:hover{background:rgba(15,23,42,.7);color:var(--text-primary)}
+.btn-icon{
+    width:36px;height:36px;padding:0;border-radius:var(--radius-md);
+    background:var(--bg-element);border:1px solid var(--border-subtle);
+    color:var(--text-secondary);
 }
-.btn-ghost:hover {
-    background: rgba(30,64,175,0.7); color: var(--text-primary);
-    border-color: rgba(191,219,254,0.6);
-}
-.btn-icon {
-    width: 36px; height: 36px; padding: 0; border-radius: var(--radius-sm);
-    background: var(--bg-element); color: var(--text-secondary);
-    border: 1px solid var(--border-subtle);
-}
-.btn-icon:hover {
-    background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-focus);
+.btn-icon:hover{
+    background:var(--bg-hover);border-color:var(--border-focus);color:#fff;
 }
 
-/* Star button */
-.star-btn {
-    border-radius: 999px;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(148,163,255,0.4);
-    background: rgba(15,23,42,0.8);
-    color: #e5e7eb;
-    cursor: pointer;
-    transition: 0.2s;
+/* Inputs / labels */
+.input-group{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.label{
+    font-size:11px;font-weight:600;color:var(--text-secondary);
+    text-transform:uppercase;letter-spacing:.06em;
+    display:flex;justify-content:space-between;align-items:center;
 }
-.star-btn.star-active {
-    background: radial-gradient(circle at top, #facc15, #b45309);
-    color: #1f2933;
-    border-color: #facc15;
-    box-shadow: 0 0 16px rgba(250, 204, 21, 0.6);
+.text-area{
+    width:100%;min-height:110px;
+    background:var(--bg-element);border:1px solid var(--border-subtle);
+    border-radius:var(--radius-md);padding:10px 12px;
+    color:var(--text-primary);font-size:14px;resize:vertical;
 }
-
-/* Inputs */
-.input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-.label {
-    font-size: 12px; font-weight: 600; color: var(--text-secondary);
-    text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between;
-}
-.text-area {
-    width: 100%; min-height: 120px;
-    background: var(--bg-element); border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md); padding: 12px;
-    color: var(--text-primary); font-family: inherit; font-size: 14px;
-    resize: vertical; transition: 0.2s;
-}
-.text-area:focus {
-    border-color: var(--accent-primary); background: var(--bg-card);
-    box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.5);
+.text-area:focus{
+    border-color:var(--border-focus);
+    box-shadow:0 0 0 1px rgba(79,70,229,.7);
+    background:#020617;
 }
 
 /* Sliders */
-input[type=range] {
-    -webkit-appearance: none; width: 100%; background: transparent; height: 24px; cursor: pointer;
+input[type=range]{
+    -webkit-appearance:none;width:100%;background:transparent;height:24px;cursor:pointer;
 }
-input[type=range]::-webkit-slider-runnable-track {
-    width: 100%; height: 4px; background: var(--bg-element); border-radius: 2px;
+input[type=range]::-webkit-slider-runnable-track{
+    height:4px;border-radius:2px;
+    background:linear-gradient(90deg,#1e293b,#4f46e5);
 }
-input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
-    background: #e5e7eb; margin-top: -6px; box-shadow: 0 2px 4px rgba(15,23,42,0.9);
-    transition: 0.2s;
+input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:16px;height:16px;border-radius:50%;
+    background:#f9fafb;margin-top:-6px;
+    box-shadow:0 0 0 3px rgba(59,130,246,.4);
 }
-input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.2); }
 
-/* SVG Icons */
-svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* Icons */
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* -------------------------------------------------------------------------- */
-/* LAYOUT ENGINE                              */
+/* LAYOUT                                                                      */
 /* -------------------------------------------------------------------------- */
-
-/* 1. Navigation Rail (Far Left) */
-.nav-rail {
-    width: var(--nav-rail-width);
-    background: linear-gradient(to bottom, #020617, #02041a);
-    border-right: 1px solid rgba(37, 99, 235, 0.4);
-    display: flex; flex-direction: column; align-items: center;
-    padding: 20px 0; gap: 24px; flex-shrink: 0; z-index: 50;
+.nav-rail{
+    width:var(--nav-rail-width);
+    background:radial-gradient(circle at top,#1e1b4b,#020617 70%);
+    border-right:1px solid var(--border-subtle);
+    display:flex;flex-direction:column;align-items:center;
+    padding:18px 0;gap:22px;flex-shrink:0;z-index:40;
 }
-.brand-logo {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: conic-gradient(from 130deg, #3b82f6, #8b5cf6, #ec4899, #22c55e, #3b82f6);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 20px; color: white;
+.brand-logo{
+    width:44px;height:44px;border-radius:16px;
+    background:var(--accent-gradient);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;color:#fff;font-size:18px;
+    box-shadow:var(--shadow-glow);
 }
-.nav-btn {
-    width: 44px; height: 44px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-secondary); transition: 0.2s; cursor: pointer;
-    position: relative;
+.nav-btn{
+    width:46px;height:46px;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--text-secondary);
+    position:relative;transition:.18s;
 }
-.nav-btn:hover { background: rgba(30, 64, 175, 0.7); color: var(--text-primary); }
-.nav-btn.active { background: radial-gradient(circle at top, #1d4ed8, #020617); color: #e0f2fe; }
-.nav-btn.active::after {
-    content: ''; position: absolute; left: -14px; top: 10px; bottom: 10px;
-    width: 3px; background: #60a5fa; border-radius: 0 4px 4px 0;
+.nav-btn:hover{background:rgba(15,23,42,.85);color:#fff}
+.nav-btn.active{
+    background:linear-gradient(145deg,#111827,#1d2364);
+    color:#fff;
+    box-shadow:0 12px 24px rgba(15,23,42,.8);
 }
-
-/* 2. Control Sidebar (Middle) */
-.sidebar {
-    width: var(--sidebar-width);
-    background: radial-gradient(circle at top, #0b1120, #02041a);
-    border-right: 1px solid rgba(37, 99, 235, 0.3);
-    display: flex; flex-direction: column;
-    z-index: 40; flex-shrink: 0;
-    box-shadow: 12px 0 40px rgba(15, 23, 42, 0.9);
-}
-.sidebar-header {
-    height: var(--header-height); padding: 0 20px;
-    border-bottom: 1px solid var(--border-subtle);
-    display: flex; align-items: center; justify-content: space-between;
-}
-.sidebar-title { font-weight: 800; font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; color: #e5e7ff; }
-.sidebar-scroll {
-    flex: 1; overflow-y: auto; padding: 20px;
-    display: flex; flex-direction: column; gap: 24px;
+.nav-btn.active::after{
+    content:'';position:absolute;left:-14px;top:10px;bottom:10px;
+    width:3px;border-radius:0 6px 6px 0;
+    background:linear-gradient(#38bdf8,#a855f7);
 }
 
-/* Tabs inside Sidebar */
-.mode-switch {
-    background: rgba(15,23,42,0.8); padding: 4px; border-radius: var(--radius-md);
-    display: flex; gap: 2px; border: 1px solid rgba(37, 99, 235, 0.5);
+/* Sidebar controls */
+.sidebar{
+    width:var(--sidebar-width);
+    background:radial-gradient(circle at top left,#020617 0%,#02021a 40%,#020617 100%);
+    border-right:1px solid var(--border-subtle);
+    display:flex;flex-direction:column;flex-shrink:0;z-index:35;
 }
-.mode-option {
-    flex: 1; text-align: center; padding: 8px; font-size: 12px; font-weight: 500;
-    color: var(--text-secondary); cursor: pointer; border-radius: var(--radius-sm);
-    transition: 0.2s;
+.sidebar-header{
+    height:var(--header-height);
+    padding:0 22px;
+    border-bottom:1px solid rgba(30,64,175,.7);
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(90deg,#020617,#02021a);
 }
-.mode-option:hover { color: var(--text-primary); background: rgba(30,64,175,0.5); }
-.mode-option.active {
-    background: radial-gradient(circle at top, #2563eb, #1e293b);
-    color: var(--text-primary); box-shadow: var(--shadow-sm);
-    font-weight: 600;
+.sidebar-title{
+    font-weight:800;font-size:15px;letter-spacing:.14em;text-transform:uppercase;
 }
-
-/* 3. Main Stage (Right) */
-.stage {
-    flex: 1; display: flex; flex-direction: column;
-    background: radial-gradient(circle at top, #020617, #02041a);
-    position: relative;
-    overflow: hidden;
+.sidebar-status{
+    font-size:11px;font-weight:600;color:#bbf7d0;display:flex;align-items:center;gap:6px;
 }
-.stage-header {
-    height: var(--header-height);
-    border-bottom: 1px solid rgba(37, 99, 235, 0.35);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px;
-    background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(30,64,175,0.7));
-    backdrop-filter: blur(24px);
-    z-index: 30;
+.sidebar-status span:first-child{
+    width:7px;height:7px;border-radius:999px;background:#22c55e;
+    box-shadow:0 0 8px rgba(34,197,94,.9);
 }
-.gallery-tabs { display: flex; gap: 24px; height: 100%; }
-.gallery-tab {
-    height: 100%; display: flex; align-items: center; gap: 8px;
-    font-size: 14px; font-weight: 500; color: var(--text-secondary);
-    cursor: pointer; border-bottom: 2px solid transparent; transition: 0.2s;
-}
-.gallery-tab:hover { color: var(--text-primary); }
-.gallery-tab.active { color: #bfdbfe; border-bottom-color: #60a5fa; }
-
-.stage-content {
-    flex: 1; padding: 32px; overflow-y: auto;
+.sidebar-scroll{
+    flex:1;overflow-y:auto;padding:22px;
 }
 
-/* Gallery Grid */
-.grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px; padding-bottom: 100px;
+/* Mode switch (Image / Video) */
+.lab-mode-switch{
+    display:flex;gap:4px;
+    background:rgba(15,23,42,.85);
+    border-radius:var(--radius-lg);
+    border:1px solid var(--border-subtle);
+    padding:4px;
+    margin-bottom:16px;
 }
-.card {
-    background: var(--bg-card); border-radius: var(--radius-lg);
-    border: 1px solid rgba(37, 99, 235, 0.5); overflow: hidden;
-    position: relative; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.9);
-    aspect-ratio: 1;
+.lab-mode{
+    flex:1;text-align:center;padding:7px 0;
+    border-radius:var(--radius-md);
+    font-size:12px;font-weight:600;
+    color:var(--text-secondary);cursor:pointer;
 }
-.card:hover {
-    transform: translateY(-4px) scale(1.01);
-    border-color: #93c5fd;
-    box-shadow: 0 30px 70px rgba(15, 23, 42, 1);
-}
-.card-image {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: 0.5s; cursor: zoom-in;
-}
-.card:hover .card-image { transform: scale(1.05); }
-
-/* Card Overlay Actions */
-.card-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, transparent 65%);
-    opacity: 0; transition: 0.2s;
-    display: flex; flex-direction: column; justify-content: flex-end; padding: 16px;
-}
-.card:hover .card-overlay { opacity: 1; }
-.card-meta { font-size: 12px; color: rgba(226,232,240,0.9); margin-bottom: 10px; line-height: 1.4; }
-.card-actions { display: flex; gap: 8px; align-items: center; }
-
-/* Upload Zone */
-.upload-dropzone {
-    width: 100%; height: 180px;
-    border: 2px dashed var(--border-subtle);
-    border-radius: var(--radius-md);
-    background: radial-gradient(circle at top, rgba(30,64,175,0.25), rgba(15,23,42,0.8));
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
-}
-.upload-dropzone:hover { border-color: #60a5fa; background: rgba(37,99,235,0.4); }
-.upload-dropzone.has-file { border-style: solid; border-color: #93c5fd; }
-.preview-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
-
-/* Aspect Ratio Grid */
-.ratio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.ratio-option {
-    background: var(--bg-element); border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm); padding: 10px; text-align: center;
-    font-size: 11px; color: var(--text-secondary); cursor: pointer; transition: 0.2s;
-}
-.ratio-option:hover { background: var(--bg-hover); color: var(--text-primary); }
-.ratio-option.active {
-    background: radial-gradient(circle at top, #3b82f6, #0f172a);
-    color: #e5e7eb; border-color: #93c5fd; font-weight: 700;
+.lab-mode.active{
+    background:radial-gradient(circle at top,#1d4ed8,#4c1d95);
+    color:#fff;box-shadow:var(--shadow-sm);
 }
 
-/* Status Toast */
-.toast-container {
-    position: fixed; bottom: 32px; right: 32px; z-index: 100;
+/* Sub-mode switch (txt2img / img2img or text2video / img2video / extend) */
+.mode-switch{
+    background:var(--bg-element);
+    border-radius:var(--radius-md);
+    border:1px solid var(--border-subtle);
+    display:flex;gap:2px;padding:4px;margin-bottom:18px;
 }
-.toast {
-    background: var(--bg-card); border: 1px solid var(--border-subtle);
-    border-left: 4px solid var(--accent-success);
-    padding: 16px 24px; border-radius: var(--radius-md);
-    box-shadow: 0 20px 50px rgba(15,23,42,0.95);
-    display: flex; align-items: center; gap: 16px;
-    transform: translateY(100px); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    background-image: radial-gradient(circle at top left, rgba(59,130,246,0.35), transparent 55%);
+.mode-option{
+    flex:1;text-align:center;padding:7px 4px;
+    border-radius:var(--radius-md);
+    font-size:11px;font-weight:600;
+    color:var(--text-secondary);cursor:pointer;
 }
-.toast.active { transform: translateY(0); opacity: 1; }
-.spinner {
-    width: 20px; height: 20px; border: 2px solid var(--border-subtle);
-    border-top-color: var(--accent-success); border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+.mode-option.active{
+    background:#020617;color:#fff;
+    box-shadow:0 0 0 1px rgba(129,140,248,.8);
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
+/* Aspect ratios / chips */
+.ratio-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.ratio-option{
+    padding:8px 6px;border-radius:var(--radius-md);
+    background:var(--bg-element);border:1px solid var(--border-subtle);
+    text-align:center;font-size:11px;color:var(--text-secondary);
+    cursor:pointer;transition:.15s;
+}
+.ratio-option span{display:block;font-size:10px;opacity:.7}
+.ratio-option.active{
+    background:radial-gradient(circle at top,#1d4ed8,#6366f1);
+    color:#e5e7eb;border-color:#fff;font-weight:700;
+}
+
+/* Upload dropzones */
+.upload-dropzone{
+    width:100%;height:180px;
+    border-radius:var(--radius-lg);
+    border:2px dashed rgba(148,163,184,.7);
+    background:radial-gradient(circle at top,#020617,#02021a);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    position:relative;cursor:pointer;overflow:hidden;
+    transition:.18s;
+}
+.upload-dropzone:hover{border-color:#60a5fa;background:#020617}
+.upload-dropzone.has-file{border-style:solid;border-color:#a5b4fc}
+.preview-layer{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7;
+}
+
+/* Video specific small controls */
+.inline-row{display:flex;gap:10px}
+.inline-row>div{flex:1}
+
+/* Stage (gallery) */
+.stage{
+    flex:1;display:flex;flex-direction:column;
+    background:radial-gradient(circle at top right,#020617,#02021a 40%,#020617);
+    position:relative;overflow:hidden;
+}
+.stage-header{
+    height:var(--header-height);
+    border-bottom:1px solid var(--border-subtle);
+    padding:0 30px;
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(90deg,#020617,#02021a);
+    backdrop-filter:blur(18px);
+}
+.gallery-tabs{display:flex;gap:24px;height:100%}
+.gallery-tab{
+    display:flex;align-items:center;gap:6px;
+    font-size:14px;font-weight:500;
+    color:var(--text-secondary);cursor:pointer;
+    border-bottom:2px solid transparent;
+}
+.gallery-tab.active{color:#fff;border-bottom-color:#60a5fa}
+.stage-header-right{display:flex;align-items:center;gap:12px}
+.plan-pill{
+    padding:6px 12px;border-radius:999px;
+    background:rgba(15,23,42,.8);
+    border:1px solid rgba(129,140,248,.7);
+    font-size:11px;font-weight:600;
+    display:flex;align-items:center;gap:6px;
+}
+
+.stage-content{flex:1;padding:28px 30px;overflow-y:auto}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:22px;padding-bottom:80px;
+}
+.card{
+    background:radial-gradient(circle at top,#020617,#02021a);
+    border-radius:var(--radius-lg);
+    border:1px solid rgba(30,64,175,.7);
+    overflow:hidden;position:relative;
+    box-shadow:var(--shadow-sm);transition:.22s;
+}
+.card.media-image{aspect-ratio:1/1;}
+.card.media-video{aspect-ratio:16/9;}
+.card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-md);
+    border-color:#a5b4fc;
+}
+.card img,.card video{
+    width:100%;height:100%;object-fit:cover;display:block;
+}
+.card video{background:#020617}
+.card-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(to top,rgba(0,0,0,.92),transparent 55%);
+    opacity:0;display:flex;flex-direction:column;justify-content:flex-end;
+    padding:16px;transition:.2s;
+}
+.card:hover .card-overlay{opacity:1}
+.card-meta{
+    font-size:11px;color:#e5e7eb;
+    max-height:60px;overflow:hidden;
+}
+.card-actions{display:flex;gap:8px;margin-top:10px}
+
+/* Empty state */
+#empty-state{
+    height:60%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    opacity:.35;text-align:center;
+}
+
+/* Toast */
+.toast-container{
+    position:fixed;bottom:30px;right:30px;z-index:120;
+}
+.toast{
+    background:radial-gradient(circle at top,#020617,#02021a);
+    border-radius:var(--radius-md);
+    border:1px solid var(--border-subtle);
+    border-left:4px solid var(--accent-success);
+    padding:14px 20px;
+    box-shadow:var(--shadow-md);
+    display:flex;align-items:center;gap:14px;
+    transform:translateY(120%);
+    opacity:0;transition:.35s cubic-bezier(.175,.885,.32,1.275);
+    min-width:260px;
+}
+.toast.active{transform:translateY(0);opacity:1}
+.spinner{
+    width:18px;height:18px;
+    border-radius:999px;
+    border:2px solid rgba(148,163,184,.5);
+    border-top-color:var(--accent-success);
+    animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Modal for plans (simple) */
+.modal-backdrop{
+    position:fixed;inset:0;background:rgba(15,23,42,.85);
+    display:none;align-items:center;justify-content:center;z-index:150;
+}
+.modal-backdrop.active{display:flex}
+.modal{
+    width:420px;max-width:95%;
+    background:radial-gradient(circle at top,#020617,#02021a);
+    border-radius:var(--radius-lg);
+    border:1px solid var(--border-subtle);
+    box-shadow:var(--shadow-md);
+    padding:22px 22px 18px;
+}
+.modal h3{font-size:16px;margin-bottom:10px}
+.modal p{font-size:13px;color:var(--text-secondary);margin-bottom:12px}
+.tier-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.tier-item{
+    border-radius:var(--radius-md);
+    border:1px solid rgba(55,65,194,.8);
+    padding:10px 12px;font-size:12px;
+    background:rgba(15,23,42,.9);
+}
+.tier-item strong{display:block;font-size:13px;margin-bottom:4px}
 </style>
 </head>
 <body>
 
+<!-- LEFT NAV RAIL -->
 <div class="nav-rail">
     <div class="brand-logo">S</div>
-    
-    <div class="nav-btn active" title="Image Lab">
+
+    <div class="nav-btn active" id="nav-image" title="Image Lab" onclick="switchLab('image')">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
     </div>
-    
-    <div class="nav-btn" onclick="window.location.href='video.html'" title="Video Lab">
+
+    <div class="nav-btn" id="nav-video" title="Video Lab" onclick="switchLab('video')">
         <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
     </div>
-    
-    <div class="nav-btn" onclick="window.location.href='music.html'" title="Music Lab">
+
+    <div class="nav-btn" title="Music (separate page)" onclick="window.location.href='music.html'">
         <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
     </div>
 
     <div style="margin-top:auto;"></div>
-    
+
     <div class="nav-btn" title="Settings">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82A1.65 1.65 0 0 0 3 13H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82A1.65 1.65 0 0 0 21 11h.09A2 2 0 0 1 21 15z"/></svg>
     </div>
 </div>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="sidebar-header">
-        <span class="sidebar-title">SULANDRA CREATIVE STUDIO IMAGE LAB</span>
-        <div style="font-size:11px; font-weight:600; color:var(--accent-success);">● H200 ONLINE</div>
+        <div>
+            <div class="sidebar-title">SULANDRA CREATIVE STUDIO IMAGE LAB</div>
+        </div>
+        <div class="sidebar-status">
+            <span></span><span>H200 ONLINE</span>
+        </div>
     </div>
 
-    <div class="sidebar-scroll">
-        
-        <div class="mode-switch">
-            <div class="mode-option active" onclick="setMode('txt2img', this)">Text to Image</div>
-            <div class="mode-option" onclick="setMode('img2img', this)">Image to Image</div>
+    <div class="sidebar-scroll" id="sidebar-scroll">
+
+        <!-- Lab mode switch (Image / Video) -->
+        <div class="lab-mode-switch">
+            <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">Image</div>
+            <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">Video</div>
         </div>
 
-        <div class="input-group">
-            <div class="label">
-                <span>Prompt</span>
-                <span style="font-size:10px; opacity:0.5;">Required</span>
+        <!-- IMAGE CONTROLS -->
+        <div id="image-controls">
+
+            <div class="mode-switch">
+                <div class="mode-option active" id="img-mode-txt2img" onclick="setImageMode('txt2img', this)">Text → Image</div>
+                <div class="mode-option" id="img-mode-img2img" onclick="setImageMode('img2img', this)">Image → Image</div>
             </div>
-            <textarea id="prompt-input" class="text-area" placeholder="Describe your imagination... A futuristic cyberpunk Lagos street, neon lights, wet pavement, 8k, afrobeat album cover..."></textarea>
+
+            <div class="input-group">
+                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Required</span></div>
+                <textarea id="prompt-input" class="text-area" placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
+            </div>
+
+            <div class="input-group" id="upload-group-img" style="display:none;">
+                <div class="label"><span>Reference Image</span></div>
+                <input type="file" id="file-input-img" hidden accept="image/*" onchange="handleImgFile(this)">
+                <div class="upload-dropzone" id="drop-zone-img" onclick="document.getElementById('file-input-img').click()">
+                    <img id="preview-img" class="preview-layer" style="display:none;">
+                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload reference</span>
+                </div>
+
+                <div class="label" style="margin-top:12px;">
+                    <span>Influence Strength</span><span id="strength-val">0.75</span>
+                </div>
+                <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Aspect Ratio & Presets</span></div>
+                <div class="ratio-grid">
+                    <div class="ratio-option active" onclick="setImageRatio(1024,1024,this)">1:1<span>Square</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(1280,720,this)">16:9<span>Landscape</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(720,1280,this)">9:16<span>Portrait</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(1024,1280,this)">4:5<span>Portrait</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(300,300,this)">Album<span>300×300</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(1280,720,this)">YouTube<span>1280×720</span></div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Guidance Scale</span><span id="guidance-val">3.5</span></div>
+                <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
+            </div>
+
+            <button id="gen-btn-img" class="btn btn-accent" style="width:100%;height:46px;margin-top:10px;" onclick="generateImage()">
+                <svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg>
+                GENERATE IMAGE
+            </button>
         </div>
 
-        <div class="input-group">
-            <div class="label">
-                <span>Negative Prompt</span>
-                <span style="font-size:10px; opacity:0.5;">Optional</span>
+        <!-- VIDEO CONTROLS -->
+        <div id="video-controls" style="display:none;">
+
+            <div class="mode-switch">
+                <div class="mode-option active" id="vid-mode-text" onclick="setVideoMode('text2video',this)">Text → Video</div>
+                <div class="mode-option" id="vid-mode-image" onclick="setVideoMode('image2video',this)">Image → Video</div>
+                <div class="mode-option" id="vid-mode-extend" onclick="setVideoMode('extend',this)">Extend Video</div>
             </div>
-            <textarea id="negative-input" class="text-area" style="min-height:70px;" placeholder="Things to avoid: low quality, blurry, deformed, watermark, text, extra limbs..."></textarea>
+
+            <div class="input-group">
+                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
+                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
+                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
+            </div>
+
+            <!-- Uploads for reference / start-end / video extension -->
+            <div class="input-group" id="video-ref-group">
+                <div class="label"><span>Primary Reference</span></div>
+                <input type="file" id="video-ref-image" hidden accept="image/*" onchange="handleVideoRefImage(this)">
+                <input type="file" id="video-ref-video" hidden accept="video/*" onchange="handleVideoRefVideo(this)">
+                <div class="upload-dropzone" id="drop-zone-video-main" onclick="triggerVideoMainUpload()">
+                    <video id="preview-video-main" class="preview-layer" style="display:none;" muted loop></video>
+                    <img id="preview-video-main-img" class="preview-layer" style="display:none;">
+                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload image or video (depends on mode)</span>
+                </div>
+            </div>
+
+            <div class="input-group" id="start-end-group">
+                <div class="label"><span>Start & End Frames</span><span style="font-size:10px;opacity:.6;">Optional morph</span></div>
+                <div class="inline-row">
+                    <div>
+                        <input type="file" id="start-frame-input" hidden accept="image/*" onchange="handleStartEnd('start',this)">
+                        <div class="upload-dropzone" id="drop-start" onclick="document.getElementById('start-frame-input').click()" style="height:120px;">
+                            <img id="start-preview" class="preview-layer" style="display:none;">
+                            <span style="font-size:11px;color:var(--text-secondary);">Start Frame</span>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="file" id="end-frame-input" hidden accept="image/*" onchange="handleStartEnd('end',this)">
+                        <div class="upload-dropzone" id="drop-end" onclick="document.getElementById('end-frame-input').click()" style="height:120px;">
+                            <img id="end-preview" class="preview-layer" style="display:none;">
+                            <span style="font-size:11px;color:var(--text-secondary);">End Frame</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Elements / consistency -->
+            <div class="input-group">
+                <div class="label"><span>Elements / Consistency</span><span style="font-size:10px;opacity:.6;">Character · Style · Scene</span></div>
+                <input type="file" id="elements-input" hidden accept="image/*" multiple onchange="handleElements(this)">
+                <div class="upload-dropzone" id="drop-elements" onclick="document.getElementById('elements-input').click()" style="height:110px;">
+                    <span style="font-size:11px;color:var(--text-secondary);">Upload multiple reference images</span>
+                </div>
+                <div id="elements-count" style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:none;"></div>
+            </div>
+
+            <!-- Durations / resolution / model mode -->
+            <div class="input-group">
+                <div class="label"><span>Duration & Resolution</span></div>
+                <div class="inline-row">
+                    <div>
+                        <select id="video-duration" style="width:100%;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
+                            <option value="5">5 seconds</option>
+                            <option value="10">10 seconds</option>
+                            <option value="15">15 seconds</option>
+                            <option value="20">20 seconds</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="video-resolution" style="width:100%;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
+                            <option value="720p">HD 1280×720</option>
+                            <option value="1080p">Full HD 1920×1080</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Aspect Ratio</span></div>
+                <div class="ratio-grid">
+                    <div class="ratio-option active" onclick="setVideoRatio('16:9',this)">16:9<span>YouTube</span></div>
+                    <div class="ratio-option" onclick="setVideoRatio('9:16',this)">9:16<span>TikTok / Reels</span></div>
+                    <div class="ratio-option" onclick="setVideoRatio('1:1',this)">1:1<span>Square</span></div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Model Mode</span></div>
+                <div class="inline-row">
+                    <button id="mode-standard" class="btn btn-ghost" style="flex:1;border-radius:var(--radius-md);border:1px solid var(--border-subtle);" onclick="setVideoQuality('standard')">Standard (Fast)</button>
+                    <button id="mode-pro" class="btn btn-ghost" style="flex:1;border-radius:var(--radius-md);border:1px solid var(--border-subtle);" onclick="setVideoQuality('pro')">Pro (High Quality)</button>
+                </div>
+            </div>
+
+            <!-- Camera + motion + lipsync + sfx -->
+            <div class="input-group">
+                <div class="label"><span>Camera & Motion</span></div>
+                <div class="inline-row">
+                    <select id="camera-path" style="flex:1;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
+                        <option value="static">Static camera</option>
+                        <option value="pan-left">Pan left</option>
+                        <option value="pan-right">Pan right</option>
+                        <option value="zoom-in">Slow zoom in</option>
+                        <option value="zoom-out">Slow zoom out</option>
+                        <option value="orbit">Orbit around subject</option>
+                    </select>
+                    <select id="motion-brush-preset" style="flex:1;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
+                        <option value="none">Motion Brush: None</option>
+                        <option value="hair-wind">Hair flowing in wind</option>
+                        <option value="cloth-wave">Clothes gentle wave</option>
+                        <option value="clouds">Clouds moving</option>
+                        <option value="camera-object">Main subject subtle move</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Lip Sync & Audio</span></div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" id="enable-lipsync">
+                        <label for="enable-lipsync" style="font-size:12px;color:var(--text-secondary);">Enable Lip Sync</label>
+                    </div>
+                    <input type="file" id="lipsync-audio" accept="audio/*" style="display:none" onchange="handleLipAudio(this)">
+                    <button class="btn btn-ghost" style="justify-content:flex-start;padding-left:10px;font-size:12px;" onclick="document.getElementById('lipsync-audio').click()">
+                        <svg style="width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                        Attach audio for lip sync (optional)
+                    </button>
+
+                    <button class="btn btn-primary" style="margin-top:4px;font-size:12px;" onclick="generateSfx()">
+                        <svg style="width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/></svg>
+                        Generate matching sound effects
+                    </button>
+                </div>
+            </div>
+
+            <button id="gen-btn-video" class="btn btn-accent" style="width:100%;height:46px;margin-top:6px;" onclick="generateVideo()">
+                <svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                GENERATE VIDEO
+            </button>
+
         </div>
-
-        <div class="input-group" id="upload-group" style="display:none;">
-            <div class="label">Reference Image</div>
-            <input type="file" id="file-input" hidden accept="image/*" onchange="handleFile(this)">
-            <div class="upload-dropzone" id="drop-zone" onclick="document.getElementById('file-input').click()">
-                <img id="preview-img" class="preview-layer" style="display:none;">
-                <svg style="margin-bottom:12px; color:var(--text-secondary);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <span style="font-size:12px; font-weight:600; color:var(--text-secondary);">Click to Upload Reference</span>
-            </div>
-            
-            <div class="label" style="margin-top:12px;">
-                <span>Influence Strength</span>
-                <span id="strength-val">0.75</span>
-            </div>
-            <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
-        </div>
-
-        <div class="input-group">
-            <div class="label">Aspect Ratio</div>
-            <div class="ratio-grid">
-                <div class="ratio-option active" onclick="setRatio(1024, 1024, this)">1:1</div>
-                <div class="ratio-option" onclick="setRatio(1280, 720, this)">16:9</div>
-                <div class="ratio-option" onclick="setRatio(720, 1280, this)">9:16</div>
-                <div class="ratio-option" onclick="setRatio(1024, 1280, this)">4:5</div>
-                <div class="ratio-option" onclick="setRatio(300, 300, this)">Album 300×300</div>
-                <div class="ratio-option" onclick="setRatio(1280, 720, this)">YouTube 1280×720</div>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <div class="label">
-                <span>Guidance Scale</span>
-                <span id="guidance-val">3.5</span>
-            </div>
-            <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
-        </div>
-
-        <button id="gen-btn" class="btn btn-accent" style="width:100%; height:48px; font-size:14px; text-transform:uppercase; letter-spacing:1px;" onclick="generate()">
-            <svg style="width:18px; margin-right:4px;"><path d="M12 2v20M2 12h20"/></svg>
-            GENERATE
-        </button>
-
     </div>
 </div>
 
+<!-- MAIN STAGE -->
 <div class="stage">
     <div class="stage-header">
         <div class="gallery-tabs">
-            <div class="gallery-tab active" onclick="switchTab('history', this)">History</div>
-            <div class="gallery-tab" onclick="switchTab('community', this)">Community Feed</div>
-            <div class="gallery-tab" onclick="switchTab('favorites', this)">Favorites</div>
+            <div class="gallery-tab active" id="tab-history" onclick="switchGalleryTab('history',this)">History</div>
+            <div class="gallery-tab" id="tab-community" onclick="switchGalleryTab('community',this)">Community Feed</div>
+            <div class="gallery-tab" id="tab-favorites" onclick="switchGalleryTab('favorites',this)">Favorites</div>
         </div>
-        
-        <div style="display:flex; gap:12px;">
-            <button class="btn btn-icon" onclick="reloadHistory()" title="Reload History">
-                <svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+
+        <div class="stage-header-right">
+            <div class="plan-pill" onclick="openPlanModal()">
+                <span style="width:6px;height:6px;border-radius:999px;background:#38bdf8;"></span>
+                <span>Plan: Free · 66 Daily Credits</span>
+            </div>
+            <button class="btn btn-icon" onclick="refreshCommunity()" title="Refresh feed">
+                <svg><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
             </button>
-            <button class="btn btn-icon"><svg><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
         </div>
     </div>
 
     <div class="stage-content" id="gallery-container">
-        
         <div class="grid" id="gallery-grid"></div>
-
-        <div id="empty-state" style="height:60%; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0.36;">
-            <svg style="width:64px; height:64px; margin-bottom:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <div style="font-size:16px; font-weight:600;">Start creating something amazing.</div>
+        <div id="empty-state">
+            <svg style="width:64px;height:64px;margin-bottom:14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Start creating something amazing.</div>
+            <div style="font-size:13px;color:var(--text-secondary);">Choose Image or Video on the left, type your prompt, and hit Generate.</div>
         </div>
-
     </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast-container">
     <div id="toast" class="toast">
         <div class="spinner"></div>
-        <div style="display:flex; flex-direction:column;">
-            <span style="font-weight:700; font-size:13px;">Processing...</span>
-            <span style="font-size:12px; opacity:0.8;" id="toast-msg">Sending request to H200 Engine</span>
+        <div style="display:flex;flex-direction:column;">
+            <span style="font-weight:700;font-size:13px;" id="toast-title">Processing...</span>
+            <span style="font-size:12px;opacity:.8;" id="toast-msg">Sending request to H200 Engine</span>
+        </div>
+    </div>
+</div>
+
+<!-- PLAN MODAL -->
+<div id="plan-modal" class="modal-backdrop">
+    <div class="modal">
+        <h3>Membership Tiers</h3>
+        <p>Offer everything your competitors do – and more. These tiers are ready for when you wire billing.</p>
+        <div class="tier-list">
+            <div class="tier-item">
+                <strong>Free Creator</strong>
+                • ~6 videos / day, 30 images / day<br>
+                • Watermark on exports<br>
+                • Standard models, community access
+            </div>
+            <div class="tier-item">
+                <strong>Studio Pro</strong>
+                • No watermarks, Pro model mode<br>
+                • Longer videos (up to 60 s / job)<br>
+                • Priority queue, API access
+            </div>
+            <div class="tier-item">
+                <strong>Premier Turbo</strong>
+                • 4× concurrent jobs, 3-minute video chain<br>
+                • Private community feed & presets<br>
+                • Team credits and usage analytics
+            </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+            <button class="btn btn-ghost" onclick="closePlanModal()">Close</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- CONFIGURATION ---
-    const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
+/* -------------------------------------------------------------------------- */
+/* CONFIG                                                                     */
+/* -------------------------------------------------------------------------- */
+const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
 
-    // STATE
-    let currentMode = 'txt2img';
-    let imageBase64 = null;
-    let currentWidth = 1024;
-    let currentHeight = 1024;
-    let toastTimeout;
-    let historyItems = [];
-    let currentTab = 'history';
+let currentLab = "image";        // 'image' | 'video'
+let currentImageMode = "txt2img";// 'txt2img' | 'img2img'
+let currentVideoMode = "text2video"; // 'text2video' | 'image2video' | 'extend'
+let imageBase64 = null;
+let imgWidth = 1024, imgHeight = 1024;
 
-    // 1. UI SWITCHING
-    function setMode(mode, el) {
-        currentMode = mode;
-        document.querySelectorAll('.mode-option').forEach(e => e.classList.remove('active'));
-        if (el) el.classList.add('active');
+let videoAspect = "16:9";
+let videoQuality = "standard";
+let videoRefs = {
+    image: null,
+    video: null,
+    startFrame: null,
+    endFrame: null,
+    elements: [],
+    lipsyncAudio: null
+};
 
-        const uploadGroup = document.getElementById('upload-group');
-        uploadGroup.style.display = (mode === 'img2img') ? 'flex' : 'none';
+/* -------------------------------------------------------------------------- */
+/* LAB SWITCHING                                                              */
+/* -------------------------------------------------------------------------- */
+function switchLab(lab){
+    currentLab = lab;
+
+    // left icons
+    document.getElementById('nav-image').classList.toggle('active', lab === 'image');
+    document.getElementById('nav-video').classList.toggle('active', lab === 'video');
+
+    // header title
+    const header = document.querySelector('.sidebar-title');
+    if(lab === 'image'){
+        header.textContent = 'SULANDRA CREATIVE STUDIO IMAGE LAB';
+    }else{
+        header.textContent = 'SULANDRA CREATIVE STUDIO VIDEO LAB';
     }
 
-    function setRatio(w, h, el) {
-        currentWidth = w;
-        currentHeight = h;
-        document.querySelectorAll('.ratio-option').forEach(e => e.classList.remove('active'));
-        el.classList.add('active');
+    // lab tabs
+    document.getElementById('lab-mode-image').classList.toggle('active', lab === 'image');
+    document.getElementById('lab-mode-video').classList.toggle('active', lab === 'video');
+
+    // control panes
+    document.getElementById('image-controls').style.display = (lab === 'image') ? 'block' : 'none';
+    document.getElementById('video-controls').style.display = (lab === 'video') ? 'block' : 'none';
+}
+
+/* -------------------------------------------------------------------------- */
+/* IMAGE CONTROLS                                                             */
+/* -------------------------------------------------------------------------- */
+function setImageMode(mode, el){
+    currentImageMode = mode;
+    document.querySelectorAll('#image-controls .mode-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+
+    const group = document.getElementById('upload-group-img');
+    group.style.display = (mode === 'img2img') ? 'block' : 'none';
+}
+
+function setImageRatio(w,h,el){
+    imgWidth = w;
+    imgHeight = h;
+    document.querySelectorAll('#image-controls .ratio-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function handleImgFile(input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            imageBase64 = e.target.result;
+            const img = document.getElementById('preview-img');
+            const zone = document.getElementById('drop-zone-img');
+            img.src = imageBase64;
+            img.style.display = 'block';
+            zone.classList.add('has-file');
+            if(currentImageMode !== 'img2img'){
+                setImageMode('img2img', document.getElementById('img-mode-img2img'));
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+async function generateImage(){
+    const prompt = document.getElementById('prompt-input').value.trim();
+    if(!prompt){ return showToast("Add a prompt first.","Notice"); }
+
+    const btn = document.getElementById('gen-btn-img');
+    btn.disabled = true;
+    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
+    showToast("Sending image job to H200...","Processing");
+
+    const payload = {
+        prompt: prompt,
+        width: imgWidth,
+        height: imgHeight,
+        steps: 25,
+        guidance: parseFloat(document.getElementById('guidance').value)
+    };
+
+    if(currentImageMode === 'img2img' && imageBase64){
+        payload.image_base64 = imageBase64;
+        payload.strength = parseFloat(document.getElementById('strength').value);
     }
 
-    // 2. FILE HANDLING
-    function handleFile(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imageBase64 = e.target.result; // data URL
-                const img = document.getElementById('preview-img');
-                const zone = document.getElementById('drop-zone');
-                img.src = imageBase64;
+    try{
+        const res = await fetch(`${API_URL}/api/image/txt2img`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if(data.status === "success"){
+            showToast("Image generated successfully!","Success");
+            addToGallery({
+                type: "image",
+                url: `${API_URL}${data.image_url || data.imageUrl || data.url || data.filename ? "/api/image/file/"+(data.filename || "") : ""}`,
+                prompt
+            });
+        }else{
+            console.error(data);
+            showToast("Image error: " + (data.message || "Unknown error"),"Error");
+        }
+    }catch(err){
+        console.error(err);
+        showToast("Connection failed. Check API / tunnel.","Error");
+    }finally{
+        btn.disabled = false;
+        btn.innerHTML = `<svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE IMAGE`;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* VIDEO CONTROLS                                                             */
+/* -------------------------------------------------------------------------- */
+function setVideoMode(mode,el){
+    currentVideoMode = mode;
+    document.querySelectorAll('#video-controls .mode-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+
+    // adjust hint text
+    const mainZone = document.getElementById('drop-zone-video-main');
+    const span = mainZone.querySelector('span');
+    if(mode === 'text2video'){
+        span.textContent = "Optional: upload an image to guide the first frame";
+    }else if(mode === 'image2video'){
+        span.textContent = "Upload a still image to animate into a video";
+    }else{
+        span.textContent = "Upload an existing video clip to extend";
+    }
+}
+
+function setVideoRatio(ratio,el){
+    videoAspect = ratio;
+    document.querySelectorAll('#video-controls .ratio-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function setVideoQuality(q){
+    videoQuality = q;
+    document.getElementById('mode-standard').style.borderColor = (q === 'standard') ? '#60a5fa' : 'var(--border-subtle)';
+    document.getElementById('mode-pro').style.borderColor       = (q === 'pro')       ? '#60a5fa' : 'var(--border-subtle)';
+}
+
+function triggerVideoMainUpload(){
+    if(currentVideoMode === 'extend'){
+        document.getElementById('video-ref-video').click();
+    }else{
+        document.getElementById('video-ref-image').click();
+    }
+}
+
+function handleVideoRefImage(input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            videoRefs.image = e.target.result;
+            const img = document.getElementById('preview-video-main-img');
+            const v = document.getElementById('preview-video-main');
+            v.style.display = 'none';
+            img.style.display = 'block';
+            img.src = videoRefs.image;
+            document.getElementById('drop-zone-video-main').classList.add('has-file');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function handleVideoRefVideo(input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            videoRefs.video = e.target.result;
+            const v = document.getElementById('preview-video-main');
+            const img = document.getElementById('preview-video-main-img');
+            img.style.display = 'none';
+            v.style.display = 'block';
+            v.src = videoRefs.video;
+            v.loop = true; v.muted = true; v.play();
+            document.getElementById('drop-zone-video-main').classList.add('has-file');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function handleStartEnd(kind,input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            if(kind === 'start'){
+                videoRefs.startFrame = e.target.result;
+                const img = document.getElementById('start-preview');
+                img.src = videoRefs.startFrame;
                 img.style.display = 'block';
-                zone.classList.add('has-file');
-                
-                if (currentMode !== 'img2img') {
-                    setMode('img2img', document.querySelectorAll('.mode-option')[1]);
+                document.getElementById('drop-start').classList.add('has-file');
+            }else{
+                videoRefs.endFrame = e.target.result;
+                const img = document.getElementById('end-preview');
+                img.src = videoRefs.endFrame;
+                img.style.display = 'block';
+                document.getElementById('drop-end').classList.add('has-file');
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function handleElements(input){
+    videoRefs.elements = [];
+    if(input.files && input.files.length){
+        const count = input.files.length;
+        let loaded = 0;
+        for(const file of input.files){
+            const reader = new FileReader();
+            reader.onload = e => {
+                videoRefs.elements.push(e.target.result);
+                loaded++;
+                if(loaded === count){
+                    const info = document.getElementById('elements-count');
+                    info.style.display = 'block';
+                    info.textContent = `${count} element reference(s) attached.`;
                 }
             };
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
         }
+        document.getElementById('drop-elements').classList.add('has-file');
     }
+}
 
-    // 3. TOAST
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        document.getElementById('toast-msg').innerText = msg;
-        t.classList.add('active');
-        
-        if (msg.includes("Error") || msg.includes("Failed")) {
-            t.style.borderLeftColor = "#ef4444";
-        } else {
-            t.style.borderLeftColor = "#10b981";
-        }
-
-        clearTimeout(toastTimeout);
-        toastTimeout = setTimeout(() => {
-            t.classList.remove('active');
-        }, 4000);
-    }
-
-    // 4. GENERATE
-    async function generate() {
-        const prompt = document.getElementById('prompt-input').value.trim();
-        const negative = document.getElementById('negative-input').value.trim();
-        const btn = document.getElementById('gen-btn');
-
-        if (!prompt) {
-            showToast("⚠️ Please enter a prompt first!");
-            return;
-        }
-
-        btn.innerHTML = `<div class="spinner" style="width:16px; height:16px; border-width:2px; border-top-color:white;"></div> GENERATING...`;
-        btn.disabled = true;
-        showToast("🚀 Sending job to H200 GPU...");
-
-        const payload = {
-            prompt: prompt,
-            negative_prompt: negative,
-            width: currentWidth,
-            height: currentHeight,
-            steps: 25,
-            guidance_scale: parseFloat(document.getElementById('guidance').value),
+function handleLipAudio(input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            videoRefs.lipsyncAudio = e.target.result;
+            showToast("Lip sync audio attached.","Info");
         };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
 
-        if (currentMode === 'img2img' && imageBase64) {
-            payload.image_base64 = imageBase64;
-            payload.strength = parseFloat(document.getElementById('strength').value);
-        }
+async function generateVideo(){
+    const prompt = document.getElementById('video-prompt').value.trim();
+    if(!prompt){ return showToast("Add a video prompt first.","Notice"); }
 
-        try {
-            const res = await fetch(`${API_URL}/api/image/txt2img`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+    const btn = document.getElementById('gen-btn-video');
+    btn.disabled = true;
+    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
+    showToast("Sending video job to H200...","Processing");
+
+    const payload = {
+        mode: currentVideoMode,
+        prompt,
+        negative_prompt: document.getElementById('video-negative').value.trim(),
+        duration_seconds: parseInt(document.getElementById('video-duration').value),
+        resolution: document.getElementById('video-resolution').value,
+        aspect_ratio: videoAspect,
+        quality: videoQuality,
+        camera_path: document.getElementById('camera-path').value,
+        motion_brush: document.getElementById('motion-brush-preset').value,
+        lipsync_enabled: document.getElementById('enable-lipsync').checked,
+        refs: {}
+    };
+
+    // choose correct reference
+    if(currentVideoMode === 'extend' && videoRefs.video){
+        payload.refs.video = videoRefs.video;
+    }else if(videoRefs.image){
+        payload.refs.image = videoRefs.image;
+    }
+
+    if(videoRefs.startFrame) payload.refs.start_frame = videoRefs.startFrame;
+    if(videoRefs.endFrame)   payload.refs.end_frame   = videoRefs.endFrame;
+    if(videoRefs.elements.length) payload.refs.elements = videoRefs.elements;
+    if(videoRefs.lipsyncAudio) payload.refs.lipsync_audio = videoRefs.lipsyncAudio;
+
+    try{
+        const res = await fetch(`${API_URL}/api/video/generate`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if(data.status === "success"){
+            showToast("Video generated successfully!","Success");
+            addToGallery({
+                type: "video",
+                url: `${API_URL}${data.video_url || data.url || ""}`,
+                thumb: data.thumbnail_url ? `${API_URL}${data.thumbnail_url}` : null,
+                prompt
             });
-
-            const data = await res.json();
-
-            if (data.status === "ok" && data.image_base64) {
-                const imgUrl = `data:image/png;base64,${data.image_base64}`;
-                showToast("✅ Image Generated Successfully!");
-
-                // Add to in-memory history & gallery immediately
-                const newItem = {
-                    id: data.id,
-                    prompt: prompt,
-                    negative_prompt: negative,
-                    favorite: false,
-                    isDataUrl: true,
-                    url: imgUrl
-                };
-                historyItems.unshift(newItem);
-                renderHistory(currentTab);
-            } else {
-                console.error(data);
-                showToast("❌ Error from API");
-            }
-
-        } catch (e) {
-            console.error(e);
-            showToast("❌ Connection Failed. Check API / tunnel.");
-        } finally {
-            btn.innerHTML = `<svg style="width:18px; margin-right:4px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE`;
-            btn.disabled = false;
+        }else{
+            console.error(data);
+            showToast("Video error: " + (data.message || "Unknown error"),"Error");
         }
+    }catch(err){
+        console.error(err);
+        showToast("Connection failed. Check API / tunnel.","Error");
+    }finally{
+        btn.disabled = false;
+        btn.innerHTML = `<svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> GENERATE VIDEO`;
     }
+}
 
-    // 5. HISTORY & GALLERY
+/* AUDIO SFX */
+async function generateSfx(){
+    const prompt = document.getElementById('video-prompt').value.trim();
+    if(!prompt){ return showToast("Add a prompt first so SFX can match.","Notice"); }
 
-    async function fetchHistoryFromServer() {
-        try {
-            const res = await fetch(`${API_URL}/api/image/history?limit=80`);
-            const data = await res.json();
-            if (data.status === "ok") {
-                // Map server items into local structure
-                historyItems = data.history.map(item => ({
-                    id: item.id,
-                    prompt: item.prompt,
-                    negative_prompt: item.negative_prompt || "",
-                    favorite: item.favorite || false,
-                    isDataUrl: false,
-                    url: `${API_URL}/api/image/file/${item.id}`
-                }));
-                renderHistory('history');
-            }
-        } catch (e) {
-            console.error("Failed to load history:", e);
+    showToast("Generating sound effects for this scene...","Processing");
+    try{
+        const res = await fetch(`${API_URL}/api/audio/sfx`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+        if(data.status === "success"){
+            showToast("Sound effects generated!","Success");
+            // you can wire this into a dedicated SFX panel if you like
+        }else{
+            showToast("SFX error: " + (data.message || "Unknown error"),"Error");
         }
+    }catch(err){
+        console.error(err);
+        showToast("Connection failed while generating SFX.","Error");
     }
+}
 
-    function renderHistory(mode) {
-        currentTab = mode;
-        const grid = document.getElementById('gallery-grid');
-        const empty = document.getElementById('empty-state');
-        grid.innerHTML = "";
+/* -------------------------------------------------------------------------- */
+/* GALLERY / COMMUNITY / FAVORITES                                           */
+/* -------------------------------------------------------------------------- */
+function addToGallery(item){
+    const grid = document.getElementById('gallery-grid');
+    document.getElementById('empty-state').style.display = 'none';
 
-        let itemsToShow = historyItems;
-        if (mode === 'favorites') {
-            itemsToShow = historyItems.filter(i => i.favorite);
-        }
+    const card = document.createElement('div');
+    card.className = 'card ' + (item.type === 'video' ? 'media-video' : 'media-image');
 
-        if (!itemsToShow.length) {
-            if (empty) empty.style.display = 'flex';
-            return;
-        } else {
-            if (empty) empty.style.display = 'none';
-        }
-
-        itemsToShow.forEach(item => addToGallery(item));
-    }
-
-    function addToGallery(item) {
-        const grid = document.getElementById('gallery-grid');
-
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.dataset.id = item.id;
-
-        const imgUrl = item.url;
-
-        div.innerHTML = `
-            <img src="${imgUrl}" class="card-image">
+    if(item.type === 'image'){
+        const url = item.url;
+        card.innerHTML = `
+            <img src="${url}" alt="">
             <div class="card-overlay">
-                <div class="card-meta">${item.prompt}</div>
+                <div class="card-meta">${item.prompt || ''}</div>
                 <div class="card-actions">
-                    <button class="star-btn ${item.favorite ? 'star-active' : ''}" onclick="toggleFavorite(${item.id}, this, event)" title="Favorite">
-                        ★
-                    </button>
-                    <button class="btn btn-primary" onclick="window.open('${imgUrl}', '_blank'); event.stopPropagation();">Download</button>
-                    <button class="btn btn-ghost" onclick="useAsReference(${item.id}, event)">Use as reference</button>
+                    <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
+                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
                 </div>
             </div>
         `;
-
-        div.style.opacity = '0';
-        div.style.transform = 'translateY(20px)';
-        grid.appendChild(div);
-
-        setTimeout(() => {
-            div.style.opacity = '1';
-            div.style.transform = 'translateY(0)';
-        }, 40);
+    }else{
+        const url = item.url;
+        const thumb = item.thumb || url;
+        card.innerHTML = `
+            <video src="${url}" poster="${thumb}" controls muted></video>
+            <div class="card-overlay">
+                <div class="card-meta">${item.prompt || ''}</div>
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
+                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
+                </div>
+            </div>
+        `;
     }
 
-    async function reloadHistory() {
-        document.getElementById('gallery-grid').innerHTML = '';
-        const empty = document.getElementById('empty-state');
-        if (empty) empty.style.display = 'flex';
-        await fetchHistoryFromServer();
-        showToast("⟳ Reloaded server history.");
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(16px)';
+    grid.prepend(card);
+    setTimeout(()=>{card.style.opacity='1';card.style.transform='translateY(0)';},30);
+}
+
+function cloneSetup(type,encodedPrompt){
+    const prompt = decodeURIComponent(encodedPrompt || '');
+    if(type === 'image'){
+        switchLab('image');
+        document.getElementById('prompt-input').value = prompt;
+    }else{
+        switchLab('video');
+        document.getElementById('video-prompt').value = prompt;
     }
+    showToast("Preset cloned into the left panel. Tweak and generate.","Info");
+}
 
-    // 6. FAVORITES
+function switchGalleryTab(tab,el){
+    document.querySelectorAll('.gallery-tab').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
 
-    async function toggleFavorite(id, btn, evt) {
-        evt.stopPropagation();
-        const item = historyItems.find(i => i.id === id);
-        if (!item) return;
+    if(tab === 'community'){
+        // fetch from API
+        refreshCommunity();
+    }else if(tab === 'history'){
+        // your history is already in grid; nothing else required
+    }else if(tab === 'favorites'){
+        // placeholder for now – could load from localStorage / backend
+        showToast("Favorites UI ready. Wire it to your backend when you want to store likes.","Info");
+    }
+}
 
-        const newVal = !item.favorite;
-        item.favorite = newVal;
-
-        // optimistic UI
-        if (newVal) {
-            btn.classList.add('star-active');
-        } else {
-            btn.classList.remove('star-active');
-        }
-
-        try {
-            await fetch(`${API_URL}/api/image/favorite`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: id, favorite: newVal })
+async function refreshCommunity(){
+    // best effort – if API isn't ready, we just ignore
+    try{
+        const res = await fetch(`${API_URL}/api/community/feed`);
+        const data = await res.json();
+        if(data && Array.isArray(data.items)){
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+            data.items.forEach(item=>{
+                addToGallery({
+                    type: item.type || 'video',
+                    url: `${API_URL}${item.url}`,
+                    thumb: item.thumb ? `${API_URL}${item.thumb}` : null,
+                    prompt: item.prompt || ''
+                });
             });
-        } catch (e) {
-            console.error("Favorite API failed:", e);
         }
+    }catch(err){
+        console.warn("Community feed not wired yet:",err);
+    }
+}
 
-        if (currentTab === 'favorites') {
-            renderHistory('favorites');
-        }
+/* -------------------------------------------------------------------------- */
+/* TOAST + MODAL                                                              */
+/* -------------------------------------------------------------------------- */
+let toastTimeout;
+function showToast(msg,title="Processing"){
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').innerText = msg;
+    document.getElementById('toast-title').innerText = title;
+    t.classList.add('active');
+
+    if(title === "Error"){
+        t.style.borderLeftColor = "#ef4444";
+    }else if(title === "Success"){
+        t.style.borderLeftColor = "#22c55e";
+    }else{
+        t.style.borderLeftColor = "#38bdf8";
     }
 
-    // 7. USE AS REFERENCE (Image → Image)
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(()=>t.classList.remove('active'),4000);
+}
 
-    async function useAsReference(id, evt) {
-        evt.stopPropagation();
-        const item = historyItems.find(i => i.id === id);
-        if (!item) return;
-
-        showToast("🎨 Loading image as reference...");
-
-        try {
-            // If we already have data URL, use it directly
-            if (item.isDataUrl) {
-                imageBase64 = item.url;
-                applyReferencePreview(item.url);
-            } else {
-                // Fetch binary and convert to data URL
-                const res = await fetch(item.url);
-                const blob = await res.blob();
-
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    imageBase64 = reader.result;
-                    applyReferencePreview(imageBase64);
-                };
-                reader.readAsDataURL(blob);
-            }
-        } catch (e) {
-            console.error("Use as reference failed:", e);
-            showToast("❌ Failed to load reference image.");
-        }
-    }
-
-    function applyReferencePreview(dataUrl) {
-        const img = document.getElementById('preview-img');
-        const zone = document.getElementById('drop-zone');
-        img.src = dataUrl;
-        img.style.display = 'block';
-        zone.classList.add('has-file');
-        setMode('img2img', document.querySelectorAll('.mode-option')[1]);
-        showToast("✅ Reference image loaded. Adjust prompt & generate.");
-    }
-
-    // 8. TABS
-
-    function switchTab(name, el) {
-        document.querySelectorAll('.gallery-tab').forEach(e => e.classList.remove('active'));
-        if (el) el.classList.add('active');
-
-        if (name === 'history') {
-            renderHistory('history');
-        } else if (name === 'favorites') {
-            renderHistory('favorites');
-        } else if (name === 'community') {
-            // Placeholder: same as history for now
-            renderHistory('history');
-            showToast("🌍 Community feed coming soon.");
-        }
-    }
-
-    // INIT
-    window.addEventListener('DOMContentLoaded', () => {
-        fetchHistoryFromServer();
-    });
+function openPlanModal(){
+    document.getElementById('plan-modal').classList.add('active');
+}
+function closePlanModal(){
+    document.getElementById('plan-modal').classList.remove('active');
+}
 </script>
-
 </body>
 </html>
