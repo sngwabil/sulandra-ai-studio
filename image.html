@@ -2611,20 +2611,23 @@ function applySiaToField(){
 
     closeSiaPanel();
 }
--------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 /* INIT                                                                       */
 /* -------------------------------------------------------------------------- */
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded', ()=>{
     // default: hide video ref + start/end for Text → Video
-    document.getElementById('video-ref-group').style.display = 'none';
-    document.getElementById('start-end-group').style.display = 'none';
+    const videoRefGroup = document.getElementById('video-ref-group');
+    const startEndGroup = document.getElementById('start-end-group');
+    if(videoRefGroup){ videoRefGroup.style.display = 'none'; }
+    if(startEndGroup){ startEndGroup.style.display = 'none'; }
 
-    // hide Elements group visually
+    // hide Elements group visually (kept for future consistency wiring)
     const elementsGroup = document.getElementById('elements-group');
     if(elementsGroup){
         elementsGroup.style.display = 'none';
     }
 });
+
 </script>
    <!-- ASK SIA – floating chat assistant -->
 <div id="sia-backdrop" class="sia-backdrop" style="display:none;">
