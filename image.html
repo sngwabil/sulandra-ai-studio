@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sulandra Creative Lab · Image & Video</title>
+<title>Sulandra Creative Studio · Image & Video Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -13,19 +13,19 @@
 /* DESIGN SYSTEM – DARK ROYAL BLUE THEME                                      */
 /* -------------------------------------------------------------------------- */
 :root {
-    --bg-app: #02061b;
+    --bg-app: #02061b;           /* deep royal blue base */
     --bg-panel: #050b25;
     --bg-card: #071133;
     --bg-element: #0a1540;
     --bg-hover: #111c4f;
-
-    --accent-primary: #8b5cf6;
-    --accent-secondary: #3b82f6;
-    --accent-tertiary: #ec4899;
+    
+    --accent-primary: #8b5cf6;   /* violet */
+    --accent-secondary: #3b82f6; /* royal blue */
+    --accent-tertiary: #ec4899;  /* pink */
     --accent-success: #22c55e;
     --accent-warning: #facc15;
     --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
-
+    
     --text-primary: #ffffff;
     --text-secondary: #c7d2fe;
     --text-tertiary: #818cf8;
@@ -38,7 +38,7 @@
     --shadow-glow: 0 0 25px rgba(59,130,246,0.4);
 
     --header-height: 64px;
-    --sidebar-width: 360px;
+    --sidebar-width: 400px; /* Widened for Short Film controls */
     --nav-rail-width: 76px;
     --radius-sm: 6px;
     --radius-md: 12px;
@@ -193,7 +193,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     flex:1;overflow-y:auto;padding:22px;
 }
 
-/* Main lab vs sub-lab selector */
+/* Mode switch (Image / Video) */
 .lab-mode-switch{
     display:flex;gap:4px;
     background:rgba(15,23,42,.85);
@@ -203,21 +203,14 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     margin-bottom:16px;
 }
 .lab-mode{
-    flex:1;text-align:center;padding:6px 0;
+    flex:1;text-align:center;padding:7px 0;
     border-radius:var(--radius-md);
-    font-size:11px;font-weight:600;
+    font-size:12px;font-weight:600;
     color:var(--text-secondary);cursor:pointer;
-    opacity:0.9;
-}
-.lab-mode span.icon{
-    display:block;
-    font-size:10px;
-    opacity:.7;
 }
 .lab-mode.active{
     background:radial-gradient(circle at top,#1d4ed8,#4c1d95);
     color:#fff;box-shadow:var(--shadow-sm);
-    opacity:1;
 }
 
 /* Sub-mode switch (txt2img / img2img or text2video / img2video / extend) */
@@ -267,7 +260,8 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .upload-dropzone:hover{border-color:#60a5fa;background:#020617}
 .upload-dropzone.has-file{border-style:solid;border-color:#a5b4fc}
 .preview-layer{
-    position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.7;
+    position:absolute;inset:0;width:100%;height:100%;object-fit:contain; /* Show full image */
+    background:#000; /* Fallback for padding */
 }
 
 /* Video specific small controls */
@@ -326,7 +320,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     border-color:#a5b4fc;
 }
 .card img,.card video{
-    width:100%;height:100%;object-fit:cover;display:block;
+    width:100%;height:100%;object-fit:contain;display:block;
 }
 .card video{background:#020617}
 .card-overlay{
@@ -375,7 +369,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Modal for plans */
+/* Modal for plans (simple) */
 .modal-backdrop{
     position:fixed;inset:0;background:rgba(15,23,42,.85);
     display:none;align-items:center;justify-content:center;z-index:150;
@@ -549,23 +543,27 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .audio-track span{
     pointer-events:none;
 }
+
+/* Override preview-layer to show full image (portrait/landscape intact) */
+.preview-layer{
+    object-fit:contain;
+}
 </style>
 </head>
 <body>
 
-<!-- LEFT NAV RAIL -->
 <div class="nav-rail">
     <div class="brand-logo">S</div>
-
-    <div class="nav-btn active" id="nav-image" title="Image" onclick="switchLab('image')">
+    
+    <div class="nav-btn active" id="nav-image" title="Image Lab" onclick="switchLab('image')">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
     </div>
-
-    <div class="nav-btn" id="nav-video" title="Video" onclick="switchLab('video')">
+    
+    <div class="nav-btn" id="nav-video" title="Video Lab" onclick="switchLab('video')">
         <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
     </div>
-
-    <div class="nav-btn" id="nav-shortfilm" title="Short Film" onclick="switchLab('shortfilm')">
+    
+    <div class="nav-btn" id="nav-shortfilm" title="Short Film Lab" onclick="switchLab('shortfilm')">
         <svg viewBox="0 0 24 24">
             <rect x="2" y="6" width="20" height="14" rx="2" ry="2"></rect>
             <path d="M2 10h20"></path>
@@ -581,17 +579,16 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 
     <div style="margin-top:auto;"></div>
-
+    
     <div class="nav-btn" title="Settings">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82A1.65 1.65 0 0 0 3 13H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82A1.65 1.65 0 0 0 21 11h.09A2 2 0 0 1 21 15z"/></svg>
     </div>
 </div>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="sidebar-header">
         <div>
-            <div class="sidebar-title">SULANDRA CREATIVE LAB</div>
+            <div class="sidebar-title">SULANDRA CREATIVE STUDIO IMAGE LAB</div>
         </div>
         <div class="sidebar-status">
             <span></span><span>H200 ONLINE</span>
@@ -600,23 +597,12 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
     <div class="sidebar-scroll" id="sidebar-scroll">
 
-        <!-- Lab mode switch (Image / Video / Short Film) -->
         <div class="lab-mode-switch">
-            <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">
-                Image
-                <span class="icon">Stills</span>
-            </div>
-            <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">
-                Video
-                <span class="icon">Clips</span>
-            </div>
-            <div id="lab-mode-shortfilm" class="lab-mode" onclick="switchLab('shortfilm')">
-                Short Film
-                <span class="icon">Storyboard</span>
-            </div>
+            <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">Image</div>
+            <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">Video</div>
+            <div id="lab-mode-shortfilm" class="lab-mode" onclick="switchLab('shortfilm')">Short Film</div>
         </div>
 
-        <!-- IMAGE CONTROLS -->
         <div id="image-controls">
 
             <div class="mode-switch">
@@ -624,7 +610,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div class="mode-option" id="img-mode-img2img" onclick="setImageMode('img2img', this)">Image → Image</div>
             </div>
 
-            <!-- Upload BEFORE prompt (hidden for Text → Image) -->
             <div class="input-group" id="upload-group-img" style="display:none;">
                 <div class="label"><span>Reference Image</span></div>
                 <input type="file" id="file-input-img" hidden accept="image/*" onchange="handleImgFile(this)">
@@ -633,6 +618,13 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                     <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload reference</span>
                 </div>
+
+                <div class="preview-toggle-row">
+                    <button type="button" class="btn btn-ghost active" id="img-preview-fit" onclick="setPreviewMode('img','fit')">Fit</button>
+                    <button type="button" class="btn btn-ghost" id="img-preview-fill" onclick="setPreviewMode('img','fill')">Fill</button>
+                </div>
+
+                <button type="button" class="btn btn-ghost" style="margin-top:6px;justify-content:flex-start;font-size:11px;" onclick="clearImageReference()">Clear reference</button>
 
                 <div class="label" style="margin-top:12px;">
                     <span>Influence Strength</span><span id="strength-val">0.75</span>
@@ -651,9 +643,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                     <div class="ratio-option active" onclick="setImageRatio(1024,1024,this)">1:1<span>Square</span></div>
                     <div class="ratio-option" onclick="setImageRatio(1280,720,this)">16:9<span>Landscape</span></div>
                     <div class="ratio-option" onclick="setImageRatio(720,1280,this)">9:16<span>Portrait</span></div>
-                    <div class="ratio-option" onclick="setImageRatio(1024,1280,this)">4:5<span>Portrait</span></div>
-                    <div class="ratio-option" onclick="setImageRatio(300,300,this)">Album<span>300×300</span></div>
-                    <div class="ratio-option" onclick="setImageRatio(1280,720,this)">YouTube<span>1280×720</span></div>
                 </div>
             </div>
 
@@ -662,13 +651,9 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
             </div>
 
-            <button id="gen-btn-img" class="btn btn-accent" style="width:100%;height:46px;margin-top:10px;" onclick="generateImage()">
-                <svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg>
-                GENERATE IMAGE
-            </button>
+            <button id="gen-btn-img" class="btn btn-accent" style="width:100%;height:46px;margin-top:10px;" onclick="generateImage()">GENERATE IMAGE</button>
         </div>
 
-        <!-- VIDEO CONTROLS -->
         <div id="video-controls" style="display:none;">
 
             <div class="mode-switch">
@@ -677,283 +662,80 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <div class="mode-option" id="vid-mode-extend" onclick="setVideoMode('extend',this)">Extend Video</div>
             </div>
 
-            <div class="input-group">
-                <div class="label"><span>Prompt</span><span style="font-size:10px;opacity:.6;">Describe the full scene</span></div>
-                <textarea id="video-prompt" class="text-area" placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
-            </div>
-
-            <div class="input-group">
-                <div class="label"><span>Negative Prompt</span><span style="font-size:10px;opacity:.6;">Things to avoid</span></div>
-                <textarea id="video-negative" class="text-area" style="min-height:70px;" placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
-            </div>
-
-            <!-- Primary ref: HIDDEN in Text → Video, visible in other modes -->
-            <div class="input-group" id="video-ref-group">
+            <div class="input-group" id="video-ref-group" style="display:none;">
                 <div class="label"><span>Primary Reference</span></div>
                 <input type="file" id="video-ref-image" hidden accept="image/*" onchange="handleVideoRefImage(this)">
                 <input type="file" id="video-ref-video" hidden accept="video/*" onchange="handleVideoRefVideo(this)">
                 <div class="upload-dropzone" id="drop-zone-video-main" onclick="triggerVideoMainUpload()">
                     <video id="preview-video-main" class="preview-layer" style="display:none;" muted loop></video>
                     <img id="preview-video-main-img" class="preview-layer" style="display:none;">
-                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                    <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload image or video (depends on mode)</span>
-                </div>
-            </div>
-
-            <!-- Start & End frames: HIDDEN in Text → Video -->
-            <div class="input-group" id="start-end-group">
-                <div class="label"><span>Start & End Frames</span><span style="font-size:10px;opacity:.6;">Optional morph</span></div>
-                <div class="inline-row">
-                    <div>
-                        <input type="file" id="start-frame-input" hidden accept="image/*" onchange="handleStartEnd('start',this)">
-                        <div class="upload-dropzone" id="drop-start" onclick="document.getElementById('start-frame-input').click()" style="height:120px;">
-                            <img id="start-preview" class="preview-layer" style="display:none;">
-                            <span style="font-size:11px;color:var(--text-secondary);">Start Frame</span>
-                        </div>
-                    </div>
-                    <div>
-                        <input type="file" id="end-frame-input" hidden accept="image/*" onchange="handleStartEnd('end',this)">
-                        <div class="upload-dropzone" id="drop-end" onclick="document.getElementById('end-frame-input').click()" style="height:120px;">
-                            <img id="end-preview" class="preview-layer" style="display:none;">
-                            <span style="font-size:11px;color:var(--text-secondary);">End Frame</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Elements (multi-ref): still here, but visually hidden and reused by Short Film if needed -->
-            <div class="input-group" id="elements-group">
-                <div class="label"><span>Elements / Consistency</span><span style="font-size:10px;opacity:.6;">Character · Style · Scene</span></div>
-                <input type="file" id="elements-input" hidden accept="image/*" multiple onchange="handleElements(this)">
-                <div class="upload-dropzone" id="drop-elements" onclick="document.getElementById('elements-input').click()" style="height:110px;">
-                    <span style="font-size:11px;color:var(--text-secondary);">Upload multiple reference images</span>
-                </div>
-                <div id="elements-count" style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:none;"></div>
-            </div>
-
-            <!-- Durations / resolution / model mode -->
-            <div class="input-group">
-                <div class="label"><span>Duration & Resolution</span></div>
-                <div class="inline-row">
-                    <div>
-                        <select id="video-duration" style="width:100%;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
-                            <option value="5">5 seconds</option>
-                            <option value="10">10 seconds</option>
-                            <option value="15">15 seconds</option>
-                            <option value="20">20 seconds</option>
-                        </select>
-                    </div>
-                    <div>
-                        <select id="video-resolution" style="width:100%;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
-                            <option value="720p">HD 1280×720</option>
-                            <option value="1080p">Full HD 1920×1080</option>
-                        </select>
-                    </div>
+                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M23 7l-7 5 7 5V7z"/></svg>
+                    <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload</span>
                 </div>
             </div>
 
             <div class="input-group">
-                <div class="label"><span>Aspect Ratio</span></div>
-                <div class="ratio-grid">
-                    <div class="ratio-option active" onclick="setVideoRatio('16:9',this)">16:9<span>YouTube</span></div>
-                    <div class="ratio-option" onclick="setVideoRatio('9:16',this)">9:16<span>TikTok / Reels</span></div>
-                    <div class="ratio-option" onclick="setVideoRatio('1:1',this)">1:1<span>Square</span></div>
-                </div>
+                <div class="label"><span>Prompt</span></div>
+                <textarea id="video-prompt" class="text-area" placeholder="Describe the scene..."></textarea>
             </div>
 
-            <div class="input-group">
-                <div class="label"><span>Model Mode</span></div>
-                <div class="inline-row">
-                    <button id="mode-standard" class="btn btn-ghost" style="flex:1;border-radius:var(--radius-md);border:1px solid var(--border-subtle);" onclick="setVideoQuality('standard')">Standard (Fast)</button>
-                    <button id="mode-pro" class="btn btn-ghost" style="flex:1;border-radius:var(--radius-md);border:1px solid var(--border-subtle);" onclick="setVideoQuality('pro')">Pro (High Quality)</button>
-                </div>
-            </div>
-
-            <!-- Camera + motion + lipsync + sfx -->
-            <div class="input-group">
-                <div class="label"><span>Camera & Motion</span></div>
-                <div class="inline-row">
-                    <select id="camera-path" style="flex:1;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
-                        <option value="static">Static camera</option>
-                        <option value="pan-left">Pan left</option>
-                        <option value="pan-right">Pan right</option>
-                        <option value="zoom-in">Slow zoom in</option>
-                        <option value="zoom-out">Slow zoom out</option>
-                        <option value="orbit">Orbit around subject</option>
-                    </select>
-                    <select id="motion-brush-preset" style="flex:1;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
-                        <option value="none">Motion Brush: None</option>
-                        <option value="hair-wind">Hair flowing in wind</option>
-                        <option value="cloth-wave">Clothes gentle wave</option>
-                        <option value="clouds">Clouds moving</option>
-                        <option value="camera-object">Main subject subtle move</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <div class="label"><span>Lip Sync & Audio</span></div>
-                <div style="display:flex;flex-direction:column;gap:6px;">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <input type="checkbox" id="enable-lipsync">
-                        <label for="enable-lipsync" style="font-size:12px;color:var(--text-secondary);">Enable Lip Sync</label>
-                    </div>
-                    <input type="file" id="lipsync-audio" accept="audio/*" style="display:none" onchange="handleLipAudio(this)">
-                    <button class="btn btn-ghost" style="justify-content:flex-start;padding-left:10px;font-size:12px;" onclick="document.getElementById('lipsync-audio').click()">
-                        <svg style="width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-                        Attach audio for lip sync (optional)
-                    </button>
-
-                    <button class="btn btn-primary" style="margin-top:4px;font-size:12px;" onclick="generateSfx()">
-                        <svg style="width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/></svg>
-                        Generate matching sound effects
-                    </button>
-                </div>
-            </div>
-
-            <button id="gen-btn-video" class="btn btn-accent" style="width:100%;height:46px;margin-top:6px;" onclick="generateVideo()">
-                <svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                GENERATE VIDEO
-            </button>
-
+            <button id="gen-btn-video" class="btn btn-accent" style="width:100%;height:46px;margin-top:6px;" onclick="generateVideo()">GENERATE VIDEO</button>
         </div>
 
-        <!-- SHORT FILM CONTROLS -->
-        <div id="shortfilm-controls" style="display:none;">
-
-            <div class="input-group">
-                <div class="label">
-                    <span>Storyboard · Short Film</span>
-                    <span style="font-size:10px;opacity:.7;">Click = select · Double-click = replace · Drag = reorder</span>
-                </div>
-                <input type="file" id="shortfilm-images-input" hidden multiple accept="image/*" onchange="handleShortFilmImages(this)">
-                <!-- for replacing a specific shot -->
-                <input type="file" id="shortfilm-replace-image-input" hidden accept="image/*" onchange="handleShortFilmReplaceImage(this)">
-                <div class="shortfilm-board upload-dropzone" id="shortfilm-board" onclick="document.getElementById('shortfilm-images-input').click()">
-                    <div id="shortfilm-board-inner" class="shortfilm-board-inner">
-                        <div class="shortfilm-empty-hint">
-                            Click to upload your storyboard images.<br>
-                            Single-click selects, double-click replaces, drag to reorder.
-                        </div>
+        <div id="film-controls" style="display:none;">
+            
+            <div class="label" style="margin-bottom:8px;">SCENE STORYBOARD (Max 20)</div>
+            <div class="storyboard-area">
+                <input type="file" id="scene-upload" hidden accept="image/*" multiple onchange="handleSceneUpload(this)">
+                <div class="storyboard-grid" id="storyboard-grid">
+                    <div class="storyboard-slot" onclick="document.getElementById('scene-upload').click()">
+                        <span style="font-size:24px;color:#666;">+</span>
                     </div>
                 </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px;color:var(--text-secondary);">
-                    <span id="shortfilm-count">0 / 20 shots</span>
-                    <button type="button" class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="document.getElementById('shortfilm-images-input').click()">Add more images</button>
+            </div>
+
+            <div id="scene-editor" class="scene-editor">
+                <div class="label"><span>Selected Scene Prompt</span></div>
+                <textarea id="scene-prompt" class="text-area" style="min-height:60px;" placeholder="Describe what happens in this specific scene..."></textarea>
+                <div class="inline-row" style="margin-top:8px;">
+                     <button class="btn btn-ghost" style="font-size:10px;" onclick="saveScenePrompt()">Save Prompt</button>
+                     <button class="btn btn-ghost" style="font-size:10px;color:#ef4444;" onclick="deleteSelectedScene()">Delete Scene</button>
                 </div>
             </div>
 
-            <div class="input-group">
-                <div class="label">
-                    <span>Selected Shot Prompt</span>
-                    <span id="shortfilm-selected-label" style="font-size:10px;opacity:.7;">None selected</span>
-                </div>
-                <textarea id="shortfilm-shot-prompt" class="text-area" placeholder="Describe this specific shot (camera move, emotion, action...)" oninput="updateShortFilmShotPrompt()"></textarea>
-            </div>
-
-            <div class="input-group">
-                <div class="label"><span>Global Film Prompt</span></div>
-                <textarea id="shortfilm-global-prompt" class="text-area" placeholder="Overall style, pacing, mood and story arc for this short film."></textarea>
-            </div>
-
-            <div class="input-group">
-                <div class="label"><span>Short Film Duration & Aspect</span></div>
+            <div class="input-group" style="margin-top:16px;">
+                <div class="label"><span>Start / End Frames (Optional)</span></div>
                 <div class="inline-row">
-                    <div>
-                        <select id="shortfilm-duration" class="shortfilm-input">
-                            <option value="10">10 seconds</option>
-                            <option value="20">20 seconds</option>
-                            <option value="30">30 seconds</option>
-                            <option value="45">45 seconds</option>
-                            <option value="60">60 seconds</option>
-                        </select>
-                    </div>
-                    <div>
-                        <select id="shortfilm-aspect" class="shortfilm-input">
-                            <option value="16:9">16:9 · YouTube</option>
-                            <option value="9:16">9:16 · Reels / TikTok</option>
-                            <option value="1:1">1:1 · Square</option>
-                        </select>
-                    </div>
+                    <div class="upload-dropzone" style="height:80px;" onclick="alert('Upload Start Frame')">Start</div>
+                    <div class="upload-dropzone" style="height:80px;" onclick="alert('Upload End Frame')">End</div>
                 </div>
             </div>
 
-            <!-- Short Film Start & End frames -->
             <div class="input-group">
-                <div class="label"><span>Start & End Frames (Optional)</span></div>
-                <div class="inline-row">
-                    <div>
-                        <input type="file" id="shortfilm-start-input" hidden accept="image/*" onchange="handleShortFilmStartEnd('start',this)">
-                        <div class="upload-dropzone" id="shortfilm-drop-start" onclick="document.getElementById('shortfilm-start-input').click()" style="height:110px;">
-                            <img id="shortfilm-start-preview" class="preview-layer" style="display:none;">
-                            <span style="font-size:11px;color:var(--text-secondary);">Start Frame</span>
-                        </div>
-                    </div>
-                    <div>
-                        <input type="file" id="shortfilm-end-input" hidden accept="image/*" onchange="handleShortFilmStartEnd('end',this)">
-                        <div class="upload-dropzone" id="shortfilm-drop-end" onclick="document.getElementById('shortfilm-end-input').click()" style="height:110px;">
-                            <img id="shortfilm-end-preview" class="preview-layer" style="display:none;">
-                            <span style="font-size:11px;color:var(--text-secondary);">End Frame</span>
-                        </div>
-                    </div>
+                <div class="label"><span>Video Reference / URL</span></div>
+                <input type="text" class="text-area" style="min-height:40px;" placeholder="Paste YouTube URL or Link...">
+                <button class="btn btn-ghost" style="margin-top:4px;" onclick="alert('Upload video ref')">Upload Video File</button>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Script Upload</span></div>
+                <div class="upload-dropzone" style="height:80px;" onclick="alert('Upload Script (PDF/Doc/Img)')">
+                    <span style="font-size:11px;color:#aaa;">Drop PDF, Doc, or Screenshot</span>
                 </div>
             </div>
 
-            <!-- Short Film Video reference (URL or upload) -->
             <div class="input-group">
-                <div class="label"><span>Video Reference (Optional)</span></div>
-                <input id="shortfilm-video-url" class="shortfilm-input" placeholder="YouTube / direct video URL for reference timing or style">
-                <input type="file" id="shortfilm-video-file" hidden accept="video/*" onchange="handleShortFilmVideoFile(this)">
-                <div class="upload-dropzone" id="shortfilm-video-drop" onclick="document.getElementById('shortfilm-video-file').click()" style="height:130px;margin-top:8px;">
-                    <video id="shortfilm-video-preview" class="preview-layer" style="display:none;" muted loop></video>
-                    <span style="font-size:11px;color:var(--text-secondary);">Click to upload a reference clip (optional)</span>
-                </div>
-            </div>
-
-            <!-- Short Film script / docs -->
-            <div class="input-group">
-                <div class="label"><span>Script / Documents</span></div>
-                <textarea id="shortfilm-script-text" class="text-area" placeholder="Paste or write your script / key beats here."></textarea>
-                <input type="file" id="shortfilm-script-file" hidden accept=".txt,.pdf,.doc,.docx,image/*" onchange="handleShortFilmScriptFile(this)">
-                <button class="btn btn-ghost" style="justify-content:flex-start;padding-left:10px;font-size:12px;margin-top:4px;" onclick="document.getElementById('shortfilm-script-file').click()">
-                    <svg style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    Upload script (TXT / DOC / PDF / Screenshot)
+                <div class="label"><span>Audio / Lip Sync</span></div>
+                <button class="btn btn-primary" onclick="openAudioPanel()">
+                    🎵 Import from Music Lab / Studio
                 </button>
-                <div id="shortfilm-script-file-label" style="font-size:11px;color:var(--text-secondary);margin-top:2px;opacity:.8;"></div>
-            </div>
-
-            <!-- Short Film Lip Sync & Audio -->
-            <div class="input-group">
-                <div class="label"><span>Lip Sync & Audio</span></div>
-                <div style="display:flex;flex-direction:column;gap:6px;">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <input type="checkbox" id="shortfilm-enable-lipsync">
-                        <label for="shortfilm-enable-lipsync" style="font-size:12px;color:var(--text-secondary);">Enable Lip Sync</label>
-                    </div>
-
-                    <input type="file" id="shortfilm-audio-file" accept="audio/*" style="display:none" onchange="handleShortFilmAudioFile(this)">
-                    <button class="btn btn-ghost" style="justify-content:flex-start;padding-left:10px;font-size:12px;" onclick="document.getElementById('shortfilm-audio-file').click()">
-                        <svg style="width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-                        Upload audio from device
-                    </button>
-
-                    <div style="display:flex;gap:6px;margin-top:2px;">
-                        <button class="btn btn-primary" style="flex:1;font-size:11px;padding:6px 8px;" onclick="openAudioBrowser('audio-html')">
-                            Import from AUDIO Lab
-                        </button>
-                        <button class="btn btn-primary" style="flex:1;font-size:11px;padding:6px 8px;" onclick="openAudioBrowser('studio')">
-                            Import from Studio
-                        </button>
-                    </div>
-
-                    <div id="shortfilm-audio-label" style="font-size:11px;color:var(--text-secondary);margin-top:4px;opacity:.8;">
-                        No audio selected yet.
-                    </div>
+                <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+                    <input type="checkbox" id="film-lipsync">
+                    <label for="film-lipsync" style="color:#ccc;font-size:12px;">Enable Lip Sync</label>
                 </div>
             </div>
 
-            <button id="gen-btn-shortfilm" class="btn btn-accent" style="width:100%;height:46px;margin-top:8px;" onclick="generateShortFilm()">
-                <svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            <button class="btn btn-accent" style="width:100%;height:46px;margin-top:10px;" onclick="alert('Generating Full Short Film...')">
                 GENERATE SHORT FILM
             </button>
         </div>
@@ -961,1058 +743,215 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 </div>
 
-<!-- MAIN STAGE -->
+<div id="audio-panel" class="audio-panel">
+    <div class="audio-header">
+        <h3 style="margin:0;color:white;">My Audio Library</h3>
+        <button class="btn btn-ghost" onclick="closeAudioPanel()">✕</button>
+    </div>
+    <div class="audio-list">
+        <div class="audio-item" ondblclick="selectAudio('Afrobeat Chill')">
+            <div class="audio-icon">🎵</div>
+            <div class="audio-info">
+                <div class="audio-title">Afrobeat Chill</div>
+                <div class="audio-meta">Album: Summer Vibes · 2:30</div>
+            </div>
+        </div>
+        <div class="audio-item" ondblclick="selectAudio('Cinematic Tension')">
+            <div class="audio-icon">🎻</div>
+            <div class="audio-info">
+                <div class="audio-title">Cinematic Tension</div>
+                <div class="audio-meta">Album: Film Scores · 1:45</div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:auto;font-size:11px;color:#666;text-align:center;">
+        Double-click to import. Single click to preview.
+    </div>
+</div>
+
 <div class="stage">
     <div class="stage-header">
         <div class="gallery-tabs">
             <div class="gallery-tab active" id="tab-history" onclick="switchGalleryTab('history',this)">History</div>
             <div class="gallery-tab" id="tab-community" onclick="switchGalleryTab('community',this)">Community Feed</div>
-            <div class="gallery-tab" id="tab-favorites" onclick="switchGalleryTab('favorites',this)">Favorites</div>
-        </div>
-
-        <div class="stage-header-right">
-            <div class="plan-pill" onclick="openPlanModal()">
-                <span style="width:6px;height:6px;border-radius:999px;background:#38bdf8;"></span>
-                <span>Plan: Free · 66 Daily Credits</span>
-            </div>
-            <button class="btn btn-icon" onclick="refreshCommunity()" title="Refresh feed">
-                <svg><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-            </button>
         </div>
     </div>
 
     <div class="stage-content" id="gallery-container">
         <div class="grid" id="gallery-grid"></div>
         <div id="empty-state">
-            <svg style="width:64px;height:64px;margin-bottom:14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Start creating something amazing.</div>
-            <div style="font-size:13px;color:var(--text-secondary);">Choose Image, Video, or Short Film on the left, type your prompt, and hit Generate.</div>
+            <svg style="width:64px;height:64px;margin-bottom:14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+            <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Start creating.</div>
         </div>
     </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast-container">
-    <div id="toast" class="toast">
-        <div class="spinner"></div>
-        <div style="display:flex;flex-direction:column;">
-            <span style="font-weight:700;font-size:13px;" id="toast-title">Processing...</span>
-            <span style="font-size:12px;opacity:.8;" id="toast-msg">Sending request to H200 Engine</span>
-        </div>
-    </div>
-</div>
-
-<!-- PLAN MODAL -->
-<div id="plan-modal" class="modal-backdrop">
-    <div class="modal">
-        <h3>Membership Tiers</h3>
-        <p>Offer everything your competitors do – and more. These tiers are ready for when you wire billing.</p>
-        <div class="tier-list">
-            <div class="tier-item">
-                <strong>Free Creator</strong>
-                • ~6 videos / day, 30 images / day<br>
-                • Watermark on exports<br>
-                • Standard models, community access
-            </div>
-            <div class="tier-item">
-                <strong>Studio Pro</strong>
-                • No watermarks, Pro model mode<br>
-                • Longer videos (up to 60 s / job)<br>
-                • Priority queue, API access
-            </div>
-            <div class="tier-item">
-                <strong>Premier Turbo</strong>
-                • 4× concurrent jobs, 3-minute video chain<br>
-                • Private community feed & presets<br>
-                • Team credits and usage analytics
-            </div>
-        </div>
-        <div style="display:flex;justify-content:flex-end;margin-top:14px;">
-            <button class="btn btn-ghost" onclick="closePlanModal()">Close</button>
-        </div>
-    </div>
-</div>
-
-<!-- AUDIO BROWSER PANEL -->
-<div id="audio-browser" class="audio-browser-backdrop">
-    <div class="audio-browser-panel">
-        <div class="audio-browser-header">
-            <span id="audio-browser-title">Select Audio</span>
-            <button class="btn btn-icon" onclick="closeAudioBrowser()">
-                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </div>
-        <div id="audio-browser-list" class="audio-browser-list"></div>
-        <audio id="audio-browser-player" style="width:100%;padding:10px 14px 14px;" controls></audio>
-    </div>
-</div>
+<div class="toast-container"><div id="toast" class="toast"><div class="spinner"></div><div id="toast-msg">Processing...</div></div></div>
 
 <script>
-/* -------------------------------------------------------------------------- */
-/* CONFIG                                                                     */
-/* -------------------------------------------------------------------------- */
 const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
-
-let currentLab = "image";
+let currentLab = "image"; 
 let currentImageMode = "txt2img";
 let currentVideoMode = "text2video";
-let imageBase64 = null;
-let imgWidth = 1024, imgHeight = 1024;
+let selectedSceneIndex = -1;
+let scenes = []; // Array to hold storyboard scenes
 
-let videoAspect = "16:9";
-let videoQuality = "standard";
-let videoRefs = {
-    image: null,
-    video: null,
-    startFrame: null,
-    endFrame: null,
-    elements: [],
-    lipsyncAudio: null
-};
-
-/* -------------------------------------------------------------------------- */
-/* LAB SWITCHING                                                              */
-/* -------------------------------------------------------------------------- */
+// --- LAB SWITCHING ---
 function switchLab(lab){
     currentLab = lab;
-
     document.getElementById('nav-image').classList.toggle('active', lab === 'image');
     document.getElementById('nav-video').classList.toggle('active', lab === 'video');
-    document.getElementById('nav-shortfilm').classList.toggle('active', lab === 'shortfilm');
+    document.getElementById('nav-film').classList.toggle('active', lab === 'film');
+
+    const header = document.querySelector('.sidebar-title');
+    if(lab === 'image') header.textContent = 'IMAGE LAB';
+    else if(lab === 'video') header.textContent = 'VIDEO LAB';
+    else header.textContent = 'SHORT FILM STUDIO';
 
     document.getElementById('lab-mode-image').classList.toggle('active', lab === 'image');
     document.getElementById('lab-mode-video').classList.toggle('active', lab === 'video');
-    document.getElementById('lab-mode-shortfilm').classList.toggle('active', lab === 'shortfilm');
+    document.getElementById('lab-mode-film').classList.toggle('active', lab === 'film');
 
     document.getElementById('image-controls').style.display = (lab === 'image') ? 'block' : 'none';
     document.getElementById('video-controls').style.display = (lab === 'video') ? 'block' : 'none';
-    document.getElementById('shortfilm-controls').style.display = (lab === 'shortfilm') ? 'block' : 'none';
+    document.getElementById('film-controls').style.display = (lab === 'film') ? 'block' : 'none';
 }
 
-/* -------------------------------------------------------------------------- */
-/* IMAGE CONTROLS                                                             */
-/* -------------------------------------------------------------------------- */
+// --- IMAGE LAB LOGIC ---
 function setImageMode(mode, el){
     currentImageMode = mode;
     document.querySelectorAll('#image-controls .mode-option').forEach(e => e.classList.remove('active'));
     el.classList.add('active');
-
-    const group = document.getElementById('upload-group-img');
-    group.style.display = (mode === 'img2img') ? 'block' : 'none';
-}
-
-function setImageRatio(w,h,el){
-    imgWidth = w;
-    imgHeight = h;
-    document.querySelectorAll('#image-controls .ratio-option').forEach(e => e.classList.remove('active'));
-    el.classList.add('active');
+    // Upload comes BEFORE prompt in HTML structure now
+    document.getElementById('upload-group-img').style.display = (mode === 'img2img') ? 'block' : 'none';
 }
 
 function handleImgFile(input){
     if(input.files && input.files[0]){
         const reader = new FileReader();
         reader.onload = e => {
-            imageBase64 = e.target.result;
             const img = document.getElementById('preview-img');
             const zone = document.getElementById('drop-zone-img');
-            img.src = imageBase64;
+            img.src = e.target.result;
             img.style.display = 'block';
             zone.classList.add('has-file');
-            if(currentImageMode !== 'img2img'){
-                setImageMode('img2img', document.getElementById('img-mode-img2img'));
-            }
+            if(currentImageMode !== 'img2img') setImageMode('img2img', document.getElementById('img-mode-img2img'));
         };
         reader.readAsDataURL(input.files[0]);
     }
 }
 
-async function generateImage(){
-    const prompt = document.getElementById('prompt-input').value.trim();
-    if(!prompt){ return showToast("Add a prompt first.","Notice"); }
-
-    const btn = document.getElementById('gen-btn-img');
-    btn.disabled = true;
-    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
-    showToast("Sending image job to H200...","Processing");
-
-    const payload = {
-        prompt: prompt,
-        width: imgWidth,
-        height: imgHeight,
-        steps: 25,
-        guidance: parseFloat(document.getElementById('guidance').value)
-    };
-
-    if(currentImageMode === 'img2img' && imageBase64){
-        payload.image_base64 = imageBase64;
-        payload.strength = parseFloat(document.getElementById('strength').value);
-    }
-
-    try{
-        const res = await fetch(`${API_URL}/api/image/txt2img`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if(data.status === "success"){
-            showToast("Image generated successfully!","Success");
-            addToGallery({
-                type: "image",
-                url: `${API_URL}${data.image_url || data.imageUrl || data.url || data.filename ? "/api/image/file/"+(data.filename || "") : ""}`,
-                prompt
-            });
-        }else{
-            console.error(data);
-            showToast("Image error: " + (data.message || "Unknown error"),"Error");
-        }
-    }catch(err){
-        console.error(err);
-        showToast("Connection failed. Check API / tunnel.","Error");
-    }finally{
-        btn.disabled = false;
-        btn.innerHTML = `<svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE IMAGE`;
-    }
-}
-
-/* -------------------------------------------------------------------------- */
-/* VIDEO CONTROLS                                                             */
-/* -------------------------------------------------------------------------- */
+// --- VIDEO LAB LOGIC ---
 function setVideoMode(mode,el){
     currentVideoMode = mode;
     document.querySelectorAll('#video-controls .mode-option').forEach(e => e.classList.remove('active'));
     el.classList.add('active');
 
-    const mainZone = document.getElementById('drop-zone-video-main');
-    const span = mainZone.querySelector('span');
-    const refGroup = document.getElementById('video-ref-group');
-    const seGroup = document.getElementById('start-end-group');
-
+    // Hide upload for text2video
+    const uploadGroup = document.getElementById('video-ref-group');
     if(mode === 'text2video'){
-        span.textContent = "Text → Video uses only your prompt. Reference uploads are off in this mode.";
-        refGroup.style.display = 'none';
-        seGroup.style.display = 'none';
-    }else if(mode === 'image2video'){
-        span.textContent = "Upload a still image to animate into a video";
-        refGroup.style.display = 'block';
-        seGroup.style.display = 'block';
-    }else{
-        span.textContent = "Upload an existing video clip to extend";
-        refGroup.style.display = 'block';
-        seGroup.style.display = 'block';
+        uploadGroup.style.display = 'none';
+    } else {
+        uploadGroup.style.display = 'block';
+        // Update hint text
+        const zone = document.getElementById('drop-zone-video-main');
+        zone.querySelector('span').textContent = (mode === 'extend') ? "Upload Video to Extend" : "Upload Image to Animate";
     }
-}
-
-function setVideoRatio(ratio,el){
-    videoAspect = ratio;
-    document.querySelectorAll('#video-controls .ratio-option').forEach(e => e.classList.remove('active'));
-    el.classList.add('active');
-}
-
-function setVideoQuality(q){
-    videoQuality = q;
-    document.getElementById('mode-standard').style.borderColor = (q === 'standard') ? '#60a5fa' : 'var(--border-subtle)';
-    document.getElementById('mode-pro').style.borderColor       = (q === 'pro')       ? '#60a5fa' : 'var(--border-subtle)';
 }
 
 function triggerVideoMainUpload(){
-    if(currentVideoMode === 'text2video'){
-        showToast("Upload is disabled in Text → Video. Use Image → Video or Short Film for references.","Notice");
-        return;
-    }
-    if(currentVideoMode === 'extend'){
-        document.getElementById('video-ref-video').click();
-    }else{
-        document.getElementById('video-ref-image').click();
-    }
+    if(currentVideoMode === 'extend') document.getElementById('video-ref-video').click();
+    else document.getElementById('video-ref-image').click();
 }
 
 function handleVideoRefImage(input){
     if(input.files && input.files[0]){
         const reader = new FileReader();
         reader.onload = e => {
-            videoRefs.image = e.target.result;
             const img = document.getElementById('preview-video-main-img');
             const v = document.getElementById('preview-video-main');
-            v.style.display = 'none';
-            img.style.display = 'block';
-            img.src = videoRefs.image;
+            v.style.display = 'none'; img.style.display = 'block';
+            img.src = e.target.result;
             document.getElementById('drop-zone-video-main').classList.add('has-file');
         };
         reader.readAsDataURL(input.files[0]);
     }
 }
 
-function handleVideoRefVideo(input){
-    if(input.files && input.files[0]){
-        const reader = new FileReader();
-        reader.onload = e => {
-            videoRefs.video = e.target.result;
-            const v = document.getElementById('preview-video-main');
-            const img = document.getElementById('preview-video-main-img');
-            img.style.display = 'none';
-            v.style.display = 'block';
-            v.src = videoRefs.video;
-            v.loop = true; v.muted = true; v.play();
-            document.getElementById('drop-zone-video-main').classList.add('has-file');
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function handleStartEnd(kind,input){
-    if(input.files && input.files[0]){
-        const reader = new FileReader();
-        reader.onload = e => {
-            if(kind === 'start'){
-                videoRefs.startFrame = e.target.result;
-                const img = document.getElementById('start-preview');
-                img.src = videoRefs.startFrame;
-                img.style.display = 'block';
-                document.getElementById('drop-start').classList.add('has-file');
-            }else{
-                videoRefs.endFrame = e.target.result;
-                const img = document.getElementById('end-preview');
-                img.src = videoRefs.endFrame;
-                img.style.display = 'block';
-                document.getElementById('drop-end').classList.add('has-file');
-            }
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function handleElements(input){
-    videoRefs.elements = [];
-    if(input.files && input.files.length){
-        const count = input.files.length;
-        let loaded = 0;
+// --- SHORT FILM LOGIC ---
+function handleSceneUpload(input){
+    if(input.files){
         for(const file of input.files){
             const reader = new FileReader();
             reader.onload = e => {
-                videoRefs.elements.push(e.target.result);
-                loaded++;
-                if(loaded === count){
-                    const info = document.getElementById('elements-count');
-                    if(info){
-                        info.style.display = 'block';
-                        info.textContent = `${count} element reference(s) attached.`;
-                    }
-                }
+                scenes.push({ src: e.target.result, prompt: "" });
+                renderStoryboard();
             };
             reader.readAsDataURL(file);
         }
-        const drop = document.getElementById('drop-elements');
-        if(drop){
-            drop.classList.add('has-file');
-        }
     }
 }
 
-function handleLipAudio(input){
-    if(input.files && input.files[0]){
-        const reader = new FileReader();
-        reader.onload = e => {
-            videoRefs.lipsyncAudio = e.target.result;
-            showToast("Lip sync audio attached.","Info");
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-async function generateVideo(){
-    const prompt = document.getElementById('video-prompt').value.trim();
-    if(!prompt){ return showToast("Add a video prompt first.","Notice"); }
-
-    const btn = document.getElementById('gen-btn-video');
-    btn.disabled = true;
-    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
-    showToast("Sending video job to H200...","Processing");
-
-    const payload = {
-        mode: currentVideoMode,
-        prompt,
-        negative_prompt: document.getElementById('video-negative').value.trim(),
-        duration_seconds: parseInt(document.getElementById('video-duration').value),
-        resolution: document.getElementById('video-resolution').value,
-        aspect_ratio: videoAspect,
-        quality: videoQuality,
-        camera_path: document.getElementById('camera-path').value,
-        motion_brush: document.getElementById('motion-brush-preset').value,
-        lipsync_enabled: document.getElementById('enable-lipsync').checked,
-        refs: {}
-    };
-
-    if(currentVideoMode === 'extend' && videoRefs.video){
-        payload.refs.video = videoRefs.video;
-    }else if(videoRefs.image && currentVideoMode !== 'text2video'){
-        payload.refs.image = videoRefs.image;
-    }
-
-    if(videoRefs.startFrame && currentVideoMode !== 'text2video') payload.refs.start_frame = videoRefs.startFrame;
-    if(videoRefs.endFrame && currentVideoMode !== 'text2video')   payload.refs.end_frame   = videoRefs.endFrame;
-    if(videoRefs.elements.length) payload.refs.elements = videoRefs.elements;
-    if(videoRefs.lipsyncAudio) payload.refs.lipsync_audio = videoRefs.lipsyncAudio;
-
-    try{
-        const res = await fetch(`${API_URL}/api/video/generate`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if(data.status === "success"){
-            showToast("Video generated successfully!","Success");
-            addToGallery({
-                type: "video",
-                url: `${API_URL}${data.video_url || data.url || ""}`,
-                thumb: data.thumbnail_url ? `${API_URL}${data.thumbnail_url}` : null,
-                prompt
-            });
-        }else{
-            console.error(data);
-            showToast("Video error: " + (data.message || "Unknown error"),"Error");
-        }
-    }catch(err){
-        console.error(err);
-        showToast("Connection failed. Check API / tunnel.","Error");
-    }finally{
-        btn.disabled = false;
-        btn.innerHTML = `<svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> GENERATE VIDEO`;
-    }
-}
-
-/* AUDIO SFX */
-async function generateSfx(){
-    const prompt = document.getElementById('video-prompt').value.trim();
-    if(!prompt){ return showToast("Add a prompt first so SFX can match.","Notice"); }
-
-    showToast("Generating sound effects for this scene...","Processing");
-    try{
-        const res = await fetch(`${API_URL}/api/audio/sfx`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({ prompt })
-        });
-        const data = await res.json();
-        if(data.status === "success"){
-            showToast("Sound effects generated!","Success");
-        }else{
-            showToast("SFX error: " + (data.message || "Unknown error"),"Error");
-        }
-    }catch(err){
-        console.error(err);
-        showToast("Connection failed while generating SFX.","Error");
-    }
-}
-
-/* -------------------------------------------------------------------------- */
-/* GALLERY / COMMUNITY / FAVORITES                                           */
-/* -------------------------------------------------------------------------- */
-function addToGallery(item){
-    const grid = document.getElementById('gallery-grid');
-    document.getElementById('empty-state').style.display = 'none';
-
-    const card = document.createElement('div');
-    card.className = 'card ' + (item.type === 'video' ? 'media-video' : 'media-image');
-
-    if(item.type === 'image'){
-        const url = item.url;
-        card.innerHTML = `
-            <img src="${url}" alt="">
-            <div class="card-overlay">
-                <div class="card-meta">${item.prompt || ''}</div>
-                <div class="card-actions">
-                    <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
-                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
-                </div>
-            </div>
+function renderStoryboard(){
+    const grid = document.getElementById('storyboard-grid');
+    // Keep the "Add" button at the end
+    const addButton = grid.lastElementChild; 
+    grid.innerHTML = '';
+    
+    scenes.forEach((scene, idx) => {
+        const div = document.createElement('div');
+        div.className = `storyboard-slot ${idx === selectedSceneIndex ? 'filled' : ''}`;
+        div.onclick = () => selectScene(idx);
+        div.innerHTML = `
+            <img src="${scene.src}">
+            <div class="slot-number">${idx + 1}</div>
+            <div class="slot-delete" onclick="event.stopPropagation(); deleteScene(${idx});">✕</div>
         `;
-    }else{
-        const url = item.url;
-        const thumb = item.thumb || url;
-        card.innerHTML = `
-            <video src="${url}" poster="${thumb}" controls muted></video>
-            <div class="card-overlay">
-                <div class="card-meta">${item.prompt || ''}</div>
-                <div class="card-actions">
-                    <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
-                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
-                </div>
-            </div>
-        `;
-    }
-
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(16px)';
-    grid.prepend(card);
-    setTimeout(()=>{card.style.opacity='1';card.style.transform='translateY(0)';},30);
+        grid.appendChild(div);
+    });
+    grid.appendChild(addButton);
 }
 
-function cloneSetup(type,encodedPrompt){
-    const prompt = decodeURIComponent(encodedPrompt || '');
-    if(type === 'image'){
-        switchLab('image');
-        document.getElementById('prompt-input').value = prompt;
-    }else{
-        switchLab('video');
-        document.getElementById('video-prompt').value = prompt;
-    }
-    showToast("Preset cloned into the left panel. Tweak and generate.","Info");
+function selectScene(idx){
+    selectedSceneIndex = idx;
+    const editor = document.getElementById('scene-editor');
+    editor.classList.add('active');
+    document.getElementById('scene-prompt').value = scenes[idx].prompt;
+    renderStoryboard(); // refresh highlights
 }
 
-function switchGalleryTab(tab,el){
-    document.querySelectorAll('.gallery-tab').forEach(e => e.classList.remove('active'));
-    el.classList.add('active');
-
-    if(tab === 'community'){
-        refreshCommunity();
-    }else if(tab === 'favorites'){
-        showToast("Favorites UI ready. Wire it to your backend when you want to store likes.","Info");
+function saveScenePrompt(){
+    if(selectedSceneIndex > -1){
+        scenes[selectedSceneIndex].prompt = document.getElementById('scene-prompt').value;
+        showToast("Scene prompt saved.", "Success");
     }
 }
 
-async function refreshCommunity(){
-    try{
-        const res = await fetch(`${API_URL}/api/community/feed`);
-        const data = await res.json();
-        if(data && Array.isArray(data.items)){
-            const grid = document.getElementById('gallery-grid');
-            grid.innerHTML = '';
-            data.items.forEach(item=>{
-                addToGallery({
-                    type: item.type || 'video',
-                    url: `${API_URL}${item.url}`,
-                    thumb: item.thumb ? `${API_URL}${item.thumb}` : null,
-                    prompt: item.prompt || ''
-                });
-            });
-        }
-    }catch(err){
-        console.warn("Community feed not wired yet:",err);
-    }
+function deleteScene(idx){
+    scenes.splice(idx, 1);
+    selectedSceneIndex = -1;
+    document.getElementById('scene-editor').classList.remove('active');
+    renderStoryboard();
 }
 
-/* -------------------------------------------------------------------------- */
-/* TOAST + MODAL                                                              */
-/* -------------------------------------------------------------------------- */
-let toastTimeout;
-function showToast(msg,title="Processing"){
+// --- AUDIO PANEL ---
+function openAudioPanel(){ document.getElementById('audio-panel').classList.add('active'); }
+function closeAudioPanel(){ document.getElementById('audio-panel').classList.remove('active'); }
+function selectAudio(name){
+    showToast(`Imported audio: ${name}`, "Success");
+    closeAudioPanel();
+}
+
+// --- TOAST ---
+function showToast(msg, title="Info"){
     const t = document.getElementById('toast');
-    document.getElementById('toast-msg').innerText = msg;
-    document.getElementById('toast-title').innerText = title;
+    t.querySelector('span:last-child').textContent = msg;
     t.classList.add('active');
-
-    if(title === "Error"){
-        t.style.borderLeftColor = "#ef4444";
-    }else if(title === "Success"){
-        t.style.borderLeftColor = "#22c55e";
-    }else{
-        t.style.borderLeftColor = "#38bdf8";
-    }
-
-    clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(()=>t.classList.remove('active'),4000);
+    setTimeout(()=>t.classList.remove('active'), 3000);
 }
 
-function openPlanModal(){
-    document.getElementById('plan-modal').classList.add('active');
-}
-function closePlanModal(){
-    document.getElementById('plan-modal').classList.remove('active');
-}
-
-/* -------------------------------------------------------------------------- */
-/* SHORT FILM LOGIC – STORYBOARD, PROMPTS, AUDIO                              */
-/* -------------------------------------------------------------------------- */
-
-let shortFilmShots = [];
-let shortFilmSelectedId = null;
-let shortFilmRefs = {
-    startFrame: null,
-    endFrame: null,
-    videoFile: null,
-    videoUrl: "",
-    scriptFile: null,
-    scriptFileName: "",
-    audioSource: null,
-    audioLabel: ""
-};
-let shortFilmDragId = null;
-let shortFilmReplaceId = null;
-
-function handleShortFilmImages(input){
-    if(!input.files || !input.files.length) return;
-
-    const maxShots = 20;
-    const remainingSlots = maxShots - shortFilmShots.length;
-    if(remainingSlots <= 0){
-        showToast("You already have 20 storyboard images.","Notice");
-        input.value = "";
-        return;
-    }
-
-    const files = Array.from(input.files).slice(0, remainingSlots);
-    let loaded = 0;
-
-    files.forEach(file=>{
-        const reader = new FileReader();
-        reader.onload = e => {
-            const id = "sf_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-            shortFilmShots.push({
-                id,
-                src: e.target.result,
-                prompt: ""
-            });
-            shortFilmSelectedId = id; // highlight last uploaded
-            loaded++;
-            if(loaded === files.length){
-                renderShortFilmBoard();
-                selectShortFilmShot(shortFilmSelectedId);
-                showToast("Storyboard images added.","Success");
-            }
-        };
-        reader.readAsDataURL(file);
-    });
-
-    input.value = "";
-}
-
-function renderShortFilmBoard(){
-    const inner = document.getElementById('shortfilm-board-inner');
-    if(!inner) return;
-
-    inner.innerHTML = "";
-    if(!shortFilmShots.length){
-        const empty = document.createElement('div');
-        empty.className = "shortfilm-empty-hint";
-        empty.innerHTML = "Click to upload your storyboard images.<br>Single-click selects, double-click replaces, drag to reorder.";
-        inner.appendChild(empty);
-    }else{
-        shortFilmShots.forEach((shot, index)=>{
-            const card = document.createElement('div');
-            card.className = "shortfilm-shot-card";
-            card.dataset.id = shot.id;
-            card.dataset.index = index.toString();
-            card.draggable = true;
-
-            const img = document.createElement('img');
-            img.className = "shortfilm-shot-thumb";
-            img.src = shot.src;
-
-            const label = document.createElement('div');
-            label.className = "shortfilm-shot-label";
-            label.textContent = "Shot " + (index + 1);
-
-            const promptTag = document.createElement('div');
-            promptTag.className = "shortfilm-shot-prompt-tag";
-            promptTag.textContent = shot.prompt ? "Prompt" : "No prompt";
-            if(!shot.prompt){
-                promptTag.style.background = "rgba(30,64,175,.85)";
-                promptTag.style.color = "#e5e7eb";
-            }
-
-            card.appendChild(img);
-            card.appendChild(label);
-            card.appendChild(promptTag);
-
-            card.addEventListener('click', ()=>selectShortFilmShot(shot.id));
-            card.addEventListener('dblclick', ()=>startShortFilmReplace(shot.id));
-            card.addEventListener('dragstart', e=>handleShortFilmDragStart(e, shot.id));
-            card.addEventListener('dragover', e=>handleShortFilmDragOver(e, shot.id));
-            card.addEventListener('dragleave', e=>handleShortFilmDragLeave(e, shot.id));
-            card.addEventListener('drop', e=>handleShortFilmDrop(e, shot.id));
-
-            if(shot.id === shortFilmSelectedId){
-                card.classList.add('selected');
-            }
-
-            inner.appendChild(card);
-        });
-    }
-
-    const countEl = document.getElementById('shortfilm-count');
-    if(countEl){
-        countEl.textContent = `${shortFilmShots.length} / 20 shots`;
-    }
-
-    if(shortFilmSelectedId){
-        const shot = shortFilmShots.find(s => s.id === shortFilmSelectedId);
-        if(shot){
-            document.getElementById('shortfilm-shot-prompt').value = shot.prompt || "";
-            document.getElementById('shortfilm-selected-label').textContent = "Shot " + (shortFilmShots.indexOf(shot)+1);
-        }
-    }else{
-        document.getElementById('shortfilm-shot-prompt').value = "";
-        document.getElementById('shortfilm-selected-label').textContent = "None selected";
-    }
-}
-
-function selectShortFilmShot(id){
-    shortFilmSelectedId = id;
-    const shot = shortFilmShots.find(s => s.id === id);
-
-    document.querySelectorAll('.shortfilm-shot-card').forEach(card=>{
-        card.classList.toggle('selected', card.dataset.id === id);
-    });
-
-    const promptArea = document.getElementById('shortfilm-shot-prompt');
-    const label = document.getElementById('shortfilm-selected-label');
-    if(shot){
-        promptArea.value = shot.prompt || "";
-        label.textContent = "Shot " + (shortFilmShots.indexOf(shot)+1);
-    }else{
-        promptArea.value = "";
-        label.textContent = "None selected";
-    }
-}
-
-function updateShortFilmShotPrompt(){
-    if(!shortFilmSelectedId) return;
-    const shot = shortFilmShots.find(s => s.id === shortFilmSelectedId);
-    if(!shot) return;
-
-    shot.prompt = document.getElementById('shortfilm-shot-prompt').value;
-    renderShortFilmBoard();
-    selectShortFilmShot(shortFilmSelectedId);
-}
-
-/* Drag & drop reordering */
-function handleShortFilmDragStart(e,id){
-    shortFilmDragId = id;
-    e.dataTransfer.effectAllowed = "move";
-}
-function handleShortFilmDragOver(e,id){
-    e.preventDefault();
-    const card = findShortFilmCardById(id);
-    if(card) card.classList.add('drag-over');
-}
-function handleShortFilmDragLeave(e,id){
-    const card = findShortFilmCardById(id);
-    if(card) card.classList.remove('drag-over');
-}
-function handleShortFilmDrop(e,id){
-    e.preventDefault();
-    const targetCard = findShortFilmCardById(id);
-    if(targetCard) targetCard.classList.remove('drag-over');
-    if(!shortFilmDragId || shortFilmDragId === id) return;
-
-    const fromIndex = shortFilmShots.findIndex(s => s.id === shortFilmDragId);
-    const toIndex = shortFilmShots.findIndex(s => s.id === id);
-    if(fromIndex === -1 || toIndex === -1) return;
-
-    const [moved] = shortFilmShots.splice(fromIndex,1);
-    shortFilmShots.splice(toIndex,0,moved);
-    shortFilmDragId = null;
-
-    renderShortFilmBoard();
-    if(shortFilmSelectedId){
-        selectShortFilmShot(shortFilmSelectedId);
-    }
-}
-function findShortFilmCardById(id){
-    return document.querySelector(`.shortfilm-shot-card[data-id="${id}"]`);
-}
-
-/* Replace a single shot (double-click) */
-function startShortFilmReplace(id){
-    shortFilmReplaceId = id;
-    const input = document.getElementById('shortfilm-replace-image-input');
-    input.value = "";
-    input.click();
-}
-function handleShortFilmReplaceImage(input){
-    if(!shortFilmReplaceId || !input.files || !input.files[0]){
-        input.value = "";
-        return;
-    }
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = e => {
-        const shot = shortFilmShots.find(s => s.id === shortFilmReplaceId);
-        if(shot){
-            shot.src = e.target.result;
-            renderShortFilmBoard();
-            selectShortFilmShot(shortFilmReplaceId);
-            showToast("Shot image replaced.","Success");
-        }
-        shortFilmReplaceId = null;
-        input.value = "";
-    };
-    reader.readAsDataURL(file);
-}
-
-/* Start / End frames for Short Film */
-function handleShortFilmStartEnd(kind,input){
-    if(!input.files || !input.files[0]) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        if(kind === 'start'){
-            shortFilmRefs.startFrame = e.target.result;
-            const img = document.getElementById('shortfilm-start-preview');
-            img.src = shortFilmRefs.startFrame;
-            img.style.display = 'block';
-            document.getElementById('shortfilm-drop-start').classList.add('has-file');
-        }else{
-            shortFilmRefs.endFrame = e.target.result;
-            const img = document.getElementById('shortfilm-end-preview');
-            img.src = shortFilmRefs.endFrame;
-            img.style.display = 'block';
-            document.getElementById('shortfilm-drop-end').classList.add('has-file');
-        }
-    };
-    reader.readAsDataURL(input.files[0]);
-}
-
-/* Video reference for Short Film */
-function handleShortFilmVideoFile(input){
-    if(!input.files || !input.files[0]) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        shortFilmRefs.videoFile = e.target.result;
-        const v = document.getElementById('shortfilm-video-preview');
-        v.src = shortFilmRefs.videoFile;
-        v.style.display = 'block';
-        v.loop = true;
-        v.muted = true;
-        v.play();
-        document.getElementById('shortfilm-video-drop').classList.add('has-file');
-    };
-    reader.readAsDataURL(input.files[0]);
-}
-
-/* Script for Short Film */
-function handleShortFilmScriptFile(input){
-    if(!input.files || !input.files[0]) return;
-    const file = input.files[0];
-    const label = document.getElementById('shortfilm-script-file-label');
-    label.textContent = "Attached: " + file.name;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-        shortFilmRefs.scriptFile = e.target.result;
-        shortFilmRefs.scriptFileName = file.name;
-    };
-    reader.readAsDataURL(file);
-}
-
-/* Audio for Short Film */
-function handleShortFilmAudioFile(input){
-    if(!input.files || !input.files[0]) return;
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = e => {
-        shortFilmRefs.audioSource = e.target.result;
-        shortFilmRefs.audioLabel = "Device audio: " + file.name;
-        const label = document.getElementById('shortfilm-audio-label');
-        if(label){
-            label.textContent = "Selected: " + shortFilmRefs.audioLabel;
-        }
-        showToast("Audio attached to Short Film.","Success");
-    };
-    reader.readAsDataURL(file);
-}
-
-/* Audio Browser – mock data */
-const audioLibraryData = {
-    "audio-html":[
-        {
-            name:"AUDIO Lab · Afrobeats Album",
-            tracks:[
-                { title:"AfroPraise Intro", src:"/audio/audiolab_afropraise_intro.mp3" },
-                { title:"H200 Groove Loop", src:"/audio/audiolab_h200_groove.mp3" }
-            ]
-        },
-        {
-            name:"AUDIO Lab · Worship Set",
-            tracks:[
-                { title:"Deep Soaking Pad", src:"/audio/audiolab_soaking_pad.mp3" },
-                { title:"Soft Piano Bed", src:"/audio/audiolab_piano_bed.mp3" }
-            ]
-        }
-    ],
-    "studio":[
-        {
-            name:"Studio · Sulandra Records",
-            tracks:[
-                { title:"Latest Afrobeat Single", src:"/audio/studio_latest_afrobeat.mp3" },
-                { title:"Amapiano Draft 003", src:"/audio/studio_amapiano_draft_003.mp3" }
-            ]
-        },
-        {
-            name:"Studio · Film Score Sketches",
-            tracks:[
-                { title:"Suspense Build 01", src:"/audio/studio_score_suspense01.mp3" },
-                { title:"Emotional Theme 02", src:"/audio/studio_score_emotional02.mp3" }
-            ]
-        }
-    ]
-};
-
-function openAudioBrowser(source){
-    const backdrop = document.getElementById('audio-browser');
-    const list = document.getElementById('audio-browser-list');
-    const title = document.getElementById('audio-browser-title');
-
-    backdrop.dataset.source = source;
-    list.innerHTML = "";
-
-    const albums = audioLibraryData[source] || [];
-    title.textContent = source === 'audio-html' ? "Import from AUDIO Lab" : "Import from Studio Library";
-
-    albums.forEach(album=>{
-        const albumDiv = document.createElement('div');
-        albumDiv.className = "audio-album";
-
-        const albumTitle = document.createElement('div');
-        albumTitle.className = "audio-album-title";
-        albumTitle.textContent = album.name;
-
-        albumDiv.appendChild(albumTitle);
-
-        album.tracks.forEach(track=>{
-            const trackDiv = document.createElement('div');
-            trackDiv.className = "audio-track";
-            trackDiv.dataset.src = track.src;
-            trackDiv.dataset.title = track.title;
-
-            const nameSpan = document.createElement('span');
-            nameSpan.textContent = track.title;
-
-            const hintSpan = document.createElement('span');
-            hintSpan.style.fontSize = "10px";
-            hintSpan.style.opacity = ".7";
-            hintSpan.textContent = "Click to preview · Double-click to import";
-
-            trackDiv.appendChild(nameSpan);
-            trackDiv.appendChild(hintSpan);
-
-            trackDiv.addEventListener('click', ()=>previewAudioTrack(track.src));
-            trackDiv.addEventListener('dblclick', ()=>selectAudioTrack(track));
-
-            albumDiv.appendChild(trackDiv);
-        });
-
-        list.appendChild(albumDiv);
-    });
-
-    backdrop.classList.add('active');
-}
-
-function closeAudioBrowser(){
-    const backdrop = document.getElementById('audio-browser');
-    backdrop.classList.remove('active');
-    const player = document.getElementById('audio-browser-player');
-    player.pause();
-}
-
-function previewAudioTrack(src){
-    const player = document.getElementById('audio-browser-player');
-    player.src = src;
-    player.play().catch(()=>{});
-}
-
-function selectAudioTrack(track){
-    shortFilmRefs.audioSource = track.src;
-    shortFilmRefs.audioLabel = track.title;
-    const label = document.getElementById('shortfilm-audio-label');
-    if(label){
-        label.textContent = "Selected from library: " + track.title;
-    }
-    showToast("Audio imported for Short Film.","Success");
-    closeAudioBrowser();
-}
-
-/* Generate Short Film */
-async function generateShortFilm(){
-    if(!shortFilmShots.length){
-        return showToast("Add at least one storyboard image for your Short Film.","Notice");
-    }
-
-    const globalPrompt = document.getElementById('shortfilm-global-prompt').value.trim();
-    if(!globalPrompt){
-        return showToast("Add a global film prompt to guide style and pacing.","Notice");
-    }
-
-    const btn = document.getElementById('gen-btn-shortfilm');
-    btn.disabled = true;
-    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
-    showToast("Sending Short Film storyboard job to H200...","Processing");
-
-    const duration = parseInt(document.getElementById('shortfilm-duration').value);
-    const aspect = document.getElementById('shortfilm-aspect').value;
-    const lipsyncEnabled = document.getElementById('shortfilm-enable-lipsync').checked;
-    const scriptText = document.getElementById('shortfilm-script-text').value.trim();
-    const videoUrl = document.getElementById('shortfilm-video-url').value.trim();
-
-    const payload = {
-        mode: "shortfilm",
-        duration_seconds: duration,
-        aspect_ratio: aspect,
-        storyboard: shortFilmShots.map((shot, index)=>({
-            index,
-            image: shot.src,
-            prompt: shot.prompt || ""
-        })),
-        global_prompt: globalPrompt,
-        script_text: scriptText,
-        script_file: shortFilmRefs.scriptFile || null,
-        script_file_name: shortFilmRefs.scriptFileName || null,
-        refs: {
-            start_frame: shortFilmRefs.startFrame || null,
-            end_frame: shortFilmRefs.endFrame || null,
-            video_file: shortFilmRefs.videoFile || null,
-            video_url: videoUrl || null,
-            audio: shortFilmRefs.audioSource || null
-        },
-        lipsync_enabled: lipsyncEnabled
-    };
-
-    try{
-        const res = await fetch(`${API_URL}/api/video/generate`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if(data.status === "success"){
-            showToast("Short Film generated successfully!","Success");
-            addToGallery({
-                type: "video",
-                url: `${API_URL}${data.video_url || data.url || ""}`,
-                thumb: data.thumbnail_url ? `${API_URL}${data.thumbnail_url}` : null,
-                prompt: globalPrompt
-            });
-        }else{
-            console.error(data);
-            showToast("Short Film error: " + (data.message || "Unknown error"),"Error");
-        }
-    }catch(err){
-        console.error(err);
-        showToast("Connection failed while generating Short Film.","Error");
-    }finally{
-        btn.disabled = false;
-        btn.innerHTML = `<svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> GENERATE SHORT FILM`;
-    }
-}
-
-/* -------------------------------------------------------------------------- */
-/* INIT                                                                       */
-/* -------------------------------------------------------------------------- */
-document.addEventListener('DOMContentLoaded',()=>{
-    // default: hide video ref + start/end for Text → Video
-    document.getElementById('video-ref-group').style.display = 'none';
-    document.getElementById('start-end-group').style.display = 'none';
-
-    // hide Elements group visually (still available internally if needed)
-    const elementsGroup = document.getElementById('elements-group');
-    if(elementsGroup){
-        elementsGroup.style.display = 'none';
-    }
-});
+// Init
+switchLab('image');
 </script>
 </body>
 </html>
