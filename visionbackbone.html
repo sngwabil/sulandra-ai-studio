@@ -1542,10 +1542,16 @@ async function generateImage(){
     const btn = document.getElementById('gen-btn-img');
     btn.disabled = true;
     btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
-    showToast("Sending image job to H200...","Processing");
+    showToast("Sending image job to Flux 2 engine...","Processing");
+
+    const negativeEl = document.getElementById('negative-prompt');
+    const negativePrompt = negativeEl ? negativeEl.value.trim() : "";
 
     const payload = {
+        model: "flux2",             // let backend know which engine to use
+        mode: currentImageMode,     // txt2img or img2img
         prompt: prompt,
+        negative_prompt: negativePrompt,
         width: imgWidth,
         height: imgHeight,
         steps: 25,
@@ -1567,11 +1573,32 @@ async function generateImage(){
 
         if(data.status === "success"){
             showToast("Image generated successfully!","Success");
-            addToGallery({
-                type: "image",
-                url: `${API_URL}${data.image_url || data.imageUrl || data.url || data.filename ? "/api/image/file/"+(data.filename || "") : ""}`,
-                prompt
-            });
+
+            let finalUrl = null;
+
+            if (data.image_base64) {
+                // Flux 2 endpoint returns raw base64
+                finalUrl = `data:image/png;base64,${data.image_base64}`;
+            } else if (data.image_url || data.imageUrl || data.url) {
+                const rel = data.image_url || data.imageUrl || data.url;
+                finalUrl = rel.startsWith('http') ? rel : `${API_URL}${rel}`;
+            } else if (data.filename) {
+                finalUrl = `${API_URL}/api/image/file/${data.filename}`;
+            }
+
+            if (!finalUrl) {
+                console.error("No image URL in response:", data);
+                return showToast("Image error: No image URL returned.","Error");
+            }
+
+            addToGallery(
+                {
+                    type: "image",
+                    url: finalUrl,
+                    prompt
+                },
+                { saveToHistory: true }
+            );
         }else{
             console.error(data);
             showToast("Image error: " + (data.message || "Unknown error"),"Error");
