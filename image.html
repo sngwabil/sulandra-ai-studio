@@ -1826,7 +1826,36 @@ function switchGalleryTab(tab, el) {
         showToast("Favorites", "Favorites view will be wired later.");
     }
 }
+    
+function applyGalleryFilterForCurrentLab() {
+    if (currentGalleryTab !== 'history') return;
 
+    const grid = document.getElementById('gallery-grid');
+    const emptyState = document.getElementById('empty-state');
+    if (!grid || !emptyState) return;
+
+    const cards = Array.from(grid.querySelectorAll('.card'));
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const mediaType = card.dataset.mediaType || 'image';
+        let show = true;
+
+        if (currentLab === 'image') {
+            show = (mediaType === 'image');
+        } else if (currentLab === 'video') {
+            show = (mediaType === 'video');
+        } else if (currentLab === 'shortfilm') {
+            show = (mediaType === 'shortfilm');
+        }
+
+        card.style.display = show ? '' : 'none';
+        if (show) visibleCount++;
+    });
+
+    emptyState.style.display = visibleCount ? 'none' : 'flex';
+}
+    
 async function refreshCommunity(){
     try{
         const res = await fetch(`${API_URL}/api/community/feed`);
