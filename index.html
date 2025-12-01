@@ -122,22 +122,27 @@
       border: 1px solid transparent;
       transition: all 0.18s ease;
     }
-    nav a.nav-glow {
+   /* Normal state — now brighter (former hover glow) */
+nav a.nav-glow {
   font-size: 16px;
   font-weight: 700;
   color: #f9fafb;
   background: linear-gradient(135deg, #a855f7, #3b82f6);
-  box-shadow:
-    0 0 10px rgba(168, 85, 247, 0.2),   /* 20% glow */
-    0 0 18px rgba(59, 130, 246, 0.2);   /* 20% glow */
   padding: 7px 14px;
   transition: all 0.2s ease;
+
+  /* ⬇️ Brighter glow (previous hover version) */
+  box-shadow:
+    0 0 14px rgba(168, 85, 247, 0.3),
+    0 0 22px rgba(59, 130, 246, 0.3);
 }
 
+/* Hover state — now softer (previous normal glow) */
 nav a.nav-glow:hover {
+  /* ⬇️ Softer glow (previous non-hover version) */
   box-shadow:
-    0 0 14px rgba(168, 85, 247, 0.3),  /* slight bump on hover */
-    0 0 22px rgba(59, 130, 246, 0.3);
+    0 0 10px rgba(168, 85, 247, 0.2),
+    0 0 18px rgba(59, 130, 246, 0.2);
   transform: translateY(-1px);
 }
     nav a:hover {
