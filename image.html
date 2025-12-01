@@ -1765,8 +1765,11 @@ function addToGallery(item){
     const grid = document.getElementById('gallery-grid');
     document.getElementById('empty-state').style.display = 'none';
 
-    const card = document.createElement('div');
-    card.className = 'card ' + (item.type === 'video' ? 'media-video' : 'media-image');
+const card = document.createElement('div');
+const t = item.type || 'image';
+card.className = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
+card.dataset.mediaType = t;
+
 
     if(item.type === 'image'){
         const url = item.url;
