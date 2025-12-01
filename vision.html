@@ -1868,7 +1868,103 @@ function cloneSetup(type,encodedPrompt){
     }
     showToast("Preset cloned into the left panel. Tweak and generate.","Info");
 }
+/* -------------------------------------------------------------
+   LOCAL STORAGE HISTORY + ASSETS + FAVORITES HANDLING
+   ------------------------------------------------------------- */
 
+const HISTORY_STORAGE_KEY = "sulandra_history_v1";
+const ASSETS_STORAGE_KEY  = "sulandra_assets_v1";
+
+/* ------------------------------
+   LOAD HISTORY FROM STORAGE
+------------------------------ */
+function loadHistoryFromStorage() {
+    try {
+        const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+        if (!raw) return [];
+
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+        console.error("Failed to load history:", err);
+        return [];
+    }
+}
+
+/* ------------------------------
+   SAVE HISTORY TO STORAGE
+------------------------------ */
+function saveHistoryToStorage(history) {
+    try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+    } catch (err) {
+        console.error("Failed to save history:", err);
+    }
+}
+
+/* ------------------------------
+   LOAD ASSETS (PERSISTED)
+------------------------------ */
+function loadAssetsFromStorage() {
+    try {
+        const raw = localStorage.getItem(ASSETS_STORAGE_KEY);
+        if (!raw) return [];
+
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+        return [];
+    }
+}
+
+/* ------------------------------
+   SAVE ASSETS
+------------------------------ */
+function saveAssetsToStorage(assets) {
+    try {
+        localStorage.setItem(ASSETS_STORAGE_KEY, JSON.stringify(assets));
+    } catch (err) {
+        console.error("Asset save error:", err);
+    }
+}
+
+/* ------------------------------
+   ADD ITEM TO ASSETS DIRECTLY
+------------------------------ */
+function addItemToAssets(item) {
+    const assets = loadAssetsFromStorage();
+    const exists = assets.find(a => a.id === item.id);
+
+    if (!exists) {
+        assets.unshift(item);
+        saveAssetsToStorage(assets);
+    }
+}
+
+/* ------------------------------
+   ADD ITEM TO HISTORY DIRECTLY
+------------------------------ */
+function addItemToHistory(item) {
+    const history = loadHistoryFromStorage();
+    history.unshift(item);
+    saveHistoryToStorage(history);
+}
+
+/* ------------------------------
+   SYNC FAVORITE STATUS
+------------------------------ */
+function toggleFavorite(itemId) {
+    const history = loadHistoryFromStorage();
+
+    const target = history.find(h => h.id === itemId);
+    if (!target) return;
+
+    target.isFavorite = !target.isFavorite;
+    saveHistoryToStorage(history);
+
+    // Live UI update
+    renderHistoryGrid();
+}
 function switchGalleryTab(tab, el) {
     document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
     if (el) el.classList.add('active');
