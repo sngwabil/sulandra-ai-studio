@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SULANDRA – Home</title>
+  <title>Sulandra AI Studio – Home</title>
 
   <style>
     :root {
@@ -111,7 +111,6 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      align-items: center;
     }
 
     nav a {
@@ -135,6 +134,44 @@
       background: var(--accent-soft);
       border-color: rgba(168, 85, 247, 0.7);
       box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+    }
+
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .profile-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .profile-badge:hover {
+      border-color: rgba(168, 85, 247, 0.7);
+      color: var(--text-main);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+    }
+
+    .profile-credits {
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
     main {
@@ -1060,11 +1097,6 @@
       }
     }
   </style>
-
-  <!-- Firebase (compat version for simple inline usage) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
@@ -1073,19 +1105,30 @@
     <div class="logo">
       <div class="logo-circle"></div>
       <div>
-        <div class="logo-text-main">SULANDRA</div>
-        <div class="logo-text-sub">Music · Lab · Studio · Explore</div>
+        <div class="logo-text-main">Sulandra AI Studio</div>
+        <div class="logo-text-sub">Images · Music · Video · Films</div>
       </div>
     </div>
 
     <div class="nav-group">
       <nav>
+        <a href="index.html" class="active">Home</a>
+        <a href="image.html">Image</a>
+        <a href="video.html">Video</a>
         <a href="music.html">Music</a>
+        <a href="film.html">Short Films</a>
         <a href="lab.html">Lab</a>
         <a href="studio.html">Studio</a>
         <a href="education.html">Explore</a>
-        <a href="#" id="nav-signin" onclick="openAuthFromNav(event)">Sign in</a>
       </nav>
+
+      <button type="button" class="profile-badge" onclick="toggleProfile()">
+        <div class="profile-avatar" id="profile-avatar">G</div>
+        <div>
+          <div id="profile-label">Sign in</div>
+          <div class="profile-credits" id="profile-credits">0 credits</div>
+        </div>
+      </button>
     </div>
   </div>
 </header>
@@ -1097,23 +1140,23 @@
     <div class="studio-overview-box">
       <div class="studio-stack">
         <div class="studio-layer">
-          <strong>SULANDRA UI</strong><br />
+          <strong>Sulandra AI Studio UI</strong><br />
           <span style="font-size:11px; color:var(--text-muted);">
-            This website · Music · Lab · Studio · Explore pages
+            This website · Image / Music / Video / Short Films · Studio editor
           </span>
         </div>
         <div class="studio-arrow">↓</div>
         <div class="studio-layer">
           <strong>Backend API layer</strong><br />
           <span style="font-size:11px; color:var(--text-muted);">
-            Authentication · plans · credits · routing to each creative pipeline
+            Authentication · plans · credits · routing to each model pipeline
           </span>
         </div>
         <div class="studio-arrow">↓</div>
         <div class="studio-layer">
           <strong>Runpod GPU workers</strong><br />
           <span style="font-size:11px; color:var(--text-muted);">
-            Your creative AI models running on dedicated GPUs
+            Your image, music, video & film models running on GPUs
           </span>
         </div>
       </div>
@@ -1123,8 +1166,8 @@
         <ul class="studio-roadmap-list">
           <li>1. Finish static UI (this step).</li>
           <li>2. Add a backend API for auth, plans and credits.</li>
-          <li>3. Connect API → Runpod workers for your AI models.</li>
-          <li>4. Expand to more tools, workflows and collaboration.</li>
+          <li>3. Connect API → Runpod workers for image generation.</li>
+          <li>4. Expand to music, video and short film pipelines.</li>
         </ul>
         <div class="profile-small" style="margin-top:8px;">
           This page already matches the final flow. Later you’ll plug in real auth, billing and model calls behind it.
@@ -1138,16 +1181,19 @@
     <div class="hero-left">
       <div class="hero-kicker">Unified creation platform</div>
       <h1 class="hero-title">
-        One brain for <span>your music and creative projects.</span>
+        One brain for <span>images, music, video and short films.</span>
       </h1>
       <p class="hero-sub">
-        SULANDRA connects everything you build here: generate songs, experiment with AI models in the Lab and assemble full projects inside Studio. Use one account and one credit system across all tools, without exporting and re-uploading files between apps.
+        Sulandra AI Studio connects everything: generate images, songs, videos
+        and short films in one place. Use your credits across all tools, move a
+        generated image into a video, or drop a song straight into a short film
+        or Studio project without downloading anything.
       </p>
 
       <div class="hero-actions">
-        <button class="btn-primary" onclick="openAuthFromNav(event)">
+        <button class="btn-primary" onclick="toggleProfile()">
           <span class="plus">+</span>
-          Sign in – start your workspace
+          Get started – choose a plan
         </button>
         <button class="btn-ghost" onclick="scrollToSection('plans')">
           View plans & credits
@@ -1163,110 +1209,317 @@
     </div>
 
     <div class="hero-right">
-      <!-- MUSIC -->
+      <!-- IMAGE LAB -->
+      <article class="product-card" onclick="goToLab('image.html')">
+        <div class="shimmer-border"></div>
+        <div class="product-card-inner">
+          <div class="product-pill">IMAGE LAB</div>
+          <h3 class="product-title">Image · Outfit · Edit</h3>
+          <p class="product-desc">
+            Text-to-image, image-to-image, outfit swap, pose changes,
+            inpainting and style reference. Each image uses <strong>5 credits</strong>.
+          </p>
+          <div class="product-tags">
+            <span class="product-tag">Text → Image</span>
+            <span class="product-tag">Image → Image</span>
+            <span class="product-tag">Outfit / pose</span>
+            <span class="product-tag">Storyboards</span>
+          </div>
+          <div class="product-footer">
+            <span>Basic: UHD preview + watermark</span>
+            <span class="product-link">Open Image Lab →</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- MUSIC LAB -->
       <article class="product-card" onclick="goToLab('music.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
-          <div class="product-pill">MUSIC</div>
-          <h3 class="product-title">Write, arrange and produce songs</h3>
+          <div class="product-pill">MUSIC LAB</div>
+          <h3 class="product-title">Music · Lyrics · Vocals</h3>
           <p class="product-desc">
-            Generate full songs, stems and lyric drafts. Train vocal styles and reuse them inside Studio projects.
+            Generate full songs, stems and lyric drafts. Train vocal styles and
+            reuse them across videos and short films. Each song uses
+            <strong>10 credits</strong>.
           </p>
           <div class="product-tags">
             <span class="product-tag">Song generation</span>
             <span class="product-tag">AI lyric help</span>
             <span class="product-tag">Vocal training</span>
-            <span class="product-tag">Stems &amp; MIDI (Ultimate)</span>
+            <span class="product-tag">Stems & MIDI (Ultimate)</span>
           </div>
           <div class="product-footer">
-            <span>Base song uses 10 credits</span>
-            <span class="product-link">Open Music →</span>
+            <span>Stems & MIDI: 50 credits (Ultimate)</span>
+            <span class="product-link">Open Music Lab →</span>
           </div>
         </div>
       </article>
 
-      <!-- LAB -->
-      <article class="product-card" onclick="goToLab('lab.html')">
+      <!-- VIDEO LAB -->
+      <article class="product-card" onclick="goToLab('video.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
-          <div class="product-pill">LAB</div>
-          <h3 class="product-title">AI models & creative experiments</h3>
+          <div class="product-pill">VIDEO LAB</div>
+          <h3 class="product-title">Video · Edits · Lip sync</h3>
           <p class="product-desc">
-            Connect and test your own AI models on Runpod. Route prompts from SULANDRA into different pipelines using one account.
+            Text-to-video, image-to-video and reference-based clips. Add lip
+            sync using generated or uploaded audio. Base video uses
+            <strong>10 credits</strong>, lip sync adds <strong>+10 credits</strong>.
           </p>
           <div class="product-tags">
-            <span class="product-tag">Custom models</span>
-            <span class="product-tag">GPU routing</span>
-            <span class="product-tag">Credits per run</span>
-            <span class="product-tag">Flux / Hunyuan / more</span>
+            <span class="product-tag">Text → Video</span>
+            <span class="product-tag">Image → Video</span>
+            <span class="product-tag">YouTube reference</span>
+            <span class="product-tag">Lip sync</span>
           </div>
           <div class="product-footer">
-            <span>Perfect for testing new setups</span>
-            <span class="product-link">Open Lab →</span>
+            <span>4K: Creator & up · WAV for Pro & up</span>
+            <span class="product-link">Open Video Lab →</span>
           </div>
         </div>
       </article>
 
-      <!-- STUDIO -->
-      <article class="product-card" onclick="goToLab('studio.html')">
+      <!-- SHORT FILMS -->
+      <article class="product-card" onclick="goToLab('film.html')">
         <div class="shimmer-border"></div>
         <div class="product-card-inner">
-          <div class="product-pill">STUDIO</div>
-          <h3 class="product-title">Timeline editor for everything</h3>
+          <div class="product-pill">SHORT FILMS</div>
+          <h3 class="product-title">Short films · Scenes</h3>
           <p class="product-desc">
-            Arrange songs, assets and outputs from the Lab into full projects. Export final content for your audience.
+            Build multi-scene short films with scripts, storyboards, and linked
+            music from Studio. Each short film uses <strong>100 credits</strong>.
           </p>
           <div class="product-tags">
-            <span class="product-tag">Multi-track</span>
-            <span class="product-tag">Project timelines</span>
-            <span class="product-tag">Version history</span>
-            <span class="product-tag">Export ready</span>
+            <span class="product-tag">Script → Film</span>
+            <span class="product-tag">Storyboard</span>
+            <span class="product-tag">Multi-scene</span>
+            <span class="product-tag">Studio export</span>
           </div>
           <div class="product-footer">
-            <span>Designed for Creator &amp; Ultimate</span>
-            <span class="product-link">Open Studio →</span>
-          </div>
-        </div>
-      </article>
-
-      <!-- EXPLORE -->
-      <article class="product-card" onclick="goToLab('education.html')">
-        <div class="shimmer-border"></div>
-        <div class="product-card-inner">
-          <div class="product-pill">EXPLORE</div>
-          <h3 class="product-title">School of Arts & tutorials</h3>
-          <p class="product-desc">
-            Learn music, film and creative skills with SIA lessons. Save your progress directly to your SULANDRA account.
-          </p>
-          <div class="product-tags">
-            <span class="product-tag">SIA courses</span>
-            <span class="product-tag">Assignments</span>
-            <span class="product-tag">Project-based</span>
-            <span class="product-tag">Creator mindset</span>
-          </div>
-          <div class="product-footer">
-            <span>Education tightly linked to Studio</span>
-            <span class="product-link">Open Explore →</span>
+            <span>Designed for Creator Ultimate</span>
+            <span class="product-link">Open Short Films →</span>
           </div>
         </div>
       </article>
     </div>
   </section>
 
-  <!-- PLANS & CREDITS (kept as-is) -->
-  <!-- (same as your previous file – unchanged for brevity) -->
-  <!-- You can keep your existing Plans, Credits and Contact sections here -->
-
   <!-- PLANS & CREDITS -->
-  <!-- ... paste your existing plans + contact sections from before here unchanged ... -->
+  <section class="section" id="plans">
+    <div class="section-header">
+      <div class="section-title">Plans, credits & add-ons</div>
+      <div class="section-sub">
+        Click a plan to see monthly vs yearly pricing and signup details.
+      </div>
+    </div>
 
+    <div class="plans-grid">
+      <!-- BASIC -->
+      <div class="plan-card" onclick="openPlanDetails('basic')">
+        <div class="plan-name">Basic</div>
+        <div class="plan-price">$0 / month · 50 credits</div>
+        <div class="plan-meta">
+          Free plan with UHD-quality previews and a Sulandra watermark on every export.
+          Perfect for testing the real quality before subscribing.
+        </div>
+        <ul class="plan-list">
+          <li>• 50 credits per month included</li>
+          <li>• Image, Music, Video & Short Film previews</li>
+          <li>• UHD and higher previews allowed</li>
+          <li>• MP3-only audio, always with watermark</li>
+          <li>• Watermark on all visuals</li>
+          <li>• Cannot buy extra credits or add-ons</li>
+        </ul>
+      </div>
+
+      <!-- PRO -->
+      <div class="plan-card" onclick="openPlanDetails('pro')">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$20 / month · 2500 credits</div>
+        <div class="plan-meta">
+          For serious creators who need clean exports, WAV audio and higher resolutions,
+          with optional Ultimate packs.
+        </div>
+        <ul class="plan-list">
+          <li>• 2500 credits per month included</li>
+          <li>• Clean outputs, no watermark</li>
+          <li>• WAV + MP3 audio export</li>
+          <li>• HD / UHD visuals (4K where supported)</li>
+          <li>• Can buy credit packs</li>
+          <li>• Optional Music / Image / Video Ultimate add-ons (+$5 each)</li>
+        </ul>
+      </div>
+
+      <!-- CREATOR -->
+      <div class="plan-card" onclick="openPlanDetails('creator')">
+        <div class="plan-ribbon">Best value</div>
+        <div class="plan-name">Creator</div>
+        <div class="plan-price">$30 / month · 5000 credits</div>
+        <div class="plan-meta">
+          For power users who want 4K, Studio workflows and Ultimate add-ons,
+          with enough credits for real monthly projects.
+        </div>
+        <ul class="plan-list">
+          <li>• 5000 credits per month included</li>
+          <li>• 4K support for visuals where available</li>
+          <li>• WAV export and clean outputs</li>
+          <li>• Full Studio access for Music & Video</li>
+          <li>• Can buy extra credit packs</li>
+          <li>• Can add Music / Image / Video Ultimate for deep control</li>
+        </ul>
+      </div>
+
+      <!-- CREATOR ULTIMATE -->
+      <div class="plan-card" onclick="openPlanDetails('creatorUltimate')">
+        <div class="plan-ribbon gold">Best overall</div>
+        <div class="plan-name">Creator Ultimate</div>
+        <div class="plan-price">$45 / month · 10000 credits</div>
+        <div class="plan-meta">
+          Everything unlocked. Designed for full productions, short films and
+          heavy Studio use across all categories.
+        </div>
+        <ul class="plan-list">
+          <li>• 10000 credits per month included</li>
+          <li>• 4K support across visual tools where available</li>
+          <li>• Full Studio + Short Film workflow</li>
+          <li>• Stems & MIDI export for 50 credits per song</li>
+          <li>• All Ultimate features included</li>
+          <li>• Priority for future Sulandra AI Studio features</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="credits-table">
+      <div class="credits-table-row">
+        <strong>Credit usage per feature:</strong><span></span>
+      </div>
+      <div class="credits-table-row">
+        <span>• 1 image (text or simple image-to-image)</span><span>5 credits</span>
+      </div>
+      <div class="credits-table-row">
+        <span>• Advanced image-to-image / heavy edit</span><span>15 credits</span>
+      </div>
+      <div class="credits-table-row">
+        <span>• 1 song / music generation</span><span>10 credits</span>
+      </div>
+      <div class="credits-table-row">
+        <span>• Text-to-video clip</span><span>10 credits</span>
+      </div>
+      <div class="credits-table-row">
+        <span>• YouTube reference (learn style)</span><span>10 credits</span>
+      </div>
+      <div class="credits-table-row">
+        <span>• Lip sync add-on for a video</span><span>+10 credits</span>
+      </div>
+      <div class="credits-table-row">
+        <span>• Stems + MIDI export (Ultimate)</span><span>50 credits</span>
+      </div>
+      <div class="credits-table-row">
+        <span>• Short film (multi-scene)</span><span>100 credits</span>
+      </div>
+
+      <div style="margin-top:8px; margin-bottom:4px;">
+        <strong>Buy extra credits (Pro / Creator / Creator Ultimate only):</strong>
+      </div>
+      <div class="credits-table-row">
+        <span>100 credits</span><span>$5</span>
+      </div>
+      <div class="credits-table-row">
+        <span>200 credits</span><span>$8</span>
+      </div>
+      <div class="credits-table-row">
+        <span>300 credits</span><span>$10</span>
+      </div>
+
+      <div class="yearly-note">
+        <strong>Yearly subscriptions:</strong><br />
+        • Pro: $228 / year (5% discount) – normal $240<br />
+        • Creator: $331.20 / year (8% discount) – normal $360<br />
+        • Creator Ultimate: $486 / year (10% discount) – normal $540<br />
+        Users can upgrade or downgrade at any time. New users can start with a
+        7-day free trial on a chosen paid plan (valid payment required;
+        exports disabled during the trial).
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title">Contact us · Leave a message</div>
+      <div class="section-sub">
+        Questions about plans, credits, Studio or custom models? Send us a message.
+      </div>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <form onsubmit="event.preventDefault(); handleContact();">
+          <div style="margin-bottom:8px;">
+            <label for="contact-name">Name</label>
+            <input id="contact-name" type="text" placeholder="Your name" />
+          </div>
+          <div style="margin-bottom:8px;">
+            <label for="contact-email">Email</label>
+            <input id="contact-email" type="email" placeholder="you@example.com" />
+          </div>
+          <div style="margin-bottom:8px;">
+            <label for="contact-topic">Topic</label>
+            <select id="contact-topic">
+              <option>Plans & credits</option>
+              <option>Billing / payments</option>
+              <option>Technical issue</option>
+              <option>Feature request</option>
+              <option>General question</option>
+            </select>
+          </div>
+          <div style="margin-bottom:8px;">
+            <label for="contact-message">Message</label>
+            <textarea id="contact-message" placeholder="Tell us what you need help with..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary">
+            <span class="plus">+</span>
+            Send message
+          </button>
+          <div class="contact-note" id="contact-note">
+            We’ll reply to you by email. In the real app, this will create a support ticket.
+          </div>
+        </form>
+      </div>
+
+      <div class="contact-card">
+        <div class="profile-section-title">Payments & methods</div>
+        <div class="profile-section-sub">
+          In your profile, users manage subscriptions, credit packs and payment methods.
+        </div>
+        <div class="profile-small">
+          Supported methods (UI preview):
+        </div>
+        <div class="payment-badges">
+          <div class="payment-pill">PayPal</div>
+          <div class="payment-pill">Visa / Mastercard</div>
+          <div class="payment-pill">Apple Pay</div>
+        </div>
+        <div class="profile-small" style="margin-top:10px;">
+          In the real system:
+        </div>
+        <ul class="plan-list">
+          <li>• Users pick a plan (Basic, Pro, Creator, Creator Ultimate).</li>
+          <li>• They can start a 7-day trial with a valid payment method.</li>
+          <li>• They can upgrade/downgrade anytime from Profile → Subscription.</li>
+          <li>• They can add or remove Ultimate add-ons per category.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  SULANDRA · One creative brain, one account. Plans, trials and payments are managed from the Profile.
+  Sulandra AI Studio · One credit system, one brain. Plans, trials and payments are managed from the Profile.
 </footer>
 
-<!-- PROFILE OVERLAY (unchanged UI, now backed by Firebase auth) -->
+<!-- PROFILE OVERLAY -->
 <div class="profile-overlay" id="profile-overlay">
   <div class="profile-panel">
     <div class="profile-header">
@@ -1298,13 +1551,13 @@
     </div>
 
     <div class="profile-footer">
-      <div>Your account is backed by Firebase. Sign in once and keep your workspace across devices.</div>
+      <div>Signed in state is simulated here. Real auth & billing will connect later.</div>
       <button type="button" id="sign-toggle" onclick="toggleSignIn()">Sign in</button>
     </div>
   </div>
 </div>
 
-<!-- PLAN DETAIL OVERLAY (unchanged from before) -->
+<!-- PLAN DETAIL OVERLAY -->
 <div class="plan-overlay" id="plan-overlay">
   <div class="plan-dialog">
     <div class="plan-dialog-header">
@@ -1351,59 +1604,7 @@
 </div>
 
 <script>
-  // 🔐 1. Firebase config – REPLACE with your real keys
-  // Go to Firebase console → Project settings → Web app → copy config here.
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
-
-  let firebaseApp = null;
-  let firebaseAuth = null;
-  let firebaseDb = null;
-  let currentFirebaseUser = null;
-
-  function initFirebase() {
-    try {
-      if (!window.firebase) return;
-      if (!firebaseConfig || firebaseConfig.apiKey === "YOUR_API_KEY") {
-        console.warn("Firebase config not set – login will stay in demo mode.");
-        return;
-      }
-      firebaseApp = firebase.initializeApp(firebaseConfig);
-      firebaseAuth = firebase.auth();
-      firebaseDb = firebase.firestore();
-
-      firebaseAuth.onAuthStateChanged(user => {
-        currentFirebaseUser = user || null;
-        handleAuthStateChange(user);
-      });
-    } catch (err) {
-      console.error("Error initialising Firebase:", err);
-    }
-  }
-
-  // 🔐 2. Simple event logger – stores events under each user
-  function logUserEvent(type, meta = {}) {
-    if (!firebaseDb || !currentFirebaseUser) return;
-    firebaseDb
-      .collection("users")
-      .doc(currentFirebaseUser.uid)
-      .collection("events")
-      .add({
-        type,
-        meta,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      .catch(err => console.error("Log event error:", err));
-  }
-
-  // ---------- Existing UI state (adapted to Firebase) ----------
-
+  // Simple user state simulation
   let isSignedIn = false;
   let user = {
     name: "Guest",
@@ -1464,7 +1665,6 @@
   let currentBilling = "monthly";
 
   function goToLab(path) {
-    logUserEvent("navigate", { to: path });
     window.location.href = path;
   }
 
@@ -1474,11 +1674,6 @@
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function openAuthFromNav(evt) {
-    if (evt) evt.preventDefault();
-    toggleProfile();
-  }
-
   /* PROFILE */
 
   function toggleProfile() {
@@ -1486,7 +1681,6 @@
     overlay.classList.toggle("show");
     if (overlay.classList.contains("show")) {
       renderProfileSection("overview");
-      logUserEvent("open_profile", {});
     }
   }
 
@@ -1495,13 +1689,10 @@
       .querySelectorAll(".profile-menu button")
       .forEach(btn => btn.classList.remove("active"));
 
-    if (section === "overview") {
-      document.getElementById("menu-overview").classList.add("active");
-    } else {
-      document
-        .querySelector(`.profile-menu button[onclick*="${section}"]`)
-        .classList.add("active");
-    }
+    if (section === "overview") document.getElementById("menu-overview").classList.add("active");
+    else document
+      .querySelector(`.profile-menu button[onclick*="${section}"]`)
+      .classList.add("active");
 
     renderProfileSection(section);
   }
@@ -1513,7 +1704,7 @@
       content.innerHTML = `
         <div class="profile-section-title">Profile overview</div>
         <div class="profile-section-sub">
-          Your account is backed by Firebase. In production this will show real usage, payments and security details.
+          Signed in state is simulated. Later this will show real account data.
         </div>
         <div class="profile-line"><strong>Name:</strong> ${user.name}</div>
         <div class="profile-line"><strong>Current plan:</strong> ${planConfig[user.plan].name}</div>
@@ -1525,29 +1716,30 @@
     } else if (section === "edit") {
       content.innerHTML = `
         <div class="profile-section-title">Edit profile</div>
-        <div class="profile-section-sub">Change your display name.</div>
+        <div class="profile-section-sub">Change your display name. (Simulated only.)</div>
         <label for="edit-name">Display name</label>
         <input id="edit-name" type="text" value="${user.name}" />
         <button class="btn-primary" style="margin-top:8px;" type="button" onclick="saveProfileName()">
           <span class="plus">+</span> Save name
         </button>
-        <div class="profile-small">This updates your local profile name. You can also sync it to Firestore later.</div>
+        <div class="profile-small">In production this would update your user record.</div>
       `;
     } else if (section === "invite") {
       content.innerHTML = `
         <div class="profile-section-title">Invite friends</div>
         <div class="profile-section-sub">
-          Share SULANDRA with other creators. Later this will give bonus credits.
+          Share Sulandra AI Studio. Later you can give invite links that reward you with credits.
         </div>
         <div class="profile-small">Sample invite link (mock):</div>
         <div class="chip">https://sulandra.ai/invite/YOURCODE</div>
+        <div class="profile-small">Copy this into your clip-notes for now. Real tracking comes later.</div>
       `;
     } else if (section === "subscription") {
       const planName = planConfig[user.plan].name;
       content.innerHTML = `
         <div class="profile-section-title">Subscription & credits</div>
         <div class="profile-section-sub">
-          Choose or change your plan. Billing will be handled by your backend.
+          Choose or change your plan. This is only simulated here, but it shows the final UX.
         </div>
         <div class="profile-line"><strong>Current plan:</strong> ${planName}</div>
         <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
@@ -1558,16 +1750,19 @@
           <span class="chip" onclick="simulatePlan('creator')">Creator</span>
           <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
         </div>
+        <div class="profile-small">
+          In the real app, plan changes would open a payment screen and keep your remaining credits when upgrading.
+        </div>
       `;
     } else if (section === "account") {
       content.innerHTML = `
         <div class="profile-section-title">Manage account</div>
         <div class="profile-section-sub">
-          This is where you’ll manage security and billing history in the real app.
+          This is where you’ll manage passwords, devices, billing history and security in the real app.
         </div>
         <ul class="plan-list">
           <li>• View invoices and payment history</li>
-          <li>• Update payment methods</li>
+          <li>• Update payment methods (PayPal, cards, Apple Pay)</li>
           <li>• Turn auto-renew on or off</li>
           <li>• Download receipts for taxes</li>
         </ul>
@@ -1588,26 +1783,18 @@
   }
 
   function updateProfileHeader() {
-    const avatarEl = document.getElementById("profile-avatar-lg");
-    const nameEl = document.getElementById("profile-name");
-    const planLabelEl = document.getElementById("profile-plan-label");
-    const signToggleEl = document.getElementById("sign-toggle");
-
-    if (avatarEl) avatarEl.textContent = user.initial;
-    if (nameEl) nameEl.textContent = user.name;
-    if (planLabelEl) {
-      planLabelEl.textContent = isSignedIn
-        ? `Plan: ${planConfig[user.plan].name}`
-        : "Not signed in";
-    }
-    if (signToggleEl) {
-      signToggleEl.textContent = isSignedIn ? "Sign out" : "Sign in with Google";
-    }
-
-    const navSignin = document.getElementById("nav-signin");
-    if (navSignin) {
-      navSignin.textContent = isSignedIn ? "Account" : "Sign in";
-    }
+    document.getElementById("profile-avatar").textContent = user.initial;
+    document.getElementById("profile-avatar-lg").textContent = user.initial;
+    document.getElementById("profile-name").textContent = user.name;
+    document.getElementById("profile-label").textContent = isSignedIn ? "Profile" : "Sign in";
+    document.getElementById("profile-credits").textContent =
+      `${user.credits} / ${user.maxCredits} credits`;
+    const planLabel = isSignedIn
+      ? `Plan: ${planConfig[user.plan].name}`
+      : "Not signed in";
+    document.getElementById("profile-plan-label").textContent = planLabel;
+    document.getElementById("sign-toggle").textContent =
+      isSignedIn ? "Sign out" : "Sign in";
   }
 
   function saveProfileName() {
@@ -1616,44 +1803,17 @@
     user.name = name;
     user.initial = name.charAt(0).toUpperCase();
     renderProfileSection("overview");
-    logUserEvent("update_name", { name });
-  }
-
-  function handleAuthStateChange(fbUser) {
-    if (fbUser) {
-      isSignedIn = true;
-      user.name = fbUser.displayName || fbUser.email || "User";
-      user.initial = (user.name.charAt(0) || "U").toUpperCase();
-      if (user.maxCredits === 0) {
-        simulatePlan("basic", true);
-      } else {
-        updateProfileHeader();
-      }
-      logUserEvent("signin", {});
-    } else {
-      isSignedIn = false;
-      user.name = "Guest";
-      user.initial = "G";
-      user.plan = "basic";
-      user.maxCredits = 0;
-      user.credits = 0;
-      updateProfileHeader();
-    }
+    alert("Name updated in local state. In production this would save to your account.");
   }
 
   function toggleSignIn() {
-    if (firebaseAuth && currentFirebaseUser) {
-      firebaseAuth.signOut().then(() => {
-        logUserEvent("signout", {});
-      });
-    } else if (firebaseAuth) {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebaseAuth.signInWithPopup(provider).catch(err => {
-        console.error("Sign-in error:", err);
-        alert("Sign in failed. Check console for details.");
-      });
+    isSignedIn = !isSignedIn;
+    if (isSignedIn && user.maxCredits === 0) {
+      // default: Pro demo
+      simulatePlan("pro", true);
     } else {
-      alert("Firebase login is not configured yet. Add your Firebase config at the top of index.html.");
+      updateProfileHeader();
+      renderProfileSection("overview");
     }
   }
 
@@ -1672,7 +1832,7 @@
     updateProfileHeader();
     renderProfileSection("subscription");
     if (!silent) {
-      alert("Plan switched (demo only) to: " + planConfig[key].name);
+      alert("Plan switched in local demo to: " + planConfig[key].name);
     }
   }
 
@@ -1683,7 +1843,6 @@
     currentBilling = "monthly";
     updatePlanDialog();
     document.getElementById("plan-overlay").classList.add("show");
-    logUserEvent("view_plan", { plan: key });
   }
 
   function closePlanDetails() {
@@ -1728,6 +1887,7 @@
           "Pay monthly for flexibility, or switch to yearly later to save more.";
       }
     } else {
+      // yearly
       if (config.monthly === 0) {
         priceMain.textContent = "$0";
         priceNote.textContent =
@@ -1757,12 +1917,14 @@
 
   function startSignup() {
     alert(
-      "Signup flow placeholder.\n\nIn the real app, this button should open your authentication + payment flow for the selected plan and billing period."
+      "Signup flow placeholder.\n\nIn the real app, this button would open your authentication + payment flow for the selected plan and billing period."
     );
+    // For demo, also set user plan
     simulatePlan(currentPlanKey, true);
-    if (firebaseAuth && !currentFirebaseUser) {
-      toggleSignIn();
-    }
+    isSignedIn = true;
+    updateProfileHeader();
+    toggleProfile();
+    closePlanDetails();
   }
 
   /* CONTACT */
@@ -1781,14 +1943,10 @@
     note.textContent =
       "Message captured locally. Later, this will send to your support backend or email.";
     alert("Message captured locally. In production, this would be sent to support.");
-
-    logUserEvent("contact_message", { name, email });
   }
 
-  // Initialise everything
-  initFirebase();
+  // Initialize header state
   updateProfileHeader();
-  logUserEvent("view_home", { path: window.location.pathname });
 </script>
 </body>
 </html>
