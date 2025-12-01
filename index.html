@@ -2057,28 +2057,15 @@ nav a.nav-explore {
   // Initialize header state
   updateProfileHeader();
 </script>
-  <script type="module">
-  /* ---------------------------------------------------
-     1. IMPORT FIREBASE (v12.6.0)
-  ---------------------------------------------------- */
+<script type="module">
+  // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import {
-    getFirestore,
-    getDoc,
-    setDoc,
-    doc
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  /* ---------------------------------------------------
-     2. FIREBASE CONFIG  (this is your real config)
-  ---------------------------------------------------- */
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
     apiKey: "AIzaSyCAc_nTzVoK1IwwT2FtsY6psNQaUBCtqNM",
     authDomain: "sulandra-studio.firebaseapp.com",
@@ -2089,77 +2076,10 @@ nav a.nav-explore {
     measurementId: "G-FD6Z8MNRHF"
   };
 
-  /* ---------------------------------------------------
-     3. INITIALIZE APP, AUTH, DB
-  ---------------------------------------------------- */
+  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
-  const provider = new GoogleAuthProvider();
-
-  /* ---------------------------------------------------
-     4. GRAB YOUR UI ELEMENTS
-        (make sure these IDs exist in your HTML)
-  ---------------------------------------------------- */
-  const loginBtn   = document.getElementById("google-auth-btn");
-  const logoutBtn  = document.getElementById("logout-btn");
-  const nameEl     = document.getElementById("profile-name");
-  const creditsEl  = document.getElementById("credit-count");
-
-  /* ---------------------------------------------------
-     5. LOGIN / LOGOUT BUTTON HANDLERS
-  ---------------------------------------------------- */
-  if (loginBtn) {
-    loginBtn.addEventListener("click", async () => {
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (err) {
-        console.error("LOGIN ERROR:", err);
-        alert("Login failed: " + (err.message || err));
-      }
-    });
-  }
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-      } catch (err) {
-        console.error("LOGOUT ERROR:", err);
-      }
-    });
-  }
-
-  /* ---------------------------------------------------
-     6. LIVE USER STATE + CREDITS FROM FIRESTORE
-  ---------------------------------------------------- */
-  onAuthStateChanged(auth, async (user) => {
-    if (!nameEl || !creditsEl) return;
-
-    if (!user) {
-      // Logged out
-      nameEl.textContent    = "Guest";
-      creditsEl.textContent = "0 / 0 credits";
-      return;
-    }
-
-    // Logged in
-    nameEl.textContent = user.displayName || "User";
-
-    const userRef = doc(db, "users", user.uid);
-    const snap    = await getDoc(userRef);
-
-    let credits = 10; // default for new user
-
-    if (snap.exists()) {
-      const data = snap.data();
-      credits = typeof data.credits === "number" ? data.credits : 10;
-    } else {
-      await setDoc(userRef, { credits });
-    }
-
-    creditsEl.textContent = `${credits} credits`;
-  });
+  const analytics = getAnalytics(app);
 </script>
+
 </body>
 </html>
