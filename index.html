@@ -2058,14 +2058,27 @@ nav a.nav-explore {
   updateProfileHeader();
 </script>
   <script type="module">
-  // Import the functions you need from the SDKs you need
+  /* ---------------------------------------------------
+     1. IMPORT FIREBASE (v12.6.0)
+  ---------------------------------------------------- */
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import {
+    getFirestore,
+    getDoc,
+    setDoc,
+    doc
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  /* ---------------------------------------------------
+     2. FIREBASE CONFIG  (this is your real config)
+  ---------------------------------------------------- */
   const firebaseConfig = {
     apiKey: "AIzaSyCAc_nTzVoK1IwwT2FtsY6psNQaUBCtqNM",
     authDomain: "sulandra-studio.firebaseapp.com",
@@ -2076,115 +2089,77 @@ nav a.nav-explore {
     measurementId: "G-FD6Z8MNRHF"
   };
 
-  // Initialize Firebase
+  /* ---------------------------------------------------
+     3. INITIALIZE APP, AUTH, DB
+  ---------------------------------------------------- */
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-<!-- FULL FIREBASE SETUP (WORKING) -->
-<script type="module">
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const provider = new GoogleAuthProvider();
 
-/* ---------------------------------------------------
-   1. IMPORT FIREBASE
----------------------------------------------------- */
+  /* ---------------------------------------------------
+     4. GRAB YOUR UI ELEMENTS
+        (make sure these IDs exist in your HTML)
+  ---------------------------------------------------- */
+  const loginBtn   = document.getElementById("google-auth-btn");
+  const logoutBtn  = document.getElementById("logout-btn");
+  const nameEl     = document.getElementById("profile-name");
+  const creditsEl  = document.getElementById("credit-count");
 
-import { 
-  initializeApp 
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-
-/* ---------------------------------------------------
-   2. FIREBASE CONFIG (USE YOUR REAL CONFIG)
----------------------------------------------------- */
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCAc_nTzVoK1IwwT2FtsY6psNQaUBCtqNM",
-  authDomain: "sulandra-studio.firebaseapp.com",
-  projectId: "sulandra-studio",
-  storageBucket: "sulandra-studio.appspot.com",
-  messagingSenderId: "114174078920",
-  appId: "1:114174078920:web:xxxxx"
-};
-
-
-/* ---------------------------------------------------
-   3. INITIALIZE SERVICES
----------------------------------------------------- */
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-
-
-/* ---------------------------------------------------
-   4. LOGIN BUTTON
----------------------------------------------------- */
-
-document.getElementById("google-auth-btn").addEventListener("click", async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    console.log("LOGIN SUCCESS:", result.user);
-  } catch (err) {
-    console.error("LOGIN ERROR:", err);
-  }
-});
-
-
-/* ---------------------------------------------------
-   5. LOGOUT BUTTON
----------------------------------------------------- */
-
-document.getElementById("logout-btn").addEventListener("click", async () => {
-  await signOut(auth);
-});
-
-
-/* ---------------------------------------------------
-   6. HANDLE USER STATE (LIVE UPDATE)
----------------------------------------------------- */
-
-onAuthStateChanged(auth, async (user) => {
-  const userPanel = document.getElementById("profile-name");
-  const credits = document.getElementById("credit-count");
-
-  if (!user) {
-    // logged out
-    userPanel.textContent = "Guest";
-    credits.textContent = "0 credits";
-    return;
+  /* ---------------------------------------------------
+     5. LOGIN / LOGOUT BUTTON HANDLERS
+  ---------------------------------------------------- */
+  if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        console.error("LOGIN ERROR:", err);
+        alert("Login failed: " + (err.message || err));
+      }
+    });
   }
 
-  // logged in
-  userPanel.textContent = user.displayName || "User";
-
-  // read credits from Firestore
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-
-  if (snap.exists()) {
-    credits.textContent = snap.data().credits + " credits";
-  } else {
-    // create new profile
-    await setDoc(userRef, { credits: 10 });
-    credits.textContent = "10 credits";
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error("LOGOUT ERROR:", err);
+      }
+    });
   }
-});
 
+  /* ---------------------------------------------------
+     6. LIVE USER STATE + CREDITS FROM FIRESTORE
+  ---------------------------------------------------- */
+  onAuthStateChanged(auth, async (user) => {
+    if (!nameEl || !creditsEl) return;
+
+    if (!user) {
+      // Logged out
+      nameEl.textContent    = "Guest";
+      creditsEl.textContent = "0 / 0 credits";
+      return;
+    }
+
+    // Logged in
+    nameEl.textContent = user.displayName || "User";
+
+    const userRef = doc(db, "users", user.uid);
+    const snap    = await getDoc(userRef);
+
+    let credits = 10; // default for new user
+
+    if (snap.exists()) {
+      const data = snap.data();
+      credits = typeof data.credits === "number" ? data.credits : 10;
+    } else {
+      await setDoc(userRef, { credits });
+    }
+
+    creditsEl.textContent = `${credits} credits`;
+  });
 </script>
 </body>
 </html>
