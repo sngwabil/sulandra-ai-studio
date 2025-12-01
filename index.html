@@ -122,7 +122,7 @@
       border: 1px solid transparent;
       transition: all 0.18s ease;
     }
-/* DEFAULT — look like your dark "Visual Lab" tab */
+/* DEFAULT – dark pill like your current Visual Lab (no glow) */
 nav a.nav-glow {
   font-size: 16px;
   font-weight: 700;
@@ -130,28 +130,46 @@ nav a.nav-glow {
   padding: 7px 24px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.45);
-  background: #020617;                 /* dark pill */
-  box-shadow: 0 0 0 rgba(0,0,0,0);      /* no glow */
+  background: #020617;
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+  position: relative;
+  overflow: visible;
   transition: all 0.2s ease;
 }
 
-/* HOVER — bright gradient + glow + bounce */
+/* BACKLIGHT LAYER – big soft halo behind the tab */
+nav a.nav-glow::before {
+  content: "";
+  position: absolute;
+  inset: -26px -34px;  /* how far the halo bleeds out */
+  border-radius: 999px;
+  background: radial-gradient(circle at center,
+              var(--tab-glow-color, rgba(168, 85, 247, 0.6)) 0%,
+              transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  filter: blur(14px);
+  z-index: -1;         /* keeps the glow behind the button */
+  transition: opacity 0.25s ease;
+}
+
+/* HOVER – gradient, glow, bounce + halo ON */
 nav a.nav-glow:hover {
   background: linear-gradient(135deg, #a855f7, #3b82f6);
+  color: #ffffff;
   box-shadow:
     0 0 18px rgba(168, 85, 247, 0.45),
     0 0 30px rgba(59, 130, 246, 0.45);
-  color: #ffffff;
 
   animation:
     navGlowPulse 2.4s ease-in-out infinite,
     navBounce 0.6s ease-in-out infinite;
 }
-    nav a:hover {
-      color: var(--text-main);
-      border-color: var(--border-soft);
-      background: rgba(15, 23, 42, 0.8);
-    }
+
+/* Show the backlight halo on hover */
+nav a.nav-glow:hover::before {
+  opacity: 1;
+}
 
     nav a.active {
       color: var(--text-main);
