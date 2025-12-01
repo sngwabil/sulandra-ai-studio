@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sulandra Creative Lab · Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-root: #020617;
+      --card-bg: #020617;
+      --accent: #a855f7;
+      --accent-soft: rgba(168, 85, 247, 0.18);
+      --accent-soft-strong: rgba(168, 85, 247, 0.35);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148, 163, 184, 0.45);
+      --radius-lg: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617, #020617 18%, #030712 60%, #020617);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-soft);
+      background: radial-gradient(circle at top left, #020617, #020617 48%, #020617);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .lab-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .lab-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lab-logo-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .lab-logo-text-main {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .lab-logo-text-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .lab-top-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-soft);
+    }
+
+    .lab-top-menu a {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      text-decoration: none;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .lab-top-menu a span.icon {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .lab-top-menu a:hover {
+      color: var(--text-main);
+      border-color: var(--border-soft);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .lab-top-menu a.active {
+      color: var(--text-main);
+      background: var(--accent-soft);
+      border-color: var(--accent-soft-strong);
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.55);
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .lab-main-inner {
+      max-width: 1200px;
+      margin: 18px auto 24px;
+      padding: 0 18px 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .lab-card {
+      border-radius: 22px;
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border: 1px solid var(--border-soft);
+      padding: 16px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+    }
+
+    .lab-card-title {
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .lab-card-headline {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .lab-card-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .lab-cta-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .lab-pill {
+      flex: 1;
+      min-width: 150px;
+      border-radius: 16px;
+      padding: 10px 12px;
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.14s ease;
+    }
+
+    .lab-pill span.label {
+      font-weight: 500;
+    }
+
+    .lab-pill span.sub {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .lab-pill span.chevron {
+      font-size: 16px;
+      opacity: 0.8;
+    }
+
+    .lab-pill:hover {
+      border-color: rgba(168, 85, 247, 0.7);
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .lab-feed-placeholder {
+      border-radius: 18px;
+      padding: 12px;
+      background: radial-gradient(circle at top, #020617, #020617);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .lab-feed-placeholder strong {
+      color: var(--text-main);
+    }
+
+    .lab-side-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .lab-side-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .lab-side-list li {
+      margin-bottom: 6px;
+    }
+
+    .lab-side-list strong {
+      color: var(--text-main);
+    }
+
+    @media (max-width: 960px) {
+      .lab-main-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .lab-header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .lab-top-menu {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="lab-header-inner">
+    <div class="lab-logo">
+      <div class="lab-logo-mark">S</div>
+      <div>
+        <div class="lab-logo-text-main">Sulandra Creative Lab</div>
+        <div class="lab-logo-text-sub">Home · Community · Quick entry points</div>
+      </div>
+    </div>
+
+    <nav class="lab-top-menu" aria-label="Create sections">
+      <a href="lab.html" class="active">
+        <span class="icon">🏠</span>
+        <span>Home</span>
+      </a>
+      <a href="vision.html#image">
+        <span class="icon">🖼️</span>
+        <span>Create Image</span>
+      </a>
+      <a href="vision.html#video">
+        <span class="icon">🎬</span>
+        <span>Create Video Clip</span>
+      </a>
+      <a href="vision.html#shortfilm">
+        <span class="icon">🎞️</span>
+        <span>Create Short Film</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="lab-main-inner">
+    <!-- LEFT: Community + entry -->
+    <section class="lab-card">
+      <div class="lab-card-title">Community feed</div>
+      <div class="lab-card-headline">Start from the right lab in one click</div>
+      <div class="lab-card-sub">
+        Choose what you want to create. Each button opens Vision in that mode, with
+        History showing only what belongs to that section.
+      </div>
+
+      <div class="lab-cta-row">
+        <a class="lab-pill" href="vision.html#image">
+          <div>
+            <span class="label">Image Lab</span>
+            <span class="sub">Photos · Posters · Covers</span>
+          </div>
+          <span class="chevron">➜</span>
+        </a>
+
+        <a class="lab-pill" href="vision.html#video">
+          <div>
+            <span class="label">Video Clips</span>
+            <span class="sub">Short clips · Reels · Scenes</span>
+          </div>
+          <span class="chevron">➜</span>
+        </a>
+
+        <a class="lab-pill" href="vision.html#shortfilm">
+          <div>
+            <span class="label">Short Films</span>
+            <span class="sub">Multi-shot stories · Trailers</span>
+          </div>
+          <span class="chevron">➜</span>
+        </a>
+      </div>
+
+      <div class="lab-feed-placeholder">
+        <strong>Community gallery will live here.</strong><br />
+        For now, use <em>Vision → Community feed</em> to preview what the real API will return.
+        Later, this home page will pull in the same feed and filter by section.
+      </div>
+    </section>
+
+    <!-- RIGHT: Overview / tips -->
+    <aside class="lab-card">
+      <div class="lab-side-section-title">How this Lab is organized</div>
+      <ul class="lab-side-list">
+        <li><strong>Vision</strong> is the main editor for creating and viewing history.</li>
+        <li><strong>History</strong> in Vision now filters by the lab you’re in (Image / Video / Short Film).</li>
+        <li><strong>Home (this page)</strong> is where you’ll keep the community feed and section shortcuts.</li>
+        <li>Use the <strong>Home</strong> button in the left rail and sidebar inside Vision to return here.</li>
+      </ul>
+    </aside>
+  </div>
+</main>
+
+</body>
+</html>
