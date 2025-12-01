@@ -490,6 +490,56 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     max-height:60px;overflow:hidden;
 }
 .card-actions{display:flex;gap:8px;margin-top:10px}
+/* Favorite toggle (heart) ---------------------------------------- */
+.card-fav-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+}
+
+.card-fav-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.card-fav-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.card-fav-toggle .heart-outline {
+  fill: none;
+  stroke: #e5e7eb;
+  stroke-width: 1.7;
+}
+
+.card-fav-toggle .heart-fill {
+  display: none;
+  fill: #fb7185;
+}
+
+.card-fav-toggle.is-active {
+  background: rgba(248, 250, 252, 0.98);
+  border-color: #fb7185;
+}
+
+.card-fav-toggle.is-active .heart-outline {
+  display: none;
+}
+
+.card-fav-toggle.is-active .heart-fill {
+  display: block;
+}
 
 /* Empty state */
 #empty-state{
