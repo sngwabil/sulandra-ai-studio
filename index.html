@@ -1096,6 +1096,34 @@ nav a.nav-glow:hover {
       }
     }
 
+    /* Pulse the glow softly */
+@keyframes navGlowPulse {
+  0% {
+    box-shadow:
+      0 0 10px rgba(168, 85, 247, 0.2),
+      0 0 18px rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 18px rgba(168, 85, 247, 0.35),
+      0 0 30px rgba(59, 130, 246, 0.35);
+  }
+  100% {
+    box-shadow:
+      0 0 10px rgba(168, 85, 247, 0.2),
+      0 0 18px rgba(59, 130, 246, 0.2);
+  }
+}
+
+/* Bounce up and down while hovered */
+@keyframes navBounce {
+  0%   { transform: translateY(0); }
+  25%  { transform: translateY(-4px); }
+  50%  { transform: translateY(0); }
+  75%  { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
     @media (max-width: 960px) {
       .studio-overview-box {
         grid-template-columns: minmax(0, 1fr);
