@@ -2080,87 +2080,111 @@ nav a.nav-explore {
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>
- <!-- ✅ FULL FIREBASE SETUP -->
+<!-- FULL FIREBASE SETUP (WORKING) -->
 <script type="module">
-/* -------------------------------------------------------
-   1. LOAD FIREBASE (v11 Modular CDN)
-------------------------------------------------------- */
-import { initializeApp } 
-  from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+/* ---------------------------------------------------
+   1. IMPORT FIREBASE
+---------------------------------------------------- */
 
 import { 
-  getAuth, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
+  initializeApp 
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
   signOut,
-  onAuthStateChanged 
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-/* -------------------------------------------------------
-   2. FIREBASE CONFIG
-------------------------------------------------------- */
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+
+/* ---------------------------------------------------
+   2. FIREBASE CONFIG (USE YOUR REAL CONFIG)
+---------------------------------------------------- */
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCAC_nTzVoK1IwwT2FTsY6psNQaUBCtqNM",
-  authDomain: "sulandara-studio.firebaseapp.com",
-  projectId: "sulandara-studio",
-  storageBucket: "sulandara-studio.appspot.com",
-  messagingSenderId: "114477409260",
-  appId: "1:114477409260:web:xxxxxx"
+  apiKey: "AIzaSyCAc_nTzVoK1IwwT2FtsY6psNQaUBCtqNM",
+  authDomain: "sulandra-studio.firebaseapp.com",
+  projectId: "sulandra-studio",
+  storageBucket: "sulandra-studio.appspot.com",
+  messagingSenderId: "114174078920",
+  appId: "1:114174078920:web:xxxxx"
 };
 
-/* -------------------------------------------------------
-   3. INITIALIZE FIREBASE
-------------------------------------------------------- */
+
+/* ---------------------------------------------------
+   3. INITIALIZE SERVICES
+---------------------------------------------------- */
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-/* -------------------------------------------------------
-   4. LOGIN + LOGOUT BUTTONS
-------------------------------------------------------- */
-const loginBtn = document.getElementById("google-auth-btn");
-const logoutBtn = document.getElementById("logout-btn");
 
-/* SIGN IN */
-loginBtn?.addEventListener("click", async () => {
+/* ---------------------------------------------------
+   4. LOGIN BUTTON
+---------------------------------------------------- */
+
+document.getElementById("google-auth-btn").addEventListener("click", async () => {
   try {
-    await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    console.log("LOGIN SUCCESS:", result.user);
   } catch (err) {
-    console.error("Login failed", err);
-    alert("Google sign-in failed.");
+    console.error("LOGIN ERROR:", err);
   }
 });
 
-/* SIGN OUT */
-logoutBtn?.addEventListener("click", () => {
-  signOut(auth);
+
+/* ---------------------------------------------------
+   5. LOGOUT BUTTON
+---------------------------------------------------- */
+
+document.getElementById("logout-btn").addEventListener("click", async () => {
+  await signOut(auth);
 });
 
-/* -------------------------------------------------------
-   5. PERSIST USER + UPDATE UI
-------------------------------------------------------- */
-onAuthStateChanged(auth, (user) => {
-  const profileBox = document.getElementById("profile-box");
-  const usernameEl = document.getElementById("username");
-  const creditEl = document.getElementById("credit-count");
 
-  if (user) {
-    const name = user.displayName || "User";
-    const avatar = user.photoURL;
+/* ---------------------------------------------------
+   6. HANDLE USER STATE (LIVE UPDATE)
+---------------------------------------------------- */
 
-    profileBox.style.display = "flex";
-    loginBtn.style.display = "none";
+onAuthStateChanged(auth, async (user) => {
+  const userPanel = document.getElementById("profile-name");
+  const credits = document.getElementById("credit-count");
 
-    usernameEl.textContent = name;
-    creditEl.textContent = "0 credits";
+  if (!user) {
+    // logged out
+    userPanel.textContent = "Guest";
+    credits.textContent = "0 credits";
+    return;
+  }
 
-    document.getElementById("profile-avatar").src = avatar;
+  // logged in
+  userPanel.textContent = user.displayName || "User";
+
+  // read credits from Firestore
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (snap.exists()) {
+    credits.textContent = snap.data().credits + " credits";
   } else {
-    profileBox.style.display = "none";
-    loginBtn.style.display = "flex";
+    // create new profile
+    await setDoc(userRef, { credits: 10 });
+    credits.textContent = "10 credits";
   }
 });
-</script>
 
+</script>
 </body>
 </html>
