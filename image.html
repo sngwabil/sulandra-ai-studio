@@ -1436,6 +1436,7 @@ function switchLab(lab){
     document.getElementById('image-controls').style.display = (lab === 'image') ? 'block' : 'none';
     document.getElementById('video-controls').style.display = (lab === 'video') ? 'block' : 'none';
     document.getElementById('shortfilm-controls').style.display = (lab === 'shortfilm') ? 'block' : 'none';
+    applyGalleryFilterForCurrentLab();
 }
 
 /* -------------------------------------------------------------------------- */
