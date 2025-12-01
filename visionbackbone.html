@@ -1846,16 +1846,27 @@ function addToGallery(item, options = {}) {
     card.dataset.mediaType = t;
     card.dataset.historyId = normalized.id;
 
-    if (t === 'image') {
+        if(t === 'image'){
         const url = normalized.url;
+        const thumb = normalized.thumb || url;
         card.innerHTML = `
-            <img src="${url}" alt="">
+            <button type="button"
+                    class="card-fav-toggle ${normalized.isFavorite ? 'is-active' : ''}"
+                    onclick="toggleFavorite('${normalized.id}')">
+                <svg viewBox="0 0 24 24">
+                    <path class="heart-outline"
+                          d="M12.1 4.3c-1.7-1.6-4.5-1.6-6.2.1-1.8 1.8-1.8 4.6 0 6.4l5.4 5.4 5.4-5.4c1.8-1.8 1.8-4.6 0-6.4-1.7-1.7-4.5-1.7-6.2-.1z"/>
+                    <path class="heart-fill"
+                          d="M12 21s-4.6-3.9-7.1-6.4C2.4 12 2 9.9 2.9 8.1 3.7 6.4 5.3 5.3 7.1 5.3c1.3 0 2.6.6 3.4 1.6.8-1 2.1-1.6 3.4-1.6 1.8 0 3.4 1.1 4.2 2.8.9 1.8.5 3.9-2 6.5C16.6 17.1 12 21 12 21z"/>
+                </svg>
+            </button>
+            <img src="${thumb}" alt="Generated image">
             <div class="card-overlay">
                 <div class="card-meta">${normalized.prompt}</div>
                 <div class="card-actions">
                     <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
                     <button class="btn btn-ghost"
-                            onclick="cloneSetup('${t}', '${encodeURIComponent(normalized.prompt)}')">
+                            onclick="cloneSetup('image', '${encodeURIComponent(normalized.prompt)}')">
                         Clone / Remix
                     </button>
                     <button class="btn btn-ghost"
@@ -1869,10 +1880,20 @@ function addToGallery(item, options = {}) {
                 </div>
             </div>
         `;
-    } else {
+        } else {
         const url   = normalized.url;
         const thumb = normalized.thumb || url;
         card.innerHTML = `
+            <button type="button"
+                    class="card-fav-toggle ${normalized.isFavorite ? 'is-active' : ''}"
+                    onclick="toggleFavorite('${normalized.id}')">
+                <svg viewBox="0 0 24 24">
+                    <path class="heart-outline"
+                          d="M12.1 4.3c-1.7-1.6-4.5-1.6-6.2.1-1.8 1.8-1.8 4.6 0 6.4l5.4 5.4 5.4-5.4c1.8-1.8 1.8-4.6 0-6.4-1.7-1.7-4.5-1.7-6.2-.1z"/>
+                    <path class="heart-fill"
+                          d="M12 21s-4.6-3.9-7.1-6.4C2.4 12 2 9.9 2.9 8.1 3.7 6.4 5.3 5.3 7.1 5.3c1.3 0 2.6.6 3.4 1.6.8-1 2.1-1.6 3.4-1.6 1.8 0 3.4 1.1 4.2 2.8.9 1.8.5 3.9-2 6.5C16.6 17.1 12 21 12 21z"/>
+                </svg>
+            </button>
             <video src="${url}" poster="${thumb}" controls muted></video>
             <div class="card-overlay">
                 <div class="card-meta">${normalized.prompt}</div>
