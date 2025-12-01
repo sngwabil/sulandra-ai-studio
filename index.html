@@ -122,7 +122,22 @@
       border: 1px solid transparent;
       transition: all 0.18s ease;
     }
-
+    nav a.nav-glow {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f9fafb;
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  box-shadow:
+    0 0 14px rgba(168, 85, 247, 0.9),
+    0 0 26px rgba(59, 130, 246, 0.9);
+  padding: 7px 14px;
+}
+nav a.nav-glow:hover {
+  box-shadow:
+    0 0 20px rgba(168, 85, 247, 1),
+    0 0 32px rgba(59, 130, 246, 1);
+  transform: translateY(-1px);
+}
     nav a:hover {
       color: var(--text-main);
       border-color: var(--border-soft);
@@ -1103,24 +1118,21 @@
 <header>
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-circle"></div>
-      <div>
-        <div class="logo-text-main">Sulandra AI Studio</div>
-        <div class="logo-text-sub">Images · Music · Video · Films</div>
-      </div>
-    </div>
+  <div class="logo-circle"></div>
+  <div>
+    <div class="logo-text-main">SULANDRA</div>
+    <div class="logo-text-sub">Music Lab · Visual Lab · Studio · Explore</div>
+  </div>
+</div>
 
     <div class="nav-group">
       <nav>
-        <a href="index.html" class="active">Home</a>
-        <a href="image.html">Image</a>
-        <a href="video.html">Video</a>
-        <a href="music.html">Music</a>
-        <a href="film.html">Short Films</a>
-        <a href="lab.html">Lab</a>
-        <a href="studio.html">Studio</a>
-        <a href="education.html">Explore</a>
-      </nav>
+  <a href="index.html" class="active">Home</a>
+  <a href="music.html" class="nav-glow">Music Lab</a>
+  <a href="lab.html" class="nav-glow">Visual Lab</a>
+  <a href="studio.html" class="nav-glow">Studio</a>
+  <a href="education.html" class="nav-glow">Explore</a>
+</nav>
 
       <button type="button" class="profile-badge" onclick="toggleProfile()">
         <div class="profile-avatar" id="profile-avatar">G</div>
