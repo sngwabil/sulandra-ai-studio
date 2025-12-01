@@ -1827,8 +1827,9 @@ function switchGalleryTab(tab, el) {
 
     if (tab === 'history') {
         applyGalleryFilterForCurrentLab();
-    } else if (tab === 'community') {
-        refreshCommunity();
+    } else if (tab === 'assets') {
+        // Open dedicated My Assets page
+        window.location.href = 'assets.html';
     } else if (tab === 'favorites') {
         showToast("Favorites", "Favorites view will be wired later.");
     }
