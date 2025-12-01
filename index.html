@@ -122,31 +122,26 @@
       border: 1px solid transparent;
       transition: all 0.18s ease;
     }
-/* DEFAULT — use the PREVIOUS hover glow (medium-bright) */
+/* DEFAULT — look like your dark "Visual Lab" tab */
 nav a.nav-glow {
   font-size: 16px;
   font-weight: 700;
   color: #f9fafb;
-  background: linear-gradient(135deg, #a855f7, #3b82f6);
-  padding: 7px 14px;
+  padding: 7px 24px;
   border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: #020617;                 /* dark pill */
+  box-shadow: 0 0 0 rgba(0,0,0,0);      /* no glow */
   transition: all 0.2s ease;
-
-  /* ← medium-bright glow (this used to be hover) */
-  box-shadow:
-    0 0 14px rgba(168, 85, 247, 0.3),
-    0 0 22px rgba(59, 130, 246, 0.3);
-
-  animation: navGlowPulse 2.4s ease-in-out infinite;
 }
 
-
-/* HOVER — now EVEN BRIGHTER glow + bouncing */
+/* HOVER — bright gradient + glow + bounce */
 nav a.nav-glow:hover {
-  /* ← MAX glow (brighter than before) */
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
   box-shadow:
-    0 0 26px rgba(168, 85, 247, 0.6),
-    0 0 38px rgba(59, 130, 246, 0.6);
+    0 0 18px rgba(168, 85, 247, 0.45),
+    0 0 30px rgba(59, 130, 246, 0.45);
+  color: #ffffff;
 
   animation:
     navGlowPulse 2.4s ease-in-out infinite,
