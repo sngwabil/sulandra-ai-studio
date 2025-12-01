@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sulandra – My Assets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-root:#020617;
+      --bg-panel:#020617;
+      --bg-card:#020617;
+      --border:#1f2937;
+      --text-main:#f9fafb;
+      --text-muted:#9ca3af;
+      --accent-green:#22c55e;
+      --radius-md:12px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Inter",system-ui,sans-serif;
+      background:radial-gradient(circle at top,#020617,#02021a);
+      color:var(--text-main);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    header{
+      padding:14px 22px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:600;
+      letter-spacing:.04em;
+    }
+    .brand span{
+      color:var(--accent-green);
+    }
+    .tabs{
+      display:flex;
+      gap:8px;
+    }
+    .tab{
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+      font-size:13px;
+      cursor:pointer;
+      color:var(--text-muted);
+    }
+    .tab.active{
+      border-color:var(--accent-green);
+      color:var(--accent-green);
+      background:rgba(34,197,94,.12);
+    }
+    main{
+      padding:18px 22px 26px;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      font-size:13px;
+      color:var(--text-muted);
+    }
+    .filter-group{
+      display:flex;
+      gap:6px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      cursor:pointer;
+      font-size:12px;
+      color:var(--text-muted);
+    }
+    .pill.active{
+      border-color:var(--accent-green);
+      color:var(--accent-green);
+      background:rgba(34,197,94,.12);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:14px;
+    }
+    .card{
+      position:relative;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#020617;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .card img,
+    .card video{
+      width:100%;
+      height:260px;
+      object-fit:cover;
+      display:block;
+    }
+    .badge{
+      position:absolute;
+      top:8px;
+      left:8px;
+      padding:2px 8px;
+      border-radius:999px;
+      background:rgba(0,0,0,.65);
+      font-size:11px;
+      color:var(--accent-green);
+    }
+    .card-overlay{
+      position:absolute;
+      inset:auto 0 0 0;
+      padding:8px 10px 9px;
+      background:linear-gradient(to top,rgba(15,23,42,.98),rgba(15,23,42,.4),transparent);
+      font-size:11px;
+    }
+    .card-meta{
+      max-height:38px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      margin-bottom:6px;
+      color:var(--text-muted);
+    }
+    .card-actions{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(15,23,42,.8);
+      padding:3px 8px;
+      font-size:10px;
+      cursor:pointer;
+      color:var(--text-main);
+    }
+    .btn-primary{
+      border-color:var(--accent-green);
+      background:rgba(34,197,94,.18);
+      color:var(--accent-green);
+    }
+    .empty{
+      border-radius:14px;
+      border:1px dashed var(--border);
+      padding:40px 16px;
+      text-align:center;
+      font-size:13px;
+      color:var(--text-muted);
+    }
+    a{color:inherit;text-decoration:none}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>●</span> <span>SULANDRA</span> <span style="color:#6b7280;">MY ASSETS</span>
+    </div>
+    <div class="tabs">
+      <a href="index.html" class="tab">Home</a>
+      <a href="vision.html" class="tab">Vision Lab</a>
+      <div class="tab active">My Assets</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="filter-group">
+        <span>Filter:</span>
+        <div class="pill active" data-filter="all"    onclick="setFilter(this)">All types</div>
+        <div class="pill"        data-filter="image" onclick="setFilter(this)">Images</div>
+        <div class="pill"        data-filter="video" onclick="setFilter(this)">Videos</div>
+        <div class="pill"        data-filter="shortfilm" onclick="setFilter(this)">Short Films</div>
+      </div>
+      <div style="font-size:12px;">
+        Stored locally in your browser · <span style="color:var(--accent-green);">private to you</span>
+      </div>
+    </div>
+
+    <div id="assets-grid" class="grid"></div>
+    <div id="assets-empty" class="empty" style="display:none;">
+      No assets saved yet. In Vision, click <span style="color:var(--accent-green);">“Save to My Assets”</span> on a generation.
+    </div>
+  </main>
+
+  <script>
+    const ASSETS_STORAGE_KEY = 'sulandra_assets_v1';
+    let myAssets = [];
+    let currentFilter = 'all';
+
+    function loadAssets() {
+      try {
+        const raw = localStorage.getItem(ASSETS_STORAGE_KEY);
+        if (!raw) {
+          myAssets = [];
+        } else {
+          const parsed = JSON.parse(raw);
+          myAssets = Array.isArray(parsed) ? parsed : [];
+        }
+      } catch (e) {
+        console.warn('Failed to load assets:', e);
+        myAssets = [];
+      }
+      renderAssets();
+    }
+
+    function renderAssets() {
+      const grid  = document.getElementById('assets-grid');
+      const empty = document.getElementById('assets-empty');
+      grid.innerHTML = '';
+
+      const filtered = myAssets.filter(a => {
+        return currentFilter === 'all' ? true : (a.type === currentFilter);
+      });
+
+      if (!filtered.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const t   = item.type || 'image';
+        const url = item.url;
+        const thumb = item.thumb || url;
+
+        if (t === 'image') {
+          card.innerHTML = `
+            <img src="${url}" alt="">
+            <div class="badge">${t.toUpperCase()}</div>
+            <div class="card-overlay">
+              <div class="card-meta">${item.prompt || ''}</div>
+              <div class="card-actions">
+                <button class="btn btn-primary" onclick="window.open('${url}')">Open / Download</button>
+              </div>
+            </div>
+          `;
+        } else {
+          card.innerHTML = `
+            <video src="${url}" poster="${thumb}" muted loop></video>
+            <div class="badge">${t.toUpperCase()}</div>
+            <div class="card-overlay">
+              <div class="card-meta">${item.prompt || ''}</div>
+              <div class="card-actions">
+                <button class="btn btn-primary" onclick="window.open('${url}')">Open / Download</button>
+              </div>
+            </div>
+          `;
+        }
+        grid.appendChild(card);
+      });
+    }
+
+    function setFilter(el) {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      currentFilter = el.dataset.filter || 'all';
+      renderAssets();
+    }
+
+    window.addEventListener('load', loadAssets);
+  </script>
+</body>
+</html>
