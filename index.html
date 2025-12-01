@@ -122,7 +122,7 @@
       border: 1px solid transparent;
       transition: all 0.18s ease;
     }
-/* Normal state — brighter & pulsing */
+/* DEFAULT — use the PREVIOUS hover glow (medium-bright) */
 nav a.nav-glow {
   font-size: 16px;
   font-weight: 700;
@@ -132,23 +132,22 @@ nav a.nav-glow {
   border-radius: 999px;
   transition: all 0.2s ease;
 
-  /* brighter default glow (your swapped state) */
+  /* ← medium-bright glow (this used to be hover) */
   box-shadow:
     0 0 14px rgba(168, 85, 247, 0.3),
     0 0 22px rgba(59, 130, 246, 0.3);
 
-  /* soft pulse all the time */
   animation: navGlowPulse 2.4s ease-in-out infinite;
 }
 
-/* Hover — softer glow + bouncing dance */
-nav a.nav-glow:hover {
-  /* softer glow while hovered */
-  box-shadow:
-    0 0 10px rgba(168, 85, 247, 0.2),
-    0 0 18px rgba(59, 130, 246, 0.2);
 
-  /* keep glow pulse + add vertical bounce */
+/* HOVER — now EVEN BRIGHTER glow + bouncing */
+nav a.nav-glow:hover {
+  /* ← MAX glow (brighter than before) */
+  box-shadow:
+    0 0 26px rgba(168, 85, 247, 0.6),
+    0 0 38px rgba(59, 130, 246, 0.6);
+
   animation:
     navGlowPulse 2.4s ease-in-out infinite,
     navBounce 0.6s ease-in-out infinite;
@@ -1096,31 +1095,32 @@ nav a.nav-glow:hover {
       }
     }
 
-    /* Pulse the glow softly */
+   /* Soft breathing pulse */
 @keyframes navGlowPulse {
   0% {
     box-shadow:
-      0 0 10px rgba(168, 85, 247, 0.2),
-      0 0 18px rgba(59, 130, 246, 0.2);
+      0 0 14px rgba(168, 85, 247, 0.3),
+      0 0 22px rgba(59, 130, 246, 0.3);
   }
   50% {
     box-shadow:
-      0 0 18px rgba(168, 85, 247, 0.35),
-      0 0 30px rgba(59, 130, 246, 0.35);
+      0 0 22px rgba(168, 85, 247, 0.45),
+      0 0 32px rgba(59, 130, 246, 0.45);
   }
   100% {
     box-shadow:
-      0 0 10px rgba(168, 85, 247, 0.2),
-      0 0 18px rgba(59, 130, 246, 0.2);
+      0 0 14px rgba(168, 85, 247, 0.3),
+      0 0 22px rgba(59, 130, 246, 0.3);
   }
 }
 
-/* Bounce up and down while hovered */
+
+/* Bounce animation */
 @keyframes navBounce {
   0%   { transform: translateY(0); }
-  25%  { transform: translateY(-4px); }
+  25%  { transform: translateY(-5px); }
   50%  { transform: translateY(0); }
-  75%  { transform: translateY(-3px); }
+  75%  { transform: translateY(-4px); }
   100% { transform: translateY(0); }
 }
 
