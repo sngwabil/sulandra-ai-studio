@@ -490,6 +490,56 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     max-height:60px;overflow:hidden;
 }
 .card-actions{display:flex;gap:8px;margin-top:10px}
+/* Favorite toggle (heart) ---------------------------------------- */
+.card-fav-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+}
+
+.card-fav-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.card-fav-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.card-fav-toggle .heart-outline {
+  fill: none;
+  stroke: #e5e7eb;
+  stroke-width: 1.7;
+}
+
+.card-fav-toggle .heart-fill {
+  display: none;
+  fill: #fb7185;
+}
+
+.card-fav-toggle.is-active {
+  background: rgba(248, 250, 252, 0.98);
+  border-color: #fb7185;
+}
+
+.card-fav-toggle.is-active .heart-outline {
+  display: none;
+}
+
+.card-fav-toggle.is-active .heart-fill {
+  display: block;
+}
 
 /* Empty state */
 #empty-state{
@@ -1315,19 +1365,20 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 <div class="stage">
     <div class="stage-header">
         <div class="gallery-tabs">
-            <div class="gallery-tab active" id="tab-history" onclick="switchGalleryTab('history',this)">History</div>
-            <div class="gallery-tab" id="tab-community" onclick="switchGalleryTab('community',this)">Community Feed</div>
-            <div class="gallery-tab" id="tab-favorites" onclick="switchGalleryTab('favorites',this)">Favorites</div>
-        </div>
+    <div class="gallery-tab active" id="tab-history"
+         onclick="switchGalleryTab('history', this)">History</div>
+
+    <div class="gallery-tab" id="tab-assets"
+         onclick="switchGalleryTab('assets', this)">My Assets</div>
+
+    <div class="gallery-tab" id="tab-favorites"
+         onclick="switchGalleryTab('favorites', this)">Favorites</div>
+</div>
 
         <div class="stage-header-right">
             <div class="plan-pill" onclick="openPlanModal()">
                 <span style="width:6px;height:6px;border-radius:999px;background:#38bdf8;"></span>
                 <span>Plan: Free · 66 Daily Credits</span>
-            </div>
-            <button class="btn btn-icon" onclick="refreshCommunity()" title="Refresh feed">
-                <svg><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-            </button>
         </div>
     </div>
 
@@ -1402,6 +1453,12 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 /* CONFIG                                                                     */
 /* -------------------------------------------------------------------------- */
 const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
+const HISTORY_STORAGE_KEY = 'sulandra_vision_history_v1';
+const ASSETS_STORAGE_KEY  = 'sulandra_assets_v1';
+
+let persistedHistory = [];   // all personal generations
+let myAssets        = [];   // curated "My Assets"
+
 
 let currentLab = "image";
 let currentGalleryTab = "history";   // history / community / favorites
@@ -1763,47 +1820,92 @@ async function generateSfx(){
 /* -------------------------------------------------------------------------- */
 /* GALLERY / COMMUNITY / FAVORITES                                           */
 /* -------------------------------------------------------------------------- */
-function addToGallery(item){
-    const grid = document.getElementById('gallery-grid');
-    document.getElementById('empty-state').style.display = 'none';
+function addToGallery(item, options = {}) {
+    const { saveToHistory = false } = options;
 
-const card = document.createElement('div');
-const t = item.type || 'image';
-card.className = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
-card.dataset.mediaType = t;
+    const grid  = document.getElementById('gallery-grid');
+    const empty = document.getElementById('empty-state');
+    if (!grid) return;
+    if (empty) empty.style.display = 'none';
 
+    // Normalize + give every item an id
+    const normalized = {
+    id: item.id || ("h_" + Date.now() + "_" + Math.random().toString(36).slice(2)),
+    type: normalType,
+    url: item.url,
+    thumb: item.thumb || item.url || "",
+    prompt: item.prompt || "",
+    isFavorite: !!item.isFavorite,   // <--- NEW IMPORTANT PART
+    lab: item.lab || currentLab,
+    createdAt: item.createdAt || new Date().toISOString()
+};
 
-    if(item.type === 'image'){
-        const url = item.url;
+    const card = document.createElement('div');
+    const t    = normalized.type;
+    card.className        = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
+    card.dataset.mediaType = t;
+    card.dataset.historyId = normalized.id;
+
+    if (t === 'image') {
+        const url = normalized.url;
         card.innerHTML = `
             <img src="${url}" alt="">
             <div class="card-overlay">
-                <div class="card-meta">${item.prompt || ''}</div>
+                <div class="card-meta">${normalized.prompt}</div>
                 <div class="card-actions">
                     <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
-                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
+                    <button class="btn btn-ghost"
+                            onclick="cloneSetup('${t}', '${encodeURIComponent(normalized.prompt)}')">
+                        Clone / Remix
+                    </button>
+                    <button class="btn btn-ghost"
+                            onclick="saveAssetFromHistory('${normalized.id}')">
+                        Save to My Assets
+                    </button>
+                    <button class="btn btn-ghost"
+                            onclick="shareToCommunity('${normalized.id}')">
+                        Post to Community
+                    </button>
                 </div>
             </div>
         `;
-    }else{
-        const url = item.url;
-        const thumb = item.thumb || url;
+    } else {
+        const url   = normalized.url;
+        const thumb = normalized.thumb || url;
         card.innerHTML = `
             <video src="${url}" poster="${thumb}" controls muted></video>
             <div class="card-overlay">
-                <div class="card-meta">${item.prompt || ''}</div>
+                <div class="card-meta">${normalized.prompt}</div>
                 <div class="card-actions">
                     <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
-                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
+                    <button class="btn btn-ghost"
+                            onclick="cloneSetup('${t}', '${encodeURIComponent(normalized.prompt)}')">
+                        Clone / Remix
+                    </button>
+                    <button class="btn btn-ghost"
+                            onclick="saveAssetFromHistory('${normalized.id}')">
+                        Save to My Assets
+                    </button>
+                    <button class="btn btn-ghost"
+                            onclick="shareToCommunity('${normalized.id}')">
+                        Post to Community
+                    </button>
                 </div>
             </div>
         `;
     }
 
-    card.style.opacity = '0';
+    card.style.opacity  = '0';
     card.style.transform = 'translateY(16px)';
     grid.prepend(card);
-    setTimeout(()=>{card.style.opacity='1';card.style.transform='translateY(0)';},30);
+    setTimeout(() => {
+        card.style.opacity  = '1';
+        card.style.transform = 'translateY(0)';
+    }, 30);
+
+    if (saveToHistory) {
+        addHistoryItem(normalized);
+    }
 }
 
 function cloneSetup(type,encodedPrompt){
@@ -1817,7 +1919,119 @@ function cloneSetup(type,encodedPrompt){
     }
     showToast("Preset cloned into the left panel. Tweak and generate.","Info");
 }
+    
+/* ------------------------------
+   LOAD HISTORY FROM STORAGE
+------------------------------ */
+function loadHistoryFromStorage() {
+    try {
+        const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+        if (!raw) return [];
 
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+        console.error("Failed to load history:", err);
+        return [];
+    }
+}
+
+/* ------------------------------
+   SAVE HISTORY TO STORAGE
+------------------------------ */
+function saveHistoryToStorage(history) {
+    try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+    } catch (err) {
+        console.error("Failed to save history:", err);
+    }
+}
+
+/* ------------------------------
+   LOAD ASSETS (PERSISTED)
+------------------------------ */
+function loadAssetsFromStorage() {
+    try {
+        const raw = localStorage.getItem(ASSETS_STORAGE_KEY);
+        if (!raw) return [];
+
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+        return [];
+    }
+}
+
+/* ------------------------------
+   SAVE ASSETS
+------------------------------ */
+function saveAssetsToStorage(assets) {
+    try {
+        localStorage.setItem(ASSETS_STORAGE_KEY, JSON.stringify(assets));
+    } catch (err) {
+        console.error("Asset save error:", err);
+    }
+}
+
+/* ------------------------------
+   ADD ITEM TO ASSETS DIRECTLY
+------------------------------ */
+function addItemToAssets(item) {
+    const assets = loadAssetsFromStorage();
+    const exists = assets.find(a => a.id === item.id);
+
+    if (!exists) {
+        assets.unshift(item);
+        saveAssetsToStorage(assets);
+    }
+}
+
+/* ------------------------------
+   ADD ITEM TO HISTORY DIRECTLY
+------------------------------ */
+function addItemToHistory(item) {
+    const history = loadHistoryFromStorage();
+    history.unshift(item);
+    saveHistoryToStorage(history);
+}
+// Backwards-compatible helper used by addToGallery
+// Also auto-saves the same item into My Assets.
+function addHistoryItem(item) {
+    addItemToHistory(item);   // store in History
+    addItemToAssets(item);    // also store in My Assets
+}
+ /* ------------------------------
+   SAVE A HISTORY ITEM INTO ASSETS
+------------------------------ */
+function saveAssetFromHistory(itemId) {
+    const history = loadHistoryFromStorage();
+    const item    = history.find(h => h.id === itemId);
+
+    if (!item) {
+        console.warn("Item not found in history for assets:", itemId);
+        showToast("Could not find this item in your history.", "Error");
+        return;
+    }
+
+    addItemToAssets(item);
+    showToast("Saved to My Assets.", "Success");
+}
+   
+/* ------------------------------
+   SYNC FAVORITE STATUS
+------------------------------ */
+function toggleFavorite(itemId) {
+    const history = loadHistoryFromStorage();
+
+    const target = history.find(h => h.id === itemId);
+    if (!target) return;
+
+    target.isFavorite = !target.isFavorite;
+    saveHistoryToStorage(history);
+
+    // Live UI update
+    renderHistoryGrid();
+}
 function switchGalleryTab(tab, el) {
     document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
     if (el) el.classList.add('active');
@@ -1826,13 +2040,14 @@ function switchGalleryTab(tab, el) {
 
     if (tab === 'history') {
         applyGalleryFilterForCurrentLab();
-    } else if (tab === 'community') {
+    } else if (tab === 'assets') {
+        // Open dedicated My Assets page
+        window.location.href = 'assets.html';
         refreshCommunity();
     } else if (tab === 'favorites') {
         showToast("Favorites", "Favorites view will be wired later.");
     }
-}
-    
+} 
 function applyGalleryFilterForCurrentLab() {
     if (currentGalleryTab !== 'history') return;
 
