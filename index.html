@@ -230,6 +230,8 @@ nav a.nav-explore {
       height: 22px;
       border-radius: 999px;
       background: linear-gradient(135deg, #a855f7, #3b82f6);
+      background-size: cover;
+      background-position: center;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -253,12 +255,6 @@ nav a.nav-explore {
       flex: 1;
     }
 
-    <button id="google-auth-btn">Sign in</button>
-<button id="logout-btn" style="display:none;">Sign out</button>
-
-<span id="profile-name">Guest</span>
-<span id="credit-count">0 credits</span>
-    
     /* ==== STUDIO OVERVIEW SECTION ==== */
 
     .studio-overview {
@@ -849,6 +845,8 @@ nav a.nav-explore {
       height: 32px;
       border-radius: 999px;
       background: linear-gradient(135deg, #a855f7, #3b82f6);
+      background-size: cover;
+      background-position: center;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1238,10 +1236,10 @@ nav a.nav-explore {
 </nav>
 
       <button type="button" class="profile-badge" onclick="toggleProfile()">
-        <div class="profile-avatar" id="profile-avatar">G</div>
+        <div class="profile-avatar" id="profile-avatar"></div>
         <div>
           <div id="profile-label">Sign in</div>
-          <div class="profile-credits" id="profile-credits">0 credits</div>
+          <div class="profile-credits" id="profile-credits">...</div>
         </div>
       </button>
     </div>
@@ -1262,9 +1260,9 @@ nav a.nav-explore {
         </div>
         <div class="studio-arrow">↓</div>
         <div class="studio-layer">
-          <strong>Backend API layer</strong><br />
+          <strong>Firebase Backend</strong><br />
           <span style="font-size:11px; color:var(--text-muted);">
-            Authentication · plans · credits · routing to each model pipeline
+            Authentication · Real-time Credits · Plan Management
           </span>
         </div>
         <div class="studio-arrow">↓</div>
@@ -1279,13 +1277,13 @@ nav a.nav-explore {
       <div>
         <div class="studio-roadmap-title">Roadmap</div>
         <ul class="studio-roadmap-list">
-          <li>1. Finish static UI (this step).</li>
-          <li>2. Add a backend API for auth, plans and credits.</li>
+          <li>1. Static UI (Complete).</li>
+          <li>2. Firebase Auth & Database (Connected).</li>
           <li>3. Connect API → Runpod workers for image generation.</li>
           <li>4. Expand to music, video and short film pipelines.</li>
         </ul>
         <div class="profile-small" style="margin-top:8px;">
-          This page already matches the final flow. Later you’ll plug in real auth, billing and model calls behind it.
+          This version is connected to Firebase. Log in to see your real credits managed in Firestore.
         </div>
       </div>
     </div>
@@ -1639,7 +1637,7 @@ nav a.nav-explore {
   <div class="profile-panel">
     <div class="profile-header">
       <div class="profile-header-main">
-        <div class="profile-avatar-lg" id="profile-avatar-lg">G</div>
+        <div class="profile-avatar-lg" id="profile-avatar-lg"></div>
         <div>
           <div class="profile-header-text-main" id="profile-name">Guest</div>
           <div class="profile-header-text-sub" id="profile-plan-label">
@@ -1666,8 +1664,8 @@ nav a.nav-explore {
     </div>
 
     <div class="profile-footer">
-      <div>Signed in state is simulated here. Real auth & billing will connect later.</div>
-      <button type="button" id="sign-toggle" onclick="toggleSignIn()">Sign in</button>
+      <div>Sulandra Identity System</div>
+      <button type="button" id="sign-toggle" onclick="handleAuthAction()">Sign in</button>
     </div>
   </div>
 </div>
@@ -1718,373 +1716,25 @@ nav a.nav-explore {
   </div>
 </div>
 
-<script>
-  // Simple user state simulation
-  let isSignedIn = false;
-  let user = {
-    name: "Guest",
-    initial: "G",
-    plan: "basic",
-    credits: 0,
-    maxCredits: 0,
-    addons: { musicUltimate:false, imageUltimate:false, videoUltimate:false }
-  };
+<script type="module">
+  // Import Firebase SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { 
+    getAuth, 
+    GoogleAuthProvider, 
+    signInWithPopup, 
+    signOut, 
+    onAuthStateChanged 
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { 
+    getFirestore, 
+    doc, 
+    setDoc, 
+    getDoc, 
+    onSnapshot 
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  const planConfig = {
-    basic: {
-      name: "Basic",
-      monthly: 0,
-      yearly: 0,
-      discount: 0,
-      credits: "50 credits / month",
-      description:
-        "Start for free. UHD-quality previews with watermark, MP3-only audio and 50 monthly credits.",
-      yearlyNote: "Basic is always free. Yearly billing only applies to paid plans."
-    },
-    pro: {
-      name: "Pro",
-      monthly: 20,
-      yearly: 228,
-      discount: 5,
-      credits: "2500 credits / month",
-      description:
-        "For serious creators who need WAV export, higher resolutions and credit packs.",
-      yearlyNote:
-        "Normal yearly cost would be $240; you pay $228 (save $12, 5%)."
-    },
-    creator: {
-      name: "Creator",
-      monthly: 30,
-      yearly: 331.2,
-      discount: 8,
-      credits: "5000 credits / month",
-      description:
-        "Power users who want 4K, Studio workflows and Ultimate add-ons, with enough credits for real monthly projects.",
-      yearlyNote:
-        "Normal yearly cost would be $360; you pay $331.20 (save $28.80, 8%)."
-    },
-    creatorUltimate: {
-      name: "Creator Ultimate",
-      monthly: 45,
-      yearly: 486,
-      discount: 10,
-      credits: "10000 credits / month",
-      description:
-        "Everything unlocked: Short Films + Studio heavy use + Stems & MIDI.",
-      yearlyNote:
-        "Normal yearly cost would be $540; you pay $486 (save $54, 10%)."
-    }
-  };
-
-  let currentPlanKey = "pro";
-  let currentBilling = "monthly";
-
-  function goToLab(path) {
-    window.location.href = path;
-  }
-
-  function scrollToSection(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  /* PROFILE */
-
-  function toggleProfile() {
-    const overlay = document.getElementById("profile-overlay");
-    overlay.classList.toggle("show");
-    if (overlay.classList.contains("show")) {
-      renderProfileSection("overview");
-    }
-  }
-
-  function setProfileSection(section) {
-    document
-      .querySelectorAll(".profile-menu button")
-      .forEach(btn => btn.classList.remove("active"));
-
-    if (section === "overview") document.getElementById("menu-overview").classList.add("active");
-    else document
-      .querySelector(`.profile-menu button[onclick*="${section}"]`)
-      .classList.add("active");
-
-    renderProfileSection(section);
-  }
-
-  function renderProfileSection(section) {
-    const content = document.getElementById("profile-content");
-
-    if (section === "overview") {
-      content.innerHTML = `
-        <div class="profile-section-title">Profile overview</div>
-        <div class="profile-section-sub">
-          Signed in state is simulated. Later this will show real account data.
-        </div>
-        <div class="profile-line"><strong>Name:</strong> ${user.name}</div>
-        <div class="profile-line"><strong>Current plan:</strong> ${planConfig[user.plan].name}</div>
-        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
-        <div class="profile-small">
-          In the real app you’ll also see: last payments, invoices, usage charts and security settings.
-        </div>
-      `;
-    } else if (section === "edit") {
-      content.innerHTML = `
-        <div class="profile-section-title">Edit profile</div>
-        <div class="profile-section-sub">Change your display name. (Simulated only.)</div>
-        <label for="edit-name">Display name</label>
-        <input id="edit-name" type="text" value="${user.name}" />
-        <button class="btn-primary" style="margin-top:8px;" type="button" onclick="saveProfileName()">
-          <span class="plus">+</span> Save name
-        </button>
-        <div class="profile-small">In production this would update your user record.</div>
-      `;
-    } else if (section === "invite") {
-      content.innerHTML = `
-        <div class="profile-section-title">Invite friends</div>
-        <div class="profile-section-sub">
-          Share Sulandra AI Studio. Later you can give invite links that reward you with credits.
-        </div>
-        <div class="profile-small">Sample invite link (mock):</div>
-        <div class="chip">https://sulandra.ai/invite/YOURCODE</div>
-        <div class="profile-small">Copy this into your clip-notes for now. Real tracking comes later.</div>
-      `;
-    } else if (section === "subscription") {
-      const planName = planConfig[user.plan].name;
-      content.innerHTML = `
-        <div class="profile-section-title">Subscription & credits</div>
-        <div class="profile-section-sub">
-          Choose or change your plan. This is only simulated here, but it shows the final UX.
-        </div>
-        <div class="profile-line"><strong>Current plan:</strong> ${planName}</div>
-        <div class="profile-line"><strong>Credits:</strong> ${user.credits} / ${user.maxCredits}</div>
-        <div class="profile-small">Click a chip to simulate switching plans:</div>
-        <div style="margin-bottom:6px;">
-          <span class="chip" onclick="simulatePlan('basic')">Basic</span>
-          <span class="chip" onclick="simulatePlan('pro')">Pro</span>
-          <span class="chip" onclick="simulatePlan('creator')">Creator</span>
-          <span class="chip" onclick="simulatePlan('creatorUltimate')">Creator Ultimate</span>
-        </div>
-        <div class="profile-small">
-          In the real app, plan changes would open a payment screen and keep your remaining credits when upgrading.
-        </div>
-      `;
-    } else if (section === "account") {
-      content.innerHTML = `
-        <div class="profile-section-title">Manage account</div>
-        <div class="profile-section-sub">
-          This is where you’ll manage passwords, devices, billing history and security in the real app.
-        </div>
-        <ul class="plan-list">
-          <li>• View invoices and payment history</li>
-          <li>• Update payment methods (PayPal, cards, Apple Pay)</li>
-          <li>• Turn auto-renew on or off</li>
-          <li>• Download receipts for taxes</li>
-        </ul>
-      `;
-    } else if (section === "theme") {
-      content.innerHTML = `
-        <div class="profile-section-title">Theme</div>
-        <div class="profile-section-sub">
-          Theme switching is not wired yet, but here is where light / dark / high-contrast options will live.
-        </div>
-        <div class="chip disabled">Dark (current)</div>
-        <div class="chip disabled">Light</div>
-        <div class="chip disabled">High contrast</div>
-      `;
-    }
-
-    updateProfileHeader();
-  }
-
-  function updateProfileHeader() {
-    document.getElementById("profile-avatar").textContent = user.initial;
-    document.getElementById("profile-avatar-lg").textContent = user.initial;
-    document.getElementById("profile-name").textContent = user.name;
-    document.getElementById("profile-label").textContent = isSignedIn ? "Profile" : "Sign in";
-    document.getElementById("profile-credits").textContent =
-      `${user.credits} / ${user.maxCredits} credits`;
-    const planLabel = isSignedIn
-      ? `Plan: ${planConfig[user.plan].name}`
-      : "Not signed in";
-    document.getElementById("profile-plan-label").textContent = planLabel;
-    document.getElementById("sign-toggle").textContent =
-      isSignedIn ? "Sign out" : "Sign in";
-  }
-
-  function saveProfileName() {
-    const input = document.getElementById("edit-name");
-    const name = input.value.trim() || "Guest";
-    user.name = name;
-    user.initial = name.charAt(0).toUpperCase();
-    renderProfileSection("overview");
-    alert("Name updated in local state. In production this would save to your account.");
-  }
-
-  function toggleSignIn() {
-    isSignedIn = !isSignedIn;
-    if (isSignedIn && user.maxCredits === 0) {
-      // default: Pro demo
-      simulatePlan("pro", true);
-    } else {
-      updateProfileHeader();
-      renderProfileSection("overview");
-    }
-  }
-
-  function simulatePlan(key, silent) {
-    user.plan = key;
-    if (key === "basic") {
-      user.maxCredits = 50;
-    } else if (key === "pro") {
-      user.maxCredits = 2500;
-    } else if (key === "creator") {
-      user.maxCredits = 5000;
-    } else if (key === "creatorUltimate") {
-      user.maxCredits = 10000;
-    }
-    user.credits = user.maxCredits;
-    updateProfileHeader();
-    renderProfileSection("subscription");
-    if (!silent) {
-      alert("Plan switched in local demo to: " + planConfig[key].name);
-    }
-  }
-
-  /* PLAN MODAL */
-
-  function openPlanDetails(key) {
-    currentPlanKey = key;
-    currentBilling = "monthly";
-    updatePlanDialog();
-    document.getElementById("plan-overlay").classList.add("show");
-  }
-
-  function closePlanDetails() {
-    document.getElementById("plan-overlay").classList.remove("show");
-  }
-
-  function setPlanBilling(mode) {
-    currentBilling = mode;
-    updatePlanDialog();
-  }
-
-  function updatePlanDialog() {
-    const config = planConfig[currentPlanKey];
-
-    document.getElementById("plan-dialog-title").textContent =
-      config.name + " plan";
-    document.getElementById("plan-dialog-sub").textContent =
-      config.description;
-
-    const monthlyBtn = document.getElementById("toggle-monthly");
-    const yearlyBtn = document.getElementById("toggle-yearly");
-    monthlyBtn.classList.toggle("active", currentBilling === "monthly");
-    yearlyBtn.classList.toggle("active", currentBilling === "yearly");
-
-    const priceMain = document.getElementById("plan-price-main");
-    const priceNote = document.getElementById("plan-price-note");
-    const rowYearly = document.getElementById("price-row-yearly");
-    const strike = document.getElementById("plan-price-strike");
-    const save = document.getElementById("plan-price-save");
-    const extra = document.getElementById("plan-dialog-extra");
-
-    if (currentBilling === "monthly") {
-      priceMain.textContent =
-        config.monthly === 0 ? "$0" : "$" + config.monthly;
-      priceNote.textContent = "per month · " + config.credits;
-      rowYearly.style.display = "none";
-      if (config.monthly === 0) {
-        extra.textContent =
-          "Basic stays free with 50 credits and watermark. Upgrade anytime to unlock clean exports and WAV.";
-      } else {
-        extra.textContent =
-          "Pay monthly for flexibility, or switch to yearly later to save more.";
-      }
-    } else {
-      // yearly
-      if (config.monthly === 0) {
-        priceMain.textContent = "$0";
-        priceNote.textContent =
-          "Always free · 50 credits / month · watermark";
-        rowYearly.style.display = "none";
-        extra.textContent =
-          "Basic is always free. Yearly discounts apply only to paid plans.";
-      } else {
-        priceMain.textContent = "$" + config.yearly.toFixed(2);
-        priceNote.textContent = "per year · " + config.credits;
-        const normalYearPrice = config.monthly * 12;
-        strike.textContent = "$" + normalYearPrice.toFixed(2) + " / year";
-        const savings = normalYearPrice - config.yearly;
-        save.textContent =
-          "You save $" +
-          savings.toFixed(2) +
-          " (" +
-          config.discount +
-          "%)";
-        rowYearly.style.display = "flex";
-        extra.textContent =
-          config.yearlyNote +
-          " Billing renews yearly; you can downgrade or upgrade at any time.";
-      }
-    }
-  }
-
-  function startSignup() {
-    alert(
-      "Signup flow placeholder.\n\nIn the real app, this button would open your authentication + payment flow for the selected plan and billing period."
-    );
-    // For demo, also set user plan
-    simulatePlan(currentPlanKey, true);
-    isSignedIn = true;
-    updateProfileHeader();
-    toggleProfile();
-    closePlanDetails();
-  }
-
-  /* CONTACT */
-
-  function handleContact() {
-    const name = document.getElementById("contact-name").value.trim();
-    const email = document.getElementById("contact-email").value.trim();
-    const message = document.getElementById("contact-message").value.trim();
-    const note = document.getElementById("contact-note");
-
-    if (!name || !email || !message) {
-      alert("Please fill in your name, email and message.");
-      return;
-    }
-
-    note.textContent =
-      "Message captured locally. Later, this will send to your support backend or email.";
-    alert("Message captured locally. In production, this would be sent to support.");
-  }
-
-  // Initialize header state
-  updateProfileHeader();
-</script>
-  <script type="module">
-  /* ---------------------------------------------------
-     1. IMPORT FIREBASE (v12.6.0)
-  ---------------------------------------------------- */
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import {
-    getFirestore,
-    getDoc,
-    setDoc,
-    doc
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-  /* ---------------------------------------------------
-     2. FIREBASE CONFIG  (this is your real config)
-  ---------------------------------------------------- */
+  // Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyCAc_nTzVoK1IwwT2FtsY6psNQaUBCtqNM",
     authDomain: "sulandra-studio.firebaseapp.com",
@@ -2095,77 +1745,265 @@ nav a.nav-explore {
     measurementId: "G-FD6Z8MNRHF"
   };
 
-  /* ---------------------------------------------------
-     3. INITIALIZE APP, AUTH, DB
-  ---------------------------------------------------- */
+  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db   = getFirestore(app);
+  const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  /* ---------------------------------------------------
-     4. GRAB YOUR UI ELEMENTS
-        (make sure these IDs exist in your HTML)
-  ---------------------------------------------------- */
-  const loginBtn   = document.getElementById("google-auth-btn");
-  const logoutBtn  = document.getElementById("logout-btn");
-  const nameEl     = document.getElementById("profile-name");
-  const creditsEl  = document.getElementById("credit-count");
+  // State
+  let currentUser = null;
+  let userData = {
+    name: "Guest",
+    plan: "basic",
+    credits: 0,
+    maxCredits: 0
+  };
+  let unsubscribeDoc = null; // To stop listening to Firestore when logging out
 
-  /* ---------------------------------------------------
-     5. LOGIN / LOGOUT BUTTON HANDLERS
-  ---------------------------------------------------- */
-  if (loginBtn) {
-    loginBtn.addEventListener("click", async () => {
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (err) {
-        console.error("LOGIN ERROR:", err);
-        alert("Login failed: " + (err.message || err));
-      }
-    });
-  }
+  // --- AUTH LOGIC ---
 
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
+  // Attached to window for HTML button access
+  window.handleAuthAction = async () => {
+    if (currentUser) {
+      // Sign out
       try {
         await signOut(auth);
-      } catch (err) {
-        console.error("LOGOUT ERROR:", err);
+        console.log("Signed out");
+      } catch (error) {
+        console.error("Sign out error", error);
       }
-    });
+    } else {
+      // Sign in
+      try {
+        await signInWithPopup(auth, provider);
+        console.log("Signed in");
+      } catch (error) {
+        console.error("Sign in error", error);
+        alert("Sign in failed: " + error.message);
+      }
+    }
+  };
+
+  // Auth Listener
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    
+    if (user) {
+      // 1. User is signed in
+      const userRef = doc(db, "users", user.uid);
+      
+      // 2. Real-time listener for user data
+      unsubscribeDoc = onSnapshot(userRef, async (docSnap) => {
+        if (docSnap.exists()) {
+            // Existing user - update state from DB
+            userData = docSnap.data();
+            updateUI();
+        } else {
+            // New user - Create document
+            const newUserData = {
+                name: user.displayName || "User",
+                email: user.email,
+                plan: "basic",
+                credits: 50,
+                maxCredits: 50,
+                createdAt: new Date().toISOString()
+            };
+            await setDoc(userRef, newUserData);
+            // The listener will catch this update immediately after
+        }
+      });
+      
+    } else {
+      // User is signed out
+      if (unsubscribeDoc) unsubscribeDoc(); // Stop listening
+      userData = { name: "Guest", plan: "basic", credits: 0, maxCredits: 0 };
+      updateUI();
+    }
+  });
+
+
+  // --- UI LOGIC ---
+
+  const planConfig = {
+    basic: { name: "Basic", description: "Free plan" },
+    pro: { name: "Pro", description: "Standard creative plan" },
+    creator: { name: "Creator", description: "Power user plan" },
+    creatorUltimate: { name: "Creator Ultimate", description: "Full access" }
+  };
+
+  function updateUI() {
+    // Header & Profile updates
+    const avatarEl = document.getElementById("profile-avatar");
+    const avatarLgEl = document.getElementById("profile-avatar-lg");
+    
+    // Avatar logic
+    if (currentUser && currentUser.photoURL) {
+        const url = `url('${currentUser.photoURL}')`;
+        avatarEl.style.backgroundImage = url;
+        avatarLgEl.style.backgroundImage = url;
+        avatarEl.textContent = "";
+        avatarLgEl.textContent = "";
+    } else {
+        const initial = userData.name.charAt(0).toUpperCase();
+        avatarEl.style.backgroundImage = "none";
+        avatarLgEl.style.backgroundImage = "none";
+        avatarEl.textContent = initial;
+        avatarLgEl.textContent = initial;
+    }
+
+    // Text updates
+    document.getElementById("profile-name").textContent = userData.name;
+    document.getElementById("profile-label").textContent = currentUser ? "Profile" : "Sign in";
+    
+    // Credits display
+    const creditText = `${userData.credits} credits`;
+    document.getElementById("profile-credits").textContent = creditText;
+    
+    // Profile Panel updates
+    const planName = planConfig[userData.plan]?.name || userData.plan;
+    document.getElementById("profile-plan-label").textContent = currentUser ? `Plan: ${planName}` : "Not signed in";
+    document.getElementById("sign-toggle").textContent = currentUser ? "Sign out" : "Sign in with Google";
+
+    // Refresh current open section if overlay is open
+    const content = document.getElementById("profile-content");
+    if (content.innerHTML !== "") {
+        // Simple re-render of current view (assuming Overview is default)
+        // Ideally we track currentSection, but for this basic logic, we refresh Overview if active
+        // or just let the user navigate.
+    }
+  }
+  
+  // --- MODULE HELPERS EXPORTED TO WINDOW ---
+  // We need to attach these to window because the HTML onclick attributes need to find them.
+  
+  let currentPlanKey = "pro";
+  let currentBilling = "monthly";
+
+  window.toggleProfile = () => {
+    const overlay = document.getElementById("profile-overlay");
+    overlay.classList.toggle("show");
+    if (overlay.classList.contains("show")) {
+      window.setProfileSection("overview");
+    }
+  };
+
+  window.setProfileSection = (section) => {
+    // Button styling
+    document.querySelectorAll(".profile-menu button").forEach(btn => btn.classList.remove("active"));
+    if (section === "overview") document.getElementById("menu-overview").classList.add("active");
+    else {
+        const btn = document.querySelector(`.profile-menu button[onclick*="${section}"]`);
+        if(btn) btn.classList.add("active");
+    }
+
+    const content = document.getElementById("profile-content");
+    
+    if (section === "overview") {
+      const planName = planConfig[userData.plan]?.name || userData.plan;
+      content.innerHTML = `
+        <div class="profile-section-title">Profile overview</div>
+        <div class="profile-section-sub">
+          ${currentUser ? "Manage your account settings." : "Please sign in to view your profile."}
+        </div>
+        <div class="profile-line"><strong>Name:</strong> ${userData.name}</div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planName}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${userData.credits} available</div>
+        <div class="profile-small">
+          Email: ${currentUser ? currentUser.email : "N/A"}
+        </div>
+      `;
+    } else if (section === "edit") {
+       content.innerHTML = `
+        <div class="profile-section-title">Edit profile</div>
+        <div class="profile-section-sub">Settings are managed via Google Account for now.</div>
+      `;
+    } else if (section === "subscription") {
+      const planName = planConfig[userData.plan]?.name || userData.plan;
+      content.innerHTML = `
+        <div class="profile-section-title">Subscription</div>
+        <div class="profile-line"><strong>Current plan:</strong> ${planName}</div>
+        <div class="profile-line"><strong>Credits:</strong> ${userData.credits}</div>
+        <div class="profile-small">
+          To upgrade, select a plan from the home page.
+        </div>
+      `;
+    } else {
+        content.innerHTML = `<div class="profile-section-title">${section}</div><div class="profile-small">Feature coming soon.</div>`;
+    }
+  };
+
+  // Plan Modal Logic
+  window.openPlanDetails = (key) => {
+    currentPlanKey = key;
+    currentBilling = "monthly";
+    updatePlanDialog();
+    document.getElementById("plan-overlay").classList.add("show");
+  };
+
+  window.closePlanDetails = () => {
+    document.getElementById("plan-overlay").classList.remove("show");
+  };
+
+  window.setPlanBilling = (mode) => {
+    currentBilling = mode;
+    updatePlanDialog();
+  };
+  
+  window.startSignup = () => {
+    if(!currentUser) {
+        alert("Please sign in first to subscribe to a plan.");
+        window.handleAuthAction();
+    } else {
+        alert(`Integration Step: Proceed to checkout for ${currentPlanKey} (${currentBilling}).`);
+        window.closePlanDetails();
+    }
+  };
+
+  function updatePlanDialog() {
+    // Config for display only
+    const displayConfig = {
+        basic: { name: "Basic", monthly: 0, credits: "50 credits", desc: "Start for free." },
+        pro: { name: "Pro", monthly: 20, yearly: 228, credits: "2500 credits", desc: "Serious creators." },
+        creator: { name: "Creator", monthly: 30, yearly: 331, credits: "5000 credits", desc: "Power users." },
+        creatorUltimate: { name: "Creator Ultimate", monthly: 45, yearly: 486, credits: "10000 credits", desc: "Everything unlocked." }
+    };
+
+    const config = displayConfig[currentPlanKey];
+    document.getElementById("plan-dialog-title").textContent = config.name;
+    document.getElementById("plan-dialog-sub").textContent = config.desc;
+
+    const monthlyBtn = document.getElementById("toggle-monthly");
+    const yearlyBtn = document.getElementById("toggle-yearly");
+    monthlyBtn.classList.toggle("active", currentBilling === "monthly");
+    yearlyBtn.classList.toggle("active", currentBilling === "yearly");
+
+    const priceMain = document.getElementById("plan-price-main");
+    const rowYearly = document.getElementById("price-row-yearly");
+
+    if (currentBilling === "monthly") {
+        priceMain.textContent = "$" + config.monthly;
+        rowYearly.style.display = "none";
+    } else {
+        priceMain.textContent = "$" + (config.yearly || 0);
+        rowYearly.style.display = "flex";
+    }
   }
 
-  /* ---------------------------------------------------
-     6. LIVE USER STATE + CREDITS FROM FIRESTORE
-  ---------------------------------------------------- */
-  onAuthStateChanged(auth, async (user) => {
-    if (!nameEl || !creditsEl) return;
+  // Navigation
+  window.goToLab = (path) => {
+    window.location.href = path;
+  };
 
-    if (!user) {
-      // Logged out
-      nameEl.textContent    = "Guest";
-      creditsEl.textContent = "0 / 0 credits";
-      return;
-    }
+  window.scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  
+  // Initialize UI once
+  updateUI();
 
-    // Logged in
-    nameEl.textContent = user.displayName || "User";
-
-    const userRef = doc(db, "users", user.uid);
-    const snap    = await getDoc(userRef);
-
-    let credits = 10; // default for new user
-
-    if (snap.exists()) {
-      const data = snap.data();
-      credits = typeof data.credits === "number" ? data.credits : 10;
-    } else {
-      await setDoc(userRef, { credits });
-    }
-
-    creditsEl.textContent = `${credits} credits`;
-  });
 </script>
 </body>
 </html>
