@@ -2987,7 +2987,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(elementsGroup){
         elementsGroup.style.display = 'none';
     }
+    // Initialize Firebase (safe no-op if not configured)
+    initFirebase();
+
+    // Load initial History grid
+    currentGalleryTab = 'history';
+    renderHistoryGrid();
 });
+
 function applyHashRouting() {
     const hash = (window.location.hash || '').replace('#', '');
 
