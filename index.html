@@ -1872,6 +1872,8 @@ nav a.nav-explore {
         // Ideally we track currentSection, but for this basic logic, we refresh Overview if active
         // or just let the user navigate.
     }
+    // Keep all labs in sync with this user+wallet
+    syncWalletToLocalStorage();
   }
   
   // --- MODULE HELPERS EXPORTED TO WINDOW ---
@@ -2001,6 +2003,26 @@ nav a.nav-explore {
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   
+  function syncWalletToLocalStorage() {
+  try {
+    if (currentUser && userData && userData.plan) {
+      const snapshot = {
+        uid: currentUser.uid,
+        name: userData.name || currentUser.displayName || "",
+        email: currentUser.email || "",
+        plan: userData.plan,                      // "basic" | "pro" | "creator" | "creatorUltimate"
+        credits: userData.credits || 0,          // current available credits
+        maxCredits: userData.maxCredits || 0,    // plan max
+        photoURL: currentUser.photoURL || null
+      };
+      localStorage.setItem("sulandraUser", JSON.stringify(snapshot));
+    } else {
+      localStorage.removeItem("sulandraUser");
+    }
+  } catch (err) {
+    console.warn("Failed to sync wallet to localStorage", err);
+  }
+}
   // Initialize UI once
   updateUI();
 
