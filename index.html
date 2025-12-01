@@ -146,7 +146,7 @@ nav a.nav-glow::before {
   background: radial-gradient(circle at center,
               var(--tab-glow-color, rgba(168, 85, 247, 0.6)) 0%,
               transparent 60%);
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
   filter: blur(14px);
   z-index: -1;         /* keeps the glow behind the button */
@@ -170,7 +170,22 @@ nav a.nav-glow:hover {
 nav a.nav-glow:hover::before {
   opacity: 1;
 }
+/* Per-tab glow colors */
+nav a.nav-music {
+  --tab-glow-color: rgba(96, 165, 250, 0.7);   /* bright blue */
+}
 
+nav a.nav-visual {
+  --tab-glow-color: rgba(45, 212, 191, 0.7);   /* teal / cyan */
+}
+
+nav a.nav-studio {
+  --tab-glow-color: rgba(236, 72, 153, 0.7);   /* pink / magenta */
+}
+
+nav a.nav-explore {
+  --tab-glow-color: rgba(234, 179, 8, 0.7);    /* gold / amber */
+}
     nav a.active {
       color: var(--text-main);
       background: var(--accent-soft);
