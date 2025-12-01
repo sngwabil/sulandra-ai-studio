@@ -1618,22 +1618,55 @@
 </div>
 
 <script>
-  // --------- simple fake user / plan state ----------
-  const user = {
-    plan: 'creator', // basic | pro | creator | creatorUltimate
-    credits: 2450
-  };
+  /* ---------------------------------------------------------
+     READ SHARED USER WALLET FROM INDEX LOGIN (localStorage)
+     --------------------------------------------------------- */
+  function readSulandraUser() {
+    try {
+      const raw = localStorage.getItem("sulandraUser");
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      console.warn("Failed to read sulandraUser for Music Lab", e);
+      return null;
+    }
+  }
 
-  const creditsLabel = document.getElementById('creditsLabel');
-  const planLabel = document.getElementById('planLabel');
-  creditsLabel.textContent = user.credits;
-  planLabel.textContent = user.plan === 'basic'
-    ? 'Basic'
-    : user.plan === 'pro'
-    ? 'Pro'
-    : user.plan === 'creator'
-    ? 'Creator'
-    : 'Creator Ultimate';
+  const user = readSulandraUser();
+
+  /* ---------------------------------------------------------
+     LOGIN REQUIRED
+     --------------------------------------------------------- */
+  if (!user) {
+    // User is not logged in on index.html
+    window.location.href = "index.html?loginRequired=1";
+  } else {
+    /* ---------------------------------------------------------
+       UPDATE HEADER (CREDITS + PLAN TEXT)
+       --------------------------------------------------------- */
+    const creditsLabel = document.getElementById("creditsLabel");
+    const planLabel    = document.getElementById("planLabel");
+
+    if (creditsLabel) {
+      creditsLabel.textContent = (user.credits || 0).toLocaleString();
+    }
+
+    if (planLabel) {
+      const prettyPlan =
+        user.plan === "basic"   ? "Basic" :
+        user.plan === "pro"     ? "Pro" :
+        user.plan === "creator" ? "Creator" :
+                                  "Creator Ultimate";
+      planLabel.textContent = prettyPlan;
+    }
+  }
+
+  /* ---------------------------------------------------------
+     KEEP ALL YOUR EXISTING MUSIC LAB CODE BELOW THIS COMMENT
+     (generation, audio player, buttons, Ask SIA, etc.)
+     Do not remove or change that logic.
+     --------------------------------------------------------- */
+</script>
 
   // --------- section switching ----------
   const sections = ['create', 'removeVocals', 'mastering', 'voiceChanger', 'voiceCloner', 'mySongs', 'mediaFeed'];
