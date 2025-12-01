@@ -1403,6 +1403,12 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 /* CONFIG                                                                     */
 /* -------------------------------------------------------------------------- */
 const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
+const HISTORY_STORAGE_KEY = 'sulandra_vision_history_v1';
+const ASSETS_STORAGE_KEY  = 'sulandra_assets_v1';
+
+let persistedHistory = [];   // all personal generations
+let myAssets        = [];   // curated "My Assets"
+
 
 let currentLab = "image";
 let currentGalleryTab = "history";   // history / community / favorites
