@@ -987,12 +987,83 @@
     }
 
     /* ---------------------------------------------------------
-       STUDIO ACCESS GATE — ONLY CREATOR ULTIMATE CAN ENTER
+       STUDIO ACCESS GATE — ONLY CREATOR ULTIMATE CAN USE TOOLS
+       (NO REDIRECT, JUST AN OVERLAY)
        --------------------------------------------------------- */
     if (user.plan !== "creatorUltimate") {
-      alert("Studio is only available for Creator Ultimate users. Upgrade to access unlimited tools.");
-      window.location.href = "index.html#plans";
+      showUpgradeOverlay();
     }
+  }
+
+  function showUpgradeOverlay() {
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.inset = "0";
+    overlay.style.background =
+      "linear-gradient(135deg, rgba(5,7,18,0.96), rgba(10,12,30,0.98))";
+    overlay.style.display = "flex";
+    overlay.style.flexDirection = "column";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "9999";
+    overlay.style.backdropFilter = "blur(14px)";
+    overlay.innerHTML = `
+      <div style="
+        max-width:420px;
+        padding:28px 26px;
+        border-radius:24px;
+        background:rgba(9,11,26,0.96);
+        border:1px solid rgba(148,163,184,0.4);
+        box-shadow:0 28px 80px rgba(0,0,0,0.75);
+        text-align:center;
+        color:#e5e7eb;
+        font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      ">
+        <div style="font-size:13px;letter-spacing:.16em;color:#a5b4fc;text-transform:uppercase;margin-bottom:10px;">
+          Access locked
+        </div>
+        <h2 style="font-size:22px;margin:0 0 10px;font-weight:700;color:white;">
+          Studio is for Creator Ultimate
+        </h2>
+        <p style="font-size:13px;line-height:1.6;color:#cbd5f5;margin:0 0 18px;">
+          Your current plan cannot use the unlimited Studio hub.
+          Upgrade to <strong>Creator Ultimate</strong> to unlock Sound, Cinema, and Photolab as an all-in-one workspace.
+        </p>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:4px;">
+          <button id="goPlansBtn" style="
+            padding:9px 18px;
+            border-radius:999px;
+            border:none;
+            cursor:pointer;
+            font-size:13px;
+            font-weight:600;
+            background:linear-gradient(135deg,#ff5af1,#45f1ff);
+            color:#050712;
+          ">
+            View plans
+          </button>
+          <button id="closeOverlayBtn" style="
+            padding:9px 16px;
+            border-radius:999px;
+            border:1px solid rgba(148,163,184,0.6);
+            background:transparent;
+            color:#e5e7eb;
+            cursor:pointer;
+            font-size:13px;
+          ">
+            Stay here
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById("goPlansBtn").onclick = () => {
+      window.location.href = "index.html#plans";
+    };
+    document.getElementById("closeOverlayBtn").onclick = () => {
+      overlay.remove();
+    };
   }
 
   /* ---------------------------------------------------------
@@ -1007,18 +1078,20 @@
     } else {
       document.body.classList.remove("theme-gray");
     }
-    themeNeonBtn.classList.toggle("active", mode === "neon");
-    themeGrayBtn.classList.toggle("active", mode === "gray");
+    if (themeNeonBtn && themeGrayBtn) {
+      themeNeonBtn.classList.toggle("active", mode === "neon");
+      themeGrayBtn.classList.toggle("active", mode === "gray");
+    }
   }
 
   if (themeNeonBtn) themeNeonBtn.addEventListener("click", () => setTheme("neon"));
   if (themeGrayBtn) themeGrayBtn.addEventListener("click", () => setTheme("gray"));
 
   /* ---------------------------------------------------------
-     (KEEP EVERYTHING BELOW — ROUTING, SLIDERS, EFFECTS, ETC.)
+     (KEEP EVERYTHING ELSE BELOW THIS COMMENT)
+     Your existing slider, goToApp(), etc, stay as-is.
      --------------------------------------------------------- */
 </script>
-
   // APP ROUTING – THESE ARE THE MAIN LINKS TO YOUR FUTURE FILES
   function goToApp(app) {
     if (app === 'sound') {
