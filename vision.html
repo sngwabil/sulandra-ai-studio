@@ -1830,6 +1830,7 @@ function switchGalleryTab(tab, el) {
     } else if (tab === 'assets') {
         // Open dedicated My Assets page
         window.location.href = 'assets.html';
+        refreshCommunity();
     } else if (tab === 'favorites') {
         showToast("Favorites", "Favorites view will be wired later.");
     }
