@@ -1315,10 +1315,15 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 <div class="stage">
     <div class="stage-header">
         <div class="gallery-tabs">
-            <div class="gallery-tab active" id="tab-history" onclick="switchGalleryTab('history',this)">History</div>
-            <div class="gallery-tab" id="tab-community" onclick="switchGalleryTab('community',this)">Community Feed</div>
-            <div class="gallery-tab" id="tab-favorites" onclick="switchGalleryTab('favorites',this)">Favorites</div>
-        </div>
+    <div class="gallery-tab active" id="tab-history"
+         onclick="switchGalleryTab('history', this)">History</div>
+
+    <div class="gallery-tab" id="tab-assets"
+         onclick="switchGalleryTab('assets', this)">My Assets</div>
+
+    <div class="gallery-tab" id="tab-favorites"
+         onclick="switchGalleryTab('favorites', this)">Favorites</div>
+</div>
 
         <div class="stage-header-right">
             <div class="plan-pill" onclick="openPlanModal()">
