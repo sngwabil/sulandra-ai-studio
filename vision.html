@@ -1452,7 +1452,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 /* -------------------------------------------------------------------------- */
 /* CONFIG                                                                     */
 /* -------------------------------------------------------------------------- */
-const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
+const API_URL = "https://jsw06ce5ia3kjh-8188.proxy.runpod.net";
 const HISTORY_STORAGE_KEY = 'sulandra_vision_history_v1';
 const ASSETS_STORAGE_KEY  = 'sulandra_assets_v1';
 
@@ -2916,63 +2916,110 @@ function closeSiaPanel(){
 }
 
 /**
- * Adds a chat bubble to the SIA panel.
- * role = "sia" or "user"
+ * UPDATED: Supports distinct IDs so we can remove "Thinking..." bubbles
  */
-function appendSiaBubble(role, text){
+function appendSiaBubble(role, text, distinctId = null){
     const messages = document.getElementById("sia-messages");
     if(!messages) return;
 
     const bubble = document.createElement("div");
     bubble.className = "sia-bubble " + (role === "user" ? "user" : "sia");
     bubble.textContent = text;
+    
+    // Assign ID if provided (used for removing the loading bubble later)
+    if(distinctId) bubble.id = distinctId;
+    
     messages.appendChild(bubble);
     messages.scrollTop = messages.scrollHeight;
 }
 
 /**
- * Called when the user clicks "Send" in the SIA panel.
- * Right now this runs a simple client-side “prompt improver”
- * so the feature actually works even before you hook up a backend.
+ * REPLACED: Connects to Real Brain + Handles Tool Use (The Hands)
  */
-function sendSiaMessage(){
+async function sendSiaMessage(){
     const inputBox = document.getElementById("sia-input");
     if(!inputBox) return;
 
     const userText = inputBox.value.trim();
     if(!userText) return;
 
+    // 1. Show user message immediately
     appendSiaBubble("user", userText);
     inputBox.value = "";
+    
+    // 2. Show "Thinking..." bubble
+    const loadingBubbleId = "sia-loading-" + Date.now();
+    appendSiaBubble("sia", "Thinking...", loadingBubbleId);
 
-    const targetEl = siaCurrentFieldId ? document.getElementById(siaCurrentFieldId) : null;
-    const basePrompt = targetEl ? (targetEl.value || "").trim() : "";
-
-    // Very simple “improvement” engine so it feels useful now.
-    let suggestion = "";
-    if(!basePrompt){
-        suggestion =
-`New prompt generated from your request:
-
-${userText}
-
-Make sure the description is clear, includes subject, environment, lighting, camera angle, and mood.`;
-    }else{
-        suggestion =
-`Improved ${siaCurrentFieldLabel} based on your request:
-
-${basePrompt}
-
-Revision goal: ${userText}
-
-Enhanced version:
-${basePrompt}
-
-(Refine this further as needed before generating.)`;
+    // 3. Gather Context (What field are we looking at?)
+    let currentContext = "";
+    let fieldType = "general";
+    
+    if(siaCurrentFieldId){
+        const targetEl = document.getElementById(siaCurrentFieldId);
+        if(targetEl) {
+            currentContext = targetEl.value || "";
+            // Guess type based on ID
+            if(siaCurrentFieldId.includes("prompt")) fieldType = "prompt";
+            else if(siaCurrentFieldId.includes("script")) fieldType = "script";
+            else if(siaCurrentFieldId.includes("lyric")) fieldType = "lyrics";
+        }
     }
 
-    siaLastSuggestion = suggestion;
-    appendSiaBubble("sia", suggestion);
+    // 4. Send to RunPod Brain
+    try {
+        const res = await fetch(`${API_URL}/ask_sia`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_input: userText,
+                context: currentContext,
+                field_type: fieldType
+            })
+        });
+
+        const data = await res.json();
+
+        // 5. Remove "Thinking..."
+        const loadingBubble = document.getElementById(loadingBubbleId);
+        if(loadingBubble) loadingBubble.remove();
+
+        if(data.status === "success"){
+            // A. Speak the reply
+            appendSiaBubble("sia", data.reply);
+            siaLastSuggestion = data.payload || data.reply; // Store for "Apply" button
+
+            // B. THE HANDS: Check if Brain wants to click buttons
+            if(data.action === "generate_image"){
+                
+                // 1. Switch to Image Tab if needed
+                switchLab('image'); 
+                
+                // 2. Fill the prompt box automatically
+                const promptBox = document.getElementById('prompt-input');
+                if(promptBox) {
+                    promptBox.value = data.payload;
+                    // Also update the hidden context for next time
+                    siaLastSuggestion = data.payload;
+                }
+                
+                // 3. Announce and Click
+                showToast("SIA is generating your image...", "Auto-Pilot");
+                setTimeout(() => {
+                    generateImage(); // Triggers your existing Flux function
+                }, 1500); // 1.5s delay so you can see the prompt fill in
+            }
+            
+        } else {
+            appendSiaBubble("sia", "My brain hiccuped. Try again.");
+        }
+
+    } catch(err) {
+        console.error(err);
+        const loadingBubble = document.getElementById(loadingBubbleId);
+        if(loadingBubble) loadingBubble.remove();
+        appendSiaBubble("sia", "⚠️ Connection Error: Is the Brain running on Port 8188?");
+    }
 }
 
 /**
