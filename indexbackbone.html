@@ -122,13 +122,88 @@
       border: 1px solid transparent;
       transition: all 0.18s ease;
     }
+/* DEFAULT – dark pill like your current Visual Lab (no glow) */
+nav a.nav-glow {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f9fafb;
+  padding: 7px 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: #020617;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  position: relative;
+  overflow: visible;
+  transition: all 0.2s ease;
+}
 
-    nav a:hover {
-      color: var(--text-main);
-      border-color: var(--border-soft);
-      background: rgba(15, 23, 42, 0.8);
-    }
+/* BACKLIGHT LAYER – big soft halo behind the tab (always on) */
+nav a.nav-glow::before {
+  content: "";
+  position: absolute;
+  inset: -26px -34px;  /* how far the halo bleeds out */
+  border-radius: 999px;
+  background: radial-gradient(circle at center,
+              var(--tab-glow-color, rgba(168, 85, 247, 0.6)) 0%,
+              transparent 60%);
+  opacity: 0.5;
+  pointer-events: none;
+  filter: blur(14px);
+  z-index: -1;         /* keeps the glow behind the button */
+  transition: opacity 0.25s ease;
+}
 
+/* Per-tab glow colors */
+nav a.nav-music {
+  --tab-glow-color: rgba(96, 165, 250, 0.7);   /* bright blue */
+}
+
+nav a.nav-visual {
+  --tab-glow-color: rgba(45, 212, 191, 0.7);   /* teal / cyan */
+}
+
+nav a.nav-studio {
+  --tab-glow-color: rgba(236, 72, 153, 0.7);   /* pink / magenta */
+}
+
+nav a.nav-explore {
+  --tab-glow-color: rgba(234, 179, 8, 0.7);    /* gold / amber */
+}
+
+/* HOVER – gradient, glow, bounce + halo ON */
+nav a.nav-glow:hover {
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  color: #ffffff;
+  box-shadow:
+    0 0 18px rgba(168, 85, 247, 0.45),
+    0 0 30px rgba(59, 130, 246, 0.45);
+
+  animation:
+    navGlowPulse 2.4s ease-in-out infinite,
+    navBounce 0.6s ease-in-out infinite;
+}
+
+/* Show the backlight halo stronger on hover */
+nav a.nav-glow:hover::before {
+  opacity: 1;
+}
+
+/* Per-tab glow colors */
+nav a.nav-music {
+  --tab-glow-color: rgba(96, 165, 250, 0.7);   /* bright blue */
+}
+
+nav a.nav-visual {
+  --tab-glow-color: rgba(45, 212, 191, 0.7);   /* teal / cyan */
+}
+
+nav a.nav-studio {
+  --tab-glow-color: rgba(236, 72, 153, 0.7);   /* pink / magenta */
+}
+
+nav a.nav-explore {
+  --tab-glow-color: rgba(234, 179, 8, 0.7);    /* gold / amber */
+}
     nav a.active {
       color: var(--text-main);
       background: var(--accent-soft);
@@ -1066,6 +1141,35 @@
       }
     }
 
+   /* Soft breathing pulse */
+@keyframes navGlowPulse {
+  0% {
+    box-shadow:
+      0 0 14px rgba(168, 85, 247, 0.3),
+      0 0 22px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 22px rgba(168, 85, 247, 0.45),
+      0 0 32px rgba(59, 130, 246, 0.45);
+  }
+  100% {
+    box-shadow:
+      0 0 14px rgba(168, 85, 247, 0.3),
+      0 0 22px rgba(59, 130, 246, 0.3);
+  }
+}
+
+
+/* Bounce animation */
+@keyframes navBounce {
+  0%   { transform: translateY(0); }
+  25%  { transform: translateY(-5px); }
+  50%  { transform: translateY(0); }
+  75%  { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
     @media (max-width: 960px) {
       .studio-overview-box {
         grid-template-columns: minmax(0, 1fr);
@@ -1103,24 +1207,29 @@
 <header>
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-circle"></div>
-      <div>
-        <div class="logo-text-main">Sulandra AI Studio</div>
-        <div class="logo-text-sub">Images · Music · Video · Films</div>
-      </div>
-    </div>
+  <div class="logo-circle"></div>
+  <div>
+    <div class="logo-text-main">SULANDRA</div>
+    <div class="logo-text-sub">Music Lab · Visual Lab · Studio · Explore</div>
+  </div>
+</div>
 
     <div class="nav-group">
       <nav>
-        <a href="index.html" class="active">Home</a>
-        <a href="image.html">Image</a>
-        <a href="video.html">Video</a>
-        <a href="music.html">Music</a>
-        <a href="film.html">Short Films</a>
-        <a href="lab.html">Lab</a>
-        <a href="studio.html">Studio</a>
-        <a href="education.html">Explore</a>
-      </nav>
+  <a href="index.html" class="active">Home</a>
+
+  <a href="music.html"
+     class="nav-glow nav-music">Music Lab</a>
+
+  <a href="lab.html"
+     class="nav-glow nav-visual">Visual Lab</a>
+
+  <a href="studio.html"
+     class="nav-glow nav-studio">Studio</a>
+
+  <a href="education.html"
+     class="nav-glow nav-explore">Explore</a>
+</nav>
 
       <button type="button" class="profile-badge" onclick="toggleProfile()">
         <div class="profile-avatar" id="profile-avatar">G</div>
@@ -1947,6 +2056,110 @@
 
   // Initialize header state
   updateProfileHeader();
+</script>
+  <script type="module">
+  /* ---------------------------------------------------
+     1. IMPORT FIREBASE (v12.6.0)
+  ---------------------------------------------------- */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import {
+    getFirestore,
+    getDoc,
+    setDoc,
+    doc
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  /* ---------------------------------------------------
+     2. FIREBASE CONFIG  (this is your real config)
+  ---------------------------------------------------- */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCAc_nTzVoK1IwwT2FtsY6psNQaUBCtqNM",
+    authDomain: "sulandra-studio.firebaseapp.com",
+    projectId: "sulandra-studio",
+    storageBucket: "sulandra-studio.firebasestorage.app",
+    messagingSenderId: "1017519342348",
+    appId: "1:1017519342348:web:539db9a2a23d35f32b7f29",
+    measurementId: "G-FD6Z8MNRHF"
+  };
+
+  /* ---------------------------------------------------
+     3. INITIALIZE APP, AUTH, DB
+  ---------------------------------------------------- */
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  /* ---------------------------------------------------
+     4. GRAB YOUR UI ELEMENTS
+        (make sure these IDs exist in your HTML)
+  ---------------------------------------------------- */
+  const loginBtn   = document.getElementById("google-auth-btn");
+  const logoutBtn  = document.getElementById("logout-btn");
+  const nameEl     = document.getElementById("profile-name");
+  const creditsEl  = document.getElementById("credit-count");
+
+  /* ---------------------------------------------------
+     5. LOGIN / LOGOUT BUTTON HANDLERS
+  ---------------------------------------------------- */
+  if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        console.error("LOGIN ERROR:", err);
+        alert("Login failed: " + (err.message || err));
+      }
+    });
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error("LOGOUT ERROR:", err);
+      }
+    });
+  }
+
+  /* ---------------------------------------------------
+     6. LIVE USER STATE + CREDITS FROM FIRESTORE
+  ---------------------------------------------------- */
+  onAuthStateChanged(auth, async (user) => {
+    if (!nameEl || !creditsEl) return;
+
+    if (!user) {
+      // Logged out
+      nameEl.textContent    = "Guest";
+      creditsEl.textContent = "0 / 0 credits";
+      return;
+    }
+
+    // Logged in
+    nameEl.textContent = user.displayName || "User";
+
+    const userRef = doc(db, "users", user.uid);
+    const snap    = await getDoc(userRef);
+
+    let credits = 10; // default for new user
+
+    if (snap.exists()) {
+      const data = snap.data();
+      credits = typeof data.credits === "number" ? data.credits : 10;
+    } else {
+      await setDoc(userRef, { credits });
+    }
+
+    creditsEl.textContent = `${credits} credits`;
+  });
 </script>
 </body>
 </html>
