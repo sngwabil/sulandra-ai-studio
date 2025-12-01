@@ -1402,6 +1402,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
 
 let currentLab = "image";
+let currentGalleryTab = "history";   // history / community / favorites
 let currentImageMode = "txt2img";
 let currentVideoMode = "text2video";
 let imageBase64 = null;
@@ -1811,14 +1812,18 @@ function cloneSetup(type,encodedPrompt){
     showToast("Preset cloned into the left panel. Tweak and generate.","Info");
 }
 
-function switchGalleryTab(tab,el){
-    document.querySelectorAll('.gallery-tab').forEach(e => e.classList.remove('active'));
-    el.classList.add('active');
+function switchGalleryTab(tab, el) {
+    document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
 
-    if(tab === 'community'){
+    currentGalleryTab = tab;
+
+    if (tab === 'history') {
+        applyGalleryFilterForCurrentLab();
+    } else if (tab === 'community') {
         refreshCommunity();
-    }else if(tab === 'favorites'){
-        showToast("Favorites UI ready. Wire it to your backend when you want to store likes.","Info");
+    } else if (tab === 'favorites') {
+        showToast("Favorites", "Favorites view will be wired later.");
     }
 }
 
