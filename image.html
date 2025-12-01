@@ -965,7 +965,31 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     </div>
 
             <div class="label">
-    <span>Negative Prompt</span>
+        <div class="input-group">
+        <div class="label">
+            <span>Negative Prompt</span>
+            <span style="font-size:10px;opacity:.6;">Things to avoid</span>
+
+            <button type="button"
+                    class="btn btn-ask-sia"
+                    onclick="openSiaForField('video-negative','Video Negative Prompt')">
+                <span class="sia-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3.5l1.4 3.3 3.3 1.4-3.3 1.4-1.4 3.3-1.4-3.3-3.3-1.4 3.3-1.4L12 3.5z"></path>
+                        <path d="M6 15l.7 1.6L8.3 17 7 17.7 6.3 19.3 5.7 17.7 4.3 17l1.6-.4L6 15z"></path>
+                        <path d="M17 9l.7 1.6L19.3 11 18 11.7 17.3 13.3 16.7 11.7 15.3 11l1.6-.4L17 9z"></path>
+                    </svg>
+                </span>
+                <span class="sia-label">Ask SIA</span>
+            </button>
+        </div>
+
+        <textarea id="video-negative"
+                  class="text-area"
+                  style="min-height:70px;"
+                  placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
+    </div>
+
     <span style="font-size:10px;opacity:.6;">
         <!-- keep your existing helper words here -->
     </span>
