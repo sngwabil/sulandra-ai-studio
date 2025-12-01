@@ -152,6 +152,27 @@ nav a.nav-glow::before {
   z-index: -1;         /* keeps the glow behind the button */
   transition: opacity 0.25s ease;
 }
+    /* Per-tab glow colors */
+nav a.nav-music {
+  --tab-glow-color: rgba(96, 165, 250, 0.7);   /* bright blue */
+}
+
+nav a.nav-visual {
+  --tab-glow-color: rgba(45, 212, 191, 0.7);   /* teal / cyan */
+}
+
+nav a.nav-studio {
+  --tab-glow-color: rgba(236, 72, 153, 0.7);   /* pink / magenta */
+}
+
+nav a.nav-explore {
+  --tab-glow-color: rgba(139, 92, 246, 0.7);   /* purple / violet */
+}
+
+<a class="nav-glow nav-music" href="#">Music Lab</a>
+<a class="nav-glow nav-visual" href="#">Visual Lab</a>
+<a class="nav-glow nav-studio" href="#">Studio</a>
+<a class="nav-glow nav-explore" href="#">Explore</a>
 
 /* HOVER – gradient, glow, bounce + halo ON */
 nav a.nav-glow:hover {
