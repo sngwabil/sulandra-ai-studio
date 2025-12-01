@@ -1830,14 +1830,15 @@ function addToGallery(item, options = {}) {
 
     // Normalize + give every item an id
     const normalized = {
-        id:        item.id || ('h_' + Date.now() + '_' + Math.random().toString(36).slice(2)),
-        type:      item.type || 'image',   // image, video, shortfilm
-        url:       item.url,
-        thumb:     item.thumb || item.url || '',
-        prompt:    item.prompt || '',
-        lab:       item.lab || currentLab,
-        createdAt: item.createdAt || new Date().toISOString()
-    };
+    id: item.id || ("h_" + Date.now() + "_" + Math.random().toString(36).slice(2)),
+    type: normalType,
+    url: item.url,
+    thumb: item.thumb || item.url || "",
+    prompt: item.prompt || "",
+    isFavorite: !!item.isFavorite,   // <--- NEW IMPORTANT PART
+    lab: item.lab || currentLab,
+    createdAt: item.createdAt || new Date().toISOString()
+};
 
     const card = document.createElement('div');
     const t    = normalized.type;
