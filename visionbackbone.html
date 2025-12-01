@@ -2053,25 +2053,48 @@ function toggleFavorite(itemId) {
     // Live UI update
     renderHistoryGrid();
 }
+function renderHistoryGrid() {
+    const grid = document.getElementById('gallery-grid');
+    const emptyState = document.getElementById('empty-state');
+    if (!grid || !emptyState) return;
+
+    grid.innerHTML = '';
+
+    const history = loadHistoryFromStorage();
+
+    let filtered = history;
+    if (currentGalleryTab === 'favorites') {
+        filtered = history.filter(h => h.isFavorite);
+    }
+
+    filtered.forEach(item => {
+        addToGallery(item, { saveToHistory: false });
+    });
+
+    // Filter by current lab (image / video / shortfilm)
+    applyGalleryFilterForCurrentLab(true);
+
+    emptyState.style.display = filtered.length ? 'none' : 'flex';
+}
 function switchGalleryTab(tab, el) {
     document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
     if (el) el.classList.add('active');
 
     currentGalleryTab = tab;
 
-    if (tab === 'history') {
-        applyGalleryFilterForCurrentLab();
+    if (tab === 'history' || tab === 'favorites') {
+        renderHistoryGrid();
     } else if (tab === 'assets') {
         // Open dedicated My Assets page
         window.location.href = 'assets.html';
+    } else {
+        // Reserved for community or other tabs later
         refreshCommunity();
-    } else if (tab === 'favorites') {
-        showToast("Favorites", "Favorites view will be wired later.");
     }
-} 
+}
 function applyGalleryFilterForCurrentLab() {
-    if (currentGalleryTab !== 'history') return;
-
+    if (currentGalleryTab !== 'history' && currentGalleryTab !== 'favorites') return;
+    
     const grid = document.getElementById('gallery-grid');
     const emptyState = document.getElementById('empty-state');
     if (!grid || !emptyState) return;
@@ -2964,7 +2987,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(elementsGroup){
         elementsGroup.style.display = 'none';
     }
+    // Initialize Firebase (safe no-op if not configured)
+    initFirebase();
+
+    // Load initial History grid
+    currentGalleryTab = 'history';
+    renderHistoryGrid();
 });
+
 function applyHashRouting() {
     const hash = (window.location.hash || '').replace('#', '');
 
