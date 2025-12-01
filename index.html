@@ -122,28 +122,36 @@
       border: 1px solid transparent;
       transition: all 0.18s ease;
     }
-   /* Normal state — now brighter (former hover glow) */
+/* Normal state — brighter & pulsing */
 nav a.nav-glow {
   font-size: 16px;
   font-weight: 700;
   color: #f9fafb;
   background: linear-gradient(135deg, #a855f7, #3b82f6);
   padding: 7px 14px;
+  border-radius: 999px;
   transition: all 0.2s ease;
 
-  /* ⬇️ Brighter glow (previous hover version) */
+  /* brighter default glow (your swapped state) */
   box-shadow:
     0 0 14px rgba(168, 85, 247, 0.3),
     0 0 22px rgba(59, 130, 246, 0.3);
+
+  /* soft pulse all the time */
+  animation: navGlowPulse 2.4s ease-in-out infinite;
 }
 
-/* Hover state — now softer (previous normal glow) */
+/* Hover — softer glow + bouncing dance */
 nav a.nav-glow:hover {
-  /* ⬇️ Softer glow (previous non-hover version) */
+  /* softer glow while hovered */
   box-shadow:
     0 0 10px rgba(168, 85, 247, 0.2),
     0 0 18px rgba(59, 130, 246, 0.2);
-  transform: translateY(-1px);
+
+  /* keep glow pulse + add vertical bounce */
+  animation:
+    navGlowPulse 2.4s ease-in-out infinite,
+    navBounce 0.6s ease-in-out infinite;
 }
     nav a:hover {
       color: var(--text-main);
