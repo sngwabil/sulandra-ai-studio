@@ -934,26 +934,90 @@
 </footer>
 
 <script>
-  // Simple user mock for labels
-  const user = { plan: 'creatorUltimate', credits: 3420 };
-  document.getElementById('creditsLabel').textContent = user.credits;
-  document.getElementById('planLabel').textContent =
-    user.plan === 'basic' ? 'Basic' :
-    user.plan === 'pro' ? 'Pro' :
-    user.plan === 'creator' ? 'Creator' : 'Creator Ultimate';
-
-  // THEME TOGGLE
-  const themeNeonBtn = document.getElementById('themeNeon');
-  const themeGrayBtn = document.getElementById('themeGray');
-
-  themeNeonBtn.addEventListener('click', () => setTheme('neon'));
-  themeGrayBtn.addEventListener('click', () => setTheme('gray'));
-
-  function setTheme(theme) {
-    document.body.setAttribute('data-theme', theme);
-    themeNeonBtn.classList.toggle('active', theme === 'neon');
-    themeGrayBtn.classList.toggle('active', theme === 'gray');
+  /* ---------------------------------------------------------
+     READ SHARED USER WALLET FROM INDEX LOGIN (localStorage)
+     --------------------------------------------------------- */
+  function readSulandraUser() {
+    try {
+      const raw = localStorage.getItem("sulandraUser");
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      console.warn("Failed to read sulandraUser", e);
+      return null;
+    }
   }
+
+  const user = readSulandraUser();
+
+  /* ---------------------------------------------------------
+     LOGIN REQUIRED
+     --------------------------------------------------------- */
+  if (!user) {
+    // User is not logged in on index.html
+    window.location.href = "index.html?loginRequired=1";
+  } else {
+    /* ---------------------------------------------------------
+       UPDATE UI (CREDITS, PLAN, PROFILE INITIALS)
+       --------------------------------------------------------- */
+    const creditsLabel = document.getElementById("creditsLabel");
+    const planLabel    = document.getElementById("planLabel");
+    const avatarEl     = document.querySelector(".profile-avatar");
+    const signedTextEl = document.querySelector(".profile-chip div div");
+
+    if (creditsLabel) {
+      creditsLabel.textContent = (user.credits || 0).toLocaleString();
+    }
+
+    if (planLabel) {
+      const prettyPlan =
+        user.plan === "basic"   ? "Basic" :
+        user.plan === "pro"     ? "Pro" :
+        user.plan === "creator" ? "Creator" :
+                                  "Creator Ultimate";
+      planLabel.textContent = prettyPlan;
+    }
+
+    if (signedTextEl) {
+      signedTextEl.textContent = "Signed in";
+    }
+
+    if (avatarEl && user.name) {
+      avatarEl.textContent = (user.name.trim()[0] || "U").toUpperCase();
+    }
+
+    /* ---------------------------------------------------------
+       STUDIO ACCESS GATE — ONLY CREATOR ULTIMATE CAN ENTER
+       --------------------------------------------------------- */
+    if (user.plan !== "creatorUltimate") {
+      alert("Studio is only available for Creator Ultimate users. Upgrade to access unlimited tools.");
+      window.location.href = "index.html#plans";
+    }
+  }
+
+  /* ---------------------------------------------------------
+     THEME TOGGLE (NEON / GRAY)
+     --------------------------------------------------------- */
+  const themeNeonBtn = document.getElementById("themeNeon");
+  const themeGrayBtn = document.getElementById("themeGray");
+
+  function setTheme(mode) {
+    if (mode === "gray") {
+      document.body.classList.add("theme-gray");
+    } else {
+      document.body.classList.remove("theme-gray");
+    }
+    themeNeonBtn.classList.toggle("active", mode === "neon");
+    themeGrayBtn.classList.toggle("active", mode === "gray");
+  }
+
+  if (themeNeonBtn) themeNeonBtn.addEventListener("click", () => setTheme("neon"));
+  if (themeGrayBtn) themeGrayBtn.addEventListener("click", () => setTheme("gray"));
+
+  /* ---------------------------------------------------------
+     (KEEP EVERYTHING BELOW — ROUTING, SLIDERS, EFFECTS, ETC.)
+     --------------------------------------------------------- */
+</script>
 
   // APP ROUTING – THESE ARE THE MAIN LINKS TO YOUR FUTURE FILES
   function goToApp(app) {
