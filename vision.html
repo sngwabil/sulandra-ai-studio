@@ -1,11 +1,2752 @@
-function applyHashRouting() {
-    const hash = (window.location.hash || '').replace('#', '');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sulandra Creative Lab · Image & Video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 
-    if (hash === 'image' || hash === 'video' || hash === 'shortfilm') {
-        switchLab(hash);
-        switchGalleryTab('history', document.getElementById('tab-history'));
+<style>
+/* -------------------------------------------------------------------------- */
+/* DESIGN SYSTEM – DARK ROYAL BLUE THEME                                      */
+/* -------------------------------------------------------------------------- */
+:root {
+    --bg-app: #02061b;
+    --bg-panel: #050b25;
+    --bg-card: #071133;
+    --bg-element: #0a1540;
+    --bg-hover: #111c4f;
+
+    --accent-primary: #8b5cf6;
+    --accent-secondary: #3b82f6;
+    --accent-tertiary: #ec4899;
+    --accent-success: #22c55e;
+    --accent-warning: #facc15;
+    --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+
+    --text-primary: #ffffff;
+    --text-secondary: #c7d2fe;
+    --text-tertiary: #818cf8;
+    --text-disabled: #4b5563;
+
+    --border-subtle: #1d2a63;
+    --border-focus: #4f46e5;
+    --shadow-sm: 0 1px 2px 0 rgba(15,23,42,0.5);
+    --shadow-md: 0 10px 20px rgba(15,23,42,0.75);
+    --shadow-glow: 0 0 25px rgba(59,130,246,0.4);
+
+    --header-height: 64px;
+    --sidebar-width: 360px;
+    --nav-rail-width: 76px;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;outline:none;-webkit-font-smoothing:antialiased;}
+body{
+    margin:0;
+    font-family:system-ui,-apple-system,system,"Segoe UI",sans-serif;
+    background:radial-gradient(circle at top,#020617,#020617 18%,#030712 60%,#020617);
+    color:var(--text-main);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;        /* center the whole lab horizontally */
+    align-items:stretch;
+}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#111827;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#1f2937}
+/* Override global font to match cinematic panel look */
+body{
+    font-family:'Cinzel','Inter',serif;
+}
+
+/* Make headings bold and elegant */
+.sidebar-title,
+.label span:first-child,
+.gallery-tab,
+.audio-album-title{
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+}
+
+/* Buttons */
+.btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:8px 16px;border-radius:var(--radius-md);
+    border:1px solid transparent;
+    font-size:13px;font-weight:600;cursor:pointer;
+    transition:all .18s ease-out;user-select:none;
+}
+.btn-primary{
+    background:#f9fafb;color:#020617;
+    box-shadow:0 6px 16px rgba(15,23,42,.45);
+}
+.btn-primary:hover{background:#e5e7eb;transform:translateY(-1px)}
+.btn-accent{
+    background:var(--accent-gradient);color:#fff;border:none;
+    box-shadow:var(--shadow-glow);
+}
+.btn-accent:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-ghost{
+    background:transparent;color:var(--text-secondary);border-color:transparent;
+}
+.btn-ghost:hover{background:rgba(15,23,42,.7);color:var(--text-primary)}
+.btn-icon{
+    width:36px;height:36px;padding:0;border-radius:var(--radius-md);
+    background:var(--bg-element);border:1px solid var(--border-subtle);
+    color:var(--text-secondary);
+}
+.btn-icon:hover{
+    background:var(--bg-hover);border-color:var(--border-focus);color:#fff;
+}
+/* Ask SIA pill – sparkle icon + gradient label */
+.btn-ask-sia{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:4px 10px;
+    border-radius:999px;
+    border:1px solid rgba(129,140,248,0.8);
+    background:rgba(15,23,42,0.0);
+    cursor:pointer;
+    font-size:11px;
+    font-weight:600;
+    text-transform:none;
+    box-shadow:0 0 0 0 rgba(59,130,246,0);
+    transition:background .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.btn-ask-sia .sia-icon{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:16px;
+    height:16px;
+}
+
+.btn-ask-sia .sia-icon svg{
+    width:100%;
+    height:100%;
+    stroke:none;
+    fill:url(#siaGradientFallback);
+    /* simple solid fallback */
+    fill:#60a5fa;
+}
+
+/* gradient text like the screenshot */
+.btn-ask-sia .sia-label{
+    background:linear-gradient(135deg,#60a5fa,#a855f7);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    letter-spacing:.04em;
+}
+
+/* hover state – subtle glow */
+.btn-ask-sia:hover{
+    background:rgba(15,23,42,0.9);
+    box-shadow:0 0 14px rgba(96,165,250,0.45);
+    transform:translateY(-1px);
+}
+/* Inputs / labels */
+.input-group{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.label{
+    font-size:11px;font-weight:600;color:var(--text-secondary);
+    text-transform:uppercase;letter-spacing:.06em;
+    display:flex;justify-content:space-between;align-items:center;
+}
+.text-area{
+    width:100%;min-height:110px;
+    background:var(--bg-element);border:1px solid var(--border-subtle);
+    border-radius:var(--radius-md);padding:10px 12px;
+    color:var(--text-primary);font-size:14px;resize:vertical;
+}
+.text-area:focus{
+    border-color:var(--border-focus);
+    box-shadow:0 0 0 1px rgba(79,70,229,.7);
+    background:#020617;
+}
+/* Make gray example text in prompt boxes italic */
+.text-area::placeholder,
+.shortfilm-input::placeholder{
+    font-style:italic;
+    color:var(--text-secondary);
+    opacity:0.8;
+}
+
+/* Sliders */
+input[type=range]{
+    -webkit-appearance:none;width:100%;background:transparent;height:24px;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+    height:4px;border-radius:2px;
+    background:linear-gradient(90deg,#1e293b,#4f46e5);
+}
+input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:16px;height:16px;border-radius:50%;
+    background:#f9fafb;margin-top:-6px;
+    box-shadow:0 0 0 3px rgba(59,130,246,.4);
+}
+
+/* Icons */
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* Ask SIA floating chat */
+.sia-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.85);
+    display:none;
+    align-items:center;
+    justify-content:flex-end;
+    z-index:180;
+}
+.sia-panel{
+    width:400px;
+    max-width:95%;
+    height:90vh;
+    margin-right:20px;
+    background:radial-gradient(circle at top,#020617,#02021a);
+    border-radius:var(--radius-lg);
+    border:1px solid var(--border-subtle);
+    box-shadow:-12px 0 24px rgba(15,23,42,0.9);
+    display:flex;
+    flex-direction:column;
+}
+.sia-panel-header{
+    padding:14px 16px;
+    border-bottom:1px solid var(--border-subtle);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+}
+.sia-messages{
+    flex:1;
+    padding:12px 16px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    font-size:13px;
+}
+.sia-bubble{
+    max-width:90%;
+    padding:8px 10px;
+    border-radius:12px;
+    line-height:1.5;
+}
+.sia-bubble.sia{
+    align-self:flex-start;
+    background:rgba(15,23,42,0.95);
+    border:1px solid var(--border-subtle);
+}
+.sia-bubble.user{
+    align-self:flex-end;
+    background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+}
+.sia-footer{
+    padding:10px 14px 14px;
+    border-top:1px solid var(--border-subtle);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+.sia-footer .text-area{
+    min-height:70px;
+}
+.sia-footer-actions{
+    display:flex;
+    gap:8px;
+    justify-content:flex-end;
+}
+
+    
+/* -------------------------------------------------------------------------- */
+/* LAYOUT                                                                      */
+/* -------------------------------------------------------------------------- */
+.nav-rail{
+    width:var(--nav-rail-width);
+    background:radial-gradient(circle at top,#1e1b4b,#020617 70%);
+    border-right:1px solid var(--border-subtle);
+    display:flex;flex-direction:column;align-items:center;
+    padding:18px 0;gap:22px;flex-shrink:0;z-index:40;
+}
+.brand-logo{
+    width:44px;height:44px;border-radius:16px;
+    background:var(--accent-gradient);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;color:#fff;font-size:18px;
+    box-shadow:var(--shadow-glow);
+}
+.nav-btn{
+    width:46px;height:46px;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--text-secondary);
+    position:relative;transition:.18s;
+}
+.nav-btn:hover{background:rgba(15,23,42,.85);color:#fff}
+.nav-btn.active{
+    background:linear-gradient(145deg,#111827,#1d2364);
+    color:#fff;
+    box-shadow:0 12px 24px rgba(15,23,42,.8);
+}
+.nav-btn.active::after{
+    content:'';position:absolute;left:-14px;top:10px;bottom:10px;
+    width:3px;border-radius:0 6px 6px 0;
+    background:linear-gradient(#38bdf8,#a855f7);
+}
+
+/* Sidebar controls */
+.sidebar{
+    width:var(--sidebar-width);
+    background:radial-gradient(circle at top left,#020617 0%,#02021a 40%,#020617 100%);
+    border-right:1px solid var(--border-subtle);
+    display:flex;flex-direction:column;flex-shrink:0;z-index:35;
+}
+.sidebar-header{
+    height:var(--header-height);
+    padding:0 22px;
+    border-bottom:1px solid rgba(30,64,175,.7);
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(90deg,#020617,#02021a);
+}
+.sidebar-title{
+    font-weight:800;font-size:15px;letter-spacing:.14em;text-transform:uppercase;
+}
+.sidebar-status{
+    font-size:11px;font-weight:600;color:#bbf7d0;display:flex;align-items:center;gap:6px;
+}
+.sidebar-status span:first-child{
+    width:7px;height:7px;border-radius:999px;background:#22c55e;
+    box-shadow:0 0 8px rgba(34,197,94,.9);
+}
+.sidebar-scroll{
+    flex:1;overflow-y:auto;padding:22px;
+}
+
+/* Main lab vs sub-lab selector */
+.lab-mode-switch{
+    display:flex;gap:4px;
+    background:rgba(15,23,42,.85);
+    border-radius:var(--radius-lg);
+    border:1px solid var(--border-subtle);
+    padding:4px;
+    margin-bottom:16px;
+}
+.lab-mode{
+    flex:1;text-align:center;padding:6px 0;
+    border-radius:var(--radius-md);
+    font-size:11px;font-weight:600;
+    color:var(--text-secondary);cursor:pointer;
+    opacity:0.9;
+}
+.lab-mode span.icon{
+    display:block;
+    font-size:10px;
+    opacity:.7;
+}
+.lab-mode.active{
+    background:radial-gradient(circle at top,#1d4ed8,#4c1d95);
+    color:#fff;box-shadow:var(--shadow-sm);
+    opacity:1;
+}
+
+/* Sub-mode switch (txt2img / img2img or text2video / img2video / extend) */
+.mode-switch{
+    background:var(--bg-element);
+    border-radius:var(--radius-md);
+    border:1px solid var(--border-subtle);
+    display:flex;gap:2px;padding:4px;margin-bottom:18px;
+}
+.mode-option{
+    flex:1;text-align:center;padding:7px 4px;
+    border-radius:var(--radius-md);
+    font-size:11px;font-weight:600;
+    color:var(--text-secondary);cursor:pointer;
+}
+.mode-option.active{
+    background:#020617;color:#fff;
+    box-shadow:0 0 0 1px rgba(129,140,248,.8);
+}
+
+/* Aspect ratios / chips */
+.ratio-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.ratio-option{
+    padding:8px 6px;border-radius:var(--radius-md);
+    background:var(--bg-element);border:1px solid var(--border-subtle);
+    text-align:center;font-size:11px;color:var(--text-secondary);
+    cursor:pointer;transition:.15s;
+}
+.ratio-option span{display:block;font-size:10px;opacity:.7}
+.ratio-option.active{
+    background:radial-gradient(circle at top,#1d4ed8,#6366f1);
+    color:#e5e7eb;border-color:#fff;font-weight:700;
+}
+
+/* Upload dropzones */
+.upload-dropzone{
+    width:100%;height:180px;
+    border-radius:var(--radius-lg);
+    border:2px dashed rgba(148,163,184,.7);
+    background:radial-gradient(circle at top,#020617,#02021a);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    position:relative;cursor:pointer;overflow:hidden;
+    transition:.18s;
+}
+.upload-dropzone:hover{border-color:#60a5fa;background:#020617}
+.upload-dropzone.has-file{border-style:solid;border-color:#a5b4fc}
+.preview-layer{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:.7;
+}
+
+/* Video specific small controls */
+.inline-row{display:flex;gap:10px}
+.inline-row>div{flex:1}
+
+/* Stage (gallery) */
+.stage{
+    flex:1;
+    max-width:1040px;  /* keeps create + history area from stretching too far */
+    display:flex;
+    flex-direction:column;
+    background:radial-gradient(circle at top right,#020617,#02021a 40%,#020617);
+    position:relative;
+    overflow:hidden;
+}
+.stage-header{
+    height:var(--header-height);
+    border-bottom:1px solid var(--border-subtle);
+    padding:0 30px;
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(90deg,#020617,#02021a);
+    backdrop-filter:blur(18px);
+}
+.gallery-tabs{display:flex;gap:24px;height:100%}
+.gallery-tab{
+    display:flex;align-items:center;gap:6px;
+    font-size:14px;font-weight:500;
+    color:var(--text-secondary);cursor:pointer;
+    border-bottom:2px solid transparent;
+}
+.gallery-tab.active{color:#fff;border-bottom-color:#60a5fa}
+.stage-header-right{display:flex;align-items:center;gap:12px}
+.plan-pill{
+    padding:6px 12px;border-radius:999px;
+    background:rgba(15,23,42,.8);
+    border:1px solid rgba(129,140,248,.7);
+    font-size:11px;font-weight:600;
+    display:flex;align-items:center;gap:6px;
+}
+
+.stage-content{flex:1;padding:28px 30px;overflow-y:auto}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:22px;padding-bottom:80px;
+}
+.card{
+    background:radial-gradient(circle at top,#020617,#02021a);
+    border-radius:var(--radius-lg);
+    border:1px solid rgba(30,64,175,.7);
+    overflow:hidden;position:relative;
+    box-shadow:var(--shadow-sm);transition:.22s;
+}
+.card.media-image{aspect-ratio:1/1;}
+.card.media-video{aspect-ratio:16/9;}
+.card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-md);
+    border-color:#a5b4fc;
+}
+.card img,.card video{
+    width:100%;height:100%;object-fit:cover;display:block;
+}
+.card video{background:#020617}
+.card-overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(to top,rgba(0,0,0,.92),transparent 55%);
+    opacity:0;display:flex;flex-direction:column;justify-content:flex-end;
+    padding:16px;transition:.2s;
+}
+.card:hover .card-overlay{opacity:1}
+.card-meta{
+    font-size:11px;color:#e5e7eb;
+    max-height:60px;overflow:hidden;
+}
+.card-actions{display:flex;gap:8px;margin-top:10px}
+
+/* Empty state */
+#empty-state{
+    height:60%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    opacity:.35;text-align:center;
+}
+
+/* Toast */
+.toast-container{
+    position:fixed;bottom:30px;right:30px;z-index:120;
+}
+.toast{
+    background:radial-gradient(circle at top,#020617,#02021a);
+    border-radius:var(--radius-md);
+    border:1px solid var(--border-subtle);
+    border-left:4px solid var(--accent-success);
+    padding:14px 20px;
+    box-shadow:var(--shadow-md);
+    display:flex;align-items:center;gap:14px;
+    transform:translateY(120%);
+    opacity:0;transition:.35s cubic-bezier(.175,.885,.32,1.275);
+    min-width:260px;
+}
+.toast.active{transform:translateY(0);opacity:1}
+.spinner{
+    width:18px;height:18px;
+    border-radius:999px;
+    border:2px solid rgba(148,163,184,.5);
+    border-top-color:var(--accent-success);
+    animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Modal for plans */
+.modal-backdrop{
+    position:fixed;inset:0;background:rgba(15,23,42,.85);
+    display:none;align-items:center;justify-content:center;z-index:150;
+}
+.modal-backdrop.active{display:flex}
+.modal{
+    width:420px;max-width:95%;
+    background:radial-gradient(circle at top,#020617,#02021a);
+    border-radius:var(--radius-lg);
+    border:1px solid var(--border-subtle);
+    box-shadow:var(--shadow-md);
+    padding:22px 22px 18px;
+}
+.modal h3{font-size:16px;margin-bottom:10px}
+.modal p{font-size:13px;color:var(--text-secondary);margin-bottom:12px}
+.tier-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.tier-item{
+    border-radius:var(--radius-md);
+    border:1px solid rgba(55,65,194,.8);
+    padding:10px 12px;font-size:12px;
+    background:rgba(15,23,42,.9);
+}
+.tier-item strong{display:block;font-size:13px;margin-bottom:4px}
+
+/* -------------------------------------------------------------------------- */
+/* SHORT FILM – BOARD                                                         */
+/* -------------------------------------------------------------------------- */
+
+.shortfilm-board{
+    height:260px;
+    border-radius:var(--radius-lg);
+    border:2px dashed rgba(148,163,184,.7);
+    background:radial-gradient(circle at top,#020617,#02021a);
+    padding:8px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+.shortfilm-board-inner{
+    flex:1;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    grid-auto-rows:140px;
+    gap:8px;
+    overflow-y:auto;
+    padding:4px;
+}
+.shortfilm-empty-hint{
+    font-size:12px;
+    color:var(--text-secondary);
+    opacity:.8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+.shortfilm-shot-card{
+    position:relative;
+    border-radius:12px;
+    border:1px solid var(--border-subtle);
+    background:#020617;
+    overflow:hidden;
+    cursor:grab;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.shortfilm-shot-card.drag-over{
+    border-color:#60a5fa;
+    box-shadow:0 0 0 1px rgba(96,165,250,.6);
+}
+.shortfilm-shot-card.selected{
+    border-color:#a855f7;
+    box-shadow:0 0 0 1px rgba(168,85,247,.7);
+}
+.shortfilm-shot-thumb{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:#020617;
+}
+.shortfilm-shot-label{
+    position:absolute;
+    left:6px;
+    top:6px;
+    padding:2px 6px;
+    border-radius:999px;
+    font-size:10px;
+    background:rgba(15,23,42,.85);
+    color:#e5e7eb;
+}
+.shortfilm-shot-prompt-tag{
+    position:absolute;
+    right:6px;
+    bottom:6px;
+    padding:2px 6px;
+    border-radius:999px;
+    font-size:9px;
+    background:rgba(56,189,248,.9);
+    color:#020617;
+}
+.shortfilm-shot-delete{
+    position:absolute;
+    top:4px;
+    right:4px;
+    width:18px;
+    height:18px;
+    border-radius:999px;
+    border:none;
+    font-size:12px;
+    line-height:18px;
+    text-align:center;
+    background:rgba(15,23,42,.9);
+    color:#f9fafb;
+    cursor:pointer;
+}
+.shortfilm-shot-delete:hover{
+    background:#ef4444;
+}
+
+/* Short Film video/script/audio bits */
+.shortfilm-input{
+    width:100%;
+    padding:7px 10px;
+    border-radius:var(--radius-md);
+    background:var(--bg-element);
+    border:1px solid var(--border-subtle);
+    color:var(--text-secondary);
+    font-size:12px;
+}
+
+/* Audio browser panel */
+.audio-browser-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.85);
+    display:none;
+    align-items:stretch;
+    justify-content:flex-end;
+    z-index:160;
+}
+.audio-browser-backdrop.active{display:flex;}
+.audio-browser-panel{
+    width:360px;
+    max-width:90%;
+    background:radial-gradient(circle at top,#020617,#02021a);
+    border-left:1px solid var(--border-subtle);
+    box-shadow:-12px 0 24px rgba(15,23,42,.9);
+    display:flex;
+    flex-direction:column;
+}
+.audio-browser-header{
+    padding:14px 16px;
+    border-bottom:1px solid var(--border-subtle);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+}
+.audio-browser-list{
+    flex:1;
+    overflow-y:auto;
+    padding:10px 14px 14px;
+}
+.audio-album{
+    margin-bottom:12px;
+}
+.audio-album-title{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--text-secondary);
+    margin-bottom:4px;
+}
+.audio-track{
+    padding:6px 8px;
+    border-radius:10px;
+    font-size:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+    border:1px solid transparent;
+}
+.audio-track:hover{
+    background:rgba(15,23,42,.9);
+    border-color:var(--border-subtle);
+}
+.audio-track span{
+    pointer-events:none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* SHORT FILM – TIMELINE (NEW)                                               */
+/* -------------------------------------------------------------------------- */
+.shortfilm-timeline{
+    width:100%;
+    height:36px;
+    border-radius:999px;
+    background:rgba(15,23,42,0.9);
+    border:1px solid rgba(51,65,85,0.9);
+    display:flex;
+    overflow:hidden;
+    position:relative;
+}
+.shortfilm-timeline-empty{
+    font-size:11px;
+    color:var(--text-secondary);
+    opacity:.7;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+}
+.shortfilm-timeline-segment{
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10px;
+    color:#e5e7eb;
+    white-space:nowrap;
+    border-right:1px solid rgba(15,23,42,0.9);
+    background:linear-gradient(135deg,#1d4ed8,#4c1d95);
+    position:relative;
+}
+.shortfilm-timeline-segment.selected{
+    background:linear-gradient(135deg,#f97316,#ec4899);
+}
+.shortfilm-timeline-segment span{
+    padding:0 6px;
+}
+.shortfilm-timeline-metadata{
+    font-size:11px;
+    color:var(--text-secondary);
+    margin-top:4px;
+    display:flex;
+    justify-content:space-between;
+}
+
+/* -------------------------------------------------------------------------- */
+/* AUDIO PLAYER FOOTER (BROWSER)                                             */
+/* -------------------------------------------------------------------------- */
+</style>
+</head>
+<body>
+
+<!-- LEFT NAV RAIL -->
+<div class="nav-rail">
+    <div class="brand-logo">S</div>
+<div class="nav-section">
+            <div class="nav-btn" onclick="window.location.href='lab.html'" title="Home / Community feed">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 11.5L12 3l9 8.5v9.5h-6v-6h-6v6H3z"/>
+                </svg>
+            </div>
+        </div>
+    <div class="nav-btn active" id="nav-image" title="Image" onclick="switchLab('image')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </div>
+
+    <div class="nav-btn" id="nav-video" title="Video" onclick="switchLab('video')">
+        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    </div>
+
+    <div class="nav-btn" id="nav-shortfilm" title="Short Film" onclick="switchLab('shortfilm')">
+        <svg viewBox="0 0 24 24">
+            <rect x="2" y="6" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M2 10h20"></path>
+            <path d="M6 2l2 4"></path>
+            <path d="M10 2l2 4"></path>
+            <path d="M14 2l2 4"></path>
+            <path d="M18 2l2 4"></path>
+        </svg>
+    </div>
+    
+    <div class="nav-btn" id="nav-covers" title="Covers & Templates"
+         onclick="window.location.href='covers.html'">
+        <!-- Folder / layers icon -->
+        <svg viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="6" rx="2" ry="2"></rect>
+            <rect x="3" y="10" width="18" height="10" rx="2" ry="2"></rect>
+            <path d="M8 4l2 2h11"></path>
+        </svg>
+    </div>
+
+    <div class="nav-btn" title="Music (separate page)" onclick="window.location.href='music.html'">
+        <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    </div>
+
+    <div style="margin-top:auto;"></div>
+
+    <div class="nav-btn" title="Settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82A1.65 1.65 0 0 0 3 13H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82A1.65 1.65 0 0 0 21 11h.09A2 2 0 0 1 21 15z"/></svg>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div>
+            <div class="sidebar-title">SULANDRA CREATIVE LAB</div>
+        </div>
+        <div class="sidebar-status">
+            <span></span><span>H200 ONLINE</span>
+        </div>
+    </div>
+    
+    <div class="sidebar-scroll" id="sidebar-scroll">
+
+        <!-- Lab mode switch -->
+        <div class="lab-mode-switch">
+            <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">
+                Image
+                <span class="icon">Stills</span>
+            </div>
+            <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">
+                Video
+                <span class="icon">Clips</span>
+            </div>
+            <div id="lab-mode-shortfilm" class="lab-mode" onclick="switchLab('shortfilm')">
+                Short Film
+                <span class="icon">Storyboard</span>
+            </div>
+        </div>
+
+        <!-- IMAGE CONTROLS -->
+        <div id="image-controls">
+
+            <div class="mode-switch">
+                <div class="mode-option active" id="img-mode-txt2img" onclick="setImageMode('txt2img', this)">Text → Image</div>
+                <div class="mode-option" id="img-mode-img2img" onclick="setImageMode('img2img', this)">Image → Image</div>
+            </div>
+
+            <!-- Upload BEFORE prompt (hidden for Text → Image) -->
+            <div class="input-group" id="upload-group-img" style="display:none;">
+                <div class="label"><span>Reference Image</span></div>
+                <input type="file" id="file-input-img" hidden accept="image/*" onchange="handleImgFile(this)">
+                <div class="upload-dropzone" id="drop-zone-img" onclick="document.getElementById('file-input-img').click()">
+                    <img id="preview-img" class="preview-layer" style="display:none;">
+                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload reference</span>
+                </div>
+
+                <div class="label" style="margin-top:12px;">
+                    <span>Influence Strength</span><span id="strength-val">0.75</span>
+                </div>
+                <input type="range" id="strength" min="0.1" max="1.0" step="0.05" value="0.75" oninput="document.getElementById('strength-val').innerText=this.value">
+            </div>
+            
+            <div class="input-group">
+                <div class="label">
+                    <span>Prompt</span>
+                    <span style="font-size:10px;opacity:.6;">Describe the full scene</span>
+                    <button type="button"
+                            class="btn btn-ask-sia"
+                            onclick="openSiaForField('prompt-input','Image Prompt')">
+                        <span class="sia-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 3.5l1.4 3.3 3.3 1.4-3.3 1.4-1.4 3.3-1.4-3.3-3.3-1.4 3.3-1.4L12 3.5z"></path>
+                                <path d="M6 15l.7 1.6L8.3 17 7 17.7 6.3 19.3 5.7 17.7 4.3 17l1.6-.4L6 15z"></path>
+                                <path d="M17 9l.7 1.6L19.3 11 18 11.7 17.3 13.3 16.7 11.7 15.3 11l1.6-.4L17 9z"></path>
+                            </svg>
+                        </span>
+                        <span class="sia-label">Ask SIA</span>
+                    </button>
+                </div>
+                <textarea id="prompt-input"
+                          class="text-area"
+                          placeholder="Describe your image... Afro-futuristic Lagos street, neon reflections, cinematic lighting..."></textarea>
+            </div>
+            
+            <div class="input-group">
+                <div class="label"><span>Aspect Ratio & Presets</span></div>
+                <div class="ratio-grid">
+                    <div class="ratio-option active" onclick="setImageRatio(1024,1024,this)">1:1<span>Square</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(1280,720,this)">16:9<span>Landscape</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(720,1280,this)">9:16<span>Portrait</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(1024,1280,this)">4:5<span>Portrait</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(300,300,this)">Album<span>300×300</span></div>
+                    <div class="ratio-option" onclick="setImageRatio(1280,720,this)">YouTube<span>1280×720</span></div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Guidance Scale</span><span id="guidance-val">3.5</span></div>
+                <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
+            </div>
+
+            <button id="gen-btn-img" class="btn btn-accent" style="width:100%;height:46px;margin-top:10px;" onclick="generateImage()">
+                <svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg>
+                GENERATE IMAGE
+            </button>
+        </div>
+
+        <!-- VIDEO CONTROLS -->
+        <div id="video-controls" style="display:none;">
+
+            <div class="mode-switch">
+                <div class="mode-option active" id="vid-mode-text" onclick="setVideoMode('text2video',this)">Text → Video</div>
+                <div class="mode-option" id="vid-mode-image" onclick="setVideoMode('image2video',this)">Image → Video</div>
+                <div class="mode-option" id="vid-mode-extend" onclick="setVideoMode('extend',this)">Extend Video</div>
+            </div>
+
+            <!-- UPLOAD + START/END FIRST -->
+            <div class="input-group" id="video-ref-group">
+                <div class="label"><span>Primary Reference</span></div>
+                <input type="file" id="video-ref-image" hidden accept="image/*" onchange="handleVideoRefImage(this)">
+                <input type="file" id="video-ref-video" hidden accept="video/*" onchange="handleVideoRefVideo(this)">
+                <div class="upload-dropzone" id="drop-zone-video-main" onclick="triggerVideoMainUpload()">
+                    <video id="preview-video-main" class="preview-layer" style="display:none;" muted loop></video>
+                    <img id="preview-video-main-img" class="preview-layer" style="display:none;">
+                    <svg style="margin-bottom:6px;color:var(--text-secondary);"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Click to upload image or video (depends on mode)</span>
+                </div>
+            </div>
+
+            <div class="input-group" id="start-end-group">
+                <div class="label"><span>Start & End Frames</span><span style="font-size:10px;opacity:.6;">Optional morph</span></div>
+                <div class="inline-row">
+                    <div>
+                        <input type="file" id="start-frame-input" hidden accept="image/*" onchange="handleStartEnd('start',this)">
+                        <div class="upload-dropzone" id="drop-start" onclick="document.getElementById('start-frame-input').click()" style="height:120px;">
+                            <img id="start-preview" class="preview-layer" style="display:none;">
+                            <span style="font-size:11px;color:var(--text-secondary);">Start Frame</span>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="file" id="end-frame-input" hidden accept="image/*" onchange="handleStartEnd('end',this)">
+                        <div class="upload-dropzone" id="drop-end" onclick="document.getElementById('end-frame-input').click()" style="height:120px;">
+                            <img id="end-preview" class="preview-layer" style="display:none;">
+                            <span style="font-size:11px;color:var(--text-secondary);">End Frame</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+        <div class="label">
+            <span>Prompt</span>
+            <span style="font-size:10px;opacity:.6;">Describe the full scene</span>
+
+            <button type="button"
+                    class="btn btn-ask-sia"
+                    onclick="openSiaForField('video-prompt','Video Prompt')">
+                <span class="sia-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3.5l1.4 3.3 3.3 1.4-3.3 1.4-1.4 3.3-1.4-3.3-3.3-1.4 3.3-1.4L12 3.5z"></path>
+                        <path d="M6 15l.7 1.6L8.3 17 7 17.7 6.3 19.3 5.7 17.7 4.3 17l1.6-.4L6 15z"></path>
+                        <path d="M17 9l.7 1.6L19.3 11 18 11.7 17.3 13.3 16.7 11.7 15.3 11l1.6-.4L17 9z"></path>
+                    </svg>
+                </span>
+                <span class="sia-label">Ask SIA</span>
+            </button>
+        </div>
+
+        <textarea id="video-prompt"
+                  class="text-area"
+                  placeholder="Afrobeat performance in a futuristic Lagos rooftop, camera orbit, neon city in background..."></textarea>
+    </div>
+
+            <div class="label">
+        <div class="input-group">
+        <div class="label">
+            <span>Negative Prompt</span>
+            <span style="font-size:10px;opacity:.6;">Things to avoid</span>
+
+            <button type="button"
+                    class="btn btn-ask-sia"
+                    onclick="openSiaForField('video-negative','Video Negative Prompt')">
+                <span class="sia-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3.5l1.4 3.3 3.3 1.4-3.3 1.4-1.4 3.3-1.4-3.3-3.3-1.4 3.3-1.4L12 3.5z"></path>
+                        <path d="M6 15l.7 1.6L8.3 17 7 17.7 6.3 19.3 5.7 17.7 4.3 17l1.6-.4L6 15z"></path>
+                        <path d="M17 9l.7 1.6L19.3 11 18 11.7 17.3 13.3 16.7 11.7 15.3 11l1.6-.4L17 9z"></path>
+                    </svg>
+                </span>
+                <span class="sia-label">Ask SIA</span>
+            </button>
+        </div>
+            
+        <textarea id="video-negative"
+                  class="text-area"
+                  style="min-height:70px;"
+                  placeholder="blurry, low quality, watermark, distorted faces, extra limbs"></textarea>
+        
+        </div>
+
+    <span style="font-size:10px;opacity:.6;">
+        <!-- keep your existing helper words here -->
+    </span>
+    
+        </div>   
+                
+            <!-- Elements (multi-ref) – hidden from UI but kept logically -->
+            <div class="input-group" id="elements-group">
+                <div class="label"><span>Elements / Consistency</span><span style="font-size:10px;opacity:.6;">Character · Style · Scene</span></div>
+                <input type="file" id="elements-input" hidden accept="image/*" multiple onchange="handleElements(this)">
+                <div class="upload-dropzone" id="drop-elements" onclick="document.getElementById('elements-input').click()" style="height:110px;">
+                    <span style="font-size:11px;color:var(--text-secondary);">Upload multiple reference images</span>
+                </div>
+                <div id="elements-count" style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:none;"></div>
+            </div>
+
+            <!-- Durations / resolution / model mode -->
+            <div class="input-group">
+                <div class="label"><span>Duration & Resolution</span></div>
+                <div class="inline-row">
+                    <div>
+                        <select id="video-duration" style="width:100%;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
+                            <option value="5">5 seconds</option>
+                            <option value="10">10 seconds</option>
+                            <option value="15">15 seconds</option>
+                            <option value="20">20 seconds</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="video-resolution" style="width:100%;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
+                            <option value="720p">HD 1280×720</option>
+                            <option value="1080p">Full HD 1920×1080</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Aspect Ratio</span></div>
+                <div class="ratio-grid">
+                    <div class="ratio-option active" onclick="setVideoRatio('16:9',this)">16:9<span>YouTube</span></div>
+                    <div class="ratio-option" onclick="setVideoRatio('9:16',this)">9:16<span>TikTok / Reels</span></div>
+                    <div class="ratio-option" onclick="setVideoRatio('1:1',this)">1:1<span>Square</span></div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Model Mode</span></div>
+                <div class="inline-row">
+                    <button id="mode-standard" class="btn btn-ghost" style="flex:1;border-radius:var(--radius-md);border:1px solid var(--border-subtle);" onclick="setVideoQuality('standard')">Standard (Fast)</button>
+                    <button id="mode-pro" class="btn btn-ghost" style="flex:1;border-radius:var(--radius-md);border:1px solid var(--border-subtle);" onclick="setVideoQuality('pro')">Pro (High Quality)</button>
+                </div>
+            </div>
+
+            <!-- Camera + motion + lipsync + sfx -->
+            <div class="input-group">
+                <div class="label"><span>Camera & Motion</span></div>
+                <div class="inline-row">
+                    <select id="camera-path" style="flex:1;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
+                        <option value="static">Static camera</option>
+                        <option value="pan-left">Pan left</option>
+                        <option value="pan-right">Pan right</option>
+                        <option value="zoom-in">Slow zoom in</option>
+                        <option value="zoom-out">Slow zoom out</option>
+                        <option value="orbit">Orbit around subject</option>
+                    </select>
+                    <select id="motion-brush-preset" style="flex:1;padding:7px 10px;border-radius:var(--radius-md);background:var(--bg-element);border:1px solid var(--border-subtle);color:var(--text-secondary);font-size:12px;">
+                        <option value="none">Motion Brush: None</option>
+                        <option value="hair-wind">Hair flowing in wind</option>
+                        <option value="cloth-wave">Clothes gentle wave</option>
+                        <option value="clouds">Clouds moving</option>
+                        <option value="camera-object">Main subject subtle move</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Lip Sync & Audio</span></div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" id="enable-lipsync">
+                        <label for="enable-lipsync" style="font-size:12px;color:var(--text-secondary);">Enable Lip Sync</label>
+                    </div>
+                    <input type="file" id="lipsync-audio" accept="audio/*" style="display:none" onchange="handleLipAudio(this)">
+                    <button class="btn btn-ghost" style="justify-content:flex-start;padding-left:10px;font-size:12px;" onclick="document.getElementById('lipsync-audio').click()">
+                        <svg style="width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                        Attach audio for lip sync (optional)
+                    </button>
+
+                    <button class="btn btn-primary" style="margin-top:4px;font-size:12px;" onclick="generateSfx()">
+                        <svg style="width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/></svg>
+                        Generate matching sound effects
+                    </button>
+                </div>
+            </div>
+
+            <button id="gen-btn-video" class="btn btn-accent" style="width:100%;height:46px;margin-top:6px;" onclick="generateVideo()">
+                <svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                GENERATE VIDEO
+            </button>
+
+        </div>
+
+        <!-- SHORT FILM CONTROLS -->
+        <div id="shortfilm-controls" style="display:none;">
+
+            <div class="input-group">
+                <div class="label">
+                    <span>Storyboard · Short Film</span>
+                    <span style="font-size:10px;opacity:.7;">Click = select · Double-click = replace · Drag = reorder</span>
+                </div>
+                <input type="file" id="shortfilm-images-input" hidden multiple accept="image/*" onchange="handleShortFilmImages(this)">
+                <!-- for replacing a specific shot -->
+                <input type="file" id="shortfilm-replace-image-input" hidden accept="image/*" onchange="handleShortFilmReplaceImage(this)">
+                <div class="shortfilm-board upload-dropzone" id="shortfilm-board">
+                    <div id="shortfilm-board-inner" class="shortfilm-board-inner">
+                        <div class="shortfilm-empty-hint">
+                            Use the + button below to add storyboard images.<br>
+                            Single-click selects, double-click replaces, drag to reorder.
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11px;color:var(--text-secondary);">
+                    <span id="shortfilm-count">0 / 20 shots</span>
+                    <div style="display:flex;gap:6px;">
+                        <button type="button" class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="document.getElementById('shortfilm-images-input').click()">
+                            <svg style="width:14px;height:14px;"><path d="M12 5v14M5 12h14"/></svg>
+                            Shots
+                        </button>
+                        <button type="button" class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="importFromImageLab()">
+                            Import from Image Lab
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Shot Duration Timeline -->
+            <div class="input-group">
+                <div class="label">
+                    <span>Shot Duration Timeline</span>
+                    <span style="font-size:10px;opacity:.7;">Proportional to per-shot seconds</span>
+                </div>
+                <div class="shortfilm-timeline" id="shortfilm-timeline">
+                    <div class="shortfilm-timeline-empty">Add storyboard shots to see the timeline.</div>
+                </div>
+                <div class="shortfilm-timeline-metadata" id="shortfilm-timeline-meta">
+                    <span>Total timeline: 0 s</span>
+                    <span>Shots: 0</span>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <div class="label">
+                    <div>
+                        <span>Selected Shot Prompt</span>
+                        <span id="shortfilm-selected-label" style="font-size:10px;opacity:.7;">None selected</span>
+                    </div>
+                    <button type="button"
+                            class="btn btn-ask-sia"
+                            onclick="openSiaForField('shortfilm-shot-prompt','Short Film Shot Prompt')">
+                        <span class="sia-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 3.5l1.4 3.3 3.3 1.4-3.3 1.4-1.4 3.3-1.4-3.3-3.3-1.4 3.3-1.4L12 3.5z"></path>
+                                <path d="M6 15l.7 1.6L8.3 17 7 17.7 6.3 19.3 5.7 17.7 4.3 17l1.6-.4L6 15z"></path>
+                                <path d="M17 9l.7 1.6L19.3 11 18 11.7 17.3 13.3 16.7 11.7 15.3 11l1.6-.4L17 9z"></path>
+                            </svg>
+                        </span>
+                        <span class="sia-label">Ask SIA</span>
+                    </button>
+                </div>
+                <textarea id="shortfilm-shot-prompt"
+                          class="text-area"
+                          placeholder="Describe this specific shot (camera move, emotion, action...)"
+                          oninput="updateShortFilmShotPrompt()"></textarea>
+            </div>
+
+            <!-- NEW: Selected Shot Duration Slider -->
+            <div class="input-group">
+                <div class="label">
+                    <span>Selected Shot Duration</span>
+                    <span id="shortfilm-shot-duration-label" style="font-size:10px;opacity:.7;">No shot selected</span>
+                </div>
+                <input type="range" id="shortfilm-shot-duration" min="1" max="12" step="0.5" value="3" oninput="updateShortFilmShotDuration(this.value)">
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">
+                    Adjust how long this shot stays on screen (in seconds).
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Global Film Prompt</span></div>
+                <textarea id="shortfilm-global-prompt" class="text-area" placeholder="Overall style, pacing, mood and story arc for this short film."></textarea>
+            </div>
+
+            <div class="input-group">
+                <div class="label"><span>Short Film Duration & Aspect</span></div>
+                <div class="inline-row">
+                    <div>
+                        <select id="shortfilm-duration" class="shortfilm-input">
+                            <option value="10">10 seconds</option>
+                            <option value="20">20 seconds</option>
+                            <option value="30">30 seconds</option>
+                            <option value="45">45 seconds</option>
+                            <option value="60">60 seconds</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="shortfilm-aspect" class="shortfilm-input">
+                            <option value="16:9">16:9 · YouTube</option>
+                            <option value="9:16">9:16 · Reels / TikTok</option>
+                            <option value="1:1">1:1 · Square</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Short Film Start & End frames -->
+            <div class="input-group">
+                <div class="label"><span>Start & End Frames (Optional)</span></div>
+                <div class="inline-row">
+                    <div>
+                        <input type="file" id="shortfilm-start-input" hidden accept="image/*" onchange="handleShortFilmStartEnd('start',this)">
+                        <div class="upload-dropzone" id="shortfilm-drop-start" onclick="document.getElementById('shortfilm-start-input').click()" style="height:110px;">
+                            <img id="shortfilm-start-preview" class="preview-layer" style="display:none;">
+                            <span style="font-size:11px;color:var(--text-secondary);">Start Frame</span>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="file" id="shortfilm-end-input" hidden accept="image/*" onchange="handleShortFilmStartEnd('end',this)">
+                        <div class="upload-dropzone" id="shortfilm-drop-end" onclick="document.getElementById('shortfilm-end-input').click()" style="height:110px;">
+                            <img id="shortfilm-end-preview" class="preview-layer" style="display:none;">
+                            <span style="font-size:11px;color:var(--text-secondary);">End Frame</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Short Film Video reference (URL or upload) -->
+            <div class="input-group">
+                <div class="label"><span>Video Reference (Optional)</span></div>
+                <input id="shortfilm-video-url" class="shortfilm-input" placeholder="YouTube / direct video URL for reference timing or style">
+                <input type="file" id="shortfilm-video-file" hidden accept="video/*" onchange="handleShortFilmVideoFile(this)">
+                <div class="upload-dropzone" id="shortfilm-video-drop" onclick="document.getElementById('shortfilm-video-file').click()" style="height:130px;margin-top:8px;">
+                    <video id="shortfilm-video-preview" class="preview-layer" style="display:none;" muted loop></video>
+                    <span style="font-size:11px;color:var(--text-secondary);">Click to upload a reference clip (optional)</span>
+                </div>
+            </div>
+
+            <!-- Short Film script / docs -->
+            <div class="input-group">
+                <div class="label"><span>Script / Documents</span></div>
+                <textarea id="shortfilm-script-text" class="text-area" placeholder="Paste or write your script / key beats here."></textarea>
+                <input type="file" id="shortfilm-script-file" hidden accept=".txt,.pdf,.doc,.docx,image/*" onchange="handleShortFilmScriptFile(this)">
+                <button class="btn btn-ghost" style="justify-content:flex-start;padding-left:10px;font-size:12px;margin-top:4px;" onclick="document.getElementById('shortfilm-script-file').click()">
+                    <svg style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Upload script (TXT / DOC / PDF / Screenshot)
+                </button>
+                <div id="shortfilm-script-file-label" style="font-size:11px;color:var(--text-secondary);margin-top:2px;opacity:.8;"></div>
+            </div>
+
+            <!-- Short Film Lip Sync & Audio -->
+            <div class="input-group">
+                <div class="label"><span>Lip Sync & Audio</span></div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" id="shortfilm-enable-lipsync">
+                        <label for="shortfilm-enable-lipsync" style="font-size:12px;color:var(--text-secondary);">Enable Lip Sync</label>
+                    </div>
+
+                    <input type="file" id="shortfilm-audio-file" accept="audio/*" style="display:none" onchange="handleShortFilmAudioFile(this)">
+                    <button class="btn btn-ghost" style="justify-content:flex-start;padding-left:10px;font-size:12px;" onclick="document.getElementById('shortfilm-audio-file').click()">
+                        <svg style="width:16px;height:16px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                        Upload audio from device
+                    </button>
+
+                    <div style="display:flex;gap:6px;margin-top:2px;">
+                        <button class="btn btn-primary" style="flex:1;font-size:11px;padding:6px 8px;" onclick="openAudioBrowser('audio-html')">
+                            Import from AUDIO Lab
+                        </button>
+                        <button class="btn btn-primary" style="flex:1;font-size:11px;padding:6px 8px;" onclick="openAudioBrowser('studio')">
+                            Import from Studio
+                        </button>
+                    </div>
+
+                    <div id="shortfilm-audio-label" style="font-size:11px;color:var(--text-secondary);margin-top:4px;opacity:.8;">
+                        No audio selected yet.
+                    </div>
+                </div>
+            </div>
+
+            <button id="gen-btn-shortfilm" class="btn btn-accent" style="width:100%;height:46px;margin-top:8px;" onclick="generateShortFilm()">
+                <svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                GENERATE SHORT FILM
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- MAIN STAGE -->
+<div class="stage">
+    <div class="stage-header">
+        <div class="gallery-tabs">
+            <div class="gallery-tab active" id="tab-history" onclick="switchGalleryTab('history',this)">History</div>
+            <div class="gallery-tab" id="tab-community" onclick="switchGalleryTab('community',this)">Community Feed</div>
+            <div class="gallery-tab" id="tab-favorites" onclick="switchGalleryTab('favorites',this)">Favorites</div>
+        </div>
+
+        <div class="stage-header-right">
+            <div class="plan-pill" onclick="openPlanModal()">
+                <span style="width:6px;height:6px;border-radius:999px;background:#38bdf8;"></span>
+                <span>Plan: Free · 66 Daily Credits</span>
+            </div>
+            <button class="btn btn-icon" onclick="refreshCommunity()" title="Refresh feed">
+                <svg><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="stage-content" id="gallery-container">
+        <div class="grid" id="gallery-grid"></div>
+        <div id="empty-state">
+            <svg style="width:64px;height:64px;margin-bottom:14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Start creating something amazing.</div>
+            <div style="font-size:13px;color:var(--text-secondary);">Choose Image, Video, or Short Film on the left, type your prompt, and hit Generate.</div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container">
+    <div id="toast" class="toast">
+        <div class="spinner"></div>
+        <div style="display:flex;flex-direction:column;">
+            <span style="font-weight:700;font-size:13px;" id="toast-title">Processing...</span>
+            <span style="font-size:12px;opacity:.8;" id="toast-msg">Sending request to H200 Engine</span>
+        </div>
+    </div>
+</div>
+
+<!-- PLAN MODAL -->
+<div id="plan-modal" class="modal-backdrop">
+    <div class="modal">
+        <h3>Membership Tiers</h3>
+        <p>Offer everything your competitors do – and more. These tiers are ready for when you wire billing.</p>
+        <div class="tier-list">
+            <div class="tier-item">
+                <strong>Free Creator</strong>
+                • ~6 videos / day, 30 images / day<br>
+                • Watermark on exports<br>
+                • Standard models, community access
+            </div>
+            <div class="tier-item">
+                <strong>Studio Pro</strong>
+                • No watermarks, Pro model mode<br>
+                • Longer videos (up to 60 s / job)<br>
+                • Priority queue, API access
+            </div>
+            <div class="tier-item">
+                <strong>Premier Turbo</strong>
+                • 4× concurrent jobs, 3-minute video chain<br>
+                • Private community feed & presets<br>
+                • Team credits and usage analytics
+            </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+            <button class="btn btn-ghost" onclick="closePlanModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- AUDIO BROWSER PANEL -->
+<div id="audio-browser" class="audio-browser-backdrop">
+    <div class="audio-browser-panel">
+        <div class="audio-browser-header">
+            <span id="audio-browser-title">Select Audio</span>
+            <button class="btn btn-icon" onclick="closeAudioBrowser()">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="audio-browser-list" class="audio-browser-list"></div>
+        <audio id="audio-browser-player" style="width:100%;padding:10px 14px 14px;" controls></audio>
+    </div>
+</div>
+
+<script>
+/* -------------------------------------------------------------------------- */
+/* CONFIG                                                                     */
+/* -------------------------------------------------------------------------- */
+const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
+
+let currentLab = "image";
+let currentGalleryTab = "history";   // history / community / favorites
+let currentImageMode = "txt2img";
+let currentVideoMode = "text2video";
+let imageBase64 = null;
+let imgWidth = 1024, imgHeight = 1024;
+
+let videoAspect = "16:9";
+let videoQuality = "standard";
+let videoRefs = {
+    image: null,
+    video: null,
+    startFrame: null,
+    endFrame: null,
+    elements: [],
+    lipsyncAudio: null
+};
+
+/* -------------------------------------------------------------------------- */
+/* LAB SWITCHING                                                              */
+/* -------------------------------------------------------------------------- */
+function switchLab(lab){
+    currentLab = lab;
+
+    document.getElementById('nav-image').classList.toggle('active', lab === 'image');
+    document.getElementById('nav-video').classList.toggle('active', lab === 'video');
+    document.getElementById('nav-shortfilm').classList.toggle('active', lab === 'shortfilm');
+
+    document.getElementById('lab-mode-image').classList.toggle('active', lab === 'image');
+    document.getElementById('lab-mode-video').classList.toggle('active', lab === 'video');
+    document.getElementById('lab-mode-shortfilm').classList.toggle('active', lab === 'shortfilm');
+
+    document.getElementById('image-controls').style.display = (lab === 'image') ? 'block' : 'none';
+    document.getElementById('video-controls').style.display = (lab === 'video') ? 'block' : 'none';
+    document.getElementById('shortfilm-controls').style.display = (lab === 'shortfilm') ? 'block' : 'none';
+    applyGalleryFilterForCurrentLab();
+}
+
+/* -------------------------------------------------------------------------- */
+/* IMAGE CONTROLS                                                             */
+/* -------------------------------------------------------------------------- */
+function setImageMode(mode, el){
+    currentImageMode = mode;
+    document.querySelectorAll('#image-controls .mode-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+
+    const group = document.getElementById('upload-group-img');
+    group.style.display = (mode === 'img2img') ? 'block' : 'none';
+}
+
+function setImageRatio(w,h,el){
+    imgWidth = w;
+    imgHeight = h;
+    document.querySelectorAll('#image-controls .ratio-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function handleImgFile(input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            imageBase64 = e.target.result;
+            const img = document.getElementById('preview-img');
+            const zone = document.getElementById('drop-zone-img');
+            img.src = imageBase64;
+            img.style.display = 'block';
+            zone.classList.add('has-file');
+            if(currentImageMode !== 'img2img'){
+                setImageMode('img2img', document.getElementById('img-mode-img2img'));
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
     }
 }
 
-window.addEventListener('load', applyHashRouting);
-window.addEventListener('hashchange', applyHashRouting);
+async function generateImage(){
+    const prompt = document.getElementById('prompt-input').value.trim();
+    if(!prompt){ return showToast("Add a prompt first.","Notice"); }
+
+    const btn = document.getElementById('gen-btn-img');
+    btn.disabled = true;
+    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
+    showToast("Sending image job to H200...","Processing");
+
+    const payload = {
+        prompt: prompt,
+        width: imgWidth,
+        height: imgHeight,
+        steps: 25,
+        guidance: parseFloat(document.getElementById('guidance').value)
+    };
+
+    if(currentImageMode === 'img2img' && imageBase64){
+        payload.image_base64 = imageBase64;
+        payload.strength = parseFloat(document.getElementById('strength').value);
+    }
+
+    try{
+        const res = await fetch(`${API_URL}/api/image/txt2img`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if(data.status === "success"){
+            showToast("Image generated successfully!","Success");
+            addToGallery({
+                type: "image",
+                url: `${API_URL}${data.image_url || data.imageUrl || data.url || data.filename ? "/api/image/file/"+(data.filename || "") : ""}`,
+                prompt
+            });
+        }else{
+            console.error(data);
+            showToast("Image error: " + (data.message || "Unknown error"),"Error");
+        }
+    }catch(err){
+        console.error(err);
+        showToast("Connection failed. Check API / tunnel.","Error");
+    }finally{
+        btn.disabled = false;
+        btn.innerHTML = `<svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE IMAGE`;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* VIDEO CONTROLS                                                             */
+/* -------------------------------------------------------------------------- */
+function setVideoMode(mode,el){
+    currentVideoMode = mode;
+    document.querySelectorAll('#video-controls .mode-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+
+    const mainZone = document.getElementById('drop-zone-video-main');
+    const span = mainZone.querySelector('span');
+    const refGroup = document.getElementById('video-ref-group');
+    const seGroup = document.getElementById('start-end-group');
+
+    if(mode === 'text2video'){
+        span.textContent = "Text → Video uses only your prompt. Reference uploads are off in this mode.";
+        refGroup.style.display = 'none';
+        seGroup.style.display = 'none';
+    }else if(mode === 'image2video'){
+        span.textContent = "Upload a still image to animate into a video";
+        refGroup.style.display = 'block';
+        seGroup.style.display = 'block';
+    }else{
+        span.textContent = "Upload an existing video clip to extend";
+        refGroup.style.display = 'block';
+        seGroup.style.display = 'block';
+    }
+}
+
+function setVideoRatio(ratio,el){
+    videoAspect = ratio;
+    document.querySelectorAll('#video-controls .ratio-option').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function setVideoQuality(q){
+    videoQuality = q;
+    document.getElementById('mode-standard').style.borderColor = (q === 'standard') ? '#60a5fa' : 'var(--border-subtle)';
+    document.getElementById('mode-pro').style.borderColor       = (q === 'pro')       ? '#60a5fa' : 'var(--border-subtle)';
+}
+
+function triggerVideoMainUpload(){
+    if(currentVideoMode === 'text2video'){
+        showToast("Upload is disabled in Text → Video. Use Image → Video or Short Film for references.","Notice");
+        return;
+    }
+    if(currentVideoMode === 'extend'){
+        document.getElementById('video-ref-video').click();
+    }else{
+        document.getElementById('video-ref-image').click();
+    }
+}
+
+function handleVideoRefImage(input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            videoRefs.image = e.target.result;
+            const img = document.getElementById('preview-video-main-img');
+            const v = document.getElementById('preview-video-main');
+            v.style.display = 'none';
+            img.style.display = 'block';
+            img.src = videoRefs.image;
+            document.getElementById('drop-zone-video-main').classList.add('has-file');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function handleVideoRefVideo(input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            videoRefs.video = e.target.result;
+            const v = document.getElementById('preview-video-main');
+            const img = document.getElementById('preview-video-main-img');
+            img.style.display = 'none';
+            v.style.display = 'block';
+            v.src = videoRefs.video;
+            v.loop = true; v.muted = true; v.play();
+            document.getElementById('drop-zone-video-main').classList.add('has-file');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function handleStartEnd(kind,input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            if(kind === 'start'){
+                videoRefs.startFrame = e.target.result;
+                const img = document.getElementById('start-preview');
+                img.src = videoRefs.startFrame;
+                img.style.display = 'block';
+                document.getElementById('drop-start').classList.add('has-file');
+            }else{
+                videoRefs.endFrame = e.target.result;
+                const img = document.getElementById('end-preview');
+                img.src = videoRefs.endFrame;
+                img.style.display = 'block';
+                document.getElementById('drop-end').classList.add('has-file');
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function handleElements(input){
+    videoRefs.elements = [];
+    if(input.files && input.files.length){
+        const count = input.files.length;
+        let loaded = 0;
+        for(const file of input.files){
+            const reader = new FileReader();
+            reader.onload = e => {
+                videoRefs.elements.push(e.target.result);
+                loaded++;
+                if(loaded === count){
+                    const info = document.getElementById('elements-count');
+                    if(info){
+                        info.style.display = 'block';
+                        info.textContent = `${count} element reference(s) attached.`;
+                    }
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+        const drop = document.getElementById('drop-elements');
+        if(drop){
+            drop.classList.add('has-file');
+        }
+    }
+}
+
+function handleLipAudio(input){
+    if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload = e => {
+            videoRefs.lipsyncAudio = e.target.result;
+            showToast("Lip sync audio attached.","Info");
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+async function generateVideo(){
+    const prompt = document.getElementById('video-prompt').value.trim();
+    if(!prompt){ return showToast("Add a video prompt first.","Notice"); }
+
+    const btn = document.getElementById('gen-btn-video');
+    btn.disabled = true;
+    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
+    showToast("Sending video job to H200...","Processing");
+
+    const payload = {
+        mode: currentVideoMode,
+        prompt,
+        negative_prompt: document.getElementById('video-negative').value.trim(),
+        duration_seconds: parseInt(document.getElementById('video-duration').value),
+        resolution: document.getElementById('video-resolution').value,
+        aspect_ratio: videoAspect,
+        quality: videoQuality,
+        camera_path: document.getElementById('camera-path').value,
+        motion_brush: document.getElementById('motion-brush-preset').value,
+        lipsync_enabled: document.getElementById('enable-lipsync').checked,
+        refs: {}
+    };
+
+    if(currentVideoMode === 'extend' && videoRefs.video){
+        payload.refs.video = videoRefs.video;
+    }else if(videoRefs.image && currentVideoMode !== 'text2video'){
+        payload.refs.image = videoRefs.image;
+    }
+
+    if(videoRefs.startFrame && currentVideoMode !== 'text2video') payload.refs.start_frame = videoRefs.startFrame;
+    if(videoRefs.endFrame && currentVideoMode !== 'text2video')   payload.refs.end_frame   = videoRefs.endFrame;
+    if(videoRefs.elements.length) payload.refs.elements = videoRefs.elements;
+    if(videoRefs.lipsyncAudio) payload.refs.lipsync_audio = videoRefs.lipsyncAudio;
+
+    try{
+        const res = await fetch(`${API_URL}/api/video/generate`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if(data.status === "success"){
+            showToast("Video generated successfully!","Success");
+            addToGallery({
+                type: "video",
+                url: `${API_URL}${data.video_url || data.url || ""}`,
+                thumb: data.thumbnail_url ? `${API_URL}${data.thumbnail_url}` : null,
+                prompt
+            });
+        }else{
+            console.error(data);
+            showToast("Video error: " + (data.message || "Unknown error"),"Error");
+        }
+    }catch(err){
+        console.error(err);
+        showToast("Connection failed. Check API / tunnel.","Error");
+    }finally{
+        btn.disabled = false;
+        btn.innerHTML = `<svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> GENERATE VIDEO`;
+    }
+}
+
+/* AUDIO SFX */
+async function generateSfx(){
+    const prompt = document.getElementById('video-prompt').value.trim();
+    if(!prompt){ return showToast("Add a prompt first so SFX can match.","Notice"); }
+
+    showToast("Generating sound effects for this scene...","Processing");
+    try{
+        const res = await fetch(`${API_URL}/api/audio/sfx`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+        if(data.status === "success"){
+            showToast("Sound effects generated!","Success");
+        }else{
+            showToast("SFX error: " + (data.message || "Unknown error"),"Error");
+        }
+    }catch(err){
+        console.error(err);
+        showToast("Connection failed while generating SFX.","Error");
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* GALLERY / COMMUNITY / FAVORITES                                           */
+/* -------------------------------------------------------------------------- */
+function addToGallery(item){
+    const grid = document.getElementById('gallery-grid');
+    document.getElementById('empty-state').style.display = 'none';
+
+const card = document.createElement('div');
+const t = item.type || 'image';
+card.className = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
+card.dataset.mediaType = t;
+
+
+    if(item.type === 'image'){
+        const url = item.url;
+        card.innerHTML = `
+            <img src="${url}" alt="">
+            <div class="card-overlay">
+                <div class="card-meta">${item.prompt || ''}</div>
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
+                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
+                </div>
+            </div>
+        `;
+    }else{
+        const url = item.url;
+        const thumb = item.thumb || url;
+        card.innerHTML = `
+            <video src="${url}" poster="${thumb}" controls muted></video>
+            <div class="card-overlay">
+                <div class="card-meta">${item.prompt || ''}</div>
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
+                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
+                </div>
+            </div>
+        `;
+    }
+
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(16px)';
+    grid.prepend(card);
+    setTimeout(()=>{card.style.opacity='1';card.style.transform='translateY(0)';},30);
+}
+
+function cloneSetup(type,encodedPrompt){
+    const prompt = decodeURIComponent(encodedPrompt || '');
+    if(type === 'image'){
+        switchLab('image');
+        document.getElementById('prompt-input').value = prompt;
+    }else{
+        switchLab('video');
+        document.getElementById('video-prompt').value = prompt;
+    }
+    showToast("Preset cloned into the left panel. Tweak and generate.","Info");
+}
+
+function switchGalleryTab(tab, el) {
+    document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    currentGalleryTab = tab;
+
+    if (tab === 'history') {
+        applyGalleryFilterForCurrentLab();
+    } else if (tab === 'community') {
+        refreshCommunity();
+    } else if (tab === 'favorites') {
+        showToast("Favorites", "Favorites view will be wired later.");
+    }
+}
+    
+function applyGalleryFilterForCurrentLab() {
+    if (currentGalleryTab !== 'history') return;
+
+    const grid = document.getElementById('gallery-grid');
+    const emptyState = document.getElementById('empty-state');
+    if (!grid || !emptyState) return;
+
+    const cards = Array.from(grid.querySelectorAll('.card'));
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const mediaType = card.dataset.mediaType || 'image';
+        let show = true;
+
+        if (currentLab === 'image') {
+            show = (mediaType === 'image');
+        } else if (currentLab === 'video') {
+            show = (mediaType === 'video');
+        } else if (currentLab === 'shortfilm') {
+            show = (mediaType === 'shortfilm');
+        }
+
+        card.style.display = show ? '' : 'none';
+        if (show) visibleCount++;
+    });
+
+    emptyState.style.display = visibleCount ? 'none' : 'flex';
+}
+    
+async function refreshCommunity(){
+    try{
+        const res = await fetch(`${API_URL}/api/community/feed`);
+        const data = await res.json();
+        if(data && Array.isArray(data.items)){
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+            data.items.forEach(item=>{
+                addToGallery({
+                    type: item.type || 'video',
+                    url: `${API_URL}${item.url}`,
+                    thumb: item.thumb ? `${API_URL}${item.thumb}` : null,
+                    prompt: item.prompt || ''
+                });
+            });
+        }
+    }catch(err){
+        console.warn("Community feed not wired yet:",err);
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* TOAST + MODAL                                                              */
+/* -------------------------------------------------------------------------- */
+let toastTimeout;
+function showToast(msg,title="Processing"){
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').innerText = msg;
+    document.getElementById('toast-title').innerText = title;
+    t.classList.add('active');
+
+    if(title === "Error"){
+        t.style.borderLeftColor = "#ef4444";
+    }else if(title === "Success"){
+        t.style.borderLeftColor = "#22c55e";
+    }else{
+        t.style.borderLeftColor = "#38bdf8";
+    }
+
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(()=>t.classList.remove('active'),4000);
+}
+
+function openPlanModal(){
+    document.getElementById('plan-modal').classList.add('active');
+}
+function closePlanModal(){
+    document.getElementById('plan-modal').classList.remove('active');
+}
+
+/* -------------------------------------------------------------------------- */
+/* SHORT FILM LOGIC – STORYBOARD, PROMPTS, DURATIONS, AUDIO                   */
+/* -------------------------------------------------------------------------- */
+
+let shortFilmShots = [];
+let shortFilmSelectedId = null;
+let shortFilmRefs = {
+    startFrame: null,
+    endFrame: null,
+    videoFile: null,
+    videoUrl: "",
+    scriptFile: null,
+    scriptFileName: "",
+    audioSource: null,
+    audioLabel: ""
+};
+let shortFilmDragId = null;
+let shortFilmReplaceId = null;
+
+function handleShortFilmImages(input){
+    if(!input.files || !input.files.length) return;
+
+    const maxShots = 20;
+    const remainingSlots = maxShots - shortFilmShots.length;
+    if(remainingSlots <= 0){
+        showToast("You already have 20 storyboard images.","Notice");
+        input.value = "";
+        return;
+    }
+
+    const files = Array.from(input.files).slice(0, remainingSlots);
+    let loaded = 0;
+
+    files.forEach(file=>{
+        const reader = new FileReader();
+        reader.onload = e => {
+            const id = "sf_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+            shortFilmShots.push({
+                id,
+                src: e.target.result,
+                prompt: "",
+                durationSeconds: 3   // default per shot
+            });
+            shortFilmSelectedId = id; // highlight last uploaded
+            loaded++;
+            if(loaded === files.length){
+                renderShortFilmBoard();
+                selectShortFilmShot(shortFilmSelectedId);
+                showToast("Storyboard images added.","Success");
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+
+    input.value = "";
+}
+
+/* Ensure each shot has durationSeconds even for older data */
+function ensureShortFilmDurations(){
+    shortFilmShots.forEach(shot=>{
+        if(typeof shot.durationSeconds !== 'number' || isNaN(shot.durationSeconds)){
+            shot.durationSeconds = 3;
+        }
+    });
+}
+
+function renderShortFilmBoard(){
+    ensureShortFilmDurations();
+
+    const inner = document.getElementById('shortfilm-board-inner');
+    if(!inner) return;
+
+    inner.innerHTML = "";
+    if(!shortFilmShots.length){
+        const empty = document.createElement('div');
+        empty.className = "shortfilm-empty-hint";
+        empty.innerHTML = "Use the + button below to add storyboard images.<br>Single-click selects, double-click replaces, drag to reorder.";
+        inner.appendChild(empty);
+    }else{
+        shortFilmShots.forEach((shot, index)=>{
+            const card = document.createElement('div');
+            card.className = "shortfilm-shot-card";
+            card.dataset.id = shot.id;
+            card.dataset.index = index.toString();
+            card.draggable = true;
+
+            const img = document.createElement('img');
+            img.className = "shortfilm-shot-thumb";
+            img.src = shot.src;
+
+            const label = document.createElement('div');
+            label.className = "shortfilm-shot-label";
+            label.textContent = "Shot " + (index + 1);
+
+            const promptTag = document.createElement('div');
+            promptTag.className = "shortfilm-shot-prompt-tag";
+            promptTag.textContent = shot.prompt ? "Prompt" : "No prompt";
+            if(!shot.prompt){
+                promptTag.style.background = "rgba(30,64,175,.85)";
+                promptTag.style.color = "#e5e7eb";
+            }
+
+            const delBtn = document.createElement('button');
+            delBtn.className = "shortfilm-shot-delete";
+            delBtn.innerHTML = "&times;";
+            delBtn.addEventListener('click',(e)=>{
+                e.stopPropagation();
+                deleteShortFilmShot(shot.id);
+            });
+
+            card.appendChild(img);
+            card.appendChild(label);
+            card.appendChild(promptTag);
+            card.appendChild(delBtn);
+
+            card.addEventListener('click', ()=>selectShortFilmShot(shot.id));
+            card.addEventListener('dblclick', ()=>startShortFilmReplace(shot.id));
+            card.addEventListener('dragstart', e=>handleShortFilmDragStart(e, shot.id));
+            card.addEventListener('dragover', e=>handleShortFilmDragOver(e, shot.id));
+            card.addEventListener('dragleave', e=>handleShortFilmDragLeave(e, shot.id));
+            card.addEventListener('drop', e=>handleShortFilmDrop(e, shot.id));
+
+            if(shot.id === shortFilmSelectedId){
+                card.classList.add('selected');
+            }
+
+            inner.appendChild(card);
+        });
+    }
+
+    const countEl = document.getElementById('shortfilm-count');
+    if(countEl){
+        countEl.textContent = `${shortFilmShots.length} / 20 shots`;
+    }
+
+    if(shortFilmSelectedId){
+        const shot = shortFilmShots.find(s => s.id === shortFilmSelectedId);
+        if(shot){
+            document.getElementById('shortfilm-shot-prompt').value = shot.prompt || "";
+            document.getElementById('shortfilm-selected-label').textContent = "Shot " + (shortFilmShots.indexOf(shot)+1);
+
+            const durSlider = document.getElementById('shortfilm-shot-duration');
+            const durLabel = document.getElementById('shortfilm-shot-duration-label');
+            if(durSlider && durLabel){
+                durSlider.value = shot.durationSeconds;
+                durLabel.textContent = `Shot ${shortFilmShots.indexOf(shot)+1} · ${shot.durationSeconds.toFixed(1)} s`;
+            }
+        }
+    }else{
+        document.getElementById('shortfilm-shot-prompt').value = "";
+        document.getElementById('shortfilm-selected-label').textContent = "None selected";
+
+        const durLabel = document.getElementById('shortfilm-shot-duration-label');
+        if(durLabel){
+            durLabel.textContent = "No shot selected";
+        }
+    }
+
+    renderShortFilmTimeline();
+}
+
+function deleteShortFilmShot(id){
+    const idx = shortFilmShots.findIndex(s => s.id === id);
+    if(idx === -1) return;
+    shortFilmShots.splice(idx,1);
+    if(shortFilmSelectedId === id){
+        if(shortFilmShots.length){
+            const newIdx = Math.max(0, idx-1);
+            shortFilmSelectedId = shortFilmShots[newIdx].id;
+        }else{
+            shortFilmSelectedId = null;
+        }
+    }
+    renderShortFilmBoard();
+    if(shortFilmSelectedId){
+        selectShortFilmShot(shortFilmSelectedId);
+    }
+}
+
+function selectShortFilmShot(id){
+    shortFilmSelectedId = id;
+    const shot = shortFilmShots.find(s => s.id === id);
+
+    document.querySelectorAll('.shortfilm-shot-card').forEach(card=>{
+        card.classList.toggle('selected', card.dataset.id === id);
+    });
+
+    const promptArea = document.getElementById('shortfilm-shot-prompt');
+    const label = document.getElementById('shortfilm-selected-label');
+    const durSlider = document.getElementById('shortfilm-shot-duration');
+    const durLabel = document.getElementById('shortfilm-shot-duration-label');
+
+    if(shot){
+        promptArea.value = shot.prompt || "";
+        label.textContent = "Shot " + (shortFilmShots.indexOf(shot)+1);
+        if(durSlider && durLabel){
+            durSlider.value = shot.durationSeconds;
+            durLabel.textContent = `Shot ${shortFilmShots.indexOf(shot)+1} · ${shot.durationSeconds.toFixed(1)} s`;
+        }
+    }else{
+        promptArea.value = "";
+        label.textContent = "None selected";
+        if(durLabel){
+            durLabel.textContent = "No shot selected";
+        }
+    }
+
+    renderShortFilmTimeline();
+}
+
+function updateShortFilmShotPrompt(){
+    if(!shortFilmSelectedId) return;
+    const shot = shortFilmShots.find(s => s.id === shortFilmSelectedId);
+    if(!shot) return;
+
+    shot.prompt = document.getElementById('shortfilm-shot-prompt').value;
+    renderShortFilmBoard();
+    selectShortFilmShot(shortFilmSelectedId);
+}
+
+/* NEW: update selected shot duration */
+function updateShortFilmShotDuration(val){
+    if(!shortFilmSelectedId) return;
+    const shot = shortFilmShots.find(s => s.id === shortFilmSelectedId);
+    if(!shot) return;
+
+    const seconds = parseFloat(val);
+    shot.durationSeconds = isNaN(seconds) ? 3 : seconds;
+
+    const idx = shortFilmShots.indexOf(shot);
+    const durLabel = document.getElementById('shortfilm-shot-duration-label');
+    if(durLabel){
+        durLabel.textContent = `Shot ${idx+1} · ${shot.durationSeconds.toFixed(1)} s`;
+    }
+
+    renderShortFilmTimeline();
+}
+
+/* NEW: timeline visual */
+function renderShortFilmTimeline(){
+    const timeline = document.getElementById('shortfilm-timeline');
+    const meta = document.getElementById('shortfilm-timeline-meta');
+    if(!timeline || !meta) return;
+
+    timeline.innerHTML = "";
+
+    if(!shortFilmShots.length){
+        const empty = document.createElement('div');
+        empty.className = 'shortfilm-timeline-empty';
+        empty.textContent = 'Add storyboard shots to see the timeline.';
+        timeline.appendChild(empty);
+        meta.innerHTML = `<span>Total timeline: 0 s</span><span>Shots: 0</span>`;
+        return;
+    }
+
+    let total = 0;
+    shortFilmShots.forEach(shot => {
+        if(typeof shot.durationSeconds !== 'number' || isNaN(shot.durationSeconds)){
+            shot.durationSeconds = 3;
+        }
+        total += shot.durationSeconds;
+    });
+
+    if(total <= 0){
+        const empty = document.createElement('div');
+        empty.className = 'shortfilm-timeline-empty';
+        empty.textContent = 'Set durations above to build a timeline.';
+        timeline.appendChild(empty);
+        meta.innerHTML = `<span>Total timeline: 0 s</span><span>Shots: ${shortFilmShots.length}</span>`;
+        return;
+    }
+
+    shortFilmShots.forEach((shot, index)=>{
+        const seg = document.createElement('div');
+        seg.className = 'shortfilm-timeline-segment';
+        const pct = (shot.durationSeconds / total) * 100;
+        seg.style.width = pct + "%";
+
+        if(shot.id === shortFilmSelectedId){
+            seg.classList.add('selected');
+        }
+
+        const label = document.createElement('span');
+        label.textContent = `S${index+1} · ${shot.durationSeconds.toFixed(1)}s`;
+        seg.appendChild(label);
+
+        timeline.appendChild(seg);
+    });
+
+    meta.innerHTML = `<span>Total timeline: ${total.toFixed(1)} s</span><span>Shots: ${shortFilmShots.length}</span>`;
+}
+
+/* Drag & drop reordering */
+function handleShortFilmDragStart(e,id){
+    shortFilmDragId = id;
+    e.dataTransfer.effectAllowed = "move";
+}
+function handleShortFilmDragOver(e,id){
+    e.preventDefault();
+    const card = findShortFilmCardById(id);
+    if(card) card.classList.add('drag-over');
+}
+function handleShortFilmDragLeave(e,id){
+    const card = findShortFilmCardById(id);
+    if(card) card.classList.remove('drag-over');
+}
+function handleShortFilmDrop(e,id){
+    e.preventDefault();
+    const targetCard = findShortFilmCardById(id);
+    if(targetCard) targetCard.classList.remove('drag-over');
+    if(!shortFilmDragId || shortFilmDragId === id) return;
+
+    const fromIndex = shortFilmShots.findIndex(s => s.id === shortFilmDragId);
+    const toIndex = shortFilmShots.findIndex(s => s.id === id);
+    if(fromIndex === -1 || toIndex === -1) return;
+
+    const [moved] = shortFilmShots.splice(fromIndex,1);
+    shortFilmShots.splice(toIndex,0,moved);
+    shortFilmDragId = null;
+
+    renderShortFilmBoard();
+    if(shortFilmSelectedId){
+        selectShortFilmShot(shortFilmSelectedId);
+    }
+}
+function findShortFilmCardById(id){
+    return document.querySelector(`.shortfilm-shot-card[data-id="${id}"]`);
+}
+
+/* Replace a single shot (double-click) */
+function startShortFilmReplace(id){
+    shortFilmReplaceId = id;
+    const input = document.getElementById('shortfilm-replace-image-input');
+    input.value = "";
+    input.click();
+}
+function handleShortFilmReplaceImage(input){
+    if(!shortFilmReplaceId || !input.files || !input.files[0]){
+        input.value = "";
+        return;
+    }
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+        const shot = shortFilmShots.find(s => s.id === shortFilmReplaceId);
+        if(shot){
+            shot.src = e.target.result;
+            renderShortFilmBoard();
+            selectShortFilmShot(shortFilmReplaceId);
+            showToast("Shot image replaced.","Success");
+        }
+        shortFilmReplaceId = null;
+        input.value = "";
+    };
+    reader.readAsDataURL(file);
+}
+
+/* Start / End frames for Short Film */
+function handleShortFilmStartEnd(kind,input){
+    if(!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        if(kind === 'start'){
+            shortFilmRefs.startFrame = e.target.result;
+            const img = document.getElementById('shortfilm-start-preview');
+            img.src = shortFilmRefs.startFrame;
+            img.style.display = 'block';
+            document.getElementById('shortfilm-drop-start').classList.add('has-file');
+        }else{
+            shortFilmRefs.endFrame = e.target.result;
+            const img = document.getElementById('shortfilm-end-preview');
+            img.src = shortFilmRefs.endFrame;
+            img.style.display = 'block';
+            document.getElementById('shortfilm-drop-end').classList.add('has-file');
+        }
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+
+/* Video reference for Short Film */
+function handleShortFilmVideoFile(input){
+    if(!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        shortFilmRefs.videoFile = e.target.result;
+        const v = document.getElementById('shortfilm-video-preview');
+        v.src = shortFilmRefs.videoFile;
+        v.style.display = 'block';
+        v.loop = true;
+        v.muted = true;
+        v.play();
+        document.getElementById('shortfilm-video-drop').classList.add('has-file');
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+
+/* Script for Short Film */
+function handleShortFilmScriptFile(input){
+    if(!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const label = document.getElementById('shortfilm-script-file-label');
+    label.textContent = "Attached: " + file.name;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        shortFilmRefs.scriptFile = e.target.result;
+        shortFilmRefs.scriptFileName = file.name;
+    };
+    reader.readAsDataURL(file);
+}
+
+/* Audio for Short Film */
+function handleShortFilmAudioFile(input){
+    if(!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+        shortFilmRefs.audioSource = e.target.result;
+        shortFilmRefs.audioLabel = "Device audio: " + file.name;
+        const label = document.getElementById('shortfilm-audio-label');
+        if(label){
+            label.textContent = "Selected: " + shortFilmRefs.audioLabel;
+        }
+        showToast("Audio attached to Short Film.","Success");
+    };
+    reader.readAsDataURL(file);
+}
+
+/* Import images from Image Lab (from gallery) into storyboard */
+function importFromImageLab(){
+    const maxShots = 20;
+    const remainingSlots = maxShots - shortFilmShots.length;
+    if(remainingSlots <= 0){
+        showToast("Storyboard already has 20 shots. Delete some to import more.","Notice");
+        return;
+    }
+    const imageCards = document.querySelectorAll('.card.media-image img');
+    if(!imageCards.length){
+        showToast("No images in gallery yet. Generate or upload in Image lab first.","Notice");
+        return;
+    }
+
+    let added = 0;
+    for(const img of imageCards){
+        if(added >= remainingSlots) break;
+        const src = img.getAttribute('src');
+        if(!src) continue;
+        const id = "sf_import_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        shortFilmShots.push({
+            id,
+            src,
+            prompt: "",
+            durationSeconds: 3
+        });
+        shortFilmSelectedId = id;
+        added++;
+    }
+
+    if(added){
+        renderShortFilmBoard();
+        selectShortFilmShot(shortFilmSelectedId);
+        showToast(`Imported ${added} shot(s) from Image lab into storyboard.`,"Success");
+    }else{
+        showToast("No importable images found.","Notice");
+    }
+}
+
+/* Audio Browser – mock data */
+const audioLibraryData = {
+    "audio-html":[
+        {
+            name:"AUDIO Lab · Afrobeats Album",
+            tracks:[
+                { title:"AfroPraise Intro", src:"/audio/audiolab_afropraise_intro.mp3" },
+                { title:"H200 Groove Loop", src:"/audio/audiolab_h200_groove.mp3" }
+            ]
+        },
+        {
+            name:"AUDIO Lab · Worship Set",
+            tracks:[
+                { title:"Deep Soaking Pad", src:"/audio/audiolab_soaking_pad.mp3" },
+                { title:"Soft Piano Bed", src:"/audio/audiolab_piano_bed.mp3" }
+            ]
+        }
+    ],
+    "studio":[
+        {
+            name:"Studio · Sulandra Records",
+            tracks:[
+                { title:"Latest Afrobeat Single", src:"/audio/studio_latest_afrobeat.mp3" },
+                { title:"Amapiano Draft 003", src:"/audio/studio_amapiano_draft_003.mp3" }
+            ]
+        },
+        {
+            name:"Studio · Film Score Sketches",
+            tracks:[
+                { title:"Suspense Build 01", src:"/audio/studio_score_suspense01.mp3" },
+                { title:"Emotional Theme 02", src:"/audio/studio_score_emotional02.mp3" }
+            ]
+        }
+    ]
+};
+
+function openAudioBrowser(source){
+    const backdrop = document.getElementById('audio-browser');
+    const list = document.getElementById('audio-browser-list');
+    const title = document.getElementById('audio-browser-title');
+
+    backdrop.dataset.source = source;
+    list.innerHTML = "";
+
+    const albums = audioLibraryData[source] || [];
+    title.textContent = source === 'audio-html' ? "Import from AUDIO Lab" : "Import from Studio Library";
+
+    albums.forEach(album=>{
+        const albumDiv = document.createElement('div');
+        albumDiv.className = "audio-album";
+
+        const albumTitle = document.createElement('div');
+        albumTitle.className = "audio-album-title";
+        albumTitle.textContent = album.name;
+
+        albumDiv.appendChild(albumTitle);
+
+        album.tracks.forEach(track=>{
+            const trackDiv = document.createElement('div');
+            trackDiv.className = "audio-track";
+            trackDiv.dataset.src = track.src;
+            trackDiv.dataset.title = track.title;
+
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = track.title;
+
+            const hintSpan = document.createElement('span');
+            hintSpan.style.fontSize = "10px";
+            hintSpan.style.opacity = ".7";
+            hintSpan.textContent = "Click to preview · Double-click to import";
+
+            trackDiv.appendChild(nameSpan);
+            trackDiv.appendChild(hintSpan);
+
+            trackDiv.addEventListener('click', ()=>previewAudioTrack(track.src));
+            trackDiv.addEventListener('dblclick', ()=>selectAudioTrack(track));
+
+            albumDiv.appendChild(trackDiv);
+        });
+
+        list.appendChild(albumDiv);
+    });
+
+    backdrop.classList.add('active');
+}
+
+function closeAudioBrowser(){
+    const backdrop = document.getElementById('audio-browser');
+    backdrop.classList.remove('active');
+    const player = document.getElementById('audio-browser-player');
+    player.pause();
+}
+
+function previewAudioTrack(src){
+    const player = document.getElementById('audio-browser-player');
+    player.src = src;
+    player.play().catch(()=>{});
+}
+
+function selectAudioTrack(track){
+    shortFilmRefs.audioSource = track.src;
+    shortFilmRefs.audioLabel = track.title;
+    const label = document.getElementById('shortfilm-audio-label');
+    if(label){
+        label.textContent = "Selected from library: " + track.title;
+    }
+    showToast("Audio imported for Short Film.","Success");
+    closeAudioBrowser();
+}
+
+/* Generate Short Film */
+async function generateShortFilm(){
+    if(!shortFilmShots.length){
+        return showToast("Add at least one storyboard image for your Short Film.","Notice");
+    }
+
+    const globalPrompt = document.getElementById('shortfilm-global-prompt').value.trim();
+    if(!globalPrompt){
+        return showToast("Add a global film prompt to guide style and pacing.","Notice");
+    }
+
+    const btn = document.getElementById('gen-btn-shortfilm');
+    btn.disabled = true;
+    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
+    showToast("Sending Short Film storyboard job to H200...","Processing");
+
+    const duration = parseInt(document.getElementById('shortfilm-duration').value);
+    const aspect = document.getElementById('shortfilm-aspect').value;
+    const lipsyncEnabled = document.getElementById('shortfilm-enable-lipsync').checked;
+    const scriptText = document.getElementById('shortfilm-script-text').value.trim();
+    const videoUrl = document.getElementById('shortfilm-video-url').value.trim();
+
+    ensureShortFilmDurations();
+
+    const payload = {
+        mode: "shortfilm",
+        duration_seconds: duration,
+        aspect_ratio: aspect,
+        storyboard: shortFilmShots.map((shot, index)=>({
+            index,
+            image: shot.src,
+            prompt: shot.prompt || "",
+            duration_seconds: shot.durationSeconds
+        })),
+        global_prompt: globalPrompt,
+        script_text: scriptText,
+        script_file: shortFilmRefs.scriptFile || null,
+        script_file_name: shortFilmRefs.scriptFileName || null,
+        refs: {
+            start_frame: shortFilmRefs.startFrame || null,
+            end_frame: shortFilmRefs.endFrame || null,
+            video_file: shortFilmRefs.videoFile || null,
+            video_url: videoUrl || null,
+            audio: shortFilmRefs.audioSource || null
+        },
+        lipsync_enabled: lipsyncEnabled
+    };
+
+    try{
+        const res = await fetch(`${API_URL}/api/video/generate`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if(data.status === "success"){
+            showToast("Short Film generated successfully!","Success");
+            addToGallery({
+                type: "video",
+                url: `${API_URL}${data.video_url || data.url || ""}`,
+                thumb: data.thumbnail_url ? `${API_URL}${data.thumbnail_url}` : null,
+                prompt: globalPrompt
+            });
+        }else{
+            console.error(data);
+            showToast("Short Film error: " + (data.message || "Unknown error"),"Error");
+        }
+    }catch(err){
+        console.error(err);
+        showToast("Connection failed while generating Short Film.","Error");
+    }finally{
+        btn.disabled = false;
+        btn.innerHTML = `<svg style="width:18px;height:18px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> GENERATE SHORT FILM`;
+    }
+}
+
+/* /* -------------------------------------------------------------------------- */
+/* ASK SIA – FLOATING PROMPT ASSISTANT                                       */
+/* -------------------------------------------------------------------------- */
+
+let siaCurrentFieldId = null;
+let siaCurrentFieldLabel = "";
+let siaLastSuggestion = "";
+
+/**
+ * Opens the Ask SIA panel for a specific textarea.
+ * fieldId  = id of the target textarea
+ * label    = friendly label to show in the header / intro
+ */
+function openSiaForField(fieldId, label){
+    siaCurrentFieldId   = fieldId;
+    siaCurrentFieldLabel = label || "Prompt";
+
+    const backdrop  = document.getElementById("sia-backdrop");
+    const messages  = document.getElementById("sia-messages");
+    const inputBox  = document.getElementById("sia-input");
+    const targetEl  = document.getElementById(fieldId);
+
+    if(!backdrop || !messages || !inputBox || !targetEl){
+        console.warn("Ask SIA: missing DOM nodes for", fieldId);
+        return;
+    }
+
+    // Clear previous chat
+    messages.innerHTML = "";
+
+    const currentPrompt = (targetEl.value || "").trim();
+
+    // Greeting bubble
+    appendSiaBubble(
+        "sia",
+        `Hi, I am SIA. What can I help you with on “${siaCurrentFieldLabel}”? 
+You can ask me to rewrite, improve, expand, or fix your prompt.`
+    );
+
+    if(currentPrompt){
+        appendSiaBubble(
+            "sia",
+            `Here is your current ${siaCurrentFieldLabel}:\n\n` + currentPrompt
+        );
+    }
+
+    // Reset input
+    inputBox.value = "";
+    siaLastSuggestion = currentPrompt || "";
+
+    // Show panel
+    backdrop.style.display = "flex";
+    // small delay so focus works reliably
+    setTimeout(()=>{ inputBox.focus(); }, 50);
+}
+
+function closeSiaPanel(){
+    const backdrop = document.getElementById("sia-backdrop");
+    if(backdrop){
+        backdrop.style.display = "none";
+    }
+}
+
+/**
+ * Adds a chat bubble to the SIA panel.
+ * role = "sia" or "user"
+ */
+function appendSiaBubble(role, text){
+    const messages = document.getElementById("sia-messages");
+    if(!messages) return;
+
+    const bubble = document.createElement("div");
+    bubble.className = "sia-bubble " + (role === "user" ? "user" : "sia");
+    bubble.textContent = text;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+/**
+ * Called when the user clicks "Send" in the SIA panel.
+ * Right now this runs a simple client-side “prompt improver”
+ * so the feature actually works even before you hook up a backend.
+ */
+function sendSiaMessage(){
+    const inputBox = document.getElementById("sia-input");
+    if(!inputBox) return;
+
+    const userText = inputBox.value.trim();
+    if(!userText) return;
+
+    appendSiaBubble("user", userText);
+    inputBox.value = "";
+
+    const targetEl = siaCurrentFieldId ? document.getElementById(siaCurrentFieldId) : null;
+    const basePrompt = targetEl ? (targetEl.value || "").trim() : "";
+
+    // Very simple “improvement” engine so it feels useful now.
+    let suggestion = "";
+    if(!basePrompt){
+        suggestion =
+`New prompt generated from your request:
+
+${userText}
+
+Make sure the description is clear, includes subject, environment, lighting, camera angle, and mood.`;
+    }else{
+        suggestion =
+`Improved ${siaCurrentFieldLabel} based on your request:
+
+${basePrompt}
+
+Revision goal: ${userText}
+
+Enhanced version:
+${basePrompt}
+
+(Refine this further as needed before generating.)`;
+    }
+
+    siaLastSuggestion = suggestion;
+    appendSiaBubble("sia", suggestion);
+}
+
+/**
+ * Applies the last SIA suggestion into the originating field.
+ */
+function applySiaToField(){
+    if(!siaCurrentFieldId) return;
+
+    const targetEl = document.getElementById(siaCurrentFieldId);
+    if(!targetEl) return;
+
+    const fallbackText = document.getElementById("sia-input")
+        ? document.getElementById("sia-input").value.trim()
+        : "";
+
+    const finalText = siaLastSuggestion || fallbackText;
+    if(!finalText) return;
+
+    targetEl.value = finalText;
+
+    if(typeof showToast === "function"){
+        showToast("SIA suggestion applied to your prompt.","Info");
+    }
+
+    closeSiaPanel();
+}
+/* -------------------------------------------------------------------------- */
+/* INIT                                                                       */
+/* -------------------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+    // default: hide video ref + start/end for Text → Video
+    const videoRefGroup = document.getElementById('video-ref-group');
+    const startEndGroup = document.getElementById('start-end-group');
+    if(videoRefGroup){ videoRefGroup.style.display = 'none'; }
+    if(startEndGroup){ startEndGroup.style.display = 'none'; }
+
+    // hide Elements group visually (kept for future consistency wiring)
+    const elementsGroup = document.getElementById('elements-group');
+    if(elementsGroup){
+        elementsGroup.style.display = 'none';
+    }
+});
+
+</script>
+   <!-- ASK SIA – floating chat assistant -->
+<div id="sia-backdrop" class="sia-backdrop" style="display:none;">
+    <div class="sia-panel">
+        <div class="sia-panel-header">
+            <span>Ask SIA · Prompt Assistant</span>
+            <button type="button" class="btn-ghost" onclick="closeSiaPanel()">×</button>
+        </div>
+        <div id="sia-messages" class="sia-messages">
+            <!-- Messages appear here -->
+        </div>
+        <div class="sia-footer">
+            <textarea id="sia-input" class="text-area" placeholder="Tell SIA what you need help with... rewrite my prompt, make it more cinematic, fix grammar..."></textarea>
+            <div class="sia-footer-actions">
+                <button type="button" class="btn btn-primary" onclick="sendSiaMessage()">Send</button>
+                <button type="button" class="btn btn-accent" onclick="applySiaToField()">Apply to Prompt</button>
+            </div>
+        </div>
+    </div>
+</div> 
+</body>
+</html>
