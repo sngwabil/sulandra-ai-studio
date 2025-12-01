@@ -1378,7 +1378,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
         <div class="stage-header-right">
             <div class="plan-pill" onclick="openPlanModal()">
                 <span style="width:6px;height:6px;border-radius:999px;background:#38bdf8;"></span>
-                <span>Plan: Free · 66 Daily Credits</span>
+                <span id="vision-plan-pill-text">Plan: Basic · 0 credits available</span>
         </div>
     </div>
 
@@ -3002,23 +3002,54 @@ function applySiaToField(){
 /* -------------------------------------------------------------------------- */
 /* INIT                                                                       */
 /* -------------------------------------------------------------------------- */
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
+    /* 1. Read shared wallet from index.html (localStorage) */
+    let user = null;
+    try {
+        const raw = localStorage.getItem("sulandraUser");
+        if (raw) user = JSON.parse(raw);
+    } catch (e) {
+        console.warn("Failed to read sulandraUser for Vision lab", e);
+    }
+
+    // If not logged in at all, send to main page
+    if (!user) {
+        window.location.href = "index.html?loginRequired=1";
+        return;
+    }
+
+    // Update the plan pill text with real plan + credits
+    const pillSpan = document.getElementById("vision-plan-pill-text");
+    if (pillSpan) {
+        const prettyPlan =
+            user.plan === "basic"   ? "Basic" :
+            user.plan === "pro"     ? "Pro" :
+            user.plan === "creator" ? "Creator" :
+                                      "Creator Ultimate";
+
+        const credits = user.credits || 0;
+        pillSpan.textContent =
+            `Plan: ${prettyPlan} · ${credits.toLocaleString()} credits available`;
+    }
+
+    /* 2. Keep existing Vision UI initialization */
     // default: hide video ref + start/end for Text → Video
-    const videoRefGroup = document.getElementById('video-ref-group');
-    const startEndGroup = document.getElementById('start-end-group');
-    if(videoRefGroup){ videoRefGroup.style.display = 'none'; }
-    if(startEndGroup){ startEndGroup.style.display = 'none'; }
+    const videoRefGroup = document.getElementById("video-ref-group");
+    const startEndGroup = document.getElementById("start-end-group");
+    if (videoRefGroup) { videoRefGroup.style.display = "none"; }
+    if (startEndGroup) { startEndGroup.style.display = "none"; }
 
     // hide Elements group visually (kept for future consistency wiring)
-    const elementsGroup = document.getElementById('elements-group');
-    if(elementsGroup){
-        elementsGroup.style.display = 'none';
+    const elementsGroup = document.getElementById("elements-group");
+    if (elementsGroup) {
+        elementsGroup.style.display = "none";
     }
+
     // Initialize Firebase (safe no-op if not configured)
     initFirebase();
 
     // Load initial History grid
-    currentGalleryTab = 'history';
+    currentGalleryTab = "history";
     renderHistoryGrid();
 });
 
