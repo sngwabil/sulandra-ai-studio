@@ -1943,7 +1943,29 @@ function addItemToHistory(item) {
     history.unshift(item);
     saveHistoryToStorage(history);
 }
+// Backwards-compatible helper used by addToGallery
+// Also auto-saves the same item into My Assets.
+function addHistoryItem(item) {
+    addItemToHistory(item);   // store in History
+    addItemToAssets(item);    // also store in My Assets
+}
+ /* ------------------------------
+   SAVE A HISTORY ITEM INTO ASSETS
+------------------------------ */
+function saveAssetFromHistory(itemId) {
+    const history = loadHistoryFromStorage();
+    const item    = history.find(h => h.id === itemId);
 
+    if (!item) {
+        console.warn("Item not found in history for assets:", itemId);
+        showToast("Could not find this item in your history.", "Error");
+        return;
+    }
+
+    addItemToAssets(item);
+    showToast("Saved to My Assets.", "Success");
+}
+   
 /* ------------------------------
    SYNC FAVORITE STATUS
 ------------------------------ */
