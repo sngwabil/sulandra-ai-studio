@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sulandra Covers Studio · Templates & Avatars</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --bg-app:#02061b;
+    --bg-panel:#050b25;
+    --bg-card:#071133;
+    --bg-element:#0a1540;
+    --bg-hover:#111c4f;
+
+    --accent-primary:#8b5cf6;
+    --accent-secondary:#3b82f6;
+    --accent-tertiary:#ec4899;
+    --accent-success:#22c55e;
+    --accent-gradient:linear-gradient(135deg,#3b82f6 0%,#8b5cf6 50%,#ec4899 100%);
+
+    --text-primary:#ffffff;
+    --text-secondary:#c7d2fe;
+    --text-muted:#9ca3af;
+
+    --border-subtle:#1d2a63;
+    --border-strong:#4f46e5;
+
+    --radius-sm:6px;
+    --radius-md:12px;
+    --radius-lg:18px;
+    --radius-full:9999px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+body{
+    font-family:'Inter',sans-serif;
+    background:radial-gradient(circle at top,#0b1120 0%,#020617 40%,#02021a 100%);
+    color:var(--text-primary);
+    min-height:100vh;
+    display:flex;
+}
+
+/* LEFT NAV (same vibe as main app) */
+.nav-rail{
+    width:76px;
+    background:radial-gradient(circle at top,#1e1b4b,#020617 70%);
+    border-right:1px solid var(--border-subtle);
+    display:flex;flex-direction:column;align-items:center;
+    padding:18px 0;gap:22px;flex-shrink:0;
+}
+.brand-logo{
+    width:44px;height:44px;border-radius:16px;
+    background:var(--accent-gradient);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;color:#fff;font-size:18px;
+    box-shadow:0 0 20px rgba(59,130,246,.6);
+}
+.nav-btn{
+    width:46px;height:46px;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--text-secondary);
+    position:relative;transition:.18s;
+}
+.nav-btn:hover{background:rgba(15,23,42,.85);color:#fff}
+.nav-btn.active{
+    background:linear-gradient(145deg,#111827,#1d2364);
+    color:#fff;
+    box-shadow:0 12px 24px rgba(15,23,42,.8);
+}
+.nav-btn.active::after{
+    content:'';position:absolute;left:-14px;top:10px;bottom:10px;
+    width:3px;border-radius:0 6px 6px 0;
+    background:linear-gradient(#38bdf8,#a855f7);
+}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* MAIN SPLIT */
+.main-shell{
+    flex:1;
+    display:grid;
+    grid-template-columns:280px minmax(0,1fr) 340px;
+    grid-template-rows:64px minmax(0,1fr);
+    grid-template-areas:
+        "head head head"
+        "side gallery editor";
+    height:100vh;
+}
+
+/* HEADER */
+.header{
+    grid-area:head;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 24px;
+    border-bottom:1px solid var(--border-subtle);
+    background:linear-gradient(90deg,#020617,#02021a);
+    backdrop-filter:blur(18px);
+}
+.header-title{
+    font-size:15px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+}
+.header-sub{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.header-right{display:flex;align-items:center;gap:10px}
+.badge{
+    padding:6px 10px;border-radius:999px;
+    background:rgba(15,23,42,.85);
+    border:1px solid rgba(129,140,248,.9);
+    font-size:11px;color:var(--text-secondary);
+}
+
+/* CATEGORY SIDEBAR */
+.sidebar{
+    grid-area:side;
+    background:radial-gradient(circle at top left,#020617 0%,#02021a 40%,#020617 100%);
+    border-right:1px solid var(--border-subtle);
+    padding:18px 18px 24px;
+    display:flex;flex-direction:column;
+}
+.sidebar h3{
+    font-size:12px;font-weight:700;color:var(--text-secondary);
+    text-transform:uppercase;letter-spacing:.14em;margin-bottom:10px;
+}
+.category-list{
+    display:flex;flex-direction:column;gap:6px;
+    margin-bottom:18px;
+}
+.category-item{
+    padding:8px 10px;border-radius:var(--radius-md);
+    background:var(--bg-element);
+    border:1px solid rgba(31,41,55,.8);
+    font-size:12px;color:var(--text-secondary);
+    cursor:pointer;display:flex;justify-content:space-between;align-items:center;
+    transition:.15s;
+}
+.category-item span:last-child{
+    font-size:10px;color:var(--text-muted);
+}
+.category-item:hover{background:var(--bg-hover);color:#fff}
+.category-item.active{
+    background:radial-gradient(circle at left,#1d4ed8,#8b5cf6);
+    border-color:#fff;color:#fff;
+}
+.sidebar small{font-size:11px;color:var(--text-muted);}
+
+/* TEMPLATE GALLERY */
+.gallery{
+    grid-area:gallery;
+    padding:18px 18px 26px;
+    overflow-y:auto;
+}
+.gallery-header{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+}
+.gallery-header h2{font-size:14px;font-weight:700}
+.gallery-header span{font-size:12px;color:var(--text-secondary)}
+.template-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:14px;
+}
+.template-card{
+    background:var(--bg-card);
+    border-radius:var(--radius-md);
+    border:1px solid rgba(30,64,175,.7);
+    padding:8px;
+    cursor:pointer;
+    transition:.18s;
+}
+.template-card:hover{
+    border-color:#bfdbfe;
+    box-shadow:0 10px 18px rgba(15,23,42,.7);
+    transform:translateY(-3px);
+}
+.template-thumb{
+    border-radius:var(--radius-sm);
+    height:100px;
+    background:linear-gradient(135deg,#1d4ed8,#a855f7);
+    position:relative;
+    overflow:hidden;
+}
+.template-thumb.ratio-square{aspect-ratio:1/1;}
+.template-thumb.ratio-landscape{aspect-ratio:16/9;}
+.template-thumb.ratio-portrait{aspect-ratio:3/4;}
+.template-layer-title{
+    position:absolute;left:10px;bottom:10px;
+    font-size:12px;font-weight:700;
+}
+.template-layer-tag{
+    position:absolute;right:10px;top:10px;
+    font-size:9px;padding:3px 6px;border-radius:999px;
+    background:rgba(15,23,42,.8);
+}
+.template-meta{
+    margin-top:6px;font-size:11px;color:var(--text-secondary);
+    display:flex;justify-content:space-between;align-items:center;
+}
+.template-meta strong{font-size:11px;color:#e5e7eb}
+
+/* EDITOR PANEL */
+.editor{
+    grid-area:editor;
+    border-left:1px solid var(--border-subtle);
+    background:radial-gradient(circle at top right,#020617,#02021a);
+    padding:16px 18px 18px;
+    display:flex;flex-direction:column;
+}
+.editor h3{
+    font-size:13px;font-weight:700;margin-bottom:8px;
+}
+.preview-wrapper{
+    border-radius:var(--radius-lg);
+    background:var(--bg-card);
+    padding:10px;
+    border:1px solid rgba(30,64,175,.7);
+    margin-bottom:12px;
+}
+.cover-frame{
+    position:relative;
+    width:100%;
+    background:#020617;
+    border-radius:var(--radius-md);
+    overflow:hidden;
+}
+.cover-frame.ratio-square{aspect-ratio:1/1;}
+.cover-frame.ratio-landscape{aspect-ratio:16/9;}
+.cover-frame.ratio-portrait{aspect-ratio:3/4;}
+.cover-bg{
+    position:absolute;inset:0;background-size:cover;background-position:center;
+    background-image:linear-gradient(135deg,#1d4ed8,#8b5cf6);
+    opacity:.95;
+}
+.cover-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent 50%);}
+.cover-text{
+    position:absolute;left:10%;right:10%;bottom:12%;
+    display:flex;flex-direction:column;gap:4px;
+}
+.cover-title{
+    font-family:'Poppins',sans-serif;
+    font-size:26px;font-weight:700;line-height:1.1;
+}
+.cover-sub{font-size:14px;color:#e5e7eb}
+.cover-tag{
+    font-size:11px;padding:4px 8px;border-radius:999px;
+    align-self:flex-start;background:rgba(15,23,42,.9);
+}
+.cover-avatar{
+    position:absolute;right:12px;top:12px;
+    width:56px;height:56px;border-radius:999px;
+    border:2px solid rgba(248,250,252,.9);
+    background:#020617;background-size:cover;background-position:center;
+    display:none;
+}
+
+/* CONTROLS */
+.control-section{
+    margin-bottom:14px;padding-bottom:10px;
+    border-bottom:1px solid rgba(30,64,175,.5);
+}
+.control-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.control-section h4{
+    font-size:11px;text-transform:uppercase;
+    letter-spacing:.12em;color:var(--text-secondary);margin-bottom:6px;
+}
+.field-row{
+    display:flex;gap:8px;margin-bottom:6px;
+}
+.field-col{flex:1;}
+.label-sm{
+    font-size:11px;color:var(--text-secondary);margin-bottom:2px;
+}
+input[type="text"],select,input[type="number"]{
+    width:100%;padding:6px 8px;border-radius:var(--radius-md);
+    border:1px solid rgba(31,41,55,.9);
+    background:var(--bg-element);
+    color:var(--text-primary);font-size:12px;
+}
+input[type="color"]{
+    width:100%;height:28px;border-radius:var(--radius-md);
+    border:1px solid rgba(31,41,55,.9);background:var(--bg-element);
+}
+.slider-line{display:flex;align-items:center;gap:6px;}
+.slider-line span{font-size:11px;color:var(--text-secondary);width:18px;text-align:right;}
+input[type="range"]{
+    -webkit-appearance:none;width:100%;background:transparent;height:24px;cursor:pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track{
+    height:4px;border-radius:2px;background:linear-gradient(90deg,#1e293b,#4f46e5);
+}
+input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+    background:#f9fafb;margin-top:-5px;
+    box-shadow:0 0 0 3px rgba(79,70,229,.6);
+}
+.btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:7px 12px;border-radius:var(--radius-md);
+    border:1px solid transparent;font-size:12px;font-weight:600;cursor:pointer;
+    transition:.16s;
+}
+.btn-accent{
+    background:var(--accent-gradient);color:#fff;border:none;
+    box-shadow:0 0 14px rgba(59,130,246,.7);
+}
+.btn-accent:hover{filter:brightness(1.06);transform:translateY(-1px);}
+.btn-ghost{
+    background:transparent;color:var(--text-secondary);border-color:rgba(31,41,55,.9);
+}
+.btn-ghost:hover{background:var(--bg-hover);color:#fff;}
+.small-note{font-size:11px;color:var(--text-muted);margin-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- LEFT NAV -->
+<div class="nav-rail">
+    <div class="brand-logo">S</div>
+
+    <!-- back to main Image/Video lab -->
+    <div class="nav-btn" title="Image & Video Lab" onclick="window.location.href='image.html'">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </div>
+
+    <!-- Covers active -->
+    <div class="nav-btn active" title="Covers & Templates">
+        <svg viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="6" rx="2" ry="2"></rect>
+            <rect x="3" y="10" width="18" height="10" rx="2" ry="2"></rect>
+            <path d="M8 4l2 2h11"></path>
+        </svg>
+    </div>
+</div>
+
+<div class="main-shell">
+    <!-- HEADER -->
+    <header class="header">
+        <div>
+            <div class="header-title">SULANDRA COVERS STUDIO</div>
+            <div class="header-sub">Music albums · thumbnails · profile images · invitations · IDs · avatars</div>
+        </div>
+        <div class="header-right">
+            <div class="badge">20 Templates per Category · Fully Editable</div>
+        </div>
+    </header>
+
+    <!-- CATEGORY SIDEBAR -->
+    <aside class="sidebar">
+        <h3>Categories</h3>
+        <div id="category-list" class="category-list"></div>
+        <small>Select a category, pick a template, and customize text, fonts, colors, layout and images.</small>
+    </aside>
+
+    <!-- TEMPLATE GALLERY -->
+    <section class="gallery">
+        <div class="gallery-header">
+            <h2 id="gallery-title">Album Covers</h2>
+            <span id="gallery-count">20 templates</span>
+        </div>
+        <div id="template-grid" class="template-grid"></div>
+    </section>
+
+    <!-- EDITOR -->
+    <aside class="editor">
+        <h3>Live Cover Editor</h3>
+
+        <div class="preview-wrapper">
+            <div id="cover-frame" class="cover-frame ratio-square">
+                <div id="cover-bg" class="cover-bg"></div>
+                <div class="cover-overlay"></div>
+                <div id="cover-avatar" class="cover-avatar"></div>
+                <div id="cover-text" class="cover-text">
+                    <div id="cover-title" class="cover-title">Your Title</div>
+                    <div id="cover-sub" class="cover-sub">Subtitle or artist name</div>
+                    <div id="cover-tag" class="cover-tag">Tagline or label</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="control-section">
+            <h4>Background & Size</h4>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Preset Size</div>
+                    <select id="size-preset"></select>
+                    <div class="small-note">Applies aspect & label (Album, YouTube, Profile, Card).</div>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Background Gradient</div>
+                    <select id="bg-style">
+                        <option value="blue-violet">Blue → Violet</option>
+                        <option value="sunset">Orange → Pink</option>
+                        <option value="emerald">Teal → Emerald</option>
+                        <option value="mono">Dark Monochrome</option>
+                    </select>
+                </div>
+                <div class="field-col">
+                    <div class="label-sm">Custom Color Overlay</div>
+                    <input type="color" id="bg-color" value="#000000">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Upload Background Image</div>
+                    <input type="file" id="bg-upload" accept="image/*">
+                    <div class="small-note">Overrides gradient if used.</div>
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Upload Avatar / Photo</div>
+                    <input type="file" id="avatar-upload" accept="image/*">
+                    <div class="small-note">Used for profile or ID layouts (optional).</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h4>Text Layers</h4>
+            <!-- Title -->
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Title</div>
+                    <input type="text" id="title-text" placeholder="Main title">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Font</div>
+                    <select id="title-font">
+                        <option value="'Poppins',sans-serif">Poppins (Bold)</option>
+                        <option value="'Inter',sans-serif">Inter</option>
+                        <option value="serif">Serif</option>
+                        <option value="'Courier New',monospace">Monospace</option>
+                    </select>
+                </div>
+                <div class="field-col">
+                    <div class="label-sm">Size</div>
+                    <input type="number" id="title-size" min="12" max="72" value="26">
+                </div>
+                <div class="field-col">
+                    <div class="label-sm">Color</div>
+                    <input type="color" id="title-color" value="#ffffff">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Subtitle</div>
+                    <input type="text" id="sub-text" placeholder="Subtitle / artist / event">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Subtitle Size</div>
+                    <input type="number" id="sub-size" min="10" max="36" value="14">
+                </div>
+                <div class="field-col">
+                    <div class="label-sm">Subtitle Color</div>
+                    <input type="color" id="sub-color" value="#e5e7eb">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Tagline / Label</div>
+                    <input type="text" id="tag-text" placeholder="Tagline / label / date">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Tag Text Color</div>
+                    <input type="color" id="tag-color" value="#ffffff">
+                </div>
+                <div class="field-col">
+                    <div class="label-sm">Tag Background</div>
+                    <input type="color" id="tag-bg" value="#111827">
+                </div>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h4>Layout & Position</h4>
+            <div class="field-row slider-line">
+                <span>Y</span>
+                <input type="range" id="text-pos-y" min="0" max="80" value="12">
+            </div>
+            <div class="field-row slider-line">
+                <span>X</span>
+                <input type="range" id="text-pos-x" min="5" max="40" value="10">
+            </div>
+            <div class="field-row">
+                <div class="field-col">
+                    <div class="label-sm">Align</div>
+                    <select id="text-align">
+                        <option value="left">Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                    </select>
+                </div>
+                <div class="field-col">
+                    <div class="label-sm">Avatar Visible</div>
+                    <select id="avatar-visible">
+                        <option value="auto">Auto (per template)</option>
+                        <option value="show">Force Show</option>
+                        <option value="hide">Hide</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <h4>Actions</h4>
+            <div class="field-row">
+                <button class="btn btn-ghost" onclick="resetToTemplate()">Reset to Template</button>
+                <button class="btn btn-accent" style="flex:1;" onclick="alert('Export to PNG/Server can be wired here via canvas or API when you are ready.')">
+                    Prepare for Export
+                </button>
+            </div>
+            <div class="small-note">When you wire backend export, you can capture this layout as PNG, or send JSON of all parameters to your API.</div>
+        </div>
+
+    </aside>
+</div>
+
+<script>
+/* ------------------------ TEMPLATE DATA ---------------------------------- */
+const CATEGORIES = [
+    {id:"album",     name:"Music Album Covers",    ratio:"square",
+     sizes:["300×300 Album","1600×1600 Album","1080×1080 Square"]},
+    {id:"thumbnail", name:"YouTube Thumbnails",    ratio:"landscape",
+     sizes:["1280×720 YouTube","1920×1080 Full HD","1024×576 HD"]},
+    {id:"profile",   name:"Profile Images & Avatars", ratio:"square",
+     sizes:["800×800 Profile","512×512 Avatar","1080×1080 Profile"]},
+    {id:"invite",    name:"Marriage Invitations",  ratio:"portrait",
+     sizes:["1080×1350 Portrait","1200×1600 Invite","900×1200 Card"]},
+    {id:"postcard",  name:"Post Cards",            ratio:"landscape",
+     sizes:["1600×1000 Postcard","1800×1200 Landscape","1280×800 Note"]},
+    {id:"idcard",    name:"ID Cards & Badges",     ratio:"landscape",
+     sizes:["1000×600 ID","1200×700 ID","1400×850 Badge"]},
+    {id:"birthday",  name:"Birthday Cards",        ratio:"portrait",
+     sizes:["1080×1350 Portrait","1200×1600 Poster","900×1200 Card"]},
+    {id:"marriage",  name:"Marriage Certificates", ratio:"landscape",
+     sizes:["1920×1080 Certificate","1600×1000 Frame","2100×1485 A5"]},
+    {id:"avatar",    name:"Stylized Avatars",      ratio:"square",
+     sizes:["1024×1024 Avatar","800×800 Social","640×640 Mini"]}
+];
+
+// generate 20 templates per category
+const TEMPLATES = {};
+function makeTemplatesFor(cat){
+    const list = [];
+    const palettePresets = [
+        {id:"blue",   gradient:"linear-gradient(135deg,#1d4ed8,#8b5cf6)", fg:"#ffffff"},
+        {id:"sunset", gradient:"linear-gradient(135deg,#f97316,#ec4899)", fg:"#ffffff"},
+        {id:"emerald",gradient:"linear-gradient(135deg,#10b981,#22c55e)",fg:"#022c22"},
+        {id:"mono",   gradient:"linear-gradient(135deg,#020617,#111827)",fg:"#f9fafb"},
+        {id:"gold",   gradient:"linear-gradient(135deg,#facc15,#f97316)",fg:"#000000"}
+    ];
+    for(let i=0;i<20;i++){
+        const pal = palettePresets[i % palettePresets.length];
+        const title = (cat==="album" ? "Album Template " :
+                       cat==="thumbnail" ? "Thumbnail " :
+                       cat==="profile" ? "Profile " :
+                       cat==="invite" ? "Invite " :
+                       cat==="postcard" ? "Postcard " :
+                       cat==="idcard" ? "ID Card " :
+                       cat==="birthday" ? "Birthday " :
+                       cat==="marriage" ? "Certificate " :
+                       "Avatar ") + (i+1);
+
+        const subtitleDefault =
+            cat==="album"      ? "Artist · Year" :
+            cat==="thumbnail"  ? "Video subtitle" :
+            cat==="profile"    ? "Your @username" :
+            cat==="invite"     ? "Couple names & date" :
+            cat==="postcard"   ? "Greetings from city" :
+            cat==="idcard"     ? "Name · Role · Company" :
+            cat==="birthday"   ? "Celebration date & time" :
+            cat==="marriage"   ? "Official names & date" :
+                                 "Short description";
+
+        const tagDefault =
+            cat==="album"      ? "Parental Advisory" :
+            cat==="thumbnail"  ? "8K · New" :
+            cat==="profile"    ? "Verified" :
+            cat==="invite"     ? "You are invited" :
+            cat==="postcard"   ? "Wish you well" :
+            cat==="idcard"     ? "Access granted" :
+            cat==="birthday"   ? "Happy Birthday" :
+            cat==="marriage"   ? "Marriage certificate" :
+                                 "Avatar style";
+
+        list.push({
+            id:cat+"-"+(i+1),
+            category:cat,
+            name:title,
+            palette:pal,
+            ratio:CATEGORIES.find(c=>c.id===cat).ratio,
+            default:{
+                title,
+                subtitle:subtitleDefault,
+                tag:tagDefault,
+                avatar: (cat==="profile"||cat==="idcard"||cat==="avatar")
+            }
+        });
+    }
+    return list;
+}
+CATEGORIES.forEach(cat=>{
+    TEMPLATES[cat.id] = makeTemplatesFor(cat.id);
+});
+
+/* ---------------------- STATE ------------------------------------------- */
+let currentCategory = "album";
+let currentTemplate = TEMPLATES["album"][0];
+let currentSizePresetIndex = 0;
+
+/* ---------------------- RENDER CATEGORY LIST ---------------------------- */
+const catListEl = document.getElementById("category-list");
+CATEGORIES.forEach(cat=>{
+    const item = document.createElement("div");
+    item.className = "category-item"+(cat.id===currentCategory?" active":"");
+    item.dataset.id = cat.id;
+    item.innerHTML = `
+        <span>${cat.name}</span>
+        <span>20 tpl</span>
+    `;
+    item.onclick = ()=>selectCategory(cat.id);
+    catListEl.appendChild(item);
+});
+
+/* ---------------------- RENDER GALLERY ---------------------------------- */
+function renderGallery(){
+    const grid = document.getElementById("template-grid");
+    grid.innerHTML = "";
+    const templates = TEMPLATES[currentCategory];
+    const cat = CATEGORIES.find(c=>c.id===currentCategory);
+    document.getElementById("gallery-title").textContent = cat.name;
+    document.getElementById("gallery-count").textContent = templates.length+" templates";
+
+    templates.forEach(t=>{
+        const card = document.createElement("div");
+        card.className = "template-card";
+        const ratioClass =
+            t.ratio==="square" ? "ratio-square" :
+            t.ratio==="portrait" ? "ratio-portrait" : "ratio-landscape";
+        card.innerHTML =
+            '<div class="template-thumb '+ratioClass+'" '+
+            'style="background-image:'+t.palette.gradient+';">'+
+                '<div class="template-layer-title">'+t.default.title+'</div>'+
+                '<div class="template-layer-tag">'+t.category.toUpperCase()+'</div>'+
+            '</div>'+
+            '<div class="template-meta"><strong>'+t.name+
+            '</strong><span>'+t.palette.id+'</span></div>';
+        card.onclick = ()=>applyTemplate(t);
+        grid.appendChild(card);
+    });
+}
+
+/* ---------------------- CATEGORY SELECT --------------------------------- */
+function selectCategory(id){
+    currentCategory = id;
+    document.querySelectorAll(".category-item")
+        .forEach(el=>el.classList.toggle("active",el.dataset.id===id));
+    currentTemplate = TEMPLATES[id][0];
+    currentSizePresetIndex = 0;
+    renderGallery();
+    applyTemplate(currentTemplate,true);
+}
+
+/* ---------------------- APPLY TEMPLATE ---------------------------------- */
+function applyTemplate(t,skipReset=false){
+    currentTemplate = t;
+    const frame = document.getElementById("cover-frame");
+    frame.classList.remove("ratio-square","ratio-landscape","ratio-portrait");
+    if(t.ratio==="square") frame.classList.add("ratio-square");
+    else if(t.ratio==="portrait") frame.classList.add("ratio-portrait");
+    else frame.classList.add("ratio-landscape");
+
+    const bg = document.getElementById("cover-bg");
+    bg.style.backgroundImage = t.palette.gradient;
+    bg.style.backgroundColor = "";
+
+    // reset uploaded bg/avatar if not skipping
+    if(!skipReset){
+        bg.dataset.uploaded = "";
+        document.getElementById("bg-upload").value = "";
+        document.getElementById("avatar-upload").value = "";
+        document.getElementById("cover-avatar").style.display = t.default.avatar ? "block" : "none";
+        document.getElementById("cover-avatar").style.backgroundImage = "";
+    }else{
+        document.getElementById("cover-avatar").style.display =
+            t.default.avatar ? "block" : "none";
+    }
+
+    const titleEl = document.getElementById("cover-title");
+    const subEl   = document.getElementById("cover-sub");
+    const tagEl   = document.getElementById("cover-tag");
+    titleEl.textContent = t.default.title;
+    subEl.textContent   = t.default.subtitle;
+    tagEl.textContent   = t.default.tag;
+
+    titleEl.style.color = t.palette.fg;
+    titleEl.style.fontSize = "26px";
+    titleEl.style.fontFamily = "'Poppins',sans-serif";
+    subEl.style.color = "#e5e7eb";
+    document.getElementById("tag-color").value = "#ffffff";
+    document.getElementById("tag-bg").value = "#111827";
+
+    // position defaults
+    const textBox = document.getElementById("cover-text");
+    textBox.style.bottom = "12%";
+    textBox.style.left   = "10%";
+    textBox.style.right  = "10%";
+    textBox.style.textAlign = "left";
+    document.getElementById("text-pos-y").value = 12;
+    document.getElementById("text-pos-x").value = 10;
+    document.getElementById("text-align").value = "left";
+    document.getElementById("avatar-visible").value = "auto";
+
+    // update form values
+    document.getElementById("title-text").value = t.default.title;
+    document.getElementById("sub-text").value   = t.default.subtitle;
+    document.getElementById("tag-text").value   = t.default.tag;
+    document.getElementById("title-size").value = 26;
+    document.getElementById("sub-size").value   = 14;
+    document.getElementById("title-color").value="#ffffff";
+    document.getElementById("sub-color").value="#e5e7eb";
+    document.getElementById("bg-style").value   = t.palette.id==="blue"?"blue-violet":
+                                                  t.palette.id==="sunset"?"sunset":
+                                                  t.palette.id==="emerald"?"emerald":
+                                                  t.palette.id==="mono"?"mono":"blue-violet";
+    document.getElementById("bg-color").value   = "#000000";
+
+    populateSizePresets();
+}
+
+/* ---------------------- SIZE PRESETS ------------------------------------ */
+function populateSizePresets(){
+    const select = document.getElementById("size-preset");
+    const cat = CATEGORIES.find(c=>c.id===currentCategory);
+    select.innerHTML = "";
+    cat.sizes.forEach((label,idx)=>{
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = label;
+        select.appendChild(opt);
+    });
+    select.value = currentSizePresetIndex;
+}
+
+/* ---------------------- FORM LISTENERS ---------------------------------- */
+function bindControls(){
+    const titleEl = document.getElementById("cover-title");
+    const subEl   = document.getElementById("cover-sub");
+    const tagEl   = document.getElementById("cover-tag");
+    const textBox = document.getElementById("cover-text");
+    const avatarEl = document.getElementById("cover-avatar");
+    const bgEl = document.getElementById("cover-bg");
+
+    document.getElementById("title-text").addEventListener("input",e=>{
+        titleEl.textContent = e.target.value || "Title";
+    });
+    document.getElementById("sub-text").addEventListener("input",e=>{
+        subEl.textContent = e.target.value || "";
+    });
+    document.getElementById("tag-text").addEventListener("input",e=>{
+        tagEl.textContent = e.target.value || "";
+    });
+    document.getElementById("title-font").addEventListener("change",e=>{
+        titleEl.style.fontFamily = e.target.value;
+    });
+    document.getElementById("title-size").addEventListener("input",e=>{
+        titleEl.style.fontSize = e.target.value+"px";
+    });
+    document.getElementById("sub-size").addEventListener("input",e=>{
+        subEl.style.fontSize = e.target.value+"px";
+    });
+    document.getElementById("title-color").addEventListener("input",e=>{
+        titleEl.style.color = e.target.value;
+    });
+    document.getElementById("sub-color").addEventListener("input",e=>{
+        subEl.style.color = e.target.value;
+    });
+    document.getElementById("tag-color").addEventListener("input",e=>{
+        tagEl.style.color = e.target.value;
+    });
+    document.getElementById("tag-bg").addEventListener("input",e=>{
+        tagEl.style.backgroundColor = e.target.value;
+    });
+
+    document.getElementById("text-pos-y").addEventListener("input",e=>{
+        const val = e.target.value;
+        textBox.style.bottom = val+"%";
+    });
+    document.getElementById("text-pos-x").addEventListener("input",e=>{
+        const val = e.target.value;
+        textBox.style.left = val+"%";
+        textBox.style.right = val+"%";
+    });
+    document.getElementById("text-align").addEventListener("change",e=>{
+        textBox.style.textAlign = e.target.value;
+        if(e.target.value==="left"){
+            textBox.style.alignItems = "flex-start";
+        }else if(e.target.value==="right"){
+            textBox.style.alignItems = "flex-end";
+        }else{
+            textBox.style.alignItems = "center";
+        }
+    });
+
+    document.getElementById("avatar-visible").addEventListener("change",e=>{
+        const mode = e.target.value;
+        if(mode==="show") avatarEl.style.display = "block";
+        else if(mode==="hide") avatarEl.style.display = "none";
+        else avatarEl.style.display = currentTemplate.default.avatar ? "block" : "none";
+    });
+
+    document.getElementById("bg-style").addEventListener("change",e=>{
+        const v = e.target.value;
+        let gradient;
+        if(v==="blue-violet") gradient="linear-gradient(135deg,#1d4ed8,#8b5cf6)";
+        else if(v==="sunset") gradient="linear-gradient(135deg,#f97316,#ec4899)";
+        else if(v==="emerald") gradient="linear-gradient(135deg,#10b981,#22c55e)";
+        else gradient="linear-gradient(135deg,#020617,#111827)";
+        if(!bgEl.dataset.uploaded){
+            bgEl.style.backgroundImage = gradient;
+        }
+    });
+
+    document.getElementById("bg-color").addEventListener("input",e=>{
+        bgEl.style.backgroundColor = e.target.value;
+    });
+
+    document.getElementById("bg-upload").addEventListener("change",e=>{
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev=>{
+            bgEl.style.backgroundImage = "url('"+ev.target.result+"')";
+            bgEl.dataset.uploaded = "1";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById("avatar-upload").addEventListener("change",e=>{
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev=>{
+            avatarEl.style.display = "block";
+            avatarEl.style.backgroundImage = "url('"+ev.target.result+"')";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById("size-preset").addEventListener("change",e=>{
+        currentSizePresetIndex = parseInt(e.target.value,10)||0;
+        // aspect ratio already controlled by template; here we just acknowledge the label,
+        // so nothing else to do visually (you can wire real px sizes later if needed)
+    });
+}
+
+/* Reset button */
+function resetToTemplate(){
+    applyTemplate(currentTemplate);
+}
+
+/* INIT */
+bindControls();
+renderGallery();
+applyTemplate(currentTemplate);
+</script>
+</body>
+</html>
