@@ -1770,47 +1770,91 @@ async function generateSfx(){
 /* -------------------------------------------------------------------------- */
 /* GALLERY / COMMUNITY / FAVORITES                                           */
 /* -------------------------------------------------------------------------- */
-function addToGallery(item){
-    const grid = document.getElementById('gallery-grid');
-    document.getElementById('empty-state').style.display = 'none';
+function addToGallery(item, options = {}) {
+    const { saveToHistory = false } = options;
 
-const card = document.createElement('div');
-const t = item.type || 'image';
-card.className = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
-card.dataset.mediaType = t;
+    const grid  = document.getElementById('gallery-grid');
+    const empty = document.getElementById('empty-state');
+    if (!grid) return;
+    if (empty) empty.style.display = 'none';
 
+    // Normalize + give every item an id
+    const normalized = {
+        id:        item.id || ('h_' + Date.now() + '_' + Math.random().toString(36).slice(2)),
+        type:      item.type || 'image',   // image, video, shortfilm
+        url:       item.url,
+        thumb:     item.thumb || item.url || '',
+        prompt:    item.prompt || '',
+        lab:       item.lab || currentLab,
+        createdAt: item.createdAt || new Date().toISOString()
+    };
 
-    if(item.type === 'image'){
-        const url = item.url;
+    const card = document.createElement('div');
+    const t    = normalized.type;
+    card.className        = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
+    card.dataset.mediaType = t;
+    card.dataset.historyId = normalized.id;
+
+    if (t === 'image') {
+        const url = normalized.url;
         card.innerHTML = `
             <img src="${url}" alt="">
             <div class="card-overlay">
-                <div class="card-meta">${item.prompt || ''}</div>
+                <div class="card-meta">${normalized.prompt}</div>
                 <div class="card-actions">
                     <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
-                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
+                    <button class="btn btn-ghost"
+                            onclick="cloneSetup('${t}', '${encodeURIComponent(normalized.prompt)}')">
+                        Clone / Remix
+                    </button>
+                    <button class="btn btn-ghost"
+                            onclick="saveAssetFromHistory('${normalized.id}')">
+                        Save to My Assets
+                    </button>
+                    <button class="btn btn-ghost"
+                            onclick="shareToCommunity('${normalized.id}')">
+                        Post to Community
+                    </button>
                 </div>
             </div>
         `;
-    }else{
-        const url = item.url;
-        const thumb = item.thumb || url;
+    } else {
+        const url   = normalized.url;
+        const thumb = normalized.thumb || url;
         card.innerHTML = `
             <video src="${url}" poster="${thumb}" controls muted></video>
             <div class="card-overlay">
-                <div class="card-meta">${item.prompt || ''}</div>
+                <div class="card-meta">${normalized.prompt}</div>
                 <div class="card-actions">
                     <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
-                    <button class="btn btn-ghost" onclick="cloneSetup('${item.type}', '${encodeURIComponent(item.prompt || '')}')">Clone / Remix</button>
+                    <button class="btn btn-ghost"
+                            onclick="cloneSetup('${t}', '${encodeURIComponent(normalized.prompt)}')">
+                        Clone / Remix
+                    </button>
+                    <button class="btn btn-ghost"
+                            onclick="saveAssetFromHistory('${normalized.id}')">
+                        Save to My Assets
+                    </button>
+                    <button class="btn btn-ghost"
+                            onclick="shareToCommunity('${normalized.id}')">
+                        Post to Community
+                    </button>
                 </div>
             </div>
         `;
     }
 
-    card.style.opacity = '0';
+    card.style.opacity  = '0';
     card.style.transform = 'translateY(16px)';
     grid.prepend(card);
-    setTimeout(()=>{card.style.opacity='1';card.style.transform='translateY(0)';},30);
+    setTimeout(() => {
+        card.style.opacity  = '1';
+        card.style.transform = 'translateY(0)';
+    }, 30);
+
+    if (saveToHistory) {
+        addHistoryItem(normalized);
+    }
 }
 
 function cloneSetup(type,encodedPrompt){
