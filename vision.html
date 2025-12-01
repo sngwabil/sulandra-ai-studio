@@ -2727,7 +2727,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
         elementsGroup.style.display = 'none';
     }
 });
+function applyHashRouting() {
+    const hash = (window.location.hash || '').replace('#', '');
 
+    if (hash === 'image' || hash === 'video' || hash === 'shortfilm') {
+        switchLab(hash);
+        switchGalleryTab('history', document.getElementById('tab-history'));
+    }
+}
+
+window.addEventListener('load', applyHashRouting);
+window.addEventListener('hashchange', applyHashRouting);
 </script>
    <!-- ASK SIA – floating chat assistant -->
 <div id="sia-backdrop" class="sia-backdrop" style="display:none;">
