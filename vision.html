@@ -471,6 +471,18 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     box-shadow:var(--shadow-sm);transition:.22s;
 }
 
+.grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 22px;
+    padding-bottom: 80px;
+
+    /* keep the gallery centered and not stuck in a corner */
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
 /* Let images keep their natural aspect ratio */
 .card.media-image{
     aspect-ratio:auto;        /* or simply remove this rule entirely */
