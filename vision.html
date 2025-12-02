@@ -1778,28 +1778,28 @@ async function generateImage(btn){
         const data = await res.json();
 
         if (data.status === "success") {
-            clearPendingHistoryCard(pendingId);
+    clearPendingHistoryCard(pendingId);
 
-            const url = `${API_URL}${data.image_url}`;
+    const url = `${API_URL}${data.image_url}`;
 
-            const item = {
-                type: "image",
-                url,
-                thumb: url,
-                prompt,
-                lab: "image",
-                isFavorite: false,
-                createdAt: new Date().toISOString()
-            };
+    const item = {
+        type: "image",
+        url,
+        thumb: url,
+        prompt,
+        lab: "image",
+        isFavorite: false,
+        createdAt: new Date().toISOString()
+    };
 
-            // Save to history + draw final card
-            addHistoryItem(item);
-            addToGallery(item, { saveToHistory: false });
-            showToast("Image generated successfully!","Success");
-        } else {
-            clearPendingHistoryCard(pendingId);
-            showToast("Image error: " + (data.detail || "Unknown error"),"Error");
-        }
+    // Let addToGallery handle history so IDs stay in sync
+    addToGallery(item, { saveToHistory: true });
+
+    showToast("Image generated successfully!","Success");
+} else {
+    clearPendingHistoryCard(pendingId);
+    showToast("Image error: " + (data.detail || "Unknown error"),"Error");
+}
 
     } catch (err) {
         console.error("Generation failed:", err);
