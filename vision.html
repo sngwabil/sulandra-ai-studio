@@ -454,11 +454,14 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     display:flex;align-items:center;gap:6px;
 }
 
-.stage-content{flex:1;padding:28px 30px;overflow-y:auto}
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-    gap:22px;padding-bottom:80px;
+.stage-content{
+    flex: 1;
+    padding: 28px 30px;
+    overflow-y: auto;
+
+    /* NEW: center the gallery area instead of letting it hug a side */
+    display: flex;
+    justify-content: center;
 }
 .card{
     background:radial-gradient(circle at top,#020617,#02021a);
