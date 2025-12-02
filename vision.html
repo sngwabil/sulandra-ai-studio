@@ -467,15 +467,88 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     overflow:hidden;position:relative;
     box-shadow:var(--shadow-sm);transition:.22s;
 }
-.card.media-image{aspect-ratio:1/1;}
-.card.media-video{aspect-ratio:16/9;}
+
+/* Let images keep their natural aspect ratio */
+.card.media-image{
+    aspect-ratio:auto;        /* or simply remove this rule entirely */
+}
+
+/* Keep videos in 16:9 frames */
+.card.media-video{
+    aspect-ratio:16/9;
+}
+    /* Pending generation card -------------------------------------------- */
+.card.pending {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top, #020617, #02021a 45%, #020617);
+}
+
+.card.pending .pending-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.card.pending .pending-label {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 10px;
+    color: #e5e7eb;
+    opacity: 0.9;
+}
+
+.card.pending .pending-countdown {
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    font-weight: 600;
+    color: #f9fafb;
+}
+
+.card.pending .pending-prompt {
+    max-width: 230px;
+    opacity: 0.7;
+}
+
+.card.pending .mini-progress {
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(15,23,42,0.9);
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.card.pending .mini-progress-bar {
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg,#22c55e,#a855f7);
+    animation: pending-progress 1.4s linear infinite;
+}
+
+@keyframes pending-progress {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(150%);  }
+}
+
 .card:hover{
     transform:translateY(-4px);
     box-shadow:var(--shadow-md);
     border-color:#a5b4fc;
 }
-.card img,.card video{
-    width:100%;height:100%;object-fit:cover;display:block;
+
+.card img,
+.card video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
 }
 .card video{background:#020617}
 .card-overlay{
@@ -1504,6 +1577,73 @@ let videoRefs = {
     elements: [],
     lipsyncAudio: null
 };
+    // Pending generation jobs (for countdown + loading card)
+const pendingJobs = {};
+
+function createPendingHistoryCard(promptText) {
+    const grid  = document.getElementById('gallery-grid');
+    const empty = document.getElementById('empty-state');
+    if (!grid) return null;
+    if (empty) empty.style.display = 'none';
+
+    const id = "pending_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+
+    const card = document.createElement('div');
+    card.className = 'card media-image pending';
+    card.dataset.pendingId = id;
+    card.dataset.mediaType = 'image';
+
+    const totalSeconds = 45; // visual countdown only
+    let remaining      = totalSeconds;
+
+    const shortPrompt = (promptText || "").trim();
+    const displayPrompt =
+        shortPrompt.length > 90 ? shortPrompt.slice(0, 90) + "…" : shortPrompt || "Preparing your render…";
+
+    const countdownId = `pending-countdown-${id}`;
+
+    card.innerHTML = `
+        <div class="pending-inner">
+            <div class="spinner"></div>
+            <div class="pending-label">RENDERING IN QUEUE</div>
+            <div id="${countdownId}" class="pending-countdown">${remaining}s</div>
+            <div class="pending-prompt">${displayPrompt}</div>
+            <div class="mini-progress"><div class="mini-progress-bar"></div></div>
+        </div>
+    `;
+
+    // Show newest job first
+    grid.prepend(card);
+
+    const interval = setInterval(() => {
+        const el = document.getElementById(countdownId);
+        if (!el) {
+            clearInterval(interval);
+            delete pendingJobs[id];
+            return;
+        }
+        remaining -= 1;
+        if (remaining <= 0) {
+            clearInterval(interval);
+            el.textContent = "Waiting for image…";
+        } else {
+            el.textContent = `${remaining}s`;
+        }
+    }, 1000);
+
+    pendingJobs[id] = { card, interval };
+    return id;
+}
+
+function clearPendingHistoryCard(id) {
+    const job = pendingJobs[id];
+    if (!job) return;
+    clearInterval(job.interval);
+    if (job.card && job.card.parentNode) {
+        job.card.parentNode.removeChild(job.card);
+    }
+    delete pendingJobs[id];
+}
 
 /* -------------------------------------------------------------------------- */
 /* LAB SWITCHING                                                              */
@@ -1562,78 +1702,100 @@ function handleImgFile(input){
     }
 }
 
-async function generateImage(){
-    const prompt = document.getElementById('prompt-input').value.trim();
-    if(!prompt){ return showToast("Add a prompt first.","Notice"); }
+async function generateImage(btn){
+    const promptEl = document.getElementById('image-prompt');
+    const prompt   = promptEl.value.trim();
+    const guidance = parseFloat(document.getElementById('image-guidance').value) || 3.5;
 
-    const btn = document.getElementById('gen-btn-img');
-    btn.disabled = true;
-    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
-    showToast("Sending job to Flux 1 engine...","Processing");
+    if (!prompt) {
+        return showToast("Please describe what you want to create.","Notice");
+    }
 
-    const negativeEl = document.getElementById('negative-prompt');
-    const negativePrompt = negativeEl ? negativeEl.value.trim() : "";
+    // Always show the History tab when generating
+    currentGalleryTab = 'history';
+    const historyTab = document.querySelector('[data-gallery-tab="history"]');
+    if (historyTab) {
+        document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+        historyTab.classList.add('active');
+    }
 
-    const endpoint = (currentImageMode === 'img2img') ? '/api/image/img2img' : '/api/image/txt2img';
-    
-    // DYNAMIC SIZE: This reads the variables set by the buttons you click
-    const payload = {
-        prompt: prompt,
-        negative_prompt: negativePrompt,
-        steps: 25,
-        guidance_scale: parseFloat(document.getElementById('guidance').value),
-        width: imgWidth,    // <--- Changes based on the button you selected
-        height: imgHeight   // <--- Changes based on the button you selected
-    };
+    // Create the pending / countdown card **before** hitting the API
+    const pendingId = createPendingHistoryCard(prompt);
 
-    if(currentImageMode === 'img2img' && imageBase64){
-        payload.init_image_base64 = imageBase64;
-        payload.strength = parseFloat(document.getElementById('strength').value);
-    } 
+    // UI: lock button
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span> RENDERING…`;
+    }
 
-    try{
-        console.log(`Sending to: ${API_URL}${endpoint}`);
-        console.log(`Requested Size: ${imgWidth} x ${imgHeight}`); // Check your browser console to verify!
-        
-        const res = await fetch(`${API_URL}${endpoint}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+    showToast("Sending your prompt to Flux…","Processing");
 
-        if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.detail || `Server error: ${res.status}`);
+    try {
+        let endpoint = "/api/image/txt2img";
+        const body = {
+            prompt,
+            steps: 25,
+            guidance_scale: guidance,
+            width: imgWidth,
+            height: imgHeight
+        };
+
+        if (currentImageMode === "img2img") {
+            if (!imageBase64) {
+                clearPendingHistoryCard(pendingId);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `+ GENERATE IMAGE`;
+                }
+                return showToast("Upload a base image for Img2Img first.","Notice");
+            }
+            endpoint = "/api/image/img2img";
+            body.init_image_base64 = imageBase64;
+            body.strength = 0.75;
         }
+
+        const res = await fetch(`${API_URL}${endpoint}`, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(body)
+        });
 
         const data = await res.json();
 
-        if(data.status === "success"){
-            showToast("Image generated successfully!","Success");
+        if (data.status === "success") {
+            clearPendingHistoryCard(pendingId);
 
-            let finalUrl = data.image_url;
-            if (finalUrl && !finalUrl.startsWith('http')) {
-                finalUrl = `${API_URL}${finalUrl}`;
-            }
+            const url = `${API_URL}${data.image_url}`;
 
-            addToGallery(
-                {
-                    type: "image",
-                    url: finalUrl,
-                    prompt: prompt
-                },
-                { saveToHistory: true }
-            );
+            const item = {
+                type: "image",
+                url,
+                thumb: url,
+                prompt,
+                lab: "image",
+                isFavorite: false,
+                createdAt: new Date().toISOString()
+            };
+
+            // Save to history + assets and draw final card
+            addHistoryItem(item);
+            addToGallery(item, { saveToHistory: false });
+
+            showToast("Image generated!","Success");
         } else {
-            console.error(data);
-            showToast("Image error: " + (data.detail || "Unknown error"),"Error");
+            clearPendingHistoryCard(pendingId);
+            console.error("Image error:", data);
+            showToast(data.message || "Image generation failed.","Error");
         }
-    } catch(err){
-        console.error("Generation Failed:", err);
-        showToast("Connection failed. Check console (F12) for details.","Error");
+    } catch (err) {
+        clearPendingHistoryCard(pendingId);
+        console.error(err);
+        showToast("Connection failed while generating image.","Error");
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE IMAGE`;
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `+ GENERATE IMAGE`;
+        }
     }
 }
 
@@ -1880,21 +2042,26 @@ function addToGallery(item, options = {}) {
     if (!grid) return;
     if (empty) empty.style.display = 'none';
 
+    // Decide the media type safely
+    const normalType =
+        item.type
+        || (item.url && item.url.toLowerCase().endswith('.mp4') ? 'video' : 'image');
+
     // Normalize + give every item an id
     const normalized = {
-    id: item.id || ("h_" + Date.now() + "_" + Math.random().toString(36).slice(2)),
-    type: normalType,
-    url: item.url,
-    thumb: item.thumb || item.url || "",
-    prompt: item.prompt || "",
-    isFavorite: !!item.isFavorite,   // <--- NEW IMPORTANT PART
-    lab: item.lab || currentLab,
-    createdAt: item.createdAt || new Date().toISOString()
-};
+        id: item.id || ("h_" + Date.now() + "_" + Math.random().toString(36).slice(2)),
+        type: normalType,
+        url: item.url,
+        thumb: item.thumb || item.url || "",
+        prompt: item.prompt || "",
+        isFavorite: !!item.isFavorite,
+        lab: item.lab || currentLab,
+        createdAt: item.createdAt || new Date().toISOString()
+    };
 
     const card = document.createElement('div');
     const t    = normalized.type;
-    card.className        = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
+    card.className         = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
     card.dataset.mediaType = t;
     card.dataset.historyId = normalized.id;
 
