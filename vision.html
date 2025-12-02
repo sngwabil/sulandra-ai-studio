@@ -818,22 +818,30 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 /* -------------------------------------------------------------------------- */
 /* AUDIO PLAYER FOOTER (BROWSER)                                             */
 /* -------------------------------------------------------------------------- */
-   /* --- SIA CHAT: Old Times Style (Bold & Serif) --- */
+  /* --- UNIVERSAL OLD TIMES STYLE (Chat + Prompts) --- */
+
+/* 1. Apply Bold Times New Roman to Chat, Inputs, and Prompt Boxes */
 .sia-bubble, 
-#sia-input {
+#sia-input, 
+.text-area,            /* <--- This is the Prompt Box */
+.shortfilm-input,
+textarea {
     font-family: 'Times New Roman', Times, serif !important;
-    font-weight: 700 !important;    /* Bold */
-    text-transform: none !important; /* Turns off ALL CAPS */
+    font-weight: 700 !important;     /* Bold */
+    text-transform: none !important;  /* Turns off ALL CAPS */
     font-size: 16px !important;      
     letter-spacing: normal !important;
 }
 
-/* Fix the Main Prompt box to stop shouting in CAPS too */
-.text-area {
+/* 2. Force the Gray Placeholder Text to match */
+::placeholder {
+    font-family: 'Times New Roman', Times, serif !important;
     text-transform: none !important;
-    font-family: 'JetBrains Mono', monospace !important;
+    font-style: italic !important;   /* Keep italics for hints */
+    opacity: 0.7 !important;
 }
 
+/* 3. Keep User Bubble white for contrast */
 .sia-bubble.user {
     color: #ffffff !important;
 } 
