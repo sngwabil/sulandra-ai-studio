@@ -1574,30 +1574,26 @@ async function generateImage(){
     const negativeEl = document.getElementById('negative-prompt');
     const negativePrompt = negativeEl ? negativeEl.value.trim() : "";
 
-    // 1. Determine the correct endpoint based on current mode
     const endpoint = (currentImageMode === 'img2img') ? '/api/image/img2img' : '/api/image/txt2img';
     
-    // 2. Build the payload
+    // DYNAMIC SIZE: This reads the variables set by the buttons you click
     const payload = {
         prompt: prompt,
         negative_prompt: negativePrompt,
         steps: 25,
-        guidance_scale: parseFloat(document.getElementById('guidance').value)
+        guidance_scale: parseFloat(document.getElementById('guidance').value),
+        width: imgWidth,    // <--- Changes based on the button you selected
+        height: imgHeight   // <--- Changes based on the button you selected
     };
 
-    // 3. Add Img2Img specific data if needed
     if(currentImageMode === 'img2img' && imageBase64){
         payload.init_image_base64 = imageBase64;
         payload.strength = parseFloat(document.getElementById('strength').value);
     } 
-    // Only add width/height for Text2Img (Img2Img uses the original image size)
-    else {
-        payload.width = imgWidth;
-        payload.height = imgHeight;
-    }
 
     try{
-        console.log(`Sending to ${API_URL}${endpoint}`); // Debug log
+        console.log(`Sending to: ${API_URL}${endpoint}`);
+        console.log(`Requested Size: ${imgWidth} x ${imgHeight}`); // Check your browser console to verify!
         
         const res = await fetch(`${API_URL}${endpoint}`, {
             method: "POST",
@@ -1606,7 +1602,8 @@ async function generateImage(){
         });
 
         if (!res.ok) {
-            throw new Error(`Server error: ${res.status}`);
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.detail || `Server error: ${res.status}`);
         }
 
         const data = await res.json();
@@ -1614,7 +1611,6 @@ async function generateImage(){
         if(data.status === "success"){
             showToast("Image generated successfully!","Success");
 
-            // Handle the lightweight URL response
             let finalUrl = data.image_url;
             if (finalUrl && !finalUrl.startsWith('http')) {
                 finalUrl = `${API_URL}${finalUrl}`;
