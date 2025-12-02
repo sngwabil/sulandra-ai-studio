@@ -1064,10 +1064,13 @@ textarea {
                 <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
             </div>
 
-            <button id="gen-btn-img" class="btn btn-accent" style="width:100%;height:46px;margin-top:10px;" onclick="generateImage()">
-                <svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg>
-                GENERATE IMAGE
-            </button>
+  <button id="gen-btn-img"
+        class="btn btn-accent"
+        style="width:100%;height:46px;margin-top:10px;"
+        onclick="generateImage(this)">
+    <svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg>
+    GENERATE IMAGE
+</button>
         </div>
 
         <!-- VIDEO CONTROLS -->
@@ -1703,9 +1706,9 @@ function handleImgFile(input){
 }
 
 async function generateImage(btn){
-    const promptEl = document.getElementById('image-prompt');
+    const promptEl = document.getElementById('prompt-input');
     const prompt   = promptEl.value.trim();
-    const guidance = parseFloat(document.getElementById('image-guidance').value) || 3.5;
+    const guidance = parseFloat(document.getElementById('guidance').value) || 3.5;
 
     if (!prompt) {
         return showToast("Please describe what you want to create.","Notice");
@@ -1777,24 +1780,23 @@ async function generateImage(btn){
                 createdAt: new Date().toISOString()
             };
 
-            // Save to history + assets and draw final card
+            // Save to history + draw final card
             addHistoryItem(item);
             addToGallery(item, { saveToHistory: false });
-
-            showToast("Image generated!","Success");
+            showToast("Image generated successfully!","Success");
         } else {
             clearPendingHistoryCard(pendingId);
-            console.error("Image error:", data);
-            showToast(data.message || "Image generation failed.","Error");
+            showToast("Image error: " + (data.detail || "Unknown error"),"Error");
         }
+
     } catch (err) {
+        console.error("Generation failed:", err);
         clearPendingHistoryCard(pendingId);
-        console.error(err);
-        showToast("Connection failed while generating image.","Error");
+        showToast("Connection failed. Check console (F12) for details.","Error");
     } finally {
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = `+ GENERATE IMAGE`;
+            btn.innerHTML = `<svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE IMAGE`;
         }
     }
 }
