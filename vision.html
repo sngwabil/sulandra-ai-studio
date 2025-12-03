@@ -2559,10 +2559,12 @@ function clearPendingHistoryCard(id) {
 /* -------------------------------------------------------------------------- */
 /* LAB SWITCHING – Image / Video / Short Film / My Files                      */
 /* -------------------------------------------------------------------------- */
-function switchLab(lab){
+function switchLab(lab) {
+    // 0. Always go back to CREATE mode when clicking a lab pill
+    currentMode = 'create';
     currentLab = lab;
 
-    // 1. Highlight left-nav buttons (if you add nav-assets later it will just work)
+    // 1. Highlight left-nav buttons
     const navMap = {
         image:     document.getElementById('nav-image'),
         video:     document.getElementById('nav-video'),
@@ -2571,47 +2573,54 @@ function switchLab(lab){
     };
     Object.keys(navMap).forEach(key => {
         const el = navMap[key];
-        if (el) el.classList.toggle('active', key === lab);
+        if (el) {
+            el.classList.toggle('active', key === lab);
+        }
     });
 
-    // 2. Highlight the sidebar lab pills using data-lab="..."
+    // 2. Highlight the sidebar lab pills
     document.querySelectorAll('.lab-mode').forEach(el => {
-        const mode = el.dataset.lab || '';
-        el.classList.toggle('active', mode === lab);
+        const id = el.dataset.lab || '';
+        el.classList.toggle('active', id === lab);
     });
 
-    // 3. Show the correct control panel on the left
+    // 3. Rerender the top bar dynamically depending on the lab & mode
+    renderLabTopbar();
+
+    // 4. Hide all center "create" UIs
+    document.querySelectorAll('.create-container').forEach(c => {
+        c.style.display = 'none';
+    });
+
+    // 5. Show the correct center UI for the selected lab
+    const target = document.getElementById(`create-${lab}`);
+    if (target) {
+        target.style.display = 'block';
+    }
+
+    // 6. Render the correct history gallery for this lab
+    renderHistoryGallery(lab);
+
+    // 7. Show the correct control panel on the left
     const imageControls     = document.getElementById('image-controls');
     const videoControls     = document.getElementById('video-controls');
     const shortfilmControls = document.getElementById('shortfilm-controls');
     const assetsControls    = document.getElementById('assets-controls');
 
-    if (imageControls)     imageControls.style.display     = (lab === 'image')     ? 'block' : 'none';
-    if (videoControls)     videoControls.style.display     = (lab === 'video')     ? 'block' : 'none';
-    if (shortfilmControls) shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
-    if (assetsControls)    assetsControls.style.display    = (lab === 'assets')    ? 'block' : 'none';
-
-    // 4. Switch between normal gallery layout and My Files layout
-    const standardLayout = document.getElementById('standard-gallery-layout');
-    const assetsLayout   = document.getElementById('assets-layout');
-
-    if (lab === 'assets') {
-        if (standardLayout) standardLayout.style.display = 'none';
-        if (assetsLayout)   assetsLayout.style.display   = 'block';
-        if (typeof renderAssetsGrid === 'function') {
-            renderAssetsGrid();
-        }
-    } else {
-        if (standardLayout) standardLayout.style.display = 'block';
-        if (assetsLayout)   assetsLayout.style.display   = 'none';
-
-        // keep your existing gallery filter logic
-        if (typeof applyGalleryFilterForCurrentLab === 'function') {
-            applyGalleryFilterForCurrentLab();
-        }
+    if (imageControls) {
+        imageControls.style.display = (lab === 'image') ? 'block' : 'none';
+    }
+    if (videoControls) {
+        videoControls.style.display = (lab === 'video') ? 'block' : 'none';
+    }
+    if (shortfilmControls) {
+        shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
+    }
+    if (assetsControls) {
+        assetsControls.style.display = (lab === 'assets') ? 'block' : 'none';
     }
 }
-
+    
 /* -------------------------------------------------------------------------- */
 /* IMAGE CONTROLS                                                             */
 /* -------------------------------------------------------------------------- */
