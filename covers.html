@@ -611,7 +611,61 @@ function makeTemplatesFor(cat){
 CATEGORIES.forEach(cat=>{
     TEMPLATES[cat.id] = makeTemplatesFor(cat.id);
 });
-
+// ---------- CUSTOM 50th BIRTHDAY INVITATION TEMPLATES ----------
+TEMPLATES["birthday"].unshift(
+    {
+        id: "bday-50-purple-gold",
+        category: "birthday",
+        name: "50th Birthday – Purple & Gold",
+        palette: {
+            id: "purplegold",
+            gradient: "linear-gradient(135deg,#4c1d95,#facc15)",
+            fg: "#ffffff"
+        },
+        ratio: "portrait",
+        default: {
+            title: "50th Birthday Celebration",
+            subtitle: "Honoring Cassy Ngweh Ngobuh",
+            tag: "RSVP · 513 903 8718",
+            avatar: false
+        }
+    },
+    {
+        id: "bday-50-black-gold",
+        category: "birthday",
+        name: "50th Birthday – Black & Gold",
+        palette: {
+            id: "blackgold",
+            gradient: "linear-gradient(135deg,#020617,#fbbf24)",
+            fg: "#f9fafb"
+        },
+        ratio: "portrait",
+        default: {
+            title: "Fabulous 50th Birthday Party",
+            subtitle: "Celebrating a Golden Queen",
+            tag: "Save the Date",
+            avatar: false
+        }
+    },
+    {
+        id: "bday-50-white-gold",
+        category: "birthday",
+        name: "50th Birthday – White & Gold",
+        palette: {
+            id: "whitegold",
+            gradient: "linear-gradient(135deg,#f9fafb,#facc15)",
+            fg: "#111827"
+        },
+        ratio: "portrait",
+        default: {
+            title: "50 Years of Grace",
+            subtitle: "Join us for a Birthday Celebration",
+            tag: "Formal attire · RSVP",
+            avatar: false
+        }
+    }
+);
+    
 /* ---------------------- STATE ------------------------------------------- */
 let currentCategory = "album";
 let currentTemplate = TEMPLATES["album"][0];
