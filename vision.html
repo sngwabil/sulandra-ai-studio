@@ -454,11 +454,11 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     display:flex;align-items:center;gap:6px;
 }
 
-.stage-content{flex:1;padding:28px 30px;overflow-y:auto}
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-    gap:22px;padding-bottom:80px;
+.stage-content{
+    flex: 1;
+    padding: 28px 30px;
+    overflow-y: auto;
+    position: relative;   /* this will be the reference box for empty-state */
 }
 .card{
     background:radial-gradient(circle at top,#020617,#02021a);
@@ -467,15 +467,100 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     overflow:hidden;position:relative;
     box-shadow:var(--shadow-sm);transition:.22s;
 }
-.card.media-image{aspect-ratio:1/1;}
-.card.media-video{aspect-ratio:16/9;}
+    
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:22px;
+    padding-bottom:80px;
+
+    /* keep the gallery centered under HISTORY */
+    width:100%;
+    max-width:1100px;
+    margin:0 auto;
+}
+
+/* Let images keep their natural aspect ratio */
+.card.media-image{
+    aspect-ratio:auto;        /* or simply remove this rule entirely */
+}
+
+/* Keep videos in 16:9 frames */
+.card.media-video{
+    aspect-ratio:16/9;
+}
+    /* Pending generation card -------------------------------------------- */
+.card.pending {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top, #020617, #02021a 45%, #020617);
+}
+
+.card.pending .pending-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.card.pending .pending-label {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 10px;
+    color: #e5e7eb;
+    opacity: 0.9;
+}
+
+.card.pending .pending-countdown {
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    font-weight: 600;
+    color: #f9fafb;
+}
+
+.card.pending .pending-prompt {
+    max-width: 230px;
+    opacity: 0.7;
+}
+
+.card.pending .mini-progress {
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(15,23,42,0.9);
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.card.pending .mini-progress-bar {
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg,#22c55e,#a855f7);
+    animation: pending-progress 1.4s linear infinite;
+}
+
+@keyframes pending-progress {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(150%);  }
+}
+
 .card:hover{
     transform:translateY(-4px);
     box-shadow:var(--shadow-md);
     border-color:#a5b4fc;
 }
-.card img,.card video{
-    width:100%;height:100%;object-fit:cover;display:block;
+
+.card img,
+.card video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
 }
 .card video{background:#020617}
 .card-overlay{
@@ -490,12 +575,68 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     max-height:60px;overflow:hidden;
 }
 .card-actions{display:flex;gap:8px;margin-top:10px}
+/* Favorite toggle (heart) ---------------------------------------- */
+.card-fav-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+}
 
-/* Empty state */
+.card-fav-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.card-fav-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.card-fav-toggle .heart-outline {
+  fill: none;
+  stroke: #e5e7eb;
+  stroke-width: 1.7;
+}
+
+.card-fav-toggle .heart-fill {
+  display: none;
+  fill: #fb7185;
+}
+
+.card-fav-toggle.is-active {
+  background: rgba(248, 250, 252, 0.98);
+  border-color: #fb7185;
+}
+
+.card-fav-toggle.is-active .heart-outline {
+  display: none;
+}
+
+.card-fav-toggle.is-active .heart-fill {
+  display: block;
+}
+
+/* Empty state – sits inside the same area as the history grid */
 #empty-state{
-    height:60%;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;
-    opacity:.35;text-align:center;
+    position:absolute;
+    inset:0;                       /* fill the whole stage-content area */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    opacity:.35;
+    text-align:center;
+    pointer-events:none;           /* clicks go to cards when they exist */
 }
 
 /* Toast */
@@ -768,6 +909,33 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 /* -------------------------------------------------------------------------- */
 /* AUDIO PLAYER FOOTER (BROWSER)                                             */
 /* -------------------------------------------------------------------------- */
+  /* --- UNIVERSAL OLD TIMES STYLE (Chat + Prompts) --- */
+
+/* 1. Apply Bold Times New Roman to Chat, Inputs, and Prompt Boxes */
+.sia-bubble, 
+#sia-input, 
+.text-area,            /* <--- This is the Prompt Box */
+.shortfilm-input,
+textarea {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-weight: 700 !important;     /* Bold */
+    text-transform: none !important;  /* Turns off ALL CAPS */
+    font-size: 16px !important;      
+    letter-spacing: normal !important;
+}
+
+/* 2. Force the Gray Placeholder Text to match */
+::placeholder {
+    font-family: 'Times New Roman', Times, serif !important;
+    text-transform: none !important;
+    font-style: italic !important;   /* Keep italics for hints */
+    opacity: 0.7 !important;
+}
+
+/* 3. Keep User Bubble white for contrast */
+.sia-bubble.user {
+    color: #ffffff !important;
+} 
 </style>
 </head>
 <body>
@@ -837,19 +1005,24 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
         <!-- Lab mode switch -->
         <div class="lab-mode-switch">
-            <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">
-                Image
-                <span class="icon">Stills</span>
-            </div>
-            <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">
-                Video
-                <span class="icon">Clips</span>
-            </div>
-            <div id="lab-mode-shortfilm" class="lab-mode" onclick="switchLab('shortfilm')">
-                Short Film
-                <span class="icon">Storyboard</span>
-            </div>
-        </div>
+    <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">
+        Image
+        <span class="icon">Stills</span>
+    </div>
+    <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">
+        Video
+        <span class="icon">Clips</span>
+    </div>
+    <div id="lab-mode-shortfilm" class="lab-mode" onclick="switchLab('shortfilm')">
+        Short Film
+        <span class="icon">Storyboard</span>
+    </div>
+    <!-- NEW: MY FILES / ASSETS -->
+    <div id="lab-mode-assets" class="lab-mode" onclick="switchLab('assets')">
+        My Files
+        <span class="icon">Assets</span>
+    </div>
+</div>
 
         <!-- IMAGE CONTROLS -->
         <div id="image-controls">
@@ -914,10 +1087,13 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
                 <input type="range" id="guidance" min="1.0" max="10.0" step="0.1" value="3.5" oninput="document.getElementById('guidance-val').innerText=this.value">
             </div>
 
-            <button id="gen-btn-img" class="btn btn-accent" style="width:100%;height:46px;margin-top:10px;" onclick="generateImage()">
-                <svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg>
-                GENERATE IMAGE
-            </button>
+  <button id="gen-btn-img"
+        class="btn btn-accent"
+        style="width:100%;height:46px;margin-top:10px;"
+        onclick="generateImage(this)">
+    <svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg>
+    GENERATE IMAGE
+</button>
         </div>
 
         <!-- VIDEO CONTROLS -->
@@ -1310,6 +1486,24 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
     </div>
 </div>
+    <!-- NEW: MY FILES / ASSETS CONTROLS -->
+<div id="assets-controls" style="display:none;">
+    <div class="input-group">
+        <div class="label">
+            <span>My Files · Assets</span>
+            <span style="font-size:10px;opacity:.7;">
+                Choose a folder on the right · Images · Videos · Films
+            </span>
+        </div>
+        <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;">
+            All images, videos and short films you create are automatically
+            saved into My Files:
+            <br>• <b>Images</b> → My Images
+            <br>• <b>Videos</b> → My Videos
+            <br>• <b>Short Films</b> → My Films
+        </p>
+    </div>
+</div>
 
 <!-- MAIN STAGE -->
 <div class="stage">
@@ -1318,9 +1512,6 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     <div class="gallery-tab active" id="tab-history"
          onclick="switchGalleryTab('history', this)">History</div>
 
-    <div class="gallery-tab" id="tab-assets"
-         onclick="switchGalleryTab('assets', this)">My Assets</div>
-
     <div class="gallery-tab" id="tab-favorites"
          onclick="switchGalleryTab('favorites', this)">Favorites</div>
 </div>
@@ -1328,7 +1519,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
         <div class="stage-header-right">
             <div class="plan-pill" onclick="openPlanModal()">
                 <span style="width:6px;height:6px;border-radius:999px;background:#38bdf8;"></span>
-                <span>Plan: Free · 66 Daily Credits</span>
+                <span id="vision-plan-pill-text">Plan: Basic · 0 credits available</span>
         </div>
     </div>
 
@@ -1402,7 +1593,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 /* -------------------------------------------------------------------------- */
 /* CONFIG                                                                     */
 /* -------------------------------------------------------------------------- */
-const API_URL = "https://pm37tp93i3bbci-9000.proxy.runpod.net";
+const API_URL = "https://l3djkaux6ykpqa-8188.proxy.runpod.net";
 const HISTORY_STORAGE_KEY = 'sulandra_vision_history_v1';
 const ASSETS_STORAGE_KEY  = 'sulandra_assets_v1';
 
@@ -1427,6 +1618,73 @@ let videoRefs = {
     elements: [],
     lipsyncAudio: null
 };
+    // Pending generation jobs (for countdown + loading card)
+const pendingJobs = {};
+
+function createPendingHistoryCard(promptText) {
+    const grid  = document.getElementById('gallery-grid');
+    const empty = document.getElementById('empty-state');
+    if (!grid) return null;
+    if (empty) empty.style.display = 'none';
+
+    const id = "pending_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+
+    const card = document.createElement('div');
+    card.className = 'card media-image pending';
+    card.dataset.pendingId = id;
+    card.dataset.mediaType = 'image';
+
+    const totalSeconds = 45; // visual countdown only
+    let remaining      = totalSeconds;
+
+    const shortPrompt = (promptText || "").trim();
+    const displayPrompt =
+        shortPrompt.length > 90 ? shortPrompt.slice(0, 90) + "…" : shortPrompt || "Preparing your render…";
+
+    const countdownId = `pending-countdown-${id}`;
+
+    card.innerHTML = `
+        <div class="pending-inner">
+            <div class="spinner"></div>
+            <div class="pending-label">RENDERING IN QUEUE</div>
+            <div id="${countdownId}" class="pending-countdown">${remaining}s</div>
+            <div class="pending-prompt">${displayPrompt}</div>
+            <div class="mini-progress"><div class="mini-progress-bar"></div></div>
+        </div>
+    `;
+
+    // Show newest job first
+    grid.prepend(card);
+
+    const interval = setInterval(() => {
+        const el = document.getElementById(countdownId);
+        if (!el) {
+            clearInterval(interval);
+            delete pendingJobs[id];
+            return;
+        }
+        remaining -= 1;
+        if (remaining <= 0) {
+            clearInterval(interval);
+            el.textContent = "Waiting for image…";
+        } else {
+            el.textContent = `${remaining}s`;
+        }
+    }, 1000);
+
+    pendingJobs[id] = { card, interval };
+    return id;
+}
+
+function clearPendingHistoryCard(id) {
+    const job = pendingJobs[id];
+    if (!job) return;
+    clearInterval(job.interval);
+    if (job.card && job.card.parentNode) {
+        job.card.parentNode.removeChild(job.card);
+    }
+    delete pendingJobs[id];
+}
 
 /* -------------------------------------------------------------------------- */
 /* LAB SWITCHING                                                              */
@@ -1485,53 +1743,99 @@ function handleImgFile(input){
     }
 }
 
-async function generateImage(){
-    const prompt = document.getElementById('prompt-input').value.trim();
-    if(!prompt){ return showToast("Add a prompt first.","Notice"); }
+async function generateImage(btn){
+    const promptEl = document.getElementById('prompt-input');
+    const prompt   = promptEl.value.trim();
+    const guidance = parseFloat(document.getElementById('guidance').value) || 3.5;
 
-    const btn = document.getElementById('gen-btn-img');
-    btn.disabled = true;
-    btn.innerHTML = `<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#fff;"></div> GENERATING...`;
-    showToast("Sending image job to H200...","Processing");
-
-    const payload = {
-        prompt: prompt,
-        width: imgWidth,
-        height: imgHeight,
-        steps: 25,
-        guidance: parseFloat(document.getElementById('guidance').value)
-    };
-
-    if(currentImageMode === 'img2img' && imageBase64){
-        payload.image_base64 = imageBase64;
-        payload.strength = parseFloat(document.getElementById('strength').value);
+    if (!prompt) {
+        return showToast("Please describe what you want to create.","Notice");
     }
 
-    try{
-        const res = await fetch(`${API_URL}/api/image/txt2img`,{
+    // Always show the History tab when generating
+    currentGalleryTab = 'history';
+    const historyTab = document.querySelector('[data-gallery-tab="history"]');
+    if (historyTab) {
+        document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+        historyTab.classList.add('active');
+    }
+
+    // Create the pending / countdown card **before** hitting the API
+    const pendingId = createPendingHistoryCard(prompt);
+
+    // UI: lock button
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner"></span> RENDERING…`;
+    }
+
+    showToast("Sending your prompt to Flux…","Processing");
+
+    try {
+        let endpoint = "/api/image/txt2img";
+        const body = {
+            prompt,
+            steps: 25,
+            guidance_scale: guidance,
+            width: imgWidth,
+            height: imgHeight
+        };
+
+        if (currentImageMode === "img2img") {
+            if (!imageBase64) {
+                clearPendingHistoryCard(pendingId);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `+ GENERATE IMAGE`;
+                }
+                return showToast("Upload a base image for Img2Img first.","Notice");
+            }
+            endpoint = "/api/image/img2img";
+            body.init_image_base64 = imageBase64;
+            body.strength = 0.75;
+        }
+
+        const res = await fetch(`${API_URL}${endpoint}`, {
             method:"POST",
             headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(payload)
+            body:JSON.stringify(body)
         });
+
         const data = await res.json();
 
-        if(data.status === "success"){
-            showToast("Image generated successfully!","Success");
-            addToGallery({
-                type: "image",
-                url: `${API_URL}${data.image_url || data.imageUrl || data.url || data.filename ? "/api/image/file/"+(data.filename || "") : ""}`,
-                prompt
-            });
-        }else{
-            console.error(data);
-            showToast("Image error: " + (data.message || "Unknown error"),"Error");
+        if (data.status === "success") {
+    clearPendingHistoryCard(pendingId);
+
+    const url = `${API_URL}${data.image_url}`;
+
+    const item = {
+        type: "image",
+        url,
+        thumb: url,
+        prompt,
+        lab: "image",
+        isFavorite: false,
+        createdAt: new Date().toISOString()
+    };
+
+    // Use ONE consistent id: addToGallery will also save into history
+    addToGallery(item, { saveToHistory: true });
+
+    showToast("Image generated successfully!","Success");
+} else {
+    clearPendingHistoryCard(pendingId);
+    showToast("Image error: " + (data.detail || "Unknown error"),"Error");
+}
+
+    } catch (err) {
+        console.error("Generation failed:", err);
+        clearPendingHistoryCard(pendingId);
+        showToast("Connection failed. Check console (F12) for details.","Error");
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE IMAGE`;
         }
-    }catch(err){
-        console.error(err);
-        showToast("Connection failed. Check API / tunnel.","Error");
-    }finally{
-        btn.disabled = false;
-        btn.innerHTML = `<svg style="width:18px;height:18px;"><path d="M12 2v20M2 12h20"/></svg> GENERATE IMAGE`;
     }
 }
 
@@ -1778,33 +2082,50 @@ function addToGallery(item, options = {}) {
     if (!grid) return;
     if (empty) empty.style.display = 'none';
 
+    // Decide the media type safely
+    const normalType =
+        item.type
+        || (item.url && item.url.toLowerCase().endswith('.mp4') ? 'video' : 'image');
+
     // Normalize + give every item an id
     const normalized = {
-        id:        item.id || ('h_' + Date.now() + '_' + Math.random().toString(36).slice(2)),
-        type:      item.type || 'image',   // image, video, shortfilm
-        url:       item.url,
-        thumb:     item.thumb || item.url || '',
-        prompt:    item.prompt || '',
-        lab:       item.lab || currentLab,
+        id: item.id || ("h_" + Date.now() + "_" + Math.random().toString(36).slice(2)),
+        type: normalType,
+        url: item.url,
+        thumb: item.thumb || item.url || "",
+        prompt: item.prompt || "",
+        isFavorite: !!item.isFavorite,
+        lab: item.lab || currentLab,
         createdAt: item.createdAt || new Date().toISOString()
     };
 
     const card = document.createElement('div');
     const t    = normalized.type;
-    card.className        = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
+    card.className         = 'card ' + (t === 'video' ? 'media-video' : 'media-image');
     card.dataset.mediaType = t;
     card.dataset.historyId = normalized.id;
 
-    if (t === 'image') {
+        if(t === 'image'){
         const url = normalized.url;
+        const thumb = normalized.thumb || url;
         card.innerHTML = `
-            <img src="${url}" alt="">
+            <button type="button"
+                    class="card-fav-toggle ${normalized.isFavorite ? 'is-active' : ''}"
+                    onclick="toggleFavorite('${normalized.id}')">
+                <svg viewBox="0 0 24 24">
+                    <path class="heart-outline"
+                          d="M12.1 4.3c-1.7-1.6-4.5-1.6-6.2.1-1.8 1.8-1.8 4.6 0 6.4l5.4 5.4 5.4-5.4c1.8-1.8 1.8-4.6 0-6.4-1.7-1.7-4.5-1.7-6.2-.1z"/>
+                    <path class="heart-fill"
+                          d="M12 21s-4.6-3.9-7.1-6.4C2.4 12 2 9.9 2.9 8.1 3.7 6.4 5.3 5.3 7.1 5.3c1.3 0 2.6.6 3.4 1.6.8-1 2.1-1.6 3.4-1.6 1.8 0 3.4 1.1 4.2 2.8.9 1.8.5 3.9-2 6.5C16.6 17.1 12 21 12 21z"/>
+                </svg>
+            </button>
+            <img src="${thumb}" alt="Generated image">
             <div class="card-overlay">
                 <div class="card-meta">${normalized.prompt}</div>
                 <div class="card-actions">
                     <button class="btn btn-primary" onclick="window.open('${url}')">Download</button>
                     <button class="btn btn-ghost"
-                            onclick="cloneSetup('${t}', '${encodeURIComponent(normalized.prompt)}')">
+                            onclick="cloneSetup('image', '${encodeURIComponent(normalized.prompt)}')">
                         Clone / Remix
                     </button>
                     <button class="btn btn-ghost"
@@ -1818,10 +2139,20 @@ function addToGallery(item, options = {}) {
                 </div>
             </div>
         `;
-    } else {
+        } else {
         const url   = normalized.url;
         const thumb = normalized.thumb || url;
         card.innerHTML = `
+            <button type="button"
+                    class="card-fav-toggle ${normalized.isFavorite ? 'is-active' : ''}"
+                    onclick="toggleFavorite('${normalized.id}')">
+                <svg viewBox="0 0 24 24">
+                    <path class="heart-outline"
+                          d="M12.1 4.3c-1.7-1.6-4.5-1.6-6.2.1-1.8 1.8-1.8 4.6 0 6.4l5.4 5.4 5.4-5.4c1.8-1.8 1.8-4.6 0-6.4-1.7-1.7-4.5-1.7-6.2-.1z"/>
+                    <path class="heart-fill"
+                          d="M12 21s-4.6-3.9-7.1-6.4C2.4 12 2 9.9 2.9 8.1 3.7 6.4 5.3 5.3 7.1 5.3c1.3 0 2.6.6 3.4 1.6.8-1 2.1-1.6 3.4-1.6 1.8 0 3.4 1.1 4.2 2.8.9 1.8.5 3.9-2 6.5C16.6 17.1 12 21 12 21z"/>
+                </svg>
+            </button>
             <video src="${url}" poster="${thumb}" controls muted></video>
             <div class="card-overlay">
                 <div class="card-meta">${normalized.prompt}</div>
@@ -1943,7 +2274,29 @@ function addItemToHistory(item) {
     history.unshift(item);
     saveHistoryToStorage(history);
 }
+// Backwards-compatible helper used by addToGallery
+// Also auto-saves the same item into My Assets.
+function addHistoryItem(item) {
+    addItemToHistory(item);   // store in History
+    addItemToAssets(item);    // also store in My Assets
+}
+ /* ------------------------------
+   SAVE A HISTORY ITEM INTO ASSETS
+------------------------------ */
+function saveAssetFromHistory(itemId) {
+    const history = loadHistoryFromStorage();
+    const item    = history.find(h => h.id === itemId);
 
+    if (!item) {
+        console.warn("Item not found in history for assets:", itemId);
+        showToast("Could not find this item in your history.", "Error");
+        return;
+    }
+
+    addItemToAssets(item);
+    showToast("Saved to My Assets.", "Success");
+}
+   
 /* ------------------------------
    SYNC FAVORITE STATUS
 ------------------------------ */
@@ -1959,25 +2312,48 @@ function toggleFavorite(itemId) {
     // Live UI update
     renderHistoryGrid();
 }
+function renderHistoryGrid() {
+    const grid = document.getElementById('gallery-grid');
+    const emptyState = document.getElementById('empty-state');
+    if (!grid || !emptyState) return;
+
+    grid.innerHTML = '';
+
+    const history = loadHistoryFromStorage();
+
+    let filtered = history;
+    if (currentGalleryTab === 'favorites') {
+        filtered = history.filter(h => h.isFavorite);
+    }
+
+    filtered.forEach(item => {
+        addToGallery(item, { saveToHistory: false });
+    });
+
+    // Filter by current lab (image / video / shortfilm)
+    applyGalleryFilterForCurrentLab(true);
+
+    emptyState.style.display = filtered.length ? 'none' : 'flex';
+}
 function switchGalleryTab(tab, el) {
     document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
     if (el) el.classList.add('active');
 
     currentGalleryTab = tab;
 
-    if (tab === 'history') {
-        applyGalleryFilterForCurrentLab();
+    if (tab === 'history' || tab === 'favorites') {
+        renderHistoryGrid();
     } else if (tab === 'assets') {
         // Open dedicated My Assets page
         window.location.href = 'assets.html';
+    } else {
+        // Reserved for community or other tabs later
         refreshCommunity();
-    } else if (tab === 'favorites') {
-        showToast("Favorites", "Favorites view will be wired later.");
     }
-} 
+}
 function applyGalleryFilterForCurrentLab() {
-    if (currentGalleryTab !== 'history') return;
-
+    if (currentGalleryTab !== 'history' && currentGalleryTab !== 'favorites') return;
+    
     const grid = document.getElementById('gallery-grid');
     const emptyState = document.getElementById('empty-state');
     if (!grid || !emptyState) return;
@@ -2772,63 +3148,110 @@ function closeSiaPanel(){
 }
 
 /**
- * Adds a chat bubble to the SIA panel.
- * role = "sia" or "user"
+ * UPDATED: Supports distinct IDs so we can remove "Thinking..." bubbles
  */
-function appendSiaBubble(role, text){
+function appendSiaBubble(role, text, distinctId = null){
     const messages = document.getElementById("sia-messages");
     if(!messages) return;
 
     const bubble = document.createElement("div");
     bubble.className = "sia-bubble " + (role === "user" ? "user" : "sia");
     bubble.textContent = text;
+    
+    // Assign ID if provided (used for removing the loading bubble later)
+    if(distinctId) bubble.id = distinctId;
+    
     messages.appendChild(bubble);
     messages.scrollTop = messages.scrollHeight;
 }
 
 /**
- * Called when the user clicks "Send" in the SIA panel.
- * Right now this runs a simple client-side “prompt improver”
- * so the feature actually works even before you hook up a backend.
+ * REPLACED: Connects to Real Brain + Handles Tool Use (The Hands)
  */
-function sendSiaMessage(){
+async function sendSiaMessage(){
     const inputBox = document.getElementById("sia-input");
     if(!inputBox) return;
 
     const userText = inputBox.value.trim();
     if(!userText) return;
 
+    // 1. Show user message immediately
     appendSiaBubble("user", userText);
     inputBox.value = "";
+    
+    // 2. Show "Thinking..." bubble
+    const loadingBubbleId = "sia-loading-" + Date.now();
+    appendSiaBubble("sia", "Thinking...", loadingBubbleId);
 
-    const targetEl = siaCurrentFieldId ? document.getElementById(siaCurrentFieldId) : null;
-    const basePrompt = targetEl ? (targetEl.value || "").trim() : "";
-
-    // Very simple “improvement” engine so it feels useful now.
-    let suggestion = "";
-    if(!basePrompt){
-        suggestion =
-`New prompt generated from your request:
-
-${userText}
-
-Make sure the description is clear, includes subject, environment, lighting, camera angle, and mood.`;
-    }else{
-        suggestion =
-`Improved ${siaCurrentFieldLabel} based on your request:
-
-${basePrompt}
-
-Revision goal: ${userText}
-
-Enhanced version:
-${basePrompt}
-
-(Refine this further as needed before generating.)`;
+    // 3. Gather Context (What field are we looking at?)
+    let currentContext = "";
+    let fieldType = "general";
+    
+    if(siaCurrentFieldId){
+        const targetEl = document.getElementById(siaCurrentFieldId);
+        if(targetEl) {
+            currentContext = targetEl.value || "";
+            // Guess type based on ID
+            if(siaCurrentFieldId.includes("prompt")) fieldType = "prompt";
+            else if(siaCurrentFieldId.includes("script")) fieldType = "script";
+            else if(siaCurrentFieldId.includes("lyric")) fieldType = "lyrics";
+        }
     }
 
-    siaLastSuggestion = suggestion;
-    appendSiaBubble("sia", suggestion);
+    // 4. Send to RunPod Brain
+    try {
+        const res = await fetch(`${API_URL}/ask_sia`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_input: userText,
+                context: currentContext,
+                field_type: fieldType
+            })
+        });
+
+        const data = await res.json();
+
+        // 5. Remove "Thinking..."
+        const loadingBubble = document.getElementById(loadingBubbleId);
+        if(loadingBubble) loadingBubble.remove();
+
+        if(data.status === "success"){
+            // A. Speak the reply
+            appendSiaBubble("sia", data.reply);
+            siaLastSuggestion = data.payload || data.reply; // Store for "Apply" button
+
+            // B. THE HANDS: Check if Brain wants to click buttons
+            if(data.action === "generate_image"){
+                
+                // 1. Switch to Image Tab if needed
+                switchLab('image'); 
+                
+                // 2. Fill the prompt box automatically
+                const promptBox = document.getElementById('prompt-input');
+                if(promptBox) {
+                    promptBox.value = data.payload;
+                    // Also update the hidden context for next time
+                    siaLastSuggestion = data.payload;
+                }
+                
+                // 3. Announce and Click
+                showToast("SIA is generating your image...", "Auto-Pilot");
+                setTimeout(() => {
+                    generateImage(); // Triggers your existing Flux function
+                }, 1500); // 1.5s delay so you can see the prompt fill in
+            }
+            
+        } else {
+            appendSiaBubble("sia", "My brain hiccuped. Try again.");
+        }
+
+    } catch(err) {
+        console.error(err);
+        const loadingBubble = document.getElementById(loadingBubbleId);
+        if(loadingBubble) loadingBubble.remove();
+        appendSiaBubble("sia", "⚠️ Connection Error: Is the Brain running on Port 8188?");
+    }
 }
 
 /**
@@ -2858,19 +3281,57 @@ function applySiaToField(){
 /* -------------------------------------------------------------------------- */
 /* INIT                                                                       */
 /* -------------------------------------------------------------------------- */
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
+    /* 1. Read shared wallet from index.html (localStorage) */
+    let user = null;
+    try {
+        const raw = localStorage.getItem("sulandraUser");
+        if (raw) user = JSON.parse(raw);
+    } catch (e) {
+        console.warn("Failed to read sulandraUser for Vision lab", e);
+    }
+
+    // If not logged in at all, send to main page
+    if (!user) {
+        window.location.href = "index.html?loginRequired=1";
+        return;
+    }
+
+    // Update the plan pill text with real plan + credits
+    const pillSpan = document.getElementById("vision-plan-pill-text");
+    if (pillSpan) {
+        const prettyPlan =
+            user.plan === "basic"   ? "Basic" :
+            user.plan === "pro"     ? "Pro" :
+            user.plan === "creator" ? "Creator" :
+                                      "Creator Ultimate";
+
+        const credits = user.credits || 0;
+        pillSpan.textContent =
+            `Plan: ${prettyPlan} · ${credits.toLocaleString()} credits available`;
+    }
+
+    /* 2. Keep existing Vision UI initialization */
     // default: hide video ref + start/end for Text → Video
-    const videoRefGroup = document.getElementById('video-ref-group');
-    const startEndGroup = document.getElementById('start-end-group');
-    if(videoRefGroup){ videoRefGroup.style.display = 'none'; }
-    if(startEndGroup){ startEndGroup.style.display = 'none'; }
+    const videoRefGroup = document.getElementById("video-ref-group");
+    const startEndGroup = document.getElementById("start-end-group");
+    if (videoRefGroup) { videoRefGroup.style.display = "none"; }
+    if (startEndGroup) { startEndGroup.style.display = "none"; }
 
     // hide Elements group visually (kept for future consistency wiring)
-    const elementsGroup = document.getElementById('elements-group');
-    if(elementsGroup){
-        elementsGroup.style.display = 'none';
+    const elementsGroup = document.getElementById("elements-group");
+    if (elementsGroup) {
+        elementsGroup.style.display = "none";
     }
+
+    // Initialize Firebase (safe no-op if not configured)
+    initFirebase();
+
+    // Load initial History grid
+    currentGalleryTab = "history";
+    renderHistoryGrid();
 });
+
 function applyHashRouting() {
     const hash = (window.location.hash || '').replace('#', '');
 
