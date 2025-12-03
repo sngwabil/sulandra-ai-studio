@@ -2756,11 +2756,12 @@ function closeSidebarPreview() {
 function renderAssetsView() {
     const grid        = document.getElementById('gallery-grid');
     const emptyState  = document.getElementById('empty-state');
-    // NEW: target the new sidebar list container
+    // Targeting the sidebar list inside the new container
     const sidebarList = document.getElementById('assets-sidebar-list');
     const preview     = document.getElementById('assets-sidebar-preview');
 
     if (!grid || !emptyState || !sidebarList || typeof loadHistoryFromStorage !== 'function') {
+        console.warn("Missing DOM elements for My Files view.");
         return;
     }
 
@@ -2770,7 +2771,7 @@ function renderAssetsView() {
         preview.innerHTML = '';
     }
 
-    // Ensure list is visible and mode class is set (grid vs list)
+    // Force sidebar list to be visible
     sidebarList.style.display = 'flex';
     sidebarList.classList.toggle('is-grid', currentAssetsSidebarMode === 'grid');
     sidebarList.classList.toggle('is-list', currentAssetsSidebarMode !== 'grid');
@@ -2786,7 +2787,6 @@ function renderAssetsView() {
     } else if (currentAssetsView === 'videos') {
         filtered = history.filter(item => item.type === 'video');
     } else if (currentAssetsView === 'films') {
-        // Ensure your generation code saves shortfilms with type: 'shortfilm' or 'film'
         filtered = history.filter(item => item.type === 'shortfilm' || item.type === 'film');
     } else if (currentAssetsView === 'favorites') {
         const favIds = new Set(favorites.map(f => f.id));
@@ -2799,39 +2799,33 @@ function renderAssetsView() {
 
     if (!filtered.length) {
         emptyState.style.display = 'flex';
-        // Sidebar is naturally empty here
         return;
     }
 
     emptyState.style.display = 'none';
 
-    // Loop through filtered items and populate BOTH containers simultaneously
+    // Loop through filtered items and populate BOTH containers
     filtered.forEach(item => {
-        // --- 1. Populate Main Gallery (Big Cards) ---
-        // Use existing helper to create the main card
+        // --- 1. Populate Main Gallery (Right Side) ---
         addToGallery(item, { saveToHistory: false });
 
-        // --- 2. Populate Sidebar Thumbnail List ---
+        // --- 2. Populate Sidebar Thumbnail List (Left Side) ---
         const url   = item.previewUrl || item.url || item.thumbnail || '';
-        // Fallback title if prompt is missing
-        const title = item.prompt ? (item.prompt.substring(0, 40) + (item.prompt.length > 40 ? '...' : '')) : (item.displayName || 'Untitled');
+        const title = item.prompt ? (item.prompt.substring(0, 40) + '...') : (item.displayName || 'Untitled');
 
         const row = document.createElement('div');
         row.className = 'assets-sidebar-item';
-        row.title     = item.prompt || title; // Full prompt on hover tooltip
+        row.title     = item.prompt || title;
 
         // Thumbnail image
         const img = document.createElement('img');
         img.className = 'assets-sidebar-thumb';
         img.src       = url;
-        // Handle video thumbnails if necessary (if url ends in mp4 and no explicit thumb exists)
-        if(item.type !== 'image' && !item.thumb && item.url && item.url.endsWith('.mp4')){
-             // simple fallback, might need a generic video icon if real thumb isn't available
-             img.style.backgroundColor = "#000";
+        // Fallback for videos without thumbnails
+        if (item.type !== 'image' && !item.thumb && item.url && item.url.endsWith('.mp4')){
+             img.style.backgroundColor = "#000"; // Black placeholder
         }
-        img.alt       = item.type;
-
-        // Meta text (truncated prompt)
+        
         const meta = document.createElement('div');
         meta.className = 'assets-sidebar-meta';
         meta.textContent = title;
@@ -2839,11 +2833,8 @@ function renderAssetsView() {
         row.appendChild(img);
         row.appendChild(meta);
 
-        // Single click: Open in main lightbox (same behavior as main gallery cards)
+        // Click to open main lightbox
         row.addEventListener('click', () => openLightbox(item.id));
-
-        // Optional: Double-click for sidebar "quick preview" if you still want that feature
-        // row.addEventListener('dblclick', (e) => { e.stopPropagation(); openSidebarPreview(item); });
 
         sidebarList.appendChild(row);
     });
