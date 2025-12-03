@@ -1232,6 +1232,356 @@ function switchLab(mode){
         }
     }
 }
+<script>
+/* ---------------- MY FILES FOLDER BUTTONS --------------------------------- */
+
+function handleAssetsFolderClick(folderKey, btn){
+    // Highlight active folder
+    document.querySelectorAll('.assets-folder').forEach(function(el){
+        el.classList.toggle('assets-folder-active', el === btn);
+    });
+
+    if (folderKey === 'create'){
+        // Go straight back to Create (Image lab by default)
+        exitAssetsToCreate();
+        return;
+    }
+
+    if (folderKey === 'images')      currentAssetsFilter = 'image';
+    else if (folderKey === 'videos') currentAssetsFilter = 'video';
+    else if (folderKey === 'films')  currentAssetsFilter = 'shortfilm';
+    else currentAssetsFilter = 'all';
+
+    // Sync top tabs if needed
+    if (currentAssetsFilter !== 'all'){
+        document.querySelectorAll('.assets-top-tab').forEach(function(el){
+            el.classList.toggle('assets-top-tab-active', el.dataset.type === currentAssetsFilter);
+        });
+    }
+
+    renderAssetsGrid();
+}
+
+function setAssetsTopTab(type, btn){
+    if (btn){
+        document.querySelectorAll('.assets-top-tab').forEach(function(el){
+            el.classList.toggle('assets-top-tab-active', el === btn);
+        });
+    }
+    currentAssetsFilter = type;
+    renderAssetsGrid();
+}
+
+function exitAssetsToCreate(){
+    // Back to normal Create + History view
+    switchLab('image');
+}
+<script>
+function toggleAssetsSidebar(){
+    const sidebar = document.getElementById('assets-sidebar');
+    const btn     = document.getElementById('assets-toggle-sidebar');
+    if (!sidebar || !btn) return;
+
+    const nowHidden = sidebar.classList.toggle('hidden');
+    btn.textContent = nowHidden ? 'Show folders' : 'Hide folders';
+}
+<script>
+function renderAssetsGrid(){
+    const grid  = document.getElementById('assets-grid');
+    const empty = document.getElementById('assets-empty-state');
+    if (!grid || !empty) return;
+
+    grid.innerHTML = '';
+
+    let history = [];
+    if (typeof loadHistoryFromStorage === 'function'){
+        history = loadHistoryFromStorage() || [];
+    }
+
+    // Filter by type
+    const items = history.filter(function(item){
+        const kind = item.kind || item.type || 'image';
+        if (currentAssetsFilter === 'all')       return true;
+        if (currentAssetsFilter === 'image')     return kind === 'image';
+        if (currentAssetsFilter === 'video')     return kind === 'video';
+        if (currentAssetsFilter === 'shortfilm') return kind === 'shortfilm';
+        return true;
+    });
+
+    if (!items.length){
+        empty.style.display = 'block';
+        return;
+    }
+
+    empty.style.display = 'none';
+
+    items.forEach(function(item){
+        const card = createAssetsCard(item);
+        if (card) grid.appendChild(card);
+    });
+}
+
+/* Build a card with heart + "Open" that triggers the lightbox */
+function createAssetsCard(item){
+    const kind = item.kind || item.type || 'image';
+    const card = document.createElement('div');
+    card.className = 'card media-' + (kind === 'video' || kind === 'shortfilm' ? 'video' : 'image');
+    card.dataset.itemId = item.id;
+
+    const mediaUrl = item.previewUrl || item.url || item.thumbnail || '';
+
+    let mediaEl;
+    if (kind === 'video' || kind === 'shortfilm'){
+        mediaEl = document.createElement('video');
+        mediaEl.src = mediaUrl;
+        mediaEl.muted = true;
+        mediaEl.loop = true;
+    } else {
+        mediaEl = document.createElement('img');
+        mediaEl.src = mediaUrl;
+        mediaEl.alt = item.displayName || 'Image';
+    }
+    card.appendChild(mediaEl);
+
+    // Heart (favorite)
+    const favBtn = document.createElement('button');
+    favBtn.className = 'card-fav-toggle' + (item.isFavorite ? ' is-active' : '');
+    favBtn.type = 'button';
+    favBtn.innerHTML = `
+        <svg viewBox="0 0 24 24">
+            <path class="heart-outline"
+                d="M12.1 8.64l-.1.1-.11-.11C10.14 6.6 7.1 6.6 5.13 8.58c-1.98 1.98-1.98 5.18 0 7.16l.11.11L12 22l6.76-6.15.11-.11c1.98-1.98 1.98-5.18 0-7.16-1.97-1.98-5.01-1.98-6.97 0z"/>
+            <path class="heart-fill"
+                d="M12.1 8.64l-.1.1-.11-.11C10.14 6.6 7.1 6.6 5.13 8.58c-1.98 1.98-1.98 5.18 0 7.16l.11.11L12 22l6.76-6.15.11-.11c1.98-1.98 1.98-5.18 0-7.16-1.97-1.98-5.01-1.98-6.97 0z"/>
+        </svg>
+    `;
+    favBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        toggleFavoriteFromCard(item.id, favBtn);
+    });
+    card.appendChild(favBtn);
+
+    // Dark overlay with meta + Open button
+    const overlay = document.createElement('div');
+    overlay.className = 'card-overlay';
+
+    const meta = document.createElement('div');
+    meta.className = 'card-meta';
+    meta.textContent = item.displayName || item.prompt || (kind === 'image' ? 'Image' : kind);
+    overlay.appendChild(meta);
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+
+    const openBtn = document.createElement('button');
+    openBtn.className = 'btn btn-primary';
+    openBtn.type = 'button';
+    openBtn.textContent = 'Open';
+    openBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        openLightbox(item.id);
+    });
+    actions.appendChild(openBtn);
+
+    overlay.appendChild(actions);
+    card.appendChild(overlay);
+
+    // Click card = open full view
+    card.addEventListener('click', function(){
+        openLightbox(item.id);
+    });
+
+    return card;
+}
+<script>
+/* ---------------- FAVORITES FROM CARD & LIGHTBOX -------------------------- */
+
+function toggleFavoriteFromCard(itemId, btn){
+    if (typeof loadHistoryFromStorage !== 'function' ||
+        typeof saveHistoryToStorage !== 'function') return;
+
+    const history = loadHistoryFromStorage() || [];
+    const item = history.find(function(h){ return h.id === itemId; });
+    if (!item) return;
+
+    item.isFavorite = !item.isFavorite;
+    saveHistoryToStorage(history);
+
+    btn.classList.toggle('is-active', !!item.isFavorite);
+
+    if (typeof showToast === 'function'){
+        showToast(item.isFavorite ? 'Added to Favorites.' : 'Removed from Favorites.', 'Success');
+    }
+}
+
+function toggleFavoriteFromLightbox(event){
+    event.stopPropagation();
+    if (!lightboxCurrentId) return;
+
+    const btn = document.getElementById('lightbox-fav-toggle');
+    toggleFavoriteFromCard(lightboxCurrentId, btn);
+
+    // Re-render My Files / History so favorites stay in sync
+    if (currentLab === 'assets') renderAssetsGrid();
+    if (typeof renderGalleryForCurrentTab === 'function'){
+        renderGalleryForCurrentTab();
+    }
+}
+
+/* ---------------- LIGHTBOX OPEN / CLOSE ----------------------------------- */
+
+function openLightbox(itemId){
+    if (typeof loadHistoryFromStorage !== 'function') return;
+
+    const history = loadHistoryFromStorage() || [];
+    const item = history.find(function(h){ return h.id === itemId; });
+    if (!item) return;
+
+    lightboxCurrentId = itemId;
+
+    const backdrop = document.getElementById('lightbox-backdrop');
+    const imgEl    = document.getElementById('lightbox-image');
+    const vidEl    = document.getElementById('lightbox-video');
+    const titleEl  = document.getElementById('lightbox-title');
+    const subEl    = document.getElementById('lightbox-subtitle');
+    const favBtn   = document.getElementById('lightbox-fav-toggle');
+
+    if (!backdrop || !imgEl || !vidEl) return;
+
+    const kind = item.kind || item.type || 'image';
+    const url  = item.previewUrl || item.url || item.thumbnail || '';
+
+    if (kind === 'video' || kind === 'shortfilm'){
+        imgEl.style.display = 'none';
+        vidEl.style.display = 'block';
+        vidEl.src = url;
+    } else {
+        vidEl.style.display = 'none';
+        imgEl.style.display = 'block';
+        imgEl.src = url;
+    }
+
+    titleEl.textContent = item.displayName || (kind === 'image' ? 'Image' : kind);
+    subEl.textContent   = item.prompt || '';
+
+    if (favBtn){
+        favBtn.classList.toggle('is-active', !!item.isFavorite);
+    }
+
+    backdrop.classList.add('active');
+}
+
+function closeLightbox(){
+    const backdrop = document.getElementById('lightbox-backdrop');
+    if (backdrop) backdrop.classList.remove('active');
+    lightboxCurrentId = null;
+    const vidEl = document.getElementById('lightbox-video');
+    if (vidEl){
+        vidEl.pause();
+        vidEl.src = '';
+    }
+}
+
+/* Close lightbox on backdrop click */
+document.addEventListener('click', function(e){
+    const backdrop = document.getElementById('lightbox-backdrop');
+    if (!backdrop || !backdrop.classList.contains('active')) return;
+
+    if (e.target === backdrop){
+        closeLightbox();
+    }
+});
+
+/* ---------------- LIGHTBOX 3-DOT MENU ------------------------------------ */
+
+function toggleLightboxMenu(event){
+    event.stopPropagation();
+    const panel = document.getElementById('lightbox-menu-panel');
+    if (!panel) return;
+    panel.classList.toggle('open');
+}
+
+document.addEventListener('click', function(){
+    const panel = document.getElementById('lightbox-menu-panel');
+    if (panel) panel.classList.remove('open');
+});
+
+/* ---------------- FILE OPERATIONS (simple versions) ----------------------- */
+
+function getCurrentItemFromHistory(){
+    if (!lightboxCurrentId || typeof loadHistoryFromStorage !== 'function') return null;
+    const history = loadHistoryFromStorage() || [];
+    return { history, item: history.find(h => h.id === lightboxCurrentId) };
+}
+
+function renameCurrentItem(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+    const newName = prompt('Rename file:', ctx.item.displayName || '');
+    if (!newName) return;
+    ctx.item.displayName = newName;
+    saveHistoryToStorage(ctx.history);
+    document.getElementById('lightbox-title').textContent = newName;
+    renderAssetsGrid();
+    if (typeof renderGalleryForCurrentTab === 'function'){
+        renderGalleryForCurrentTab();
+    }
+}
+
+function deleteCurrentItem(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+    if (!confirm('Delete this file from My Files?')) return;
+
+    const filtered = ctx.history.filter(h => h.id !== ctx.item.id);
+    saveHistoryToStorage(filtered);
+    closeLightbox();
+    renderAssetsGrid();
+    if (typeof renderGalleryForCurrentTab === 'function'){
+        renderGalleryForCurrentTab();
+    }
+    if (typeof showToast === 'function'){
+        showToast('Item deleted.', 'Success');
+    }
+}
+
+function downloadCurrentItem(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+
+    const url = ctx.item.previewUrl || ctx.item.url || ctx.item.thumbnail;
+    if (!url){
+        if (typeof showToast === 'function'){
+            showToast('No download URL available for this item.', 'Error');
+        }
+        return;
+    }
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = ctx.item.displayName || 'sulandra-file';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+function recreateCurrentItem(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+    // This just shows a toast – you can wire it into your recreate flow.
+    if (typeof showToast === 'function'){
+        showToast('Recreate flow triggered for this file.', 'Success');
+    }
+}
+
+function sendCurrentItemToCinema(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+    // Hook this into your Cinema page routing as needed.
+    if (typeof showToast === 'function'){
+        showToast('Sent to Cinema queue.', 'Success');
+    }
+}
 </script>
 </style>
 </head>
