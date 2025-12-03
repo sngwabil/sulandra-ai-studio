@@ -2411,6 +2411,28 @@ function sendCurrentItemToCinema(){
 
     </div>
 </div>
+<div id="assets-sidebar-container" style="display:none; flex-direction:column; height:100%;">
+            <div class="assets-actions-row" style="margin-bottom:12px;">
+                <div class="assets-view-toggle">
+                    <button type="button"
+                            class="assets-sidebar-mode-btn active"
+                            onclick="setAssetsSidebarMode('grid', this)">
+                        Grid
+                    </button>
+                    <button type="button"
+                            class="assets-sidebar-mode-btn"
+                            onclick="setAssetsSidebarMode('list', this)">
+                        Vertical
+                    </button>
+                </div>
+                </div>
+
+            <div id="assets-sidebar-list" class="assets-sidebar-list is-grid" style="flex:1; overflow-y:auto; max-height:none;">
+                </div>
+
+            <div id="assets-sidebar-preview" class="assets-sidebar-preview" style="display:none;">
+                </div>
+        </div>
 
 <!-- MAIN STAGE -->
 <div class="stage">
