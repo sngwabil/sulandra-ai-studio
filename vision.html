@@ -3454,6 +3454,56 @@ window.addEventListener('hashchange', applyHashRouting);
             </div>
         </div>
     </div>
-</div> 
+</div>
+<!-- FULLSCREEN VIEWER / LIGHTBOX -->
+<div id="lightbox-backdrop" class="lightbox-backdrop">
+    <div class="lightbox-inner">
+        <button class="lightbox-close" type="button" onclick="closeLightbox()">×</button>
+
+        <div class="lightbox-media">
+            <img id="lightbox-image" style="display:none;" alt="Preview">
+            <video id="lightbox-video" style="display:none;" controls></video>
+        </div>
+
+        <div class="lightbox-info-bar">
+            <div class="lightbox-meta">
+                <div id="lightbox-title" class="lightbox-title">Untitled</div>
+                <div id="lightbox-subtitle" class="lightbox-subtitle"></div>
+            </div>
+
+            <div class="lightbox-actions">
+                <!-- Heart / Favorite -->
+                <button class="card-fav-toggle"
+                        id="lightbox-fav-toggle"
+                        type="button"
+                        onclick="toggleFavoriteFromLightbox(event)">
+                    <svg viewBox="0 0 24 24">
+                        <path class="heart-outline"
+                              d="M12.1 8.64l-.1.1-.11-.11C10.14 6.6 7.1 6.6 5.13 8.58c-1.98 1.98-1.98 5.18 0 7.16l.11.11L12 22l6.76-6.15.11-.11c1.98-1.98 1.98-5.18 0-7.16-1.97-1.98-5.01-1.98-6.97 0z"/>
+                        <path class="heart-fill"
+                              d="M12.1 8.64l-.1.1-.11-.11C10.14 6.6 7.1 6.6 5.13 8.58c-1.98 1.98-1.98 5.18 0 7.16l.11.11L12 22l6.76-6.15.11-.11c1.98-1.98 1.98-5.18 0-7.16-1.97-1.98-5.01-1.98-6.97 0z"/>
+                    </svg>
+                </button>
+
+                <!-- 3 DOTS MENU -->
+                <div class="lightbox-menu">
+                    <button class="btn btn-icon"
+                            id="lightbox-menu-trigger"
+                            type="button"
+                            onclick="toggleLightboxMenu(event)">
+                        ⋯
+                    </button>
+                    <div class="lightbox-menu-panel" id="lightbox-menu-panel">
+                        <button type="button" onclick="renameCurrentItem()">Rename</button>
+                        <button type="button" onclick="downloadCurrentItem()">Download</button>
+                        <button type="button" onclick="recreateCurrentItem()">Recreate</button>
+                        <button type="button" onclick="sendCurrentItemToCinema()">Send to Cinema</button>
+                        <button type="button" onclick="deleteCurrentItem()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
