@@ -200,14 +200,18 @@ input[type=range]::-webkit-slider-thumb{
 /* Icons */
 svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-    /* Ask SIA floating chat */
+    /* Ask SIA split panel on the right */
 .sia-backdrop{
     position:fixed;
-    inset:0;
-    background:rgba(15,23,42,0.85);
+    top:0;
+    right:0;
+    bottom:0;
+    /* only cover the right side, not the whole screen */
+    width: min(460px, 100%);
+    background:rgba(15,23,42,0.98);
     display:none;
-    align-items:center;
-    justify-content:flex-end;
+    align-items:stretch;
+    justify-content:flex-start;
     z-index:180;
 }
 .sia-panel{
@@ -317,6 +321,14 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     border-right:1px solid var(--border-subtle);
     display:flex;flex-direction:column;flex-shrink:0;z-index:35;
 }
+/* Collapsed sidebar for full-focus mode */
+.sidebar.collapsed{
+    width:0;
+    padding:0;
+    border:none;
+    overflow:hidden;
+}
+    
 .sidebar-header{
     height:var(--header-height);
     padding:0 22px;
@@ -422,7 +434,9 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 /* Stage (gallery) */
 .stage{
     flex:1;
-    max-width:1040px;  /* keeps create + history area from stretching too far */
+    /* FULL WIDTH: allow stage to use all remaining space */
+    max-width:none;
+    width:100%;
     display:flex;
     flex-direction:column;
     background:radial-gradient(circle at top right,#020617,#02021a 40%,#020617);
@@ -436,6 +450,39 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     display:flex;align-items:center;justify-content:space-between;
     background:linear-gradient(90deg,#020617,#02021a);
     backdrop-filter:blur(18px);
+}
+/* Top lab bar that replaces History/Favorites */
+.lab-topbar{
+    display:flex;
+    gap:16px;
+    height:100%;
+    align-items:flex-end;
+}
+
+.lab-topbar-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px 10px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-secondary);
+    border-bottom:2px solid transparent;
+    cursor:pointer;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+
+.lab-topbar-btn.active{
+    color:#fff;
+    border-bottom-color:#60a5fa;
+}
+
+/* Optional slim divider between top bar and content if needed */
+.stage-header-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
 }
 .gallery-tabs{display:flex;gap:24px;height:100%}
 .gallery-tab{
@@ -1189,51 +1236,358 @@ textarea {
     background:rgba(15,23,42,.9);
     color:#e5e7eb;
 }
+</style>
+
+/* ---------------- MY FILES FOLDER BUTTONS --------------------------------- */
+
+function handleAssetsFolderClick(folderKey, btn){
+    // Highlight active folder
+    document.querySelectorAll('.assets-folder').forEach(function(el){
+        el.classList.toggle('assets-folder-active', el === btn);
+    });
+
+    if (folderKey === 'create'){
+        // Go straight back to Create (Image lab by default)
+        exitAssetsToCreate();
+        return;
+    }
+
+    if (folderKey === 'images')      currentAssetsFilter = 'image';
+    else if (folderKey === 'videos') currentAssetsFilter = 'video';
+    else if (folderKey === 'films')  currentAssetsFilter = 'shortfilm';
+    else currentAssetsFilter = 'all';
+
+    // Sync top tabs if needed
+    if (currentAssetsFilter !== 'all'){
+        document.querySelectorAll('.assets-top-tab').forEach(function(el){
+            el.classList.toggle('assets-top-tab-active', el.dataset.type === currentAssetsFilter);
+        });
+    }
+
+    renderAssetsGrid();
+}
+
+function setAssetsTopTab(type, btn){
+    if (btn){
+        document.querySelectorAll('.assets-top-tab').forEach(function(el){
+            el.classList.toggle('assets-top-tab-active', el === btn);
+        });
+    }
+    currentAssetsFilter = type;
+    renderAssetsGrid();
+}
+
+function exitAssetsToCreate(){
+    // Back to normal Create + History view
+    switchLab('image');
+}
 <script>
-let currentLab = 'image';
-let currentGalleryTab = 'history';
-let currentAssetsFilter = 'image';   // image | video | shortfilm | all
-let lightboxCurrentId = null;
+function toggleAssetsSidebar(){
+    const sidebar = document.getElementById('assets-sidebar');
+    const btn     = document.getElementById('assets-toggle-sidebar');
+    if (!sidebar || !btn) return;
 
-/* ---------------- LAB SWITCHING (Image / Video / Short Film / My Files) --- */
-function switchLab(mode){
-    currentLab = mode;
+    const nowHidden = sidebar.classList.toggle('hidden');
+    btn.textContent = nowHidden ? 'Show folders' : 'Hide folders';
+}
+<script>
+function renderAssetsGrid(){
+    const grid  = document.getElementById('assets-grid');
+    const empty = document.getElementById('assets-empty-state');
+    if (!grid || !empty) return;
 
-    // Highlight lab pills
-    ['image','video','shortfilm','assets'].forEach(function(key){
-        const pill = document.getElementById('lab-mode-' + key);
-        if (pill) pill.classList.toggle('active', key === mode);
+    grid.innerHTML = '';
+
+    let history = [];
+    if (typeof loadHistoryFromStorage === 'function'){
+        history = loadHistoryFromStorage() || [];
+    }
+
+    // Filter by type
+    const items = history.filter(function(item){
+        const kind = item.kind || item.type || 'image';
+        if (currentAssetsFilter === 'all')       return true;
+        if (currentAssetsFilter === 'image')     return kind === 'image';
+        if (currentAssetsFilter === 'video')     return kind === 'video';
+        if (currentAssetsFilter === 'shortfilm') return kind === 'shortfilm';
+        return true;
     });
 
-    // Show correct sidebar controls
-    const blocks = {
-        image:      document.getElementById('image-controls'),
-        video:      document.getElementById('video-controls'),
-        shortfilm:  document.getElementById('shortfilm-controls'),
-        assets:     document.getElementById('assets-controls')
-    };
-    Object.keys(blocks).forEach(function(k){
-        if (blocks[k]) blocks[k].style.display = (k === mode ? 'block' : 'none');
+    if (!items.length){
+        empty.style.display = 'block';
+        return;
+    }
+
+    empty.style.display = 'none';
+
+    items.forEach(function(item){
+        const card = createAssetsCard(item);
+        if (card) grid.appendChild(card);
     });
+}
 
-    // Switch stage layouts
-    const standardLayout = document.getElementById('standard-gallery-layout');
-    const assetsLayout   = document.getElementById('assets-layout');
+/* Build a card with heart + "Open" that triggers the lightbox */
+function createAssetsCard(item){
+    const kind = item.kind || item.type || 'image';
+    const card = document.createElement('div');
+    card.className = 'card media-' + (kind === 'video' || kind === 'shortfilm' ? 'video' : 'image');
+    card.dataset.itemId = item.id;
 
-    if (mode === 'assets'){
-        if (standardLayout) standardLayout.style.display = 'none';
-        if (assetsLayout)   assetsLayout.style.display   = 'block';
-        renderAssetsGrid();
+    const mediaUrl = item.previewUrl || item.url || item.thumbnail || '';
+
+    let mediaEl;
+    if (kind === 'video' || kind === 'shortfilm'){
+        mediaEl = document.createElement('video');
+        mediaEl.src = mediaUrl;
+        mediaEl.muted = true;
+        mediaEl.loop = true;
     } else {
-        if (standardLayout) standardLayout.style.display = 'block';
-        if (assetsLayout)   assetsLayout.style.display   = 'none';
-        if (typeof renderGalleryForCurrentTab === 'function'){
-            renderGalleryForCurrentTab();
+        mediaEl = document.createElement('img');
+        mediaEl.src = mediaUrl;
+        mediaEl.alt = item.displayName || 'Image';
+    }
+    card.appendChild(mediaEl);
+
+    // Heart (favorite)
+    const favBtn = document.createElement('button');
+    favBtn.className = 'card-fav-toggle' + (item.isFavorite ? ' is-active' : '');
+    favBtn.type = 'button';
+    favBtn.innerHTML = `
+        <svg viewBox="0 0 24 24">
+            <path class="heart-outline"
+                d="M12.1 8.64l-.1.1-.11-.11C10.14 6.6 7.1 6.6 5.13 8.58c-1.98 1.98-1.98 5.18 0 7.16l.11.11L12 22l6.76-6.15.11-.11c1.98-1.98 1.98-5.18 0-7.16-1.97-1.98-5.01-1.98-6.97 0z"/>
+            <path class="heart-fill"
+                d="M12.1 8.64l-.1.1-.11-.11C10.14 6.6 7.1 6.6 5.13 8.58c-1.98 1.98-1.98 5.18 0 7.16l.11.11L12 22l6.76-6.15.11-.11c1.98-1.98 1.98-5.18 0-7.16-1.97-1.98-5.01-1.98-6.97 0z"/>
+        </svg>
+    `;
+    favBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        toggleFavoriteFromCard(item.id, favBtn);
+    });
+    card.appendChild(favBtn);
+
+    // Dark overlay with meta + Open button
+    const overlay = document.createElement('div');
+    overlay.className = 'card-overlay';
+
+    const meta = document.createElement('div');
+    meta.className = 'card-meta';
+    meta.textContent = item.displayName || item.prompt || (kind === 'image' ? 'Image' : kind);
+    overlay.appendChild(meta);
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+
+    const openBtn = document.createElement('button');
+    openBtn.className = 'btn btn-primary';
+    openBtn.type = 'button';
+    openBtn.textContent = 'Open';
+    openBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        openLightbox(item.id);
+    });
+    actions.appendChild(openBtn);
+
+    overlay.appendChild(actions);
+    card.appendChild(overlay);
+
+    // Click card = open full view
+    card.addEventListener('click', function(){
+        openLightbox(item.id);
+    });
+
+    return card;
+}
+<script>
+/* ---------------- FAVORITES FROM CARD & LIGHTBOX -------------------------- */
+
+function toggleFavoriteFromCard(itemId, btn){
+    if (typeof loadHistoryFromStorage !== 'function' ||
+        typeof saveHistoryToStorage !== 'function') return;
+
+    const history = loadHistoryFromStorage() || [];
+    const item = history.find(function(h){ return h.id === itemId; });
+    if (!item) return;
+
+    item.isFavorite = !item.isFavorite;
+    saveHistoryToStorage(history);
+
+    btn.classList.toggle('is-active', !!item.isFavorite);
+
+    if (typeof showToast === 'function'){
+        showToast(item.isFavorite ? 'Added to Favorites.' : 'Removed from Favorites.', 'Success');
+    }
+}
+
+function toggleFavoriteFromLightbox(event){
+    event.stopPropagation();
+    if (!lightboxCurrentId) return;
+
+    const btn = document.getElementById('lightbox-fav-toggle');
+    toggleFavoriteFromCard(lightboxCurrentId, btn);
+
+    // Re-render My Files / History so favorites stay in sync
+    if (currentLab === 'assets') renderAssetsGrid();
+    if (typeof renderGalleryForCurrentTab === 'function'){
+        renderGalleryForCurrentTab();
+    }
+}
+
+/* ---------------- LIGHTBOX OPEN / CLOSE ----------------------------------- */
+
+function openLightbox(itemId){
+    if (typeof loadHistoryFromStorage !== 'function') return;
+
+    const history = loadHistoryFromStorage() || [];
+    const item = history.find(function(h){ return h.id === itemId; });
+    if (!item) return;
+
+    lightboxCurrentId = itemId;
+
+    const backdrop = document.getElementById('lightbox-backdrop');
+    const imgEl    = document.getElementById('lightbox-image');
+    const vidEl    = document.getElementById('lightbox-video');
+    const titleEl  = document.getElementById('lightbox-title');
+    const subEl    = document.getElementById('lightbox-subtitle');
+    const favBtn   = document.getElementById('lightbox-fav-toggle');
+
+    if (!backdrop || !imgEl || !vidEl) return;
+
+    const kind = item.kind || item.type || 'image';
+    const url  = item.previewUrl || item.url || item.thumbnail || '';
+
+    if (kind === 'video' || kind === 'shortfilm'){
+        imgEl.style.display = 'none';
+        vidEl.style.display = 'block';
+        vidEl.src = url;
+    } else {
+        vidEl.style.display = 'none';
+        imgEl.style.display = 'block';
+        imgEl.src = url;
+    }
+
+    titleEl.textContent = item.displayName || (kind === 'image' ? 'Image' : kind);
+    subEl.textContent   = item.prompt || '';
+
+    if (favBtn){
+        favBtn.classList.toggle('is-active', !!item.isFavorite);
+    }
+
+    backdrop.classList.add('active');
+}
+
+function closeLightbox(){
+    const backdrop = document.getElementById('lightbox-backdrop');
+    if (backdrop) backdrop.classList.remove('active');
+    lightboxCurrentId = null;
+    const vidEl = document.getElementById('lightbox-video');
+    if (vidEl){
+        vidEl.pause();
+        vidEl.src = '';
+    }
+}
+
+/* Close lightbox on backdrop click */
+document.addEventListener('click', function(e){
+    const backdrop = document.getElementById('lightbox-backdrop');
+    if (!backdrop || !backdrop.classList.contains('active')) return;
+
+    if (e.target === backdrop){
+        closeLightbox();
+    }
+});
+
+/* ---------------- LIGHTBOX 3-DOT MENU ------------------------------------ */
+
+function toggleLightboxMenu(event){
+    event.stopPropagation();
+    const panel = document.getElementById('lightbox-menu-panel');
+    if (!panel) return;
+    panel.classList.toggle('open');
+}
+
+document.addEventListener('click', function(){
+    const panel = document.getElementById('lightbox-menu-panel');
+    if (panel) panel.classList.remove('open');
+});
+
+/* ---------------- FILE OPERATIONS (simple versions) ----------------------- */
+
+function getCurrentItemFromHistory(){
+    if (!lightboxCurrentId || typeof loadHistoryFromStorage !== 'function') return null;
+    const history = loadHistoryFromStorage() || [];
+    return { history, item: history.find(h => h.id === lightboxCurrentId) };
+}
+
+function renameCurrentItem(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+    const newName = prompt('Rename file:', ctx.item.displayName || '');
+    if (!newName) return;
+    ctx.item.displayName = newName;
+    saveHistoryToStorage(ctx.history);
+    document.getElementById('lightbox-title').textContent = newName;
+    renderAssetsGrid();
+    if (typeof renderGalleryForCurrentTab === 'function'){
+        renderGalleryForCurrentTab();
+    }
+}
+
+function deleteCurrentItem(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+    if (!confirm('Delete this file from My Files?')) return;
+
+    const filtered = ctx.history.filter(h => h.id !== ctx.item.id);
+    saveHistoryToStorage(filtered);
+    closeLightbox();
+    renderAssetsGrid();
+    if (typeof renderGalleryForCurrentTab === 'function'){
+        renderGalleryForCurrentTab();
+    }
+    if (typeof showToast === 'function'){
+        showToast('Item deleted.', 'Success');
+    }
+}
+
+function downloadCurrentItem(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+
+    const url = ctx.item.previewUrl || ctx.item.url || ctx.item.thumbnail;
+    if (!url){
+        if (typeof showToast === 'function'){
+            showToast('No download URL available for this item.', 'Error');
         }
+        return;
+    }
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = ctx.item.displayName || 'sulandra-file';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+function recreateCurrentItem(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+    // This just shows a toast – you can wire it into your recreate flow.
+    if (typeof showToast === 'function'){
+        showToast('Recreate flow triggered for this file.', 'Success');
+    }
+}
+
+function sendCurrentItemToCinema(){
+    const ctx = getCurrentItemFromHistory();
+    if (!ctx || !ctx.item) return;
+    // Hook this into your Cinema page routing as needed.
+    if (typeof showToast === 'function'){
+        showToast('Sent to Cinema queue.', 'Success');
     }
 }
 </script>
-</style>
 </head>
 <body>
 
@@ -1302,24 +1656,30 @@ function switchLab(mode){
 
         <!-- Lab mode switch -->
         <div class="lab-mode-switch">
-    <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">
-        Image
+
+    <div class="lab-mode active" data-lab="image" onclick="switchLab('image')">
+        <span>Images</span>
         <span class="icon">Stills</span>
     </div>
-    <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">
-        Video
+
+    <div class="lab-mode" data-lab="video" onclick="switchLab('video')">
+        <span>Video</span>
         <span class="icon">Clips</span>
     </div>
-    <div id="lab-mode-shortfilm" class="lab-mode" onclick="switchLab('shortfilm')">
-        Short Film
+
+    <div class="lab-mode" data-lab="shortfilm" onclick="switchLab('shortfilm')">
+        <span>Short Film</span>
         <span class="icon">Storyboard</span>
     </div>
+
     <!-- NEW: MY FILES / ASSETS -->
-    <div id="lab-mode-assets" class="lab-mode" onclick="switchLab('assets')">
-        My Files
-        <span class="icon">Assets</span>
+    <div class="lab-mode" data-lab="assets" onclick="switchLab('assets')">
+        <span>My Files</span>
+        <span class="icon">LIB</span>
     </div>
+
 </div>
+
 
         <!-- IMAGE CONTROLS -->
         <div id="image-controls">
@@ -1803,22 +2163,18 @@ function switchLab(mode){
 </div>
 
 <!-- MAIN STAGE -->
-<div class="stage">
-    <div class="stage-header">
-        <div class="gallery-tabs">
-    <div class="gallery-tab active" id="tab-history"
-         onclick="switchGalleryTab('history', this)">History</div>
+<div class="stage-header">
 
-    <div class="gallery-tab" id="tab-favorites"
-         onclick="switchGalleryTab('favorites', this)">Favorites</div>
-</div>
+    <div class="lab-topbar" id="lab-topbar"></div>
 
-        <div class="stage-header-right">
-            <div class="plan-pill" onclick="openPlanModal()">
-                <span style="width:6px;height:6px;border-radius:999px;background:#38bdf8;"></span>
-                <span id="vision-plan-pill-text">Plan: Basic · 0 credits available</span>
+    <div class="stage-header-right">
+        <div class="plan-pill" onclick="openPlanModal()">
+            <span style="width:6px;height:6px;border-radius:999px;background:#ffcc00;"></span>
+            <span id="vision-plan-pill-text">Plan: Basic · 0 credits available</span>
         </div>
     </div>
+
+</div>
 
     <div class="stage-content" id="gallery-container">
 
@@ -2076,23 +2432,59 @@ function clearPendingHistoryCard(id) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* LAB SWITCHING                                                              */
+/* LAB SWITCHING – Image / Video / Short Film / My Files                      */
 /* -------------------------------------------------------------------------- */
 function switchLab(lab){
     currentLab = lab;
 
-    document.getElementById('nav-image').classList.toggle('active', lab === 'image');
-    document.getElementById('nav-video').classList.toggle('active', lab === 'video');
-    document.getElementById('nav-shortfilm').classList.toggle('active', lab === 'shortfilm');
+    // 1. Highlight left-nav buttons (if you add nav-assets later it will just work)
+    const navMap = {
+        image:     document.getElementById('nav-image'),
+        video:     document.getElementById('nav-video'),
+        shortfilm: document.getElementById('nav-shortfilm'),
+        assets:    document.getElementById('nav-assets')
+    };
+    Object.keys(navMap).forEach(key => {
+        const el = navMap[key];
+        if (el) el.classList.toggle('active', key === lab);
+    });
 
-    document.getElementById('lab-mode-image').classList.toggle('active', lab === 'image');
-    document.getElementById('lab-mode-video').classList.toggle('active', lab === 'video');
-    document.getElementById('lab-mode-shortfilm').classList.toggle('active', lab === 'shortfilm');
+    // 2. Highlight the sidebar lab pills using data-lab="..."
+    document.querySelectorAll('.lab-mode').forEach(el => {
+        const mode = el.dataset.lab || '';
+        el.classList.toggle('active', mode === lab);
+    });
 
-    document.getElementById('image-controls').style.display = (lab === 'image') ? 'block' : 'none';
-    document.getElementById('video-controls').style.display = (lab === 'video') ? 'block' : 'none';
-    document.getElementById('shortfilm-controls').style.display = (lab === 'shortfilm') ? 'block' : 'none';
-    applyGalleryFilterForCurrentLab();
+    // 3. Show the correct control panel on the left
+    const imageControls     = document.getElementById('image-controls');
+    const videoControls     = document.getElementById('video-controls');
+    const shortfilmControls = document.getElementById('shortfilm-controls');
+    const assetsControls    = document.getElementById('assets-controls');
+
+    if (imageControls)     imageControls.style.display     = (lab === 'image')     ? 'block' : 'none';
+    if (videoControls)     videoControls.style.display     = (lab === 'video')     ? 'block' : 'none';
+    if (shortfilmControls) shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
+    if (assetsControls)    assetsControls.style.display    = (lab === 'assets')    ? 'block' : 'none';
+
+    // 4. Switch between normal gallery layout and My Files layout
+    const standardLayout = document.getElementById('standard-gallery-layout');
+    const assetsLayout   = document.getElementById('assets-layout');
+
+    if (lab === 'assets') {
+        if (standardLayout) standardLayout.style.display = 'none';
+        if (assetsLayout)   assetsLayout.style.display   = 'block';
+        if (typeof renderAssetsGrid === 'function') {
+            renderAssetsGrid();
+        }
+    } else {
+        if (standardLayout) standardLayout.style.display = 'block';
+        if (assetsLayout)   assetsLayout.style.display   = 'none';
+
+        // keep your existing gallery filter logic
+        if (typeof applyGalleryFilterForCurrentLab === 'function') {
+            applyGalleryFilterForCurrentLab();
+        }
+    }
 }
 
 /* -------------------------------------------------------------------------- */
