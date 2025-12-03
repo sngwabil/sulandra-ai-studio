@@ -337,28 +337,145 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     display:flex;align-items:center;justify-content:space-between;
     background:linear-gradient(90deg,#020617,#02021a);
 }
+/* Sidebar gallery for MY FILES ---------------------------------------- */
+.assets-header-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+}
+
+.assets-header-text{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+.assets-view-toggle{
+    display:flex;
+    gap:4px;
+}
+
+.assets-view-toggle-btn{
+    border-radius:999px;
+    border:1px solid var(--border-subtle);
+    padding:4px 8px;
+    font-size:10px;
+    background:transparent;
+    color:var(--text-secondary);
+    cursor:pointer;
+}
+
+.assets-view-toggle-btn.active{
+    background:var(--accent-primary);
+    color:#f9fafb;
+    border-color:var(--accent-primary);
+}
+
+/* Container that holds the thumbnails */
 .assets-sidebar-list{
     max-height:260px;
     overflow-y:auto;
     margin-top:8px;
     padding:6px 0;
     display:flex;
-    flex-direction:column;
-    gap:4px;
+    flex-wrap:wrap;
+    gap:6px;
 }
 
+/* Two modes: grid vs vertical list */
+.assets-sidebar-list.is-grid{
+    flex-direction:row;
+}
+
+.assets-sidebar-list.is-list{
+    flex-direction:column;
+}
+
+/* Each thumbnail row/card */
 .assets-sidebar-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:4px 6px;
+    border-radius:8px;
+    background:rgba(15,23,42,0.9);
     font-size:11px;
     color:var(--text-secondary);
-    padding:4px 6px;
-    border-radius:var(--radius-sm);
-    background:rgba(15,23,42,.7);
+    cursor:pointer;
+    flex:0 0 calc(50% - 3px); /* 2-column grid by default */
+}
+.assets-sidebar-list.is-list .assets-sidebar-item{
+    flex:1 1 auto;           /* full width for vertical mode */
 }
 
 .assets-sidebar-item:hover{
-    background:rgba(30,64,175,.7);
-    color:#e5e7eb;
+    background:rgba(30,64,175,0.95);
+    color:#f9fafb;
 }
+
+/* Thumbnail image inside each item */
+.assets-sidebar-thumb{
+    width:40px;
+    height:40px;
+    border-radius:6px;
+    object-fit:cover;
+    flex-shrink:0;
+    background:#020617;
+}
+
+/* Text next to the thumbnail */
+.assets-sidebar-meta{
+    flex:1;
+    line-height:1.3;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+/* Sidebar full-image preview (opened on double-click) */
+.assets-sidebar-preview{
+    margin-top:10px;
+    padding:8px;
+    border-radius:12px;
+    background:rgba(15,23,42,0.95);
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+}
+
+.assets-preview-image-wrapper{
+    width:100%;
+    border-radius:10px;
+    overflow:hidden;
+    background:#020617;
+}
+
+.assets-preview-image{
+    width:100%;
+    display:block;
+    object-fit:contain;
+}
+
+.assets-preview-meta{
+    font-size:11px;
+    color:var(--text-secondary);
+}
+
+.assets-preview-close{
+    margin-top:4px;
+    font-size:10px;
+    border:none;
+    background:transparent;
+    color:var(--text-secondary);
+    cursor:pointer;
+}
+
+.assets-preview-close:hover{
+    color:#f9fafb;
+}
+
 .sidebar-title{
     font-weight:800;font-size:15px;letter-spacing:.14em;text-transform:uppercase;
 }
@@ -2268,19 +2385,40 @@ function sendCurrentItemToCinema(){
 
     </div>
 </div>
-    <!-- MY FILES / VIEW MODE CONTROLS (sidebar list) -->
-<div id="assets-controls" style="display:none;">
+<!-- MY FILES / VIEW MODE CONTROLS (sidebar list + preview) -->
+<div id="assets-controls" class="input-section" style="display:none;">
     <div class="input-group">
-        <div class="label">
-            <span id="assets-label">My Images</span>
-            <span style="font-size:10px;opacity:.7;" id="assets-label-sub">
-                All images you created in Sulandra Creative Lab
-            </span>
+        <div class="label assets-header-row">
+            <div class="assets-header-text">
+                <span id="assets-label">My Images</span>
+                <span id="assets-label-sub"
+                      style="font-size:10px;font-weight:400;color:var(--text-secondary);display:block;margin-top:2px;">
+                    All images you created in Sulandra Creative Lab
+                </span>
+            </div>
+
+            <div class="assets-view-toggle">
+                <button type="button"
+                        class="assets-view-toggle-btn active"
+                        onclick="setAssetsSidebarMode('grid', this)">
+                    Grid
+                </button>
+                <button type="button"
+                        class="assets-view-toggle-btn"
+                        onclick="setAssetsSidebarMode('list', this)">
+                    Vertical
+                </button>
+            </div>
         </div>
 
-        <!-- List of items for the chosen view (images / videos / films / favorites) -->
-        <div id="assets-sidebar-list" class="assets-sidebar-list">
-            <!-- Filled by JS in renderAssetsView() -->
+        <!-- Thumbnails in sidebar (grid or vertical) -->
+        <div id="assets-sidebar-list" class="assets-sidebar-list is-grid">
+            <!-- JS will inject thumbnail rows here -->
+        </div>
+
+        <!-- Full image preview INSIDE sidebar (appears on double click) -->
+        <div id="assets-sidebar-preview" class="assets-sidebar-preview" style="display:none;">
+            <!-- JS will fill this when a thumbnail is double-clicked -->
         </div>
     </div>
 </div>
@@ -2469,7 +2607,7 @@ const ASSETS_STORAGE_KEY  = 'sulandra_assets_v1';
 
 let persistedHistory = [];   // all personal generations
 let myAssets        = [];   // curated "My Assets"
-
+let currentAssetsSidebarMode = 'grid'; // grid vs vertical list in My Files
 
 let currentLab = "image";
 let currentGalleryTab = "history";   // history / community / favorites
@@ -2632,87 +2770,153 @@ function switchLab(lab){
 /* -------------------------------------------------------------------------- */
 /* VIEW MODE – My Files (Images / Videos / Films / Favorites / Create)        */
 /* -------------------------------------------------------------------------- */
+function switchAssetsView(view, el) {
+    // Only remember real library views, not "create"
+    if (view !== 'create') {
+        currentAssetsView = view;
+    }
 
-function switchAssetsView(view, el){
-    // Store current view so we can restore it when re-entering My Files
-    currentAssetsView = view;
-
-    // Highlight the active view tab
     document.querySelectorAll('.lab-mode-view').forEach(btn => {
         btn.classList.toggle('active', btn === el);
     });
 
-    // "Create" jumps back to normal create mode
-    if (view === 'create'){
+    // "Create" inside My Files just routes back to the main create lab
+    if (view === 'create') {
         switchLab('image');
         return;
     }
+function setAssetsSidebarMode(mode, el) {
+    currentAssetsSidebarMode = mode;
 
+    const list = document.getElementById('assets-sidebar-list');
+    if (!list) return;
+
+    list.classList.toggle('is-grid', mode === 'grid');
+    list.classList.toggle('is-list', mode === 'list');
+
+    document.querySelectorAll('.assets-sidebar-mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn === el);
+    });
+}
+
+function openSidebarPreview(item) {
+    const preview = document.getElementById('assets-sidebar-preview');
+    const list    = document.getElementById('assets-sidebar-list');
+    if (!preview || !list) return;
+
+    const url   = item.previewUrl || item.url || item.thumbnail || '';
+    const title = item.prompt || item.title || item.filename || 'Untitled item';
+
+    preview.innerHTML = `
+        <div class="assets-preview-image-wrapper">
+            <img src="${url}" alt="Preview" class="assets-preview-image">
+        </div>
+        <div class="assets-preview-meta">${title}</div>
+        <button type="button"
+                class="assets-preview-close"
+                onclick="closeSidebarPreview()">
+            ✕ Close
+        </button>
+    `;
+
+    list.style.display = 'flex';
+    preview.style.display = 'flex';
+}
+
+function closeSidebarPreview() {
+    const preview = document.getElementById('assets-sidebar-preview');
+    const list    = document.getElementById('assets-sidebar-list');
+    if (!preview || !list) return;
+
+    preview.style.display = 'none';
+    list.style.display    = 'flex';
+}
     renderAssetsView();
 }
 
-function renderAssetsView(){
+function renderAssetsView() {
     const grid        = document.getElementById('gallery-grid');
     const emptyState  = document.getElementById('empty-state');
     const sidebarList = document.getElementById('assets-sidebar-list');
     const label       = document.getElementById('assets-label');
     const labelSub    = document.getElementById('assets-label-sub');
+    const preview     = document.getElementById('assets-sidebar-preview');
 
     if (!grid || !emptyState || !sidebarList || typeof loadHistoryFromStorage !== 'function') {
         return;
     }
 
-    // Update the label text based on which tab is active
-    if (label && labelSub){
-        if (currentAssetsView === 'images'){
-            label.textContent    = 'My Images';
-            labelSub.textContent = 'All images you created in Sulandra Creative Lab';
-        } else if (currentAssetsView === 'videos'){
-            label.textContent    = 'My Videos';
-            labelSub.textContent = 'All videos you created in Sulandra Creative Lab';
-        } else if (currentAssetsView === 'films'){
-            label.textContent    = 'My Films';
-            labelSub.textContent = 'All short films you created in Sulandra Creative Lab';
-        } else if (currentAssetsView === 'favorites'){
-            label.textContent    = 'Favorites';
-            labelSub.textContent = 'Only items you have starred as favorites';
-        }
+    // Reset sidebar preview + list mode each time
+    if (preview) {
+        preview.style.display = 'none';
+        preview.innerHTML = '';
+    }
+    sidebarList.style.display = 'flex';
+    sidebarList.classList.toggle('is-grid', currentAssetsSidebarMode === 'grid');
+    sidebarList.classList.toggle('is-list', currentAssetsSidebarMode !== 'grid');
+
+    // Pull everything from history / favorites
+    const history   = loadHistoryFromStorage() || [];
+    const favorites = loadFavoritesFromStorage ? loadFavoritesFromStorage() : [];
+
+    let filtered = [];
+    if (currentAssetsView === 'images') {
+        filtered = history.filter(item => item.type === 'image');
+        if (label)     label.textContent = 'My Images';
+        if (labelSub)  labelSub.textContent = 'All images you created in Sulandra Creative Lab';
+    } else if (currentAssetsView === 'videos') {
+        filtered = history.filter(item => item.type === 'video');
+        if (label)     label.textContent = 'My Videos';
+        if (labelSub)  labelSub.textContent = 'All videos you created in Sulandra Creative Lab';
+    } else if (currentAssetsView === 'films') {
+        filtered = history.filter(item => item.type === 'film');
+        if (label)     label.textContent = 'My Films';
+        if (labelSub)  labelSub.textContent = 'All short films you created in Sulandra Creative Lab';
+    } else if (currentAssetsView === 'favorites') {
+        const favIds = new Set(favorites.map(f => f.id));
+        filtered = history.filter(item => favIds.has(item.id));
+        if (label)     label.textContent = 'Favorites';
+        if (labelSub)  labelSub.textContent = 'Images, videos, and films you starred';
     }
 
-    const history = loadHistoryFromStorage() || [];
-
-    // Filter by type / favorites
-    let filtered = history;
-    if (currentAssetsView === 'images'){
-        filtered = history.filter(item => (item.kind || item.type || 'image') === 'image');
-    } else if (currentAssetsView === 'videos'){
-        filtered = history.filter(item => (item.kind || item.type || 'image') === 'video');
-    } else if (currentAssetsView === 'films'){
-        filtered = history.filter(item => (item.kind || item.type || 'image') === 'shortfilm');
-    } else if (currentAssetsView === 'favorites'){
-        filtered = history.filter(item => item.isFavorite);
-    }
-
-    // Clear existing UI
+    // Clear old UI
     grid.innerHTML = '';
     sidebarList.innerHTML = '';
 
-    if (!filtered.length){
+    if (!filtered.length) {
         emptyState.style.display = 'flex';
         return;
     }
 
     emptyState.style.display = 'none';
 
-    // Fill gallery + sidebar list
     filtered.forEach(item => {
-        // Main gallery uses your existing card builder
+        // 1. Fill the big gallery on the right (standard layout)
         addToGallery(item, { saveToHistory: false });
 
-        // Sidebar entry – simple text list
+        // 2. Add a thumbnail row in the sidebar
+        const url   = item.previewUrl || item.url || item.thumbnail || '';
+        const title = item.prompt || item.title || item.filename || 'Untitled item';
+
         const row = document.createElement('div');
         row.className = 'assets-sidebar-item';
-        row.textContent = item.prompt || item.title || item.filename || 'Untitled item';
+        row.title     = title;
+
+        const img = document.createElement('img');
+        img.className = 'assets-sidebar-thumb';
+        img.src       = url;
+        img.alt       = 'Thumbnail';
+
+        const meta = document.createElement('div');
+        meta.className = 'assets-sidebar-meta';
+        meta.textContent = title;
+
+        row.appendChild(img);
+        row.appendChild(meta);
+
+        // Double-click to open the zoomed preview inside sidebar
+        row.addEventListener('dblclick', () => openSidebarPreview(item));
+
         sidebarList.appendChild(row);
     });
 }
