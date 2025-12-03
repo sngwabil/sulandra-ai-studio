@@ -350,13 +350,12 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     flex-direction:column;
     gap:2px;
 }
-
 .assets-view-toggle{
     display:flex;
     gap:4px;
 }
 
-/* New row: Grid / Vertical + Ask SIA on the same line */
+/* Row that holds Grid/Vertical + Ask SIA in the sidebar */
 .assets-actions-row{
     margin-top:8px;
     display:flex;
@@ -364,16 +363,12 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     gap:8px;
 }
 
-.assets-actions-row .assets-view-toggle{
-    flex-shrink:0;
-}
-
-/* Let Ask SIA stretch to fill the rest of the row */
+/* Let Ask SIA stretch while Grid/Vertical stay compact */
 .assets-actions-row .btn-ask-sia{
     flex:1;
 }
 
-/* Styled pills for the sidebar Grid / Vertical buttons */
+/* Sidebar Grid / Vertical buttons */
 .assets-sidebar-mode-btn{
     border-radius:999px;
     border:1px solid var(--border-subtle);
@@ -1964,7 +1959,7 @@ function sendCurrentItemToCinema(){
         <option value="4">4 images</option>
     </select>
 </div>
-            
+        
   <button id="gen-btn-img"
         class="btn btn-accent"
         style="width:100%;height:46px;margin-top:10px;"
@@ -1973,7 +1968,20 @@ function sendCurrentItemToCinema(){
     GENERATE IMAGE
 </button>
         </div>
- <div style="margin-top:8px;display:flex;justify-content:flex-end;">
+ <div class="assets-actions-row">
+    <div class="assets-view-toggle">
+        <button type="button"
+                class="assets-sidebar-mode-btn active"
+                onclick="setAssetsSidebarMode('grid', this)">
+            Grid
+        </button>
+        <button type="button"
+                class="assets-sidebar-mode-btn"
+                onclick="setAssetsSidebarMode('list', this)">
+            Vertical
+        </button>
+    </div>
+
     <button
         type="button"
         class="btn-ask-sia"
