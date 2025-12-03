@@ -1652,13 +1652,25 @@ function sendCurrentItemToCinema(){
 <!-- SIDEBAR -->
 <div class="sidebar">
     <div class="sidebar-header">
-        <div>
-            <div class="sidebar-title">SULANDRA CREATIVE LAB</div>
-        </div>
+    <div class="sidebar-title">Sulandra Vision Lab</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+        <button
+            type="button"
+            class="btn-icon"
+            onclick="toggleSidebar()"
+            title="Hide/Show controls">
+            <!-- simple chevron icon -->
+            <svg viewBox="0 0 24 24">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
         <div class="sidebar-status">
-            <span></span><span>H200 ONLINE</span>
+            <!-- keep your existing status dots/text here -->
+            ...
         </div>
     </div>
+</div>
+
     
     <div class="sidebar-scroll" id="sidebar-scroll">
 
@@ -2393,8 +2405,16 @@ function sendCurrentItemToCinema(){
         <audio id="audio-browser-player" style="width:100%;padding:10px 14px 14px;" controls></audio>
     </div>
 </div>
-
 <script>
+// your other functions…
+
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar) return;
+    sidebar.classList.toggle('collapsed');
+}
+</script>
+
 /* -------------------------------------------------------------------------- */
 /* CONFIG                                                                     */
 /* -------------------------------------------------------------------------- */
