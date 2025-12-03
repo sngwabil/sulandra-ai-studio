@@ -1699,24 +1699,30 @@ function sendCurrentItemToCinema(){
 
         <!-- Lab mode switch -->
         <div class="lab-mode-switch">
-    <div id="lab-mode-image" class="lab-mode active" onclick="switchLab('image')">
-        Image
+
+    <div class="lab-mode active" data-lab="image" onclick="switchLab('image')">
+        <span>Images</span>
         <span class="icon">Stills</span>
     </div>
-    <div id="lab-mode-video" class="lab-mode" onclick="switchLab('video')">
-        Video
+
+    <div class="lab-mode" data-lab="video" onclick="switchLab('video')">
+        <span>Video</span>
         <span class="icon">Clips</span>
     </div>
-    <div id="lab-mode-shortfilm" class="lab-mode" onclick="switchLab('shortfilm')">
-        Short Film
+
+    <div class="lab-mode" data-lab="shortfilm" onclick="switchLab('shortfilm')">
+        <span>Short Film</span>
         <span class="icon">Storyboard</span>
     </div>
+
     <!-- NEW: MY FILES / ASSETS -->
-    <div id="lab-mode-assets" class="lab-mode" onclick="switchLab('assets')">
-        My Files
-        <span class="icon">Assets</span>
+    <div class="lab-mode" data-lab="assets" onclick="switchLab('assets')">
+        <span>My Files</span>
+        <span class="icon">LIB</span>
     </div>
+
 </div>
+
 
         <!-- IMAGE CONTROLS -->
         <div id="image-controls">
