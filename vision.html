@@ -2432,23 +2432,59 @@ function clearPendingHistoryCard(id) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* LAB SWITCHING                                                              */
+/* LAB SWITCHING – Image / Video / Short Film / My Files                      */
 /* -------------------------------------------------------------------------- */
 function switchLab(lab){
     currentLab = lab;
 
-    document.getElementById('nav-image').classList.toggle('active', lab === 'image');
-    document.getElementById('nav-video').classList.toggle('active', lab === 'video');
-    document.getElementById('nav-shortfilm').classList.toggle('active', lab === 'shortfilm');
+    // 1. Highlight left-nav buttons (if you add nav-assets later it will just work)
+    const navMap = {
+        image:     document.getElementById('nav-image'),
+        video:     document.getElementById('nav-video'),
+        shortfilm: document.getElementById('nav-shortfilm'),
+        assets:    document.getElementById('nav-assets')
+    };
+    Object.keys(navMap).forEach(key => {
+        const el = navMap[key];
+        if (el) el.classList.toggle('active', key === lab);
+    });
 
-    document.getElementById('lab-mode-image').classList.toggle('active', lab === 'image');
-    document.getElementById('lab-mode-video').classList.toggle('active', lab === 'video');
-    document.getElementById('lab-mode-shortfilm').classList.toggle('active', lab === 'shortfilm');
+    // 2. Highlight the sidebar lab pills using data-lab="..."
+    document.querySelectorAll('.lab-mode').forEach(el => {
+        const mode = el.dataset.lab || '';
+        el.classList.toggle('active', mode === lab);
+    });
 
-    document.getElementById('image-controls').style.display = (lab === 'image') ? 'block' : 'none';
-    document.getElementById('video-controls').style.display = (lab === 'video') ? 'block' : 'none';
-    document.getElementById('shortfilm-controls').style.display = (lab === 'shortfilm') ? 'block' : 'none';
-    applyGalleryFilterForCurrentLab();
+    // 3. Show the correct control panel on the left
+    const imageControls     = document.getElementById('image-controls');
+    const videoControls     = document.getElementById('video-controls');
+    const shortfilmControls = document.getElementById('shortfilm-controls');
+    const assetsControls    = document.getElementById('assets-controls');
+
+    if (imageControls)     imageControls.style.display     = (lab === 'image')     ? 'block' : 'none';
+    if (videoControls)     videoControls.style.display     = (lab === 'video')     ? 'block' : 'none';
+    if (shortfilmControls) shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
+    if (assetsControls)    assetsControls.style.display    = (lab === 'assets')    ? 'block' : 'none';
+
+    // 4. Switch between normal gallery layout and My Files layout
+    const standardLayout = document.getElementById('standard-gallery-layout');
+    const assetsLayout   = document.getElementById('assets-layout');
+
+    if (lab === 'assets') {
+        if (standardLayout) standardLayout.style.display = 'none';
+        if (assetsLayout)   assetsLayout.style.display   = 'block';
+        if (typeof renderAssetsGrid === 'function') {
+            renderAssetsGrid();
+        }
+    } else {
+        if (standardLayout) standardLayout.style.display = 'block';
+        if (assetsLayout)   assetsLayout.style.display   = 'none';
+
+        // keep your existing gallery filter logic
+        if (typeof applyGalleryFilterForCurrentLab === 'function') {
+            applyGalleryFilterForCurrentLab();
+        }
+    }
 }
 
 /* -------------------------------------------------------------------------- */
