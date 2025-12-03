@@ -2406,73 +2406,8 @@ let persistedHistory = [];   // all personal generations
 let myAssets        = [];   // curated "My Assets"
 
 
-let currentLab = 'image';        // image | video | shortfilm | assets
-let currentMode = 'create';      // create | files
-let currentFilesTab = 'images';  // used only inside My Files
-function renderLabTopbar() {
-    const bar = document.getElementById('lab-topbar');
-    if (!bar) return;
-
-    let tabs = [];
-
-    if (currentMode === 'create') {
-        tabs = [
-            { id: 'image',      label: 'Images' },
-            { id: 'video',      label: 'Video Clips' },
-            { id: 'shortfilm',  label: 'Short Films' },
-            { id: 'assets',     label: 'My Files' }
-        ];
-    } else {
-        // My Files mode
-        tabs = [
-            { id: 'images', label: 'My Images' },
-            { id: 'videos', label: 'My Videos' },
-            { id: 'films',  label: 'My Films' },
-            { id: 'create', label: 'Create' }
-        ];
-    }
-
-    bar.innerHTML = '';
-
-    tabs.forEach(tab => {
-        const btn = document.createElement('div');
-        btn.className = 'lab-topbar-btn';
-
-        if (currentMode === 'create') {
-            if (tab.id === currentLab) btn.classList.add('active');
-        } else {
-            if (tab.id === currentFilesTab || (tab.id === 'create' && currentMode === 'create')) {
-                if (tab.id === currentFilesTab) btn.classList.add('active');
-            }
-        }
-
-        btn.textContent = tab.label;
-
-        btn.addEventListener('click', () => {
-            if (currentMode === 'create') {
-                if (tab.id === 'assets') {
-                    currentMode = 'files';
-                    currentFilesTab = 'images';   // default My Images
-                    switchToFilesLayout();
-                } else {
-                    switchLab(tab.id);
-                }
-            } else { // files mode
-                if (tab.id === 'create') {
-                    currentMode = 'create';
-                    switchLab('image'); // default back to image lab
-                } else {
-                    currentFilesTab = tab.id;
-                    renderFilesSection();
-                }
-            }
-            renderLabTopbar();
-        });
-
-        bar.appendChild(btn);
-    });
-}
-
+let currentLab = "image";
+let currentGalleryTab = "history";   // history / community / favorites
 let currentImageMode = "txt2img";
 let currentVideoMode = "text2video";
 let imageBase64 = null;
@@ -2559,12 +2494,10 @@ function clearPendingHistoryCard(id) {
 /* -------------------------------------------------------------------------- */
 /* LAB SWITCHING – Image / Video / Short Film / My Files                      */
 /* -------------------------------------------------------------------------- */
-function switchLab(lab) {
-    // 0. Always go back to CREATE mode when clicking a lab pill
-    currentMode = 'create';
+function switchLab(lab){
     currentLab = lab;
 
-    // 1. Highlight left-nav buttons
+    // 1. Highlight left-nav buttons (if you add nav-assets later it will just work)
     const navMap = {
         image:     document.getElementById('nav-image'),
         video:     document.getElementById('nav-video'),
@@ -2573,54 +2506,47 @@ function switchLab(lab) {
     };
     Object.keys(navMap).forEach(key => {
         const el = navMap[key];
-        if (el) {
-            el.classList.toggle('active', key === lab);
-        }
+        if (el) el.classList.toggle('active', key === lab);
     });
 
-    // 2. Highlight the sidebar lab pills
+    // 2. Highlight the sidebar lab pills using data-lab="..."
     document.querySelectorAll('.lab-mode').forEach(el => {
-        const id = el.dataset.lab || '';
-        el.classList.toggle('active', id === lab);
+        const mode = el.dataset.lab || '';
+        el.classList.toggle('active', mode === lab);
     });
 
-    // 3. Rerender the top bar dynamically depending on the lab & mode
-    renderLabTopbar();
-
-    // 4. Hide all center "create" UIs
-    document.querySelectorAll('.create-container').forEach(c => {
-        c.style.display = 'none';
-    });
-
-    // 5. Show the correct center UI for the selected lab
-    const target = document.getElementById(`create-${lab}`);
-    if (target) {
-        target.style.display = 'block';
-    }
-
-    // 6. Render the correct history gallery for this lab
-    renderHistoryGallery(lab);
-
-    // 7. Show the correct control panel on the left
+    // 3. Show the correct control panel on the left
     const imageControls     = document.getElementById('image-controls');
     const videoControls     = document.getElementById('video-controls');
     const shortfilmControls = document.getElementById('shortfilm-controls');
     const assetsControls    = document.getElementById('assets-controls');
 
-    if (imageControls) {
-        imageControls.style.display = (lab === 'image') ? 'block' : 'none';
-    }
-    if (videoControls) {
-        videoControls.style.display = (lab === 'video') ? 'block' : 'none';
-    }
-    if (shortfilmControls) {
-        shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
-    }
-    if (assetsControls) {
-        assetsControls.style.display = (lab === 'assets') ? 'block' : 'none';
+    if (imageControls)     imageControls.style.display     = (lab === 'image')     ? 'block' : 'none';
+    if (videoControls)     videoControls.style.display     = (lab === 'video')     ? 'block' : 'none';
+    if (shortfilmControls) shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
+    if (assetsControls)    assetsControls.style.display    = (lab === 'assets')    ? 'block' : 'none';
+
+    // 4. Switch between normal gallery layout and My Files layout
+    const standardLayout = document.getElementById('standard-gallery-layout');
+    const assetsLayout   = document.getElementById('assets-layout');
+
+    if (lab === 'assets') {
+        if (standardLayout) standardLayout.style.display = 'none';
+        if (assetsLayout)   assetsLayout.style.display   = 'block';
+        if (typeof renderAssetsGrid === 'function') {
+            renderAssetsGrid();
+        }
+    } else {
+        if (standardLayout) standardLayout.style.display = 'block';
+        if (assetsLayout)   assetsLayout.style.display   = 'none';
+
+        // keep your existing gallery filter logic
+        if (typeof applyGalleryFilterForCurrentLab === 'function') {
+            applyGalleryFilterForCurrentLab();
+        }
     }
 }
-    
+
 /* -------------------------------------------------------------------------- */
 /* IMAGE CONTROLS                                                             */
 /* -------------------------------------------------------------------------- */
