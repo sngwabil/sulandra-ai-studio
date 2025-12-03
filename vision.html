@@ -1237,17 +1237,21 @@ textarea {
     color:#e5e7eb;
 }
 </style>
+<script>
+// Global state for My Files & lightbox
+let currentAssetsFilter = 'image';   // 'image' | 'video' | 'shortfilm' | 'all'
+let lightboxCurrentId   = null;
 
 /* ---------------- MY FILES FOLDER BUTTONS --------------------------------- */
 
 function handleAssetsFolderClick(folderKey, btn){
-    // Highlight active folder
+    // Highlight active folder in the left My Files sidebar
     document.querySelectorAll('.assets-folder').forEach(function(el){
         el.classList.toggle('assets-folder-active', el === btn);
     });
 
     if (folderKey === 'create'){
-        // Go straight back to Create (Image lab by default)
+        // Go straight back to the normal Create lab (image by default)
         exitAssetsToCreate();
         return;
     }
@@ -1255,12 +1259,15 @@ function handleAssetsFolderClick(folderKey, btn){
     if (folderKey === 'images')      currentAssetsFilter = 'image';
     else if (folderKey === 'videos') currentAssetsFilter = 'video';
     else if (folderKey === 'films')  currentAssetsFilter = 'shortfilm';
-    else currentAssetsFilter = 'all';
+    else                             currentAssetsFilter = 'all';
 
-    // Sync top tabs if needed
+    // Keep the top tabs (Images / Videos / Films / All) in sync
     if (currentAssetsFilter !== 'all'){
         document.querySelectorAll('.assets-top-tab').forEach(function(el){
-            el.classList.toggle('assets-top-tab-active', el.dataset.type === currentAssetsFilter);
+            el.classList.toggle(
+                'assets-top-tab-active',
+                el.dataset.type === currentAssetsFilter
+            );
         });
     }
 
@@ -1268,6 +1275,7 @@ function handleAssetsFolderClick(folderKey, btn){
 }
 
 function setAssetsTopTab(type, btn){
+    // Highlight the active top tab (Images / Videos / Films / All)
     if (btn){
         document.querySelectorAll('.assets-top-tab').forEach(function(el){
             el.classList.toggle('assets-top-tab-active', el === btn);
@@ -1278,10 +1286,14 @@ function setAssetsTopTab(type, btn){
 }
 
 function exitAssetsToCreate(){
-    // Back to normal Create + History view
-    switchLab('image');
+    // Back to the normal Create + History layout
+    if (typeof switchLab === 'function'){
+        switchLab('image');
+    }
 }
-<script>
+
+/* ---------------- ASSETS SIDEBAR TOGGLE ----------------------------------- */
+
 function toggleAssetsSidebar(){
     const sidebar = document.getElementById('assets-sidebar');
     const btn     = document.getElementById('assets-toggle-sidebar');
@@ -1290,67 +1302,59 @@ function toggleAssetsSidebar(){
     const nowHidden = sidebar.classList.toggle('hidden');
     btn.textContent = nowHidden ? 'Show folders' : 'Hide folders';
 }
-<script>
+
+/* ---------------- RENDER MY FILES GRID ------------------------------------ */
+
 function renderAssetsGrid(){
     const grid  = document.getElementById('assets-grid');
     const empty = document.getElementById('assets-empty-state');
-    if (!grid || !empty) return;
+
+    if (!grid || !empty || typeof loadHistoryFromStorage !== 'function') return;
+
+    const history = loadHistoryFromStorage() || [];
+
+    const filtered = history.filter(function(item){
+        const kind = item.kind || item.type || 'image';
+        if (currentAssetsFilter === 'all') return true;
+        if (currentAssetsFilter === 'shortfilm') return kind === 'shortfilm';
+        return kind === currentAssetsFilter;
+    });
 
     grid.innerHTML = '';
 
-    let history = [];
-    if (typeof loadHistoryFromStorage === 'function'){
-        history = loadHistoryFromStorage() || [];
-    }
-
-    // Filter by type
-    const items = history.filter(function(item){
-        const kind = item.kind || item.type || 'image';
-        if (currentAssetsFilter === 'all')       return true;
-        if (currentAssetsFilter === 'image')     return kind === 'image';
-        if (currentAssetsFilter === 'video')     return kind === 'video';
-        if (currentAssetsFilter === 'shortfilm') return kind === 'shortfilm';
-        return true;
-    });
-
-    if (!items.length){
+    if (!filtered.length){
         empty.style.display = 'block';
         return;
     }
 
     empty.style.display = 'none';
 
-    items.forEach(function(item){
-        const card = createAssetsCard(item);
-        if (card) grid.appendChild(card);
+    filtered.forEach(function(item){
+        grid.appendChild(createAssetsCard(item));
     });
 }
 
-/* Build a card with heart + "Open" that triggers the lightbox */
+/* ---------------- BUILD ONE ASSETS CARD ----------------------------------- */
+
 function createAssetsCard(item){
     const kind = item.kind || item.type || 'image';
+    const url  = item.previewUrl || item.url || item.thumbnail || '';
+
     const card = document.createElement('div');
-    card.className = 'card media-' + (kind === 'video' || kind === 'shortfilm' ? 'video' : 'image');
-    card.dataset.itemId = item.id;
+    card.className = 'assets-card';
 
-    const mediaUrl = item.previewUrl || item.url || item.thumbnail || '';
+    // Image / thumbnail
+    const media = document.createElement('div');
+    media.className = 'card-media';
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = kind;
+    media.appendChild(img);
+    card.appendChild(media);
 
-    let mediaEl;
-    if (kind === 'video' || kind === 'shortfilm'){
-        mediaEl = document.createElement('video');
-        mediaEl.src = mediaUrl;
-        mediaEl.muted = true;
-        mediaEl.loop = true;
-    } else {
-        mediaEl = document.createElement('img');
-        mediaEl.src = mediaUrl;
-        mediaEl.alt = item.displayName || 'Image';
-    }
-    card.appendChild(mediaEl);
-
-    // Heart (favorite)
+    // Heart favorite button
     const favBtn = document.createElement('button');
-    favBtn.className = 'card-fav-toggle' + (item.isFavorite ? ' is-active' : '');
+    favBtn.className = 'card-fav-btn' + (item.isFavorite ? ' is-active' : '');
     favBtn.type = 'button';
     favBtn.innerHTML = `
         <svg viewBox="0 0 24 24">
@@ -1366,7 +1370,7 @@ function createAssetsCard(item){
     });
     card.appendChild(favBtn);
 
-    // Dark overlay with meta + Open button
+    // Overlay with title + Open button
     const overlay = document.createElement('div');
     overlay.className = 'card-overlay';
 
@@ -1391,14 +1395,14 @@ function createAssetsCard(item){
     overlay.appendChild(actions);
     card.appendChild(overlay);
 
-    // Click card = open full view
+    // Clicking anywhere on the card opens the lightbox
     card.addEventListener('click', function(){
         openLightbox(item.id);
     });
 
     return card;
 }
-<script>
+
 /* ---------------- FAVORITES FROM CARD & LIGHTBOX -------------------------- */
 
 function toggleFavoriteFromCard(itemId, btn){
@@ -1480,6 +1484,7 @@ function closeLightbox(){
     const backdrop = document.getElementById('lightbox-backdrop');
     if (backdrop) backdrop.classList.remove('active');
     lightboxCurrentId = null;
+
     const vidEl = document.getElementById('lightbox-video');
     if (vidEl){
         vidEl.pause();
@@ -1487,7 +1492,7 @@ function closeLightbox(){
     }
 }
 
-/* Close lightbox on backdrop click */
+// Close lightbox on backdrop click
 document.addEventListener('click', function(e){
     const backdrop = document.getElementById('lightbox-backdrop');
     if (!backdrop || !backdrop.classList.contains('active')) return;
@@ -1511,12 +1516,15 @@ document.addEventListener('click', function(){
     if (panel) panel.classList.remove('open');
 });
 
-/* ---------------- FILE OPERATIONS (simple versions) ----------------------- */
+/* ---------------- FILE OPERATIONS (RENAME / DELETE / DOWNLOAD) ------------ */
 
 function getCurrentItemFromHistory(){
     if (!lightboxCurrentId || typeof loadHistoryFromStorage !== 'function') return null;
     const history = loadHistoryFromStorage() || [];
-    return { history, item: history.find(h => h.id === lightboxCurrentId) };
+    return {
+        history,
+        item: history.find(function(h){ return h.id === lightboxCurrentId; })
+    };
 }
 
 function renameCurrentItem(){
@@ -1524,6 +1532,7 @@ function renameCurrentItem(){
     if (!ctx || !ctx.item) return;
     const newName = prompt('Rename file:', ctx.item.displayName || '');
     if (!newName) return;
+
     ctx.item.displayName = newName;
     saveHistoryToStorage(ctx.history);
     document.getElementById('lightbox-title').textContent = newName;
@@ -1538,7 +1547,7 @@ function deleteCurrentItem(){
     if (!ctx || !ctx.item) return;
     if (!confirm('Delete this file from My Files?')) return;
 
-    const filtered = ctx.history.filter(h => h.id !== ctx.item.id);
+    const filtered = ctx.history.filter(function(h){ return h.id !== ctx.item.id; });
     saveHistoryToStorage(filtered);
     closeLightbox();
     renderAssetsGrid();
@@ -1573,7 +1582,6 @@ function downloadCurrentItem(){
 function recreateCurrentItem(){
     const ctx = getCurrentItemFromHistory();
     if (!ctx || !ctx.item) return;
-    // This just shows a toast – you can wire it into your recreate flow.
     if (typeof showToast === 'function'){
         showToast('Recreate flow triggered for this file.', 'Success');
     }
@@ -1582,12 +1590,12 @@ function recreateCurrentItem(){
 function sendCurrentItemToCinema(){
     const ctx = getCurrentItemFromHistory();
     if (!ctx || !ctx.item) return;
-    // Hook this into your Cinema page routing as needed.
     if (typeof showToast === 'function'){
         showToast('Sent to Cinema queue.', 'Success');
     }
 }
 </script>
+
 </head>
 <body>
 
