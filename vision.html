@@ -1668,8 +1668,8 @@ function sendCurrentItemToCinema(){
     
     <div class="sidebar-scroll" id="sidebar-scroll">
 
-        <!-- Lab mode switch -->
-        <div class="lab-mode-switch">
+       <!-- Lab mode switch – CREATE MODE (default) -->
+<div class="lab-mode-switch" id="lab-switch-create">
 
     <div class="lab-mode active" data-lab="image" onclick="switchLab('image')">
         <span>Images</span>
@@ -1686,7 +1686,7 @@ function sendCurrentItemToCinema(){
         <span class="icon">Storyboard</span>
     </div>
 
-    <!-- NEW: MY FILES / ASSETS -->
+    <!-- MY FILES = enter VIEW MODE -->
     <div class="lab-mode" data-lab="assets" onclick="switchLab('assets')">
         <span>My Files</span>
         <span class="icon">LIB</span>
@@ -1694,6 +1694,43 @@ function sendCurrentItemToCinema(){
 
 </div>
 
+<!-- VIEW MODE SWITCH (used only when lab === 'assets') -->
+<div class="lab-mode-switch" id="lab-switch-view" style="display:none;">
+    <div class="lab-mode lab-mode-view active"
+         data-view="images"
+         onclick="switchAssetsView('images', this)">
+        <span>Images</span>
+        <span class="icon">My Images</span>
+    </div>
+
+    <div class="lab-mode lab-mode-view"
+         data-view="videos"
+         onclick="switchAssetsView('videos', this)">
+        <span>Videos</span>
+        <span class="icon">My Videos</span>
+    </div>
+
+    <div class="lab-mode lab-mode-view"
+         data-view="films"
+         onclick="switchAssetsView('films', this)">
+        <span>Films</span>
+        <span class="icon">My Films</span>
+    </div>
+
+    <div class="lab-mode lab-mode-view"
+         data-view="favorites"
+         onclick="switchAssetsView('favorites', this)">
+        <span>Favorites</span>
+        <span class="icon">Starred</span>
+    </div>
+
+    <div class="lab-mode lab-mode-view"
+         data-view="create"
+         onclick="switchAssetsView('create', this)">
+        <span>Create</span>
+        <span class="icon">Back</span>
+    </div>
+</div>
 
         <!-- IMAGE CONTROLS -->
         <div id="image-controls">
