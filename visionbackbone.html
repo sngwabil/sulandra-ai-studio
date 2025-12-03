@@ -350,13 +350,26 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     flex-direction:column;
     gap:2px;
 }
-
 .assets-view-toggle{
     display:flex;
     gap:4px;
 }
 
-.assets-view-toggle-btn{
+/* Row that holds Grid/Vertical + Ask SIA in the sidebar */
+.assets-actions-row{
+    margin-top:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+/* Let Ask SIA stretch while Grid/Vertical stay compact */
+.assets-actions-row .btn-ask-sia{
+    flex:1;
+}
+
+/* Sidebar Grid / Vertical buttons */
+.assets-sidebar-mode-btn{
     border-radius:999px;
     border:1px solid var(--border-subtle);
     padding:4px 8px;
@@ -366,7 +379,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     cursor:pointer;
 }
 
-.assets-view-toggle-btn.active{
+.assets-sidebar-mode-btn.active{
     background:var(--accent-primary);
     color:#f9fafb;
     border-color:var(--accent-primary);
@@ -1946,7 +1959,7 @@ function sendCurrentItemToCinema(){
         <option value="4">4 images</option>
     </select>
 </div>
-            
+        
   <button id="gen-btn-img"
         class="btn btn-accent"
         style="width:100%;height:46px;margin-top:10px;"
@@ -1955,7 +1968,20 @@ function sendCurrentItemToCinema(){
     GENERATE IMAGE
 </button>
         </div>
- <div style="margin-top:8px;display:flex;justify-content:flex-end;">
+ <div class="assets-actions-row">
+    <div class="assets-view-toggle">
+        <button type="button"
+                class="assets-sidebar-mode-btn active"
+                onclick="setAssetsSidebarMode('grid', this)">
+            Grid
+        </button>
+        <button type="button"
+                class="assets-sidebar-mode-btn"
+                onclick="setAssetsSidebarMode('list', this)">
+            Vertical
+        </button>
+    </div>
+
     <button
         type="button"
         class="btn-ask-sia"
@@ -2385,43 +2411,6 @@ function sendCurrentItemToCinema(){
 
     </div>
 </div>
-<!-- MY FILES / VIEW MODE CONTROLS (sidebar list + preview) -->
-<div id="assets-controls" class="input-section" style="display:none;">
-    <div class="input-group">
-        <div class="label assets-header-row">
-            <div class="assets-header-text">
-                <span id="assets-label">My Images</span>
-                <span id="assets-label-sub"
-                      style="font-size:10px;font-weight:400;color:var(--text-secondary);display:block;margin-top:2px;">
-                    All images you created in Sulandra Creative Lab
-                </span>
-            </div>
-
-            <div class="assets-view-toggle">
-                <button type="button"
-                        class="assets-view-toggle-btn active"
-                        onclick="setAssetsSidebarMode('grid', this)">
-                    Grid
-                </button>
-                <button type="button"
-                        class="assets-view-toggle-btn"
-                        onclick="setAssetsSidebarMode('list', this)">
-                    Vertical
-                </button>
-            </div>
-        </div>
-
-        <!-- Thumbnails in sidebar (grid or vertical) -->
-        <div id="assets-sidebar-list" class="assets-sidebar-list is-grid">
-            <!-- JS will inject thumbnail rows here -->
-        </div>
-
-        <!-- Full image preview INSIDE sidebar (appears on double click) -->
-        <div id="assets-sidebar-preview" class="assets-sidebar-preview" style="display:none;">
-            <!-- JS will fill this when a thumbnail is double-clicked -->
-        </div>
-    </div>
-</div>
 
 <!-- MAIN STAGE -->
 <div class="stage">
@@ -2458,88 +2447,6 @@ function sendCurrentItemToCinema(){
                 </div>
             </div>
         </div>
-
-    <!-- NEW LAYOUT: MY FILES / ASSETS GALLERY -->
-    <div id="assets-layout" style="display:none; height:100%;">
-        <div class="assets-shell">
-            <!-- LEFT MINI FOLDER BAR (hide-able) -->
-            <div class="assets-sidebar" id="assets-sidebar">
-                <div class="assets-sidebar-title">My Files</div>
-
-                <button class="assets-folder assets-folder-active"
-                        data-folder="create"
-                        onclick="handleAssetsFolderClick('create', this)">
-                    ➕ Create
-                </button>
-                <button class="assets-folder"
-                        data-folder="images"
-                        onclick="handleAssetsFolderClick('images', this)">
-                    🖼️ Images
-                </button>
-                <button class="assets-folder"
-                        data-folder="videos"
-                        onclick="handleAssetsFolderClick('videos', this)">
-                    🎬 Videos
-                </button>
-                <button class="assets-folder"
-                        data-folder="films"
-                        onclick="handleAssetsFolderClick('films', this)">
-                    🎞️ Films
-                </button>
-                <button class="assets-folder"
-                        data-folder="all"
-                        onclick="handleAssetsFolderClick('all', this)">
-                    📂 All Assets
-                </button>
-            </div>
-
-            <!-- RIGHT: FULL-WIDTH GRID + TOP TABS -->
-            <div class="assets-main">
-                <div class="assets-main-header">
-                    <button class="btn btn-ghost"
-                            id="assets-toggle-sidebar"
-                            type="button"
-                            onclick="toggleAssetsSidebar()">
-                        Hide folders
-                    </button>
-
-                    <div class="assets-top-tabs">
-                        <button class="assets-top-tab assets-top-tab-active"
-                                data-type="image"
-                                onclick="setAssetsTopTab('image', this)">
-                            My Images
-                        </button>
-                        <button class="assets-top-tab"
-                                data-type="video"
-                                onclick="setAssetsTopTab('video', this)">
-                            My Videos
-                        </button>
-                        <button class="assets-top-tab"
-                                data-type="shortfilm"
-                                onclick="setAssetsTopTab('shortfilm', this)">
-                            My Films
-                        </button>
-                    </div>
-
-                    <!-- BACK TO CREATE -->
-                    <button class="btn btn-primary"
-                            type="button"
-                            onclick="exitAssetsToCreate()">
-                        Back to Create
-                    </button>
-                </div>
-
-                <!-- Scrollable grid for My Files -->
-                <div class="grid assets-grid" id="assets-grid"></div>
-
-                <div id="assets-empty-state" class="assets-empty-state">
-                    Nothing saved here yet.
-                    <br>Generate an image, video or short film and it will appear automatically.
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- TOAST -->
 <div class="toast-container">
