@@ -1189,6 +1189,50 @@ textarea {
     background:rgba(15,23,42,.9);
     color:#e5e7eb;
 }
+<script>
+let currentLab = 'image';
+let currentGalleryTab = 'history';
+let currentAssetsFilter = 'image';   // image | video | shortfilm | all
+let lightboxCurrentId = null;
+
+/* ---------------- LAB SWITCHING (Image / Video / Short Film / My Files) --- */
+function switchLab(mode){
+    currentLab = mode;
+
+    // Highlight lab pills
+    ['image','video','shortfilm','assets'].forEach(function(key){
+        const pill = document.getElementById('lab-mode-' + key);
+        if (pill) pill.classList.toggle('active', key === mode);
+    });
+
+    // Show correct sidebar controls
+    const blocks = {
+        image:      document.getElementById('image-controls'),
+        video:      document.getElementById('video-controls'),
+        shortfilm:  document.getElementById('shortfilm-controls'),
+        assets:     document.getElementById('assets-controls')
+    };
+    Object.keys(blocks).forEach(function(k){
+        if (blocks[k]) blocks[k].style.display = (k === mode ? 'block' : 'none');
+    });
+
+    // Switch stage layouts
+    const standardLayout = document.getElementById('standard-gallery-layout');
+    const assetsLayout   = document.getElementById('assets-layout');
+
+    if (mode === 'assets'){
+        if (standardLayout) standardLayout.style.display = 'none';
+        if (assetsLayout)   assetsLayout.style.display   = 'block';
+        renderAssetsGrid();
+    } else {
+        if (standardLayout) standardLayout.style.display = 'block';
+        if (assetsLayout)   assetsLayout.style.display   = 'none';
+        if (typeof renderGalleryForCurrentTab === 'function'){
+            renderGalleryForCurrentTab();
+        }
+    }
+}
+</script>
 </style>
 </head>
 <body>
