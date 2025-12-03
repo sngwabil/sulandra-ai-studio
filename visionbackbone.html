@@ -50,12 +50,13 @@
 *{box-sizing:border-box;margin:0;padding:0;outline:none;-webkit-font-smoothing:antialiased;}
 body{
     margin:0;
-    font-family:system-ui,-apple-system,system,"Segoe UI",sans-serif;
+    font-family:'Cinzel','Inter',serif; /* Merged font declaration */
     background:radial-gradient(circle at top,#020617,#020617 18%,#030712 60%,#020617);
     color:var(--text-primary);
-    min-height:100vh;
+    height:100vh;                  /* Fixed height forces internal scrolling */
+    overflow:hidden;               /* Prevents the whole page from moving */
     display:flex;
-    justify-content:center;        /* center the whole lab horizontally */
+    justify-content:flex-start;    /* Start from left, no gaps in middle */
     align-items:stretch;
 }
 ::-webkit-scrollbar{width:6px;height:6px}
@@ -503,10 +504,17 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
 .stage-content{
     flex: 1;
-    padding: 28px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    /* remove left padding so the gallery touches the create panel */
+    padding: 28px 30px 28px 0;
+
     overflow-y: auto;
-    position: relative;   /* this will be the reference box for empty-state */
+    position: relative;
 }
+    
 .card{
     background:radial-gradient(circle at top,#020617,#02021a);
     border-radius:var(--radius-lg);
