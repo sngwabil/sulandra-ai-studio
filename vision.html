@@ -337,6 +337,28 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     display:flex;align-items:center;justify-content:space-between;
     background:linear-gradient(90deg,#020617,#02021a);
 }
+.assets-sidebar-list{
+    max-height:260px;
+    overflow-y:auto;
+    margin-top:8px;
+    padding:6px 0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.assets-sidebar-item{
+    font-size:11px;
+    color:var(--text-secondary);
+    padding:4px 6px;
+    border-radius:var(--radius-sm);
+    background:rgba(15,23,42,.7);
+}
+
+.assets-sidebar-item:hover{
+    background:rgba(30,64,175,.7);
+    color:#e5e7eb;
+}
 .sidebar-title{
     font-weight:800;font-size:15px;letter-spacing:.14em;text-transform:uppercase;
 }
