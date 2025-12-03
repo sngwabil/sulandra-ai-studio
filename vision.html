@@ -2246,22 +2246,20 @@ function sendCurrentItemToCinema(){
 
     </div>
 </div>
-    <!-- NEW: MY FILES / ASSETS CONTROLS -->
+    <!-- MY FILES / VIEW MODE CONTROLS (sidebar list) -->
 <div id="assets-controls" style="display:none;">
     <div class="input-group">
         <div class="label">
-            <span>My Files · Assets</span>
-            <span style="font-size:10px;opacity:.7;">
-                Choose a folder on the right · Images · Videos · Films
+            <span id="assets-label">My Images</span>
+            <span style="font-size:10px;opacity:.7;" id="assets-label-sub">
+                All images you created in Sulandra Creative Lab
             </span>
         </div>
-        <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;">
-            All images, videos and short films you create are automatically
-            saved into My Files:
-            <br>• <b>Images</b> → My Images
-            <br>• <b>Videos</b> → My Videos
-            <br>• <b>Short Films</b> → My Films
-        </p>
+
+        <!-- List of items for the chosen view (images / videos / films / favorites) -->
+        <div id="assets-sidebar-list" class="assets-sidebar-list">
+            <!-- Filled by JS in renderAssetsView() -->
+        </div>
     </div>
 </div>
 
