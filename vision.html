@@ -443,6 +443,39 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     background:linear-gradient(90deg,#020617,#02021a);
     backdrop-filter:blur(18px);
 }
+/* Top lab bar that replaces History/Favorites */
+.lab-topbar{
+    display:flex;
+    gap:16px;
+    height:100%;
+    align-items:flex-end;
+}
+
+.lab-topbar-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px 10px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-secondary);
+    border-bottom:2px solid transparent;
+    cursor:pointer;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+
+.lab-topbar-btn.active{
+    color:#fff;
+    border-bottom-color:#60a5fa;
+}
+
+/* Optional slim divider between top bar and content if needed */
+.stage-header-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
 .gallery-tabs{display:flex;gap:24px;height:100%}
 .gallery-tab{
     display:flex;align-items:center;gap:6px;
