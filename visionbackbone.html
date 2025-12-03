@@ -1668,8 +1668,8 @@ function sendCurrentItemToCinema(){
     
     <div class="sidebar-scroll" id="sidebar-scroll">
 
-        <!-- Lab mode switch -->
-        <div class="lab-mode-switch">
+       <!-- Lab mode switch – CREATE MODE (default) -->
+<div class="lab-mode-switch" id="lab-switch-create">
 
     <div class="lab-mode active" data-lab="image" onclick="switchLab('image')">
         <span>Images</span>
@@ -1686,7 +1686,7 @@ function sendCurrentItemToCinema(){
         <span class="icon">Storyboard</span>
     </div>
 
-    <!-- NEW: MY FILES / ASSETS -->
+    <!-- MY FILES = enter VIEW MODE -->
     <div class="lab-mode" data-lab="assets" onclick="switchLab('assets')">
         <span>My Files</span>
         <span class="icon">LIB</span>
@@ -1694,6 +1694,43 @@ function sendCurrentItemToCinema(){
 
 </div>
 
+<!-- VIEW MODE SWITCH (used only when lab === 'assets') -->
+<div class="lab-mode-switch" id="lab-switch-view" style="display:none;">
+    <div class="lab-mode lab-mode-view active"
+         data-view="images"
+         onclick="switchAssetsView('images', this)">
+        <span>Images</span>
+        <span class="icon">My Images</span>
+    </div>
+
+    <div class="lab-mode lab-mode-view"
+         data-view="videos"
+         onclick="switchAssetsView('videos', this)">
+        <span>Videos</span>
+        <span class="icon">My Videos</span>
+    </div>
+
+    <div class="lab-mode lab-mode-view"
+         data-view="films"
+         onclick="switchAssetsView('films', this)">
+        <span>Films</span>
+        <span class="icon">My Films</span>
+    </div>
+
+    <div class="lab-mode lab-mode-view"
+         data-view="favorites"
+         onclick="switchAssetsView('favorites', this)">
+        <span>Favorites</span>
+        <span class="icon">Starred</span>
+    </div>
+
+    <div class="lab-mode lab-mode-view"
+         data-view="create"
+         onclick="switchAssetsView('create', this)">
+        <span>Create</span>
+        <span class="icon">Back</span>
+    </div>
+</div>
 
         <!-- IMAGE CONTROLS -->
         <div id="image-controls">
@@ -2209,22 +2246,20 @@ function sendCurrentItemToCinema(){
 
     </div>
 </div>
-    <!-- NEW: MY FILES / ASSETS CONTROLS -->
+    <!-- MY FILES / VIEW MODE CONTROLS (sidebar list) -->
 <div id="assets-controls" style="display:none;">
     <div class="input-group">
         <div class="label">
-            <span>My Files · Assets</span>
-            <span style="font-size:10px;opacity:.7;">
-                Choose a folder on the right · Images · Videos · Films
+            <span id="assets-label">My Images</span>
+            <span style="font-size:10px;opacity:.7;" id="assets-label-sub">
+                All images you created in Sulandra Creative Lab
             </span>
         </div>
-        <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;">
-            All images, videos and short films you create are automatically
-            saved into My Files:
-            <br>• <b>Images</b> → My Images
-            <br>• <b>Videos</b> → My Videos
-            <br>• <b>Short Films</b> → My Films
-        </p>
+
+        <!-- List of items for the chosen view (images / videos / films / favorites) -->
+        <div id="assets-sidebar-list" class="assets-sidebar-list">
+            <!-- Filled by JS in renderAssetsView() -->
+        </div>
     </div>
 </div>
 
@@ -2502,10 +2537,12 @@ function clearPendingHistoryCard(id) {
 /* -------------------------------------------------------------------------- */
 /* LAB SWITCHING – Image / Video / Short Film / My Files                      */
 /* -------------------------------------------------------------------------- */
+let currentAssetsView = 'images'; // images | videos | films | favorites
+
 function switchLab(lab){
     currentLab = lab;
 
-    // 1. Highlight left-nav buttons (if you add nav-assets later it will just work)
+    // 1. Highlight left-nav buttons (sidebar icons)
     const navMap = {
         image:     document.getElementById('nav-image'),
         video:     document.getElementById('nav-video'),
@@ -2517,13 +2554,26 @@ function switchLab(lab){
         if (el) el.classList.toggle('active', key === lab);
     });
 
-    // 2. Highlight the sidebar lab pills using data-lab="..."
-    document.querySelectorAll('.lab-mode').forEach(el => {
+    // 2. Highlight ONLY the create-mode lab pills (not the view-mode ones)
+    document.querySelectorAll('.lab-mode:not(.lab-mode-view)').forEach(el => {
         const mode = el.dataset.lab || '';
         el.classList.toggle('active', mode === lab);
     });
 
-    // 3. Show the correct control panel on the left
+    // 3. Toggle which top bar row is visible in the sidebar
+    const createSwitch = document.getElementById('lab-switch-create');
+    const viewSwitch   = document.getElementById('lab-switch-view');
+    if (createSwitch && viewSwitch){
+        if (lab === 'assets'){
+            createSwitch.style.display = 'none';
+            viewSwitch.style.display   = 'flex';
+        } else {
+            createSwitch.style.display = 'flex';
+            viewSwitch.style.display   = 'none';
+        }
+    }
+
+    // 4. Show the correct control panel on the left
     const imageControls     = document.getElementById('image-controls');
     const videoControls     = document.getElementById('video-controls');
     const shortfilmControls = document.getElementById('shortfilm-controls');
@@ -2534,26 +2584,29 @@ function switchLab(lab){
     if (shortfilmControls) shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
     if (assetsControls)    assetsControls.style.display    = (lab === 'assets')    ? 'block' : 'none';
 
-    // 4. Switch between normal gallery layout and My Files layout
+    // 5. Always keep the standard gallery layout; never show the old assets-layout
     const standardLayout = document.getElementById('standard-gallery-layout');
     const assetsLayout   = document.getElementById('assets-layout');
 
+    if (standardLayout) standardLayout.style.display = 'block';
+    if (assetsLayout)   assetsLayout.style.display   = 'none';
+
+    // 6. Populate the right-hand gallery
     if (lab === 'assets') {
-        if (standardLayout) standardLayout.style.display = 'none';
-        if (assetsLayout)   assetsLayout.style.display   = 'block';
-        if (typeof renderAssetsGrid === 'function') {
-            renderAssetsGrid();
+        // View mode: render by type (images / videos / films / favorites)
+        if (typeof switchAssetsView === 'function') {
+            // Use whatever view was active, default to images
+            switchAssetsView(currentAssetsView || 'images');
         }
     } else {
-        if (standardLayout) standardLayout.style.display = 'block';
-        if (assetsLayout)   assetsLayout.style.display   = 'none';
-
-        // keep your existing gallery filter logic
-        if (typeof applyGalleryFilterForCurrentLab === 'function') {
-            applyGalleryFilterForCurrentLab();
+        // Create mode: normal history / favorites behaviour
+        if (typeof renderHistoryGrid === 'function') {
+            currentGalleryTab = 'history';
+            renderHistoryGrid();
         }
     }
 }
+
 
 /* -------------------------------------------------------------------------- */
 /* IMAGE CONTROLS                                                             */
