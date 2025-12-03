@@ -2409,6 +2409,69 @@ let myAssets        = [];   // curated "My Assets"
 let currentLab = 'image';        // image | video | shortfilm | assets
 let currentMode = 'create';      // create | files
 let currentFilesTab = 'images';  // used only inside My Files
+function renderLabTopbar() {
+    const bar = document.getElementById('lab-topbar');
+    if (!bar) return;
+
+    let tabs = [];
+
+    if (currentMode === 'create') {
+        tabs = [
+            { id: 'image',      label: 'Images' },
+            { id: 'video',      label: 'Video Clips' },
+            { id: 'shortfilm',  label: 'Short Films' },
+            { id: 'assets',     label: 'My Files' }
+        ];
+    } else {
+        // My Files mode
+        tabs = [
+            { id: 'images', label: 'My Images' },
+            { id: 'videos', label: 'My Videos' },
+            { id: 'films',  label: 'My Films' },
+            { id: 'create', label: 'Create' }
+        ];
+    }
+
+    bar.innerHTML = '';
+
+    tabs.forEach(tab => {
+        const btn = document.createElement('div');
+        btn.className = 'lab-topbar-btn';
+
+        if (currentMode === 'create') {
+            if (tab.id === currentLab) btn.classList.add('active');
+        } else {
+            if (tab.id === currentFilesTab || (tab.id === 'create' && currentMode === 'create')) {
+                if (tab.id === currentFilesTab) btn.classList.add('active');
+            }
+        }
+
+        btn.textContent = tab.label;
+
+        btn.addEventListener('click', () => {
+            if (currentMode === 'create') {
+                if (tab.id === 'assets') {
+                    currentMode = 'files';
+                    currentFilesTab = 'images';   // default My Images
+                    switchToFilesLayout();
+                } else {
+                    switchLab(tab.id);
+                }
+            } else { // files mode
+                if (tab.id === 'create') {
+                    currentMode = 'create';
+                    switchLab('image'); // default back to image lab
+                } else {
+                    currentFilesTab = tab.id;
+                    renderFilesSection();
+                }
+            }
+            renderLabTopbar();
+        });
+
+        bar.appendChild(btn);
+    });
+}
 
 let currentImageMode = "txt2img";
 let currentVideoMode = "text2video";
