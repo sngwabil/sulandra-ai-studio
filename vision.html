@@ -2666,29 +2666,32 @@ function switchLab(lab){
     const imageControls     = document.getElementById('image-controls');
     const videoControls     = document.getElementById('video-controls');
     const shortfilmControls = document.getElementById('shortfilm-controls');
-    const assetsControls    = document.getElementById('assets-controls');
+    // NEW: The container for the sidebar thumbnails
+    const assetsContainer   = document.getElementById('assets-sidebar-container');
 
     if (imageControls)     imageControls.style.display     = (lab === 'image')     ? 'block' : 'none';
     if (videoControls)     videoControls.style.display     = (lab === 'video')     ? 'block' : 'none';
     if (shortfilmControls) shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
-    if (assetsControls)    assetsControls.style.display    = (lab === 'assets')    ? 'block' : 'none';
 
-    // 5. Always keep the standard gallery layout; never show the old assets-layout
+    // Crucial change: Show the assets container ONLY when in assets lab
+    if (assetsContainer) {
+         // Use flex so it fills height correctly per the HTML style added
+        assetsContainer.style.display = (lab === 'assets')    ? 'flex' : 'none';
+    }
+
+    // 5. Always keep the standard gallery layout
     const standardLayout = document.getElementById('standard-gallery-layout');
-    const assetsLayout   = document.getElementById('assets-layout');
-
     if (standardLayout) standardLayout.style.display = 'block';
-    if (assetsLayout)   assetsLayout.style.display   = 'none';
 
-    // 6. Populate the right-hand gallery
+    // 6. Populate the content
     if (lab === 'assets') {
-        // View mode: render by type (images / videos / films / favorites)
+        // View mode: render by type (images / videos / films / favorites) to BOTH sidebar and main gallery
         if (typeof switchAssetsView === 'function') {
             // Use whatever view was active, default to images
             switchAssetsView(currentAssetsView || 'images');
         }
     } else {
-        // Create mode: normal history / favorites behaviour
+        // Create mode: normal history behavior (main gallery only)
         if (typeof renderHistoryGrid === 'function') {
             currentGalleryTab = 'history';
             renderHistoryGrid();
@@ -2766,76 +2769,82 @@ function closeSidebarPreview() {
 function renderAssetsView() {
     const grid        = document.getElementById('gallery-grid');
     const emptyState  = document.getElementById('empty-state');
+    // NEW: target the new sidebar list container
     const sidebarList = document.getElementById('assets-sidebar-list');
-    const label       = document.getElementById('assets-label');
-    const labelSub    = document.getElementById('assets-label-sub');
     const preview     = document.getElementById('assets-sidebar-preview');
 
     if (!grid || !emptyState || !sidebarList || typeof loadHistoryFromStorage !== 'function') {
         return;
     }
 
-    // Reset sidebar preview + list mode each time
+    // Reset sidebar preview area
     if (preview) {
         preview.style.display = 'none';
         preview.innerHTML = '';
     }
+
+    // Ensure list is visible and mode class is set (grid vs list)
     sidebarList.style.display = 'flex';
     sidebarList.classList.toggle('is-grid', currentAssetsSidebarMode === 'grid');
     sidebarList.classList.toggle('is-list', currentAssetsSidebarMode !== 'grid');
 
-    // Pull everything from history / favorites
+    // Pull data
     const history   = loadHistoryFromStorage() || [];
     const favorites = loadFavoritesFromStorage ? loadFavoritesFromStorage() : [];
 
+    // Filter based on current tab selection
     let filtered = [];
     if (currentAssetsView === 'images') {
         filtered = history.filter(item => item.type === 'image');
-        if (label)     label.textContent = 'My Images';
-        if (labelSub)  labelSub.textContent = 'All images you created in Sulandra Creative Lab';
     } else if (currentAssetsView === 'videos') {
         filtered = history.filter(item => item.type === 'video');
-        if (label)     label.textContent = 'My Videos';
-        if (labelSub)  labelSub.textContent = 'All videos you created in Sulandra Creative Lab';
     } else if (currentAssetsView === 'films') {
-        filtered = history.filter(item => item.type === 'film');
-        if (label)     label.textContent = 'My Films';
-        if (labelSub)  labelSub.textContent = 'All short films you created in Sulandra Creative Lab';
+        // Ensure your generation code saves shortfilms with type: 'shortfilm' or 'film'
+        filtered = history.filter(item => item.type === 'shortfilm' || item.type === 'film');
     } else if (currentAssetsView === 'favorites') {
         const favIds = new Set(favorites.map(f => f.id));
-        filtered = history.filter(item => favIds.has(item.id));
-        if (label)     label.textContent = 'Favorites';
-        if (labelSub)  labelSub.textContent = 'Images, videos, and films you starred';
+        filtered = history.filter(item => favIds.has(item.id) || item.isFavorite);
     }
 
-    // Clear old UI
+    // Clear both containers
     grid.innerHTML = '';
     sidebarList.innerHTML = '';
 
     if (!filtered.length) {
         emptyState.style.display = 'flex';
+        // Sidebar is naturally empty here
         return;
     }
 
     emptyState.style.display = 'none';
 
+    // Loop through filtered items and populate BOTH containers simultaneously
     filtered.forEach(item => {
-        // 1. Fill the big gallery on the right (standard layout)
+        // --- 1. Populate Main Gallery (Big Cards) ---
+        // Use existing helper to create the main card
         addToGallery(item, { saveToHistory: false });
 
-        // 2. Add a thumbnail row in the sidebar
+        // --- 2. Populate Sidebar Thumbnail List ---
         const url   = item.previewUrl || item.url || item.thumbnail || '';
-        const title = item.prompt || item.title || item.filename || 'Untitled item';
+        // Fallback title if prompt is missing
+        const title = item.prompt ? (item.prompt.substring(0, 40) + (item.prompt.length > 40 ? '...' : '')) : (item.displayName || 'Untitled');
 
         const row = document.createElement('div');
         row.className = 'assets-sidebar-item';
-        row.title     = title;
+        row.title     = item.prompt || title; // Full prompt on hover tooltip
 
+        // Thumbnail image
         const img = document.createElement('img');
         img.className = 'assets-sidebar-thumb';
         img.src       = url;
-        img.alt       = 'Thumbnail';
+        // Handle video thumbnails if necessary (if url ends in mp4 and no explicit thumb exists)
+        if(item.type !== 'image' && !item.thumb && item.url && item.url.endsWith('.mp4')){
+             // simple fallback, might need a generic video icon if real thumb isn't available
+             img.style.backgroundColor = "#000";
+        }
+        img.alt       = item.type;
 
+        // Meta text (truncated prompt)
         const meta = document.createElement('div');
         meta.className = 'assets-sidebar-meta';
         meta.textContent = title;
@@ -2843,8 +2852,11 @@ function renderAssetsView() {
         row.appendChild(img);
         row.appendChild(meta);
 
-        // Double-click to open the zoomed preview inside sidebar
-        row.addEventListener('dblclick', () => openSidebarPreview(item));
+        // Single click: Open in main lightbox (same behavior as main gallery cards)
+        row.addEventListener('click', () => openLightbox(item.id));
+
+        // Optional: Double-click for sidebar "quick preview" if you still want that feature
+        // row.addEventListener('dblclick', (e) => { e.stopPropagation(); openSidebarPreview(item); });
 
         sidebarList.appendChild(row);
     });
