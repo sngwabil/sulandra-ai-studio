@@ -2406,8 +2406,10 @@ let persistedHistory = [];   // all personal generations
 let myAssets        = [];   // curated "My Assets"
 
 
-let currentLab = "image";
-let currentGalleryTab = "history";   // history / community / favorites
+let currentLab = 'image';        // image | video | shortfilm | assets
+let currentMode = 'create';      // create | files
+let currentFilesTab = 'images';  // used only inside My Files
+
 let currentImageMode = "txt2img";
 let currentVideoMode = "text2video";
 let imageBase64 = null;
