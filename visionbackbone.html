@@ -39,7 +39,7 @@
     --shadow-glow: 0 0 25px rgba(59,130,246,0.4);
 
     --header-height: 64px;
-    --sidebar-width: 360px;
+    --sidebar-width: 480px;
     --nav-rail-width: 76px;
     --radius-sm: 6px;
     --radius-md: 12px;
@@ -319,7 +319,7 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 .sidebar{
     width:var(--sidebar-width);
     background:radial-gradient(circle at top left,#020617 0%,#02021a 40%,#020617 100%);
-    border-right:1px solid var(--border-subtle);
+    border-right:none;  /* REMOVED THE LINE */
     display:flex;flex-direction:column;flex-shrink:0;z-index:35;
 }
 /* Collapsed sidebar for full-focus mode */
@@ -434,10 +434,8 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
 
 /* Stage (gallery) */
 .stage{
-    flex:1;
-    /* FULL WIDTH: allow stage to use all remaining space */
-    max-width:none;
-    width:100%;
+    flex:1; /* Takes up all remaining space */
+    width:auto;
     display:flex;
     flex-direction:column;
     background:radial-gradient(circle at top right,#020617,#02021a 40%,#020617);
