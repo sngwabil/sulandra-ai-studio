@@ -337,6 +337,28 @@ svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-l
     display:flex;align-items:center;justify-content:space-between;
     background:linear-gradient(90deg,#020617,#02021a);
 }
+.assets-sidebar-list{
+    max-height:260px;
+    overflow-y:auto;
+    margin-top:8px;
+    padding:6px 0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.assets-sidebar-item{
+    font-size:11px;
+    color:var(--text-secondary);
+    padding:4px 6px;
+    border-radius:var(--radius-sm);
+    background:rgba(15,23,42,.7);
+}
+
+.assets-sidebar-item:hover{
+    background:rgba(30,64,175,.7);
+    color:#e5e7eb;
+}
 .sidebar-title{
     font-weight:800;font-size:15px;letter-spacing:.14em;text-transform:uppercase;
 }
@@ -2607,6 +2629,93 @@ function switchLab(lab){
     }
 }
 
+/* -------------------------------------------------------------------------- */
+/* VIEW MODE – My Files (Images / Videos / Films / Favorites / Create)        */
+/* -------------------------------------------------------------------------- */
+
+function switchAssetsView(view, el){
+    // Store current view so we can restore it when re-entering My Files
+    currentAssetsView = view;
+
+    // Highlight the active view tab
+    document.querySelectorAll('.lab-mode-view').forEach(btn => {
+        btn.classList.toggle('active', btn === el);
+    });
+
+    // "Create" jumps back to normal create mode
+    if (view === 'create'){
+        switchLab('image');
+        return;
+    }
+
+    renderAssetsView();
+}
+
+function renderAssetsView(){
+    const grid        = document.getElementById('gallery-grid');
+    const emptyState  = document.getElementById('empty-state');
+    const sidebarList = document.getElementById('assets-sidebar-list');
+    const label       = document.getElementById('assets-label');
+    const labelSub    = document.getElementById('assets-label-sub');
+
+    if (!grid || !emptyState || !sidebarList || typeof loadHistoryFromStorage !== 'function') {
+        return;
+    }
+
+    // Update the label text based on which tab is active
+    if (label && labelSub){
+        if (currentAssetsView === 'images'){
+            label.textContent    = 'My Images';
+            labelSub.textContent = 'All images you created in Sulandra Creative Lab';
+        } else if (currentAssetsView === 'videos'){
+            label.textContent    = 'My Videos';
+            labelSub.textContent = 'All videos you created in Sulandra Creative Lab';
+        } else if (currentAssetsView === 'films'){
+            label.textContent    = 'My Films';
+            labelSub.textContent = 'All short films you created in Sulandra Creative Lab';
+        } else if (currentAssetsView === 'favorites'){
+            label.textContent    = 'Favorites';
+            labelSub.textContent = 'Only items you have starred as favorites';
+        }
+    }
+
+    const history = loadHistoryFromStorage() || [];
+
+    // Filter by type / favorites
+    let filtered = history;
+    if (currentAssetsView === 'images'){
+        filtered = history.filter(item => (item.kind || item.type || 'image') === 'image');
+    } else if (currentAssetsView === 'videos'){
+        filtered = history.filter(item => (item.kind || item.type || 'image') === 'video');
+    } else if (currentAssetsView === 'films'){
+        filtered = history.filter(item => (item.kind || item.type || 'image') === 'shortfilm');
+    } else if (currentAssetsView === 'favorites'){
+        filtered = history.filter(item => item.isFavorite);
+    }
+
+    // Clear existing UI
+    grid.innerHTML = '';
+    sidebarList.innerHTML = '';
+
+    if (!filtered.length){
+        emptyState.style.display = 'flex';
+        return;
+    }
+
+    emptyState.style.display = 'none';
+
+    // Fill gallery + sidebar list
+    filtered.forEach(item => {
+        // Main gallery uses your existing card builder
+        addToGallery(item, { saveToHistory: false });
+
+        // Sidebar entry – simple text list
+        const row = document.createElement('div');
+        row.className = 'assets-sidebar-item';
+        row.textContent = item.prompt || item.title || item.filename || 'Untitled item';
+        sidebarList.appendChild(row);
+    });
+}
 
 /* -------------------------------------------------------------------------- */
 /* IMAGE CONTROLS                                                             */
