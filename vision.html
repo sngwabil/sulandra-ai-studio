@@ -50,12 +50,13 @@
 *{box-sizing:border-box;margin:0;padding:0;outline:none;-webkit-font-smoothing:antialiased;}
 body{
     margin:0;
-    font-family:system-ui,-apple-system,system,"Segoe UI",sans-serif;
+    font-family:'Cinzel','Inter',serif; /* Merged font declaration */
     background:radial-gradient(circle at top,#020617,#020617 18%,#030712 60%,#020617);
     color:var(--text-primary);
-    min-height:100vh;
+    height:100vh;                  /* Fixed height forces internal scrolling */
+    overflow:hidden;               /* Prevents the whole page from moving */
     display:flex;
-    justify-content:center;        /* center the whole lab horizontally */
+    justify-content:flex-start;    /* Start from left, no gaps in middle */
     align-items:stretch;
 }
 ::-webkit-scrollbar{width:6px;height:6px}
