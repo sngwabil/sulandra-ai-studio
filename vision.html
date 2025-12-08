@@ -1,365 +1,298 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Sulandra Creative Lab · Professional Suite</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sulandra Creative Lab · Enterprise Suite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
 
 <style>
 /* -------------------------------------------------------------------------- */
-/* 1. DESIGN TOKENS (KLING AI / RUNWAY STYLE)                                 */
+/* 1.0 DESIGN SYSTEM: "DEEP VOID" (KLING AI AESTHETIC)                        */
 /* -------------------------------------------------------------------------- */
 :root {
-    /* Base Backgrounds - Deep Void Theme */
-    --bg-app: #050505;        /* Main background */
-    --bg-panel: #0a0a0a;      /* Sidebars */
-    --bg-surface: #121212;    /* Cards/Inputs */
-    --bg-surface-hover: #1a1a1a;
-    
-    /* Borders & Separators */
-    --border: rgba(255, 255, 255, 0.08);
-    --border-hover: rgba(255, 255, 255, 0.15);
-    
-    /* Brand Accents */
-    --primary: #6366f1;       /* Indigo */
-    --primary-hover: #4f46e5;
-    --accent: #d946ef;        /* Fuchsia */
-    --gradient-brand: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #d946ef 100%);
-    
-    /* Typography */
-    --font-ui: 'Inter', -apple-system, sans-serif;
-    --font-brand: 'Cinzel', serif;
-    --font-mono: 'JetBrains Mono', monospace;
-    
-    --text-main: #ffffff;
-    --text-muted: #a1a1aa;
-    --text-dim: #52525b;
+    /* Color Palette - Absolute Dark Mode */
+    --bg-root: #000000;
+    --bg-chrome: #09090b;
+    --bg-surface: #121214;
+    --bg-surface-hover: #1c1c1f;
+    --bg-input: #000000;
 
-    /* Spacing & Layout */
-    --nav-width: 72px;
-    --sidebar-width: 420px;
-    --header-height: 64px;
+    /* Borders */
+    --border-dim: rgba(255, 255, 255, 0.06);
+    --border-light: rgba(255, 255, 255, 0.12);
+    --border-highlight: rgba(255, 255, 255, 0.2);
+
+    /* Text */
+    --txt-primary: #ffffff;
+    --txt-secondary: #a1a1aa;
+    --txt-tertiary: #52525b;
+    --txt-accent: #6366f1;
+
+    /* Accents (Indigo/Violet) */
+    --accent-primary: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.35);
+    --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+
+    /* Metrics */
+    --nav-width: 68px;
+    --sidebar-width: 380px;
+    --header-height: 60px;
     --radius-sm: 6px;
     --radius-md: 10px;
-    --radius-lg: 16px;
+    --radius-lg: 14px;
 }
 
-/* Reset & Base */
-* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+/* Base Reset */
+* { box-sizing: border-box; outline: none; user-select: none; -webkit-font-smoothing: antialiased; }
 body {
     margin: 0; padding: 0;
-    background: var(--bg-app);
-    color: var(--text-main);
-    font-family: var(--font-ui);
-    height: 100vh;
-    overflow: hidden;
+    background: var(--bg-root);
+    color: var(--txt-primary);
+    font-family: 'Inter', sans-serif;
+    height: 100vh; overflow: hidden;
     display: flex;
-    font-size: 13px;
 }
+input, textarea, select { user-select: text; font-family: 'Inter', sans-serif; }
+a { text-decoration: none; color: inherit; }
 
-/* Scrollbars */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* Typography Classes */
+.font-brand { font-family: 'Cinzel', serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+.text-xs { font-size: 11px; }
+.text-sm { font-size: 13px; }
+.text-md { font-size: 15px; }
+.text-lg { font-size: 18px; }
+.font-bold { font-weight: 700; }
+.text-muted { color: var(--txt-secondary); }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #555; }
 
 /* -------------------------------------------------------------------------- */
-/* 2. COMPONENT SYSTEM                                                        */
+/* 2.0 COMPONENTS                                                             */
 /* -------------------------------------------------------------------------- */
 
 /* Buttons */
 .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    height: 40px; padding: 0 16px;
-    border-radius: var(--radius-md);
-    font-weight: 600; font-size: 13px;
-    border: 1px solid transparent;
-    cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-    user-select: none;
+    height: 40px; padding: 0 16px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s ease; border: 1px solid transparent;
 }
-.btn:active { transform: scale(0.98); }
-
 .btn-primary {
-    background: var(--text-main); color: var(--bg-app);
+    background: var(--txt-primary); color: var(--bg-root);
 }
-.btn-primary:hover { background: #e5e5e5; }
-
-.btn-gradient {
-    background: var(--gradient-brand); color: white;
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+.btn-primary:hover { background: #e4e4e7; transform: translateY(-1px); }
+.btn-accent {
+    background: var(--accent-gradient); color: white;
+    box-shadow: 0 0 15px var(--accent-glow);
 }
-.btn-gradient:hover { filter: brightness(1.1); box-shadow: 0 0 30px rgba(99, 102, 241, 0.5); }
-.btn-gradient:disabled { filter: grayscale(1); cursor: not-allowed; }
-
+.btn-accent:hover { filter: brightness(1.1); }
 .btn-ghost {
-    background: transparent; color: var(--text-muted);
+    background: transparent; color: var(--txt-secondary);
 }
-.btn-ghost:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+.btn-ghost:hover { background: var(--bg-surface-hover); color: var(--txt-primary); }
+.btn-outline {
+    background: transparent; border: 1px solid var(--border-light); color: var(--txt-secondary);
+}
+.btn-outline:hover { border-color: var(--txt-primary); color: var(--txt-primary); }
 
 .btn-icon {
-    width: 36px; height: 36px; padding: 0;
-    border-radius: var(--radius-md);
-    color: var(--text-muted); background: transparent;
-    border: 1px solid transparent;
+    width: 36px; height: 36px; padding: 0; border-radius: var(--radius-md);
+    color: var(--txt-secondary); background: transparent;
 }
-.btn-icon:hover { background: var(--bg-surface-hover); color: var(--text-main); }
-.btn-icon.active { background: rgba(99, 102, 241, 0.15); color: var(--primary); border-color: rgba(99, 102, 241, 0.3); }
+.btn-icon:hover { background: var(--bg-surface-hover); color: white; }
+.btn-icon.active { background: rgba(99,102,241,0.1); color: var(--accent-primary); border: 1px solid rgba(99,102,241,0.2); }
 
-/* Inputs & Forms */
-.input-group { margin-bottom: 24px; }
-.label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.label { 
-    font-size: 11px; font-weight: 700; text-transform: uppercase; 
-    letter-spacing: 0.05em; color: var(--text-muted); 
+/* Inputs */
+.form-group { margin-bottom: 20px; }
+.form-label {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; color: var(--txt-secondary); letter-spacing: 0.05em;
 }
+.input-text, .input-area, .input-select {
+    width: 100%; background: var(--bg-input); border: 1px solid var(--border-dim);
+    border-radius: var(--radius-md); padding: 10px 12px;
+    color: white; font-size: 13px; transition: 0.2s;
+}
+.input-text:focus, .input-area:focus, .input-select:focus {
+    border-color: var(--accent-primary); box-shadow: 0 0 0 1px var(--accent-primary);
+}
+.input-area { min-height: 100px; resize: vertical; line-height: 1.5; }
 
-.input-field, .textarea-field, .select-field {
-    width: 100%;
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 10px 12px;
-    color: white;
-    font-family: var(--font-ui);
-    font-size: 13px;
-    transition: 0.2s;
-}
-.input-field:focus, .textarea-field:focus, .select-field:focus {
-    border-color: var(--primary);
-    background: var(--bg-app);
-    box-shadow: 0 0 0 1px var(--primary);
-}
-.textarea-field { resize: vertical; min-height: 100px; line-height: 1.5; }
-
-/* Custom Slider */
-.range-wrapper { position: relative; height: 30px; display: flex; align-items: center; }
+/* Sliders */
 input[type=range] {
-    -webkit-appearance: none; width: 100%; background: transparent; z-index: 2; cursor: pointer;
+    -webkit-appearance: none; width: 100%; background: transparent; margin: 8px 0;
 }
 input[type=range]::-webkit-slider-runnable-track {
     width: 100%; height: 4px; background: var(--bg-surface-hover); border-radius: 2px;
 }
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
-    background: white; margin-top: -6px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    transition: transform 0.1s;
+    background: white; margin-top: -6px; cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
-input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
-
-/* Tabs & Switchers */
-.segmented-control {
-    display: flex; background: var(--bg-surface);
-    padding: 4px; border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    margin-bottom: 20px;
-}
-.segment-btn {
-    flex: 1; text-align: center; padding: 6px;
-    font-size: 12px; font-weight: 600; color: var(--text-muted);
-    border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s;
-}
-.segment-btn.active { background: var(--bg-app); color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 
 /* Aspect Ratio Grid */
-.grid-ratios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ratio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .ratio-card {
-    background: var(--bg-surface); border: 1px solid var(--border);
-    border-radius: var(--radius-md); padding: 12px 8px;
-    text-align: center; cursor: pointer; transition: 0.2s;
+    background: var(--bg-surface); border: 1px solid var(--border-dim);
+    border-radius: var(--radius-md); padding: 12px 0; text-align: center;
+    cursor: pointer; transition: 0.2s;
 }
-.ratio-card:hover { border-color: var(--text-muted); }
-.ratio-card.active { background: rgba(99, 102, 241, 0.1); border-color: var(--primary); color: white; }
-.ratio-icon {
-    display: block; width: 24px; height: 16px; border: 2px solid currentColor;
-    margin: 0 auto 6px auto; border-radius: 2px; opacity: 0.7;
-}
-.ratio-card.active .ratio-icon { opacity: 1; border-color: var(--primary); }
+.ratio-card:hover { border-color: var(--txt-secondary); }
+.ratio-card.active { background: rgba(99,102,241,0.1); border-color: var(--accent-primary); color: white; }
+.ratio-viz { display: block; margin: 0 auto 6px; border: 1.5px solid currentColor; border-radius: 2px; opacity: 0.7; }
 
 /* -------------------------------------------------------------------------- */
-/* 3. LAYOUT STRUCTURE                                                        */
+/* 3.0 LAYOUT ENGINE                                                          */
 /* -------------------------------------------------------------------------- */
+.layout-container { display: flex; width: 100vw; height: 100vh; }
 
-/* Navigation Rail (Left) */
+/* Left Nav Rail */
 .nav-rail {
-    width: var(--nav-width); background: var(--bg-app);
-    border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; align-items: center;
-    padding: 24px 0; z-index: 50;
+    width: var(--nav-width); background: var(--bg-root);
+    border-right: 1px solid var(--border-dim);
+    display: flex; flex-direction: column; align-items: center; padding: 20px 0; z-index: 50;
 }
-.logo {
-    width: 42px; height: 42px; border-radius: 12px;
-    background: var(--gradient-brand);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-brand); font-weight: 700; font-size: 20px; color: white;
-    margin-bottom: 32px; box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+.nav-brand {
+    width: 44px; height: 44px; background: var(--accent-gradient);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-weight: 800; font-size: 20px; color: white;
+    margin-bottom: 30px; box-shadow: 0 0 20px var(--accent-glow);
 }
 .nav-item {
-    width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); border-radius: 12px; margin-bottom: 8px;
-    cursor: pointer; transition: 0.2s; position: relative;
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    border-radius: 12px; color: var(--txt-secondary); margin-bottom: 12px;
+    cursor: pointer; transition: 0.2s; position: relative; font-size: 22px;
 }
-.nav-item:hover { background: var(--bg-surface); color: white; }
-.nav-item.active { background: var(--bg-surface); color: var(--primary); }
-.nav-item.active::after {
-    content: ''; position: absolute; left: 0; width: 3px; height: 24px;
-    background: var(--primary); border-radius: 0 4px 4px 0;
+.nav-item:hover { color: white; background: var(--bg-surface); }
+.nav-item.active { color: white; background: var(--bg-surface); }
+.nav-item.active::before {
+    content: ''; position: absolute; left: -12px; width: 4px; height: 24px;
+    background: var(--accent-primary); border-radius: 0 4px 4px 0;
 }
-.nav-item svg { width: 22px; height: 22px; stroke-width: 1.8px; }
 
-/* Sidebar (Middle Controls) */
+/* Control Sidebar */
 .sidebar {
-    width: var(--sidebar-width); background: var(--bg-panel);
-    border-right: 1px solid var(--border);
+    width: var(--sidebar-width); background: var(--bg-chrome);
+    border-right: 1px solid var(--border-dim);
     display: flex; flex-direction: column; z-index: 40;
 }
 .sidebar-header {
-    height: var(--header-height); padding: 0 24px;
+    height: var(--header-height); padding: 0 20px;
     display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-dim);
 }
-.sidebar-title { font-family: var(--font-brand); font-weight: 700; letter-spacing: 0.05em; }
-.pro-badge { 
-    font-size: 10px; font-weight: 800; color: #000; 
-    background: linear-gradient(90deg, #fbbf24, #d97706);
-    padding: 2px 6px; border-radius: 4px;
-}
-.sidebar-content {
-    flex: 1; overflow-y: auto; padding: 24px;
-}
+.sidebar-content { flex: 1; overflow-y: auto; padding: 20px; }
 
-/* Stage (Right Content) */
+/* Main Stage */
 .stage {
-    flex: 1; background: #000; display: flex; flex-direction: column; position: relative;
+    flex: 1; background: #000; position: relative;
+    display: flex; flex-direction: column;
 }
 .stage-header {
     height: var(--header-height); padding: 0 24px;
     display: flex; align-items: center; justify-content: space-between;
-    background: rgba(5,5,5,0.8); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border); z-index: 10;
+    background: rgba(9,9,11,0.8); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-dim); z-index: 10;
 }
-.stage-tabs { display: flex; gap: 24px; }
-.stage-tab {
-    font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer;
-    padding: 8px 0; border-bottom: 2px solid transparent; transition: 0.2s;
-}
-.stage-tab:hover { color: white; }
-.stage-tab.active { color: white; border-bottom-color: var(--primary); }
-
 .stage-content {
     flex: 1; overflow-y: auto; padding: 24px;
-    background: radial-gradient(circle at 50% 0%, #111111 0%, #000000 70%);
+    background: radial-gradient(circle at 50% 0%, #15151a 0%, #000000 70%);
 }
 
 /* -------------------------------------------------------------------------- */
-/* 4. GALLERY GRID & ASSETS                                                   */
+/* 4.0 ASSETS / MY FILES SIDEBAR (THE MISSING PIECE)                          */
 /* -------------------------------------------------------------------------- */
-.gallery-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+.assets-toolbar {
+    display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px;
 }
-.card {
-    background: var(--bg-surface); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); overflow: hidden;
-    position: relative; aspect-ratio: 1/1;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-.card.video { aspect-ratio: 16/9; }
-.card:hover { 
-    transform: translateY(-4px); 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-color: var(--text-muted);
-}
-.card-media { width: 100%; height: 100%; object-fit: cover; }
-.card-overlay {
-    position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%);
-    opacity: 0; transition: opacity 0.2s; padding: 16px;
-    display: flex; flex-direction: column; justify-content: flex-end;
-}
-.card:hover .card-overlay { opacity: 1; }
-
-.card-prompt {
-    font-size: 12px; line-height: 1.4; color: #eee;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    margin-bottom: 12px;
-}
-.card-actions { display: flex; gap: 8px; }
-
-/* ASSETS SIDEBAR LIST (THE REQUESTED FEATURE) */
-.assets-container { display: flex; flex-direction: column; height: 100%; }
-.assets-filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
 .chip {
-    padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 600;
-    background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-muted);
-    cursor: pointer; white-space: nowrap; transition: 0.2s;
+    padding: 6px 12px; border-radius: 100px; border: 1px solid var(--border-dim);
+    background: var(--bg-surface); color: var(--txt-secondary); font-size: 11px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
 }
-.chip.active { background: var(--bg-surface-hover); color: white; border-color: var(--primary); }
+.chip.active { background: var(--bg-surface-hover); color: white; border-color: var(--accent-primary); }
 
-.assets-list { 
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
-    overflow-y: auto; padding-bottom: 20px;
+.assets-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
 }
-.assets-list.list-view { grid-template-columns: 1fr; }
+.assets-grid.list-mode { grid-template-columns: 1fr; }
 
-.asset-thumb-item {
-    background: var(--bg-surface); border: 1px solid var(--border);
+.asset-item {
+    background: var(--bg-surface); border: 1px solid var(--border-dim);
     border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
     transition: 0.15s; position: relative;
 }
-.asset-thumb-item:hover { border-color: var(--text-muted); }
-.asset-thumb-item img { width: 100%; height: 80px; object-fit: cover; display: block; }
-.list-view .asset-thumb-item { display: flex; align-items: center; padding: 6px; height: auto; }
-.list-view .asset-thumb-item img { width: 48px; height: 48px; border-radius: 4px; }
-.asset-thumb-meta {
-    padding: 8px; font-size: 11px; color: var(--text-muted);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.asset-item:hover { border-color: var(--txt-secondary); }
+.asset-item.active { border-color: var(--accent-primary); box-shadow: 0 0 0 1px var(--accent-primary); }
+
+/* Thumb styles */
+.asset-thumb { width: 100%; height: 80px; object-fit: cover; background: #000; display: block; }
+.list-mode .asset-thumb { width: 48px; height: 48px; border-radius: 4px; display: inline-block; vertical-align: middle; margin: 4px; }
+.asset-info { padding: 8px; font-size: 11px; color: var(--txt-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-mode .asset-info { display: inline-block; vertical-align: middle; width: calc(100% - 60px); border: none; }
+
+/* -------------------------------------------------------------------------- */
+/* 5.0 GALLERY CARDS                                                          */
+/* -------------------------------------------------------------------------- */
+.gallery-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
 }
-.list-view .asset-thumb-meta { border: none; padding: 0 0 0 10px; flex: 1; }
+.card {
+    background: var(--bg-surface); border: 1px solid var(--border-dim);
+    border-radius: var(--radius-lg); overflow: hidden; position: relative;
+    aspect-ratio: 1/1; transition: transform 0.2s;
+}
+.card.video { aspect-ratio: 16/9; }
+.card:hover { transform: translateY(-4px); border-color: var(--txt-secondary); }
+.card-img { width: 100%; height: 100%; object-fit: cover; }
+.card-overlay {
+    position: absolute; inset: 0; background: linear-gradient(to top, black, transparent 60%);
+    opacity: 0; transition: 0.2s; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end;
+}
+.card:hover .card-overlay { opacity: 1; }
+.card-prompt { font-size: 12px; color: #e4e4e7; line-height: 1.4; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-actions { display: flex; gap: 8px; }
 
 /* -------------------------------------------------------------------------- */
-/* 5. SPECIAL FEATURES (Short Film, Ask SIA)                                  */
+/* 6.0 STORYBOARD (SHORT FILM)                                                */
 /* -------------------------------------------------------------------------- */
-
-/* Storyboard */
-.storyboard-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 8px; padding: 8px; border: 2px dashed var(--border);
-    border-radius: var(--radius-md); min-height: 200px; background: rgba(0,0,0,0.2);
+.storyboard-track {
+    display: flex; gap: 8px; overflow-x: auto; padding: 10px;
+    background: var(--bg-input); border: 1px dashed var(--border-dim);
+    border-radius: var(--radius-md); min-height: 140px; align-items: center;
 }
 .shot-card {
-    background: var(--bg-surface); border: 1px solid var(--border);
-    border-radius: 8px; aspect-ratio: 16/9; position: relative;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: var(--text-muted); cursor: grab;
+    min-width: 140px; height: 80px; background: var(--bg-surface);
+    border: 1px solid var(--border-dim); border-radius: 6px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--txt-secondary); font-size: 10px; position: relative;
 }
-.shot-card:hover { border-color: var(--primary); }
-.shot-number { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.6); padding: 2px 4px; border-radius: 4px; }
+.shot-card:hover { border-color: var(--accent-primary); }
+.shot-num { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.7); padding: 2px 4px; border-radius: 4px; }
 
-/* Ask SIA Button */
-.ask-sia-trigger {
-    background: linear-gradient(90deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1));
-    border: 1px solid rgba(168,85,247,0.3); color: #d8b4fe;
-    font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 100px;
-    cursor: pointer; display: flex; align-items: center; gap: 6px;
+/* -------------------------------------------------------------------------- */
+/* 7.0 UTILS & ANIMATIONS                                                     */
+/* -------------------------------------------------------------------------- */
+.hidden { display: none !important; }
+.pro-badge { 
+    background: linear-gradient(90deg, #f59e0b, #d97706); 
+    color: black; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px; 
 }
-.ask-sia-trigger:hover { background: rgba(168,85,247,0.2); }
-
-/* Floating Elements */
-.toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
-.toast {
-    background: var(--bg-surface); border: 1px solid var(--border);
-    border-left: 3px solid var(--primary);
-    padding: 12px 16px; border-radius: var(--radius-md);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    font-size: 13px; font-weight: 500;
-    transform: translateY(20px); opacity: 0; animation: slideIn 0.3s forwards;
-}
-@keyframes slideIn { to { transform: translateY(0); opacity: 1; } }
-
-/* Loaders */
-.spinner {
-    width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.2);
+.loader {
+    width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.2);
     border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -368,394 +301,402 @@ input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
 </head>
 <body>
 
-<div class="nav-rail">
-    <div class="logo">S</div>
-    
-    <div class="nav-item active" id="nav-image" onclick="switchLab('image')" title="Image Generator">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-    </div>
-    
-    <div class="nav-item" id="nav-video" onclick="switchLab('video')" title="Video Generator">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-    </div>
-    
-    <div class="nav-item" id="nav-shortfilm" onclick="switchLab('shortfilm')" title="Short Film Director">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" /></svg>
-    </div>
-    
-    <div class="nav-item" id="nav-assets" onclick="switchLab('assets')" title="My Files / Assets">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" /></svg>
-    </div>
+<div class="layout-container">
 
-    <div style="margin-top: auto;"></div>
-    <div class="nav-item" title="Settings"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
-</div>
+    <nav class="nav-rail">
+        <div class="nav-brand">S</div>
+        
+        <div class="nav-item active" id="nav-image" onclick="App.switchLab('image')" title="Image Lab">
+            <i class="ph ph-image"></i>
+        </div>
+        <div class="nav-item" id="nav-video" onclick="App.switchLab('video')" title="Video Lab">
+            <i class="ph ph-film-strip"></i>
+        </div>
+        <div class="nav-item" id="nav-shortfilm" onclick="App.switchLab('shortfilm')" title="Director Mode">
+            <i class="ph ph-projector-screen"></i>
+        </div>
+        <div class="nav-item" id="nav-assets" onclick="App.switchLab('assets')" title="My Files">
+            <i class="ph ph-folder-open"></i>
+        </div>
 
-<div class="sidebar">
-    <div class="sidebar-header">
-        <span class="sidebar-title">CREATIVE LAB</span>
-        <div class="pro-badge">PRO</div>
-    </div>
+        <div style="margin-top: auto;"></div>
+        <div class="nav-item" title="Community"><i class="ph ph-users"></i></div>
+        <div class="nav-item" title="Settings"><i class="ph ph-gear"></i></div>
+        <div class="nav-item" title="Profile"><img src="https://i.pravatar.cc/100" style="width:24px; height:24px; border-radius:50%;"></div>
+    </nav>
 
-    <div class="sidebar-content">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <span class="font-brand font-bold text-md tracking-wider">CREATIVE LAB</span>
+            <div class="pro-badge">PRO</div>
+        </div>
 
-        <div id="controls-image">
-            <div class="segmented-control">
-                <div class="segment-btn active" onclick="setMode(this, 'txt2img')">Text to Image</div>
-                <div class="segment-btn" onclick="setMode(this, 'img2img')">Image to Image</div>
-            </div>
-
-            <div class="input-group">
-                <div class="label-row">
-                    <span class="label">Prompt</span>
-                    <button class="ask-sia-trigger" onclick="openSia('prompt')">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
-                        Ask SIA
-                    </button>
+        <div class="sidebar-content">
+            
+            <div id="controls-image" class="lab-controls">
+                <div class="form-group">
+                    <div style="background: var(--bg-surface); padding: 4px; border-radius: 8px; display: flex; border: 1px solid var(--border-dim);">
+                        <div class="btn-ghost active" style="flex:1; text-align:center; padding: 6px; border-radius:6px; font-size:12px; background:var(--bg-surface-hover); color:white;">Text to Image</div>
+                        <div class="btn-ghost" style="flex:1; text-align:center; padding: 6px; border-radius:6px; font-size:12px;">Image to Image</div>
+                    </div>
                 </div>
-                <textarea id="img-prompt" class="textarea-field" placeholder="A futuristic cyberpunk street in Tokyo, neon lights, rain reflections, highly detailed..."></textarea>
-            </div>
 
-            <div class="input-group">
-                <div class="label-row"><span class="label">Aspect Ratio</span></div>
-                <div class="grid-ratios">
-                    <div class="ratio-card active" onclick="setRatio(this)"><div class="ratio-icon" style="width:16px; height:16px"></div>1:1</div>
-                    <div class="ratio-card" onclick="setRatio(this)"><div class="ratio-icon" style="width:24px; height:14px"></div>16:9</div>
-                    <div class="ratio-card" onclick="setRatio(this)"><div class="ratio-icon" style="width:14px; height:24px"></div>9:16</div>
+                <div class="form-group">
+                    <div class="form-label">
+                        <span>Prompt</span>
+                        <button class="btn-outline" style="height: 22px; font-size: 10px; padding: 0 8px; border-radius: 100px;" onclick="SIA.open()">
+                            <i class="ph ph-sparkle" style="margin-right:4px;"></i> Ask SIA
+                        </button>
+                    </div>
+                    <textarea id="prompt-image" class="input-area" placeholder="Describe your imagination in detail... e.g. An astronaut riding a horse on Mars, cinematic lighting, 8k resolution"></textarea>
                 </div>
-            </div>
 
-            <div class="input-group">
-                <div class="label-row"><span class="label">Settings</span></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:11px; color:var(--text-muted);">
-                    <span>Guidance Scale</span><span id="img-guidance-val">3.5</span>
+                <div class="form-group">
+                    <div class="form-label"><span>Aspect Ratio</span></div>
+                    <div class="ratio-grid">
+                        <div class="ratio-card active" onclick="UI.setRatio(this, '1:1')">
+                            <span class="ratio-viz" style="width:16px; height:16px;"></span> 1:1
+                        </div>
+                        <div class="ratio-card" onclick="UI.setRatio(this, '16:9')">
+                            <span class="ratio-viz" style="width:24px; height:14px;"></span> 16:9
+                        </div>
+                        <div class="ratio-card" onclick="UI.setRatio(this, '9:16')">
+                            <span class="ratio-viz" style="width:14px; height:24px;"></span> 9:16
+                        </div>
+                    </div>
                 </div>
-                <div class="range-wrapper">
-                    <input type="range" min="1" max="10" step="0.5" value="3.5" oninput="document.getElementById('img-guidance-val').innerText = this.value">
-                </div>
-                
-                <div style="margin-top:16px;">
-                    <span class="label" style="display:block; margin-bottom:8px;">Model Version</span>
-                    <select class="select-field">
-                        <option>Flux Professional (Best)</option>
-                        <option>Flux Schnell (Fastest)</option>
-                        <option>Sulandra Realistic v4</option>
+
+                <div class="form-group">
+                    <div class="form-label"><span>Model Config</span></div>
+                    <select class="input-select">
+                        <option>Flux Professional (v1.0)</option>
+                        <option>Midjourney V6 (Simulated)</option>
+                        <option>Stable Diffusion XL</option>
                     </select>
                 </div>
-            </div>
 
-            <button class="btn btn-gradient" style="width:100%; height:48px;" onclick="generate('image')">
-                Generate Image
-            </button>
-        </div>
-
-        <div id="controls-video" style="display:none;">
-            <div class="segmented-control">
-                <div class="segment-btn active">Text to Video</div>
-                <div class="segment-btn">Image to Video</div>
-            </div>
-
-            <div class="input-group">
-                <div class="label-row"><span class="label">Description</span></div>
-                <textarea id="vid-prompt" class="textarea-field" placeholder="A drone shot flying over a majestic waterfall, slow motion, cinematic lighting..."></textarea>
-            </div>
-
-            <div class="input-group">
-                <div class="label-row"><span class="label">Camera Control</span></div>
-                <select class="select-field">
-                    <option>Static Camera</option>
-                    <option>Horizontal Pan</option>
-                    <option>Zoom In</option>
-                    <option>Orbit</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <div class="label-row"><span class="label">Duration</span></div>
-                <div class="grid-ratios">
-                    <div class="ratio-card active">5s</div>
-                    <div class="ratio-card">10s</div>
+                <div class="form-group">
+                    <div class="form-label">
+                        <span>Guidance Scale</span>
+                        <span id="val-guidance" class="text-muted">7.5</span>
+                    </div>
+                    <input type="range" min="1" max="20" step="0.5" value="7.5" oninput="document.getElementById('val-guidance').innerText=this.value">
                 </div>
+
+                <button class="btn btn-accent" style="width: 100%; height: 48px;" onclick="Engine.generate('image')">
+                    <i class="ph ph-magic-wand"></i> GENERATE IMAGE
+                </button>
             </div>
 
-            <button class="btn btn-gradient" style="width:100%; height:48px;" onclick="generate('video')">
-                Generate Video
-            </button>
-        </div>
+            <div id="controls-video" class="lab-controls hidden">
+                <div class="form-group">
+                    <div class="form-label"><span>Video Prompt</span></div>
+                    <textarea id="prompt-video" class="input-area" placeholder="Describe motion... e.g. A drone flying over a futuristic city, slow motion, neon lights"></textarea>
+                </div>
 
-        <div id="controls-shortfilm" style="display:none;">
-            <div class="label-row">
-                <span class="label">Storyboard</span>
-                <span class="label">0 / 20 Shots</span>
+                <div class="form-group">
+                    <div class="form-label"><span>Camera Motion</span></div>
+                    <div class="ratio-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="ratio-card active"><i class="ph ph-video-camera"></i> Static</div>
+                        <div class="ratio-card"><i class="ph ph-arrows-out-simple"></i> Zoom</div>
+                        <div class="ratio-card"><i class="ph ph-arrow-right"></i> Pan</div>
+                        <div class="ratio-card"><i class="ph ph-arrows-clockwise"></i> Orbit</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-label"><span>Duration</span></div>
+                    <input type="range" min="3" max="10" value="5">
+                    <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--txt-secondary);">
+                        <span>3s</span><span>10s</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-accent" style="width: 100%; height: 48px;" onclick="Engine.generate('video')">
+                    <i class="ph ph-film-strip"></i> GENERATE VIDEO
+                </button>
+            </div>
+
+            <div id="controls-shortfilm" class="lab-controls hidden">
+                <div class="form-group">
+                    <div class="form-label">
+                        <span>Storyboard</span>
+                        <span>0 / 20 Shots</span>
+                    </div>
+                    <div class="storyboard-track" id="storyboard-track">
+                        <div style="width:100%; text-align:center; font-size:11px; color:var(--txt-tertiary);">
+                            Drag generated clips here
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-label"><span>Global Script</span></div>
+                    <textarea class="input-area" placeholder="Write the narrative script here..."></textarea>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%;">
+                    <i class="ph ph-play"></i> RENDER FULL FILM
+                </button>
+            </div>
+
+            <div id="controls-assets" class="lab-controls hidden" style="height: 100%; display: flex; flex-direction: column;">
+                <div class="assets-toolbar">
+                    <div class="chip active" onclick="Assets.filter('all', this)">All</div>
+                    <div class="chip" onclick="Assets.filter('image', this)">Images</div>
+                    <div class="chip" onclick="Assets.filter('video', this)">Videos</div>
+                    <div class="chip" onclick="Assets.filter('favorites', this)">Starred</div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                    <span class="text-xs font-bold text-muted uppercase">Library Content</span>
+                    <div style="display:flex; gap:4px;">
+                        <button class="btn-icon active" id="btn-view-grid" onclick="Assets.setView('grid')"><i class="ph ph-grid-four"></i></button>
+                        <button class="btn-icon" id="btn-view-list" onclick="Assets.setView('list')"><i class="ph ph-list-dashes"></i></button>
+                    </div>
+                </div>
+
+                <div id="assets-sidebar-list" class="assets-grid" style="flex: 1; overflow-y: auto;">
+                    </div>
+            </div>
+
+        </div>
+    </aside>
+
+    <main class="stage">
+        <header class="stage-header">
+            <div style="display:flex; gap: 24px;">
+                <div class="btn-ghost" style="font-weight:600; color:white; border-bottom:2px solid var(--accent-primary);">History</div>
+                <div class="btn-ghost" style="font-weight:600;">Community Feed</div>
+                <div class="btn-ghost" style="font-weight:600;">Favorites</div>
             </div>
             
-            <div class="storyboard-grid" id="storyboard-dropzone">
-                <div style="grid-column: 1/-1; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:11px;">
-                    Drag images here to build shots
-                </div>
+            <div style="display:flex; align-items:center; gap: 12px;">
+                <div class="text-xs font-bold text-muted">50 CREDITS LEFT</div>
+                <button class="btn-primary" style="height: 32px; padding: 0 12px;">Get More</button>
             </div>
+        </header>
 
-            <div class="input-group" style="margin-top:20px;">
-                <span class="label">Timeline Script</span>
-                <textarea class="textarea-field" style="margin-top:8px;" placeholder="Narrator: In a world where..."></textarea>
-            </div>
-
-            <button class="btn btn-gradient" style="width:100%; margin-top:10px;">Render Film</button>
-        </div>
-
-        <div id="controls-assets" style="display:none; height: 100%;">
-            <div class="assets-container">
-                <div class="assets-filter-bar">
-                    <div class="chip active" onclick="filterAssets('all', this)">All</div>
-                    <div class="chip" onclick="filterAssets('image', this)">Images</div>
-                    <div class="chip" onclick="filterAssets('video', this)">Videos</div>
-                    <div class="chip" onclick="filterAssets('favorites', this)">Favorites</div>
+        <div class="stage-content" id="stage-container">
+            <div class="gallery-grid" id="gallery-grid">
                 </div>
 
-                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-                    <span class="label">Recent Files</span>
-                    <div style="display:flex; gap:4px;">
-                        <button class="btn-icon active" onclick="setAssetView('grid', this)"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg></button>
-                        <button class="btn-icon" onclick="setAssetView('list', this)"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></button>
-                    </div>
-                </div>
-
-                <div id="assets-sidebar-list" class="assets-list">
-                    </div>
+            <div id="empty-state" class="hidden" style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0.3;">
+                <i class="ph ph-image-square" style="font-size: 64px; margin-bottom: 16px;"></i>
+                <div class="text-lg font-bold">Start Creating</div>
+                <div class="text-sm">Your history is empty.</div>
             </div>
         </div>
+    </main>
 
-    </div>
 </div>
-
-<div class="stage">
-    <div class="stage-header">
-        <div class="stage-tabs">
-            <div class="stage-tab active" onclick="switchStageTab('history', this)">History</div>
-            <div class="stage-tab" onclick="switchStageTab('community', this)">Community Feed</div>
-            <div class="stage-tab" onclick="switchStageTab('favorites', this)">Favorites</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:12px;">
-            <div style="font-size:11px; font-weight:700; color:var(--text-muted);">50 CREDITS</div>
-            <button class="btn-primary" style="height:30px; font-size:11px; padding:0 12px;">Upgrade</button>
-        </div>
-    </div>
-
-    <div class="stage-content" id="gallery-container">
-        </div>
-</div>
-
-<div class="toast-container" id="toast-container"></div>
 
 <script>
-    // --- STATE MANAGEMENT ---
-    const APP_STATE = {
-        currentLab: 'image',
-        history: [], // Stores {id, type, url, prompt, timestamp, favorite}
-        assetsFilter: 'all',
-        assetsView: 'grid'
-    };
+/**
+ * SULANDRA CORE ENGINE
+ * Handles State, DOM, Mock Data, and Simulation Logic.
+ */
 
-    // --- INITIALIZATION ---
-    document.addEventListener('DOMContentLoaded', () => {
-        // Load mock history
-        seedMockData();
-        renderGallery();
-    });
+// 1. STATE MANAGEMENT
+const STATE = {
+    lab: 'image',
+    history: [], // { id, type, url, prompt, timestamp, favorite }
+    assetsFilter: 'all',
+    assetsView: 'grid'
+};
 
-    // --- NAVIGATION ---
-    function switchLab(labId) {
-        APP_STATE.currentLab = labId;
-        
-        // Update Nav Rail
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById(`nav-${labId}`).classList.add('active');
+// 2. MOCK DATA GENERATOR (To fill the empty void)
+function seedData() {
+    const images = [
+        'https://picsum.photos/seed/1/512/512', 'https://picsum.photos/seed/2/512/512',
+        'https://picsum.photos/seed/3/512/512', 'https://picsum.photos/seed/4/512/512'
+    ];
+    const videos = [
+        'https://media.istockphoto.com/id/1346563637/video/abstract-background-motion-design.jpg?s=640x640&k=20&c=6N35pL2hMvEw8qT2T2yY2y2y2y2y2y2y2y2y2y2y2y=',
+        'https://media.istockphoto.com/id/1336449767/video/colorful-abstract-glowing-lines.jpg?s=640x640&k=20&c=6P4sF1aFjFv1zW2y2y2y2y2y2y2y2y2y2y2y2y2y2y='
+    ];
 
-        // Toggle Sidebar Panels
-        ['image', 'video', 'shortfilm', 'assets'].forEach(id => {
-            const el = document.getElementById(`controls-${id}`);
-            if (el) el.style.display = (id === labId) ? (id === 'assets' ? 'block' : 'block') : 'none';
+    for(let i=0; i<12; i++) {
+        const type = i % 3 === 0 ? 'video' : 'image';
+        STATE.history.push({
+            id: Date.now() - (i * 100000),
+            type: type,
+            url: type === 'image' ? images[i%images.length] : videos[i%videos.length],
+            prompt: `Futuristic concept art #${i+1}, highly detailed, cinematic lighting, 8k resolution...`,
+            favorite: i % 4 === 0
         });
+    }
+}
 
-        // Specific logic for Assets tab
-        if (labId === 'assets') {
-            renderAssetsSidebar();
+// 3. UI CONTROLLER
+const UI = {
+    setRatio: (el, ratio) => {
+        document.querySelectorAll('.ratio-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+    },
+    
+    toggleFav: (id) => {
+        const item = STATE.history.find(x => x.id === id);
+        if(item) {
+            item.favorite = !item.favorite;
+            Render.gallery();
+            if(STATE.lab === 'assets') Render.assetsSidebar();
         }
     }
+};
 
-    function switchStageTab(tab, btn) {
-        document.querySelectorAll('.stage-tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        // Filter main gallery based on tab (Implementation simplified for demo)
-        renderGallery(tab === 'favorites' ? 'favorites' : 'all');
-    }
-
-    // --- GENERATION SIMULATION ---
-    function generate(type) {
-        const promptInput = type === 'image' ? document.getElementById('img-prompt') : document.getElementById('vid-prompt');
-        const prompt = promptInput.value;
-
-        if (!prompt) {
-            showToast('Please enter a prompt first', 'error');
-            return;
-        }
-
-        // Show loading state
-        showToast('Sending job to H200 Engine...', 'info');
+// 4. RENDER ENGINE
+const Render = {
+    gallery: () => {
+        const grid = document.getElementById('gallery-grid');
+        grid.innerHTML = '';
         
-        // Add "Pending" card to gallery
-        const grid = document.getElementById('gallery-container');
-        const pendingCard = document.createElement('div');
-        pendingCard.className = `card ${type === 'video' ? 'video' : ''}`;
-        pendingCard.innerHTML = `
-            <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--bg-surface);">
-                <div class="spinner"></div>
-                <div style="margin-top:12px; font-size:11px; color:var(--text-muted);">Generating...</div>
-            </div>
-        `;
-        // Insert at top
-        const firstCard = grid.firstChild;
-        if(firstCard) grid.insertBefore(pendingCard, firstCard);
-        else grid.appendChild(pendingCard);
-
-        // Simulate API delay
-        setTimeout(() => {
-            // Replace pending with result
-            grid.removeChild(pendingCard);
-            
-            const newItem = {
-                id: Date.now(),
-                type: type,
-                url: type === 'image' ? `https://picsum.photos/seed/${Date.now()}/512/512` : 'https://media.istockphoto.com/id/1346563637/video/abstract-background-motion-design.jpg?s=640x640&k=20&c=6N35pL2hMvEw8qT2T2yY2y2y2y2y2y2y2y2y2y2y2y2=', 
-                prompt: prompt,
-                timestamp: new Date(),
-                favorite: false
-            };
-
-            APP_STATE.history.unshift(newItem);
-            renderGallery();
-            
-            // If assets sidebar is open, update it too
-            if(APP_STATE.currentLab === 'assets') renderAssetsSidebar();
-            
-            showToast(`${type === 'image' ? 'Image' : 'Video'} generated successfully!`, 'success');
-        }, 2500);
-    }
-
-    // --- RENDERING ---
-    function renderGallery(filter = 'all') {
-        const grid = document.getElementById('gallery-container');
-        grid.innerHTML = '<div class="gallery-grid" id="grid-inner"></div>';
-        const inner = document.getElementById('grid-inner');
-
-        const items = APP_STATE.history.filter(item => {
-            if (filter === 'favorites') return item.favorite;
-            return true;
-        });
-
-        items.forEach(item => {
+        STATE.history.forEach(item => {
             const card = document.createElement('div');
-            card.className = `card ${item.type === 'video' ? 'video' : ''}`;
+            card.className = `card ${item.type}`;
             card.innerHTML = `
-                <img src="${item.url}" class="card-media">
+                <img src="${item.url}" class="card-img" loading="lazy">
                 <div class="card-overlay">
                     <div class="card-prompt">${item.prompt}</div>
                     <div class="card-actions">
-                        <button class="btn btn-primary" style="height:28px; font-size:11px; padding:0 10px;">Download</button>
-                        <button class="btn btn-ghost" style="height:28px; width:28px; padding:0; background:rgba(255,255,255,0.2); color:white;" onclick="toggleFav(${item.id})">
-                            ${item.favorite ? '★' : '☆'}
+                        <button class="btn btn-primary" style="height:28px; font-size:11px;">Download</button>
+                        <button class="btn btn-ghost" style="height:28px; width:28px; padding:0; background:rgba(255,255,255,0.2); color:white;" onclick="UI.toggleFav(${item.id})">
+                            <i class="ph ${item.favorite ? 'ph-star-fill' : 'ph-star'}" style="color:${item.favorite ? '#fbbf24' : 'white'}"></i>
                         </button>
                     </div>
                 </div>
             `;
-            inner.appendChild(card);
+            grid.appendChild(card);
         });
-    }
+    },
 
-    // --- ASSETS SIDEBAR LOGIC (THE FIX) ---
-    function renderAssetsSidebar() {
+    assetsSidebar: () => {
         const list = document.getElementById('assets-sidebar-list');
-        list.className = `assets-list ${APP_STATE.assetsView === 'list' ? 'list-view' : ''}`;
+        list.className = `assets-grid ${STATE.assetsView === 'list' ? 'list-mode' : ''}`;
         list.innerHTML = '';
 
-        const items = APP_STATE.history.filter(item => {
-            if (APP_STATE.assetsFilter === 'all') return true;
-            if (APP_STATE.assetsFilter === 'favorites') return item.favorite;
-            return item.type === APP_STATE.assetsFilter;
+        // Filter items
+        const items = STATE.history.filter(item => {
+            if(STATE.assetsFilter === 'all') return true;
+            if(STATE.assetsFilter === 'favorites') return item.favorite;
+            return item.type === STATE.assetsFilter;
         });
 
         items.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'asset-thumb-item';
-            div.onclick = () => { showToast('Asset selected', 'info') };
-            div.innerHTML = `
-                <img src="${item.url}">
-                <div class="asset-thumb-meta">${item.prompt}</div>
+            const el = document.createElement('div');
+            el.className = 'asset-item';
+            el.innerHTML = `
+                <img src="${item.url}" class="asset-thumb">
+                <div class="asset-info">
+                    <div style="font-weight:600; margin-bottom:2px;">${item.type.toUpperCase()}</div>
+                    ${item.prompt}
+                </div>
             `;
-            list.appendChild(div);
+            // Click to preview in main stage
+            el.onclick = () => { 
+                document.querySelectorAll('.asset-item').forEach(a => a.classList.remove('active'));
+                el.classList.add('active');
+            };
+            list.appendChild(el);
         });
     }
+};
 
-    function filterAssets(type, btn) {
-        APP_STATE.assetsFilter = type;
+// 5. APP CONTROLLER
+const App = {
+    init: () => {
+        seedData();
+        Render.gallery();
+        // Hook up default view
+        App.switchLab('image');
+    },
+
+    switchLab: (labId) => {
+        STATE.lab = labId;
+        
+        // 1. Update Nav Icons
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(`nav-${labId}`).classList.add('active');
+
+        // 2. Show Correct Sidebar Panel
+        document.querySelectorAll('.lab-controls').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`controls-${labId}`).classList.remove('hidden');
+
+        // 3. Special initialization for Assets view
+        if(labId === 'assets') {
+            Render.assetsSidebar();
+        }
+    }
+};
+
+// 6. ASSETS MANAGER LOGIC
+const Assets = {
+    filter: (type, btn) => {
+        STATE.assetsFilter = type;
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
-        renderAssetsSidebar();
+        Render.assetsSidebar();
+    },
+    setView: (view) => {
+        STATE.assetsView = view;
+        document.getElementById('btn-view-grid').classList.toggle('active', view === 'grid');
+        document.getElementById('btn-view-list').classList.toggle('active', view === 'list');
+        Render.assetsSidebar();
     }
+};
 
-    function setAssetView(view, btn) {
-        APP_STATE.assetsView = view;
-        btn.parentElement.querySelectorAll('.btn-icon').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderAssetsSidebar();
+// 7. GENERATION ENGINE (Mock)
+const Engine = {
+    generate: (type) => {
+        const promptEl = type === 'image' ? document.getElementById('prompt-image') : document.getElementById('prompt-video');
+        if(!promptEl.value) { alert("Please enter a prompt first."); return; }
+
+        const btn = event.currentTarget;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<div class="loader"></div> Generating...`;
+        btn.disabled = true;
+
+        // Add pending card
+        const grid = document.getElementById('gallery-grid');
+        const pending = document.createElement('div');
+        pending.className = `card ${type === 'video' ? 'video' : ''}`;
+        pending.innerHTML = `<div style="height:100%; display:flex; align-items:center; justify-content:center; background:var(--bg-surface);"><div class="loader"></div></div>`;
+        grid.insertBefore(pending, grid.firstChild);
+
+        setTimeout(() => {
+            // Finish generation
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            grid.removeChild(pending);
+
+            const newItem = {
+                id: Date.now(),
+                type: type,
+                url: type === 'image' ? 'https://picsum.photos/512/512' : 'https://media.istockphoto.com/id/1346563637/video/abstract-background-motion-design.jpg?s=640x640&k=20&c=6N35pL2hMvEw8qT2T2yY2y2y2y2y2y2y2y2y2y2y2y=',
+                prompt: promptEl.value,
+                favorite: false
+            };
+            STATE.history.unshift(newItem);
+            Render.gallery();
+            if(STATE.lab === 'assets') Render.assetsSidebar();
+        }, 2000);
     }
+};
 
-    // --- UTILS ---
-    function toggleFav(id) {
-        const item = APP_STATE.history.find(i => i.id === id);
-        if (item) {
-            item.favorite = !item.favorite;
-            renderGallery(); // Re-render to show star state
+// 8. ASK SIA (Mock Chat)
+const SIA = {
+    open: () => {
+        const prompt = prompt("Ask SIA (AI Assistant) to help refine your prompt:", "Make it more cinematic");
+        if(prompt) {
+            const box = document.getElementById('prompt-image');
+            box.value += ", cinematic lighting, 8k resolution, photorealistic, trending on artstation";
         }
     }
+};
 
-    function setRatio(el) {
-        el.parentElement.querySelectorAll('.ratio-card').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-    }
+// START APP
+App.init();
 
-    function setMode(el, mode) {
-        el.parentElement.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    function openSia(context) {
-        showToast('Ask SIA Assistant Activated', 'info');
-    }
-
-    function showToast(msg, type = 'info') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.style.borderLeftColor = type === 'success' ? '#22c55e' : (type === 'error' ? '#ef4444' : '#6366f1');
-        toast.innerText = msg;
-        container.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
-
-    function seedMockData() {
-        // Create some fake history for demonstration
-        for(let i=0; i<8; i++) {
-            APP_STATE.history.push({
-                id: i,
-                type: i % 3 === 0 ? 'video' : 'image',
-                url: i % 3 === 0 ? 'https://media.istockphoto.com/id/1336449767/video/colorful-abstract-glowing-lines.jpg?s=640x640&k=20&c=6P4sF1aFjFv1zW2y2y2y2y2y2y2y2y2y2y2y2y2y2y=' : `https://picsum.photos/seed/${i}/512/512`,
-                prompt: `Demo creation ${i} - A cinematic scene with lighting...`,
-                timestamp: new Date(),
-                favorite: i % 4 === 0
-            });
-        }
-    }
 </script>
 </body>
 </html>
