@@ -2503,6 +2503,54 @@ function sendCurrentItemToCinema(){
         <audio id="audio-browser-player" style="width:100%;padding:10px 14px 14px;" controls></audio>
     </div>
 </div>
+<!-- My Files controls: VIEW MODE SIDEBAR -->
+<div id="assets-controls" style="display:none;">
+
+    <!-- Top row: which library we are looking at -->
+    <div class="label">
+        <div>
+            <div id="assets-label" style="font-size:11px; text-transform:uppercase;">
+                My Images
+            </div>
+            <div id="assets-label-sub"
+                 style="font-size:10px; opacity:0.7; margin-top:2px;">
+                All images you created in Sulandra Creative Lab
+            </div>
+        </div>
+    </div>
+
+    <!-- Row: grid / vertical toggle + Ask SIA -->
+    <div class="assets-actions-row">
+        <div class="assets-view-toggle">
+            <button type="button"
+                    class="assets-sidebar-mode-btn active"
+                    onclick="setAssetsSidebarMode('grid', this)">
+                Grid
+            </button>
+            <button type="button"
+                    class="assets-sidebar-mode-btn"
+                    onclick="setAssetsSidebarMode('list', this)">
+                Vertical
+            </button>
+        </div>
+
+        <button type="button"
+                class="btn-ask-sia"
+                onclick="openSiaForField('prompt-input','Image Prompt')">
+            Ask SIA
+        </button>
+    </div>
+
+    <!-- Sidebar list of items (thumbnails) -->
+    <div id="assets-sidebar-list" class="assets-sidebar-list is-grid">
+        <!-- Filled by renderAssetsView() -->
+    </div>
+
+    <!-- Zoomed preview in the sidebar when you double-click -->
+    <div id="assets-sidebar-preview" class="assets-sidebar-preview" style="display:none;">
+        <!-- Filled by openSidebarPreview() -->
+    </div>
+</div>
 
 <script>
 /* -------------------------------------------------------------------------- */
