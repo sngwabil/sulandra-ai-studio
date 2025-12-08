@@ -1846,6 +1846,106 @@ function sendCurrentItemToCinema(){
 
 </div>
 
+<!-- My Files controls: VIEW MODE SIDEBAR -->
+<div id="assets-controls" style="display:none;">
+
+  <!-- Top row: which library we are looking at -->
+  <div class="label">
+    <span>MY FILES LIB</span>
+  </div>
+
+  <div class="assets-header-row">
+    <div class="assets-header-text">
+      <div id="assets-label" class="assets-label">
+        My Images
+      </div>
+      <div id="assets-label-sub" class="assets-label-sub">
+        All images you created in Sulandra Creative Lab
+      </div>
+    </div>
+
+    <div class="assets-view-toggle">
+      <button type="button"
+              class="lab-mode-view active"
+              data-view="images"
+              onclick="switchAssetsView('images', this)">
+        Images
+      </button>
+      <button type="button"
+              class="lab-mode-view"
+              data-view="videos"
+              onclick="switchAssetsView('videos', this)">
+        Videos
+      </button>
+      <button type="button"
+              class="lab-mode-view"
+              data-view="films"
+              onclick="switchAssetsView('films', this)">
+        Films
+      </button>
+      <button type="button"
+              class="lab-mode-view"
+              data-view="favorites"
+              onclick="switchAssetsView('favorites', this)">
+        Favorites
+      </button>
+      <button type="button"
+              class="lab-mode-view"
+              data-view="create"
+              onclick="switchAssetsView('create', this)">
+        Create
+      </button>
+    </div>
+  </div>
+
+  <!-- Grid / Vertical + Ask SIA row (controls how the sidebar thumbnails look) -->
+  <div class="assets-actions-row">
+    <button type="button"
+            class="assets-sidebar-mode-btn active"
+            onclick="setAssetsSidebarMode('grid', this)">
+      Grid
+    </button>
+    <button type="button"
+            class="assets-sidebar-mode-btn"
+            onclick="setAssetsSidebarMode('list', this)">
+      Vertical
+    </button>
+
+    <button type="button"
+            class="btn-ask-sia"
+            onclick="openSiaForField(null, 'My Files · Ask SIA')">
+      <span class="sia-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3l1.4 4.1L17.5 9 13.4 10.6 12 15l-1.4-4.4L6.5 9l4.1-1.9L12 3z"/>
+        </svg>
+      </span>
+      <span class="sia-label">Ask SIA before generating Image</span>
+    </button>
+  </div>
+
+  <!-- Thumbnail strip that renderAssetsView() will fill -->
+  <div id="assets-sidebar-list" class="assets-sidebar-list is-grid">
+    <!-- JS will inject thumbnail rows here -->
+  </div>
+
+  <!-- Double-click preview area (hidden until you open a file) -->
+  <div id="assets-sidebar-preview"
+       class="assets-sidebar-preview"
+       style="display:none;">
+    <div class="assets-preview-image-wrapper">
+      <img id="assets-preview-image"
+           class="assets-preview-image"
+           alt="Selected preview">
+    </div>
+    <div id="assets-preview-meta" class="assets-preview-meta"></div>
+    <button type="button"
+            class="assets-preview-close"
+            onclick="closeSidebarPreview()">
+      ✕ Close
+    </button>
+  </div>
+</div>
+        
 <!-- VIEW MODE SWITCH (used only when lab === 'assets') -->
 <div class="lab-mode-switch" id="lab-switch-view" style="display:none;">
     <div class="lab-mode lab-mode-view active"
