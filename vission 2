@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>AI Image Generator</title>
+    <title>Sulandra Vision · Image & Video Generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,30 +14,25 @@
     />
 <style>
 :root {
-    /* THEME: Matte Black & Mint Green (From Screenshot) */
-    --bg-root: #010203;
-    --bg-surface: #050609;
-    --bg-element: #0b0d12;
-    --bg-input: #080a0f;
+    --bg-root: #020617;
+    --bg-surface: #050816;
+    --bg-surface-soft: #050814;
+    --bg-deep: #00010a;
 
-    --border-subtle: #1a1d26;
-    --border-active: #2d3342;
+    --accent-green: #3bff64;
+    --accent-green-soft: rgba(59, 255, 100, 0.12);
 
-    --accent-primary: #10b981; /* Mint Green */
-    --accent-glow: rgba(16, 185, 129, 0.4);
-    --accent-soft: rgba(16, 185, 129, 0.1);
+    --border-subtle: #050b18;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
 
-    --text-primary: #ffffff;
-    --text-secondary: #94a3b8;
-    --text-muted: #475569;
-
-    --nav-width: 72px;
-    --topbar-height: 68px;
+    --nav-width: 76px;
+    --topbar-height: 64px;
     --radius-card: 20px;
-    --radius-md: 12px;
-    --radius-pill: 99px;
-    
-    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --radius-md: 14px;
+    --radius-pill: 999px;
+    --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.85);
 }
 
 * {
@@ -47,764 +43,1602 @@
 }
 
 body {
-    font-family: "Inter", system-ui, sans-serif;
-    background: var(--bg-root);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter",
+        "Segoe UI", sans-serif;
+    background: #000;
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
-    overflow: hidden; /* App-feel */
 }
 
 /* ===================== LEFT NAV ===================== */
+
 .nav-rail {
     width: var(--nav-width);
-    background: var(--bg-root);
-    border-right: 1px solid var(--border-subtle);
+    background: radial-gradient(circle at 0 0, #020617, #020817 40%, #000 100%);
+    border-right: 1px solid #020617;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 0;
-    gap: 16px;
+    padding: 14px 10px 16px;
+    gap: 10px;
+    position: fixed;
+    inset-block: 0;
     z-index: 40;
 }
 
 .nav-logo {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: var(--accent-primary);
-    color: #000;
-    font-weight: 700;
-    font-size: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 18px;
+    background: radial-gradient(circle at 0 0, #22c55e, #020617 70%);
+    border: 1px solid rgba(148, 163, 184, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 20px;
+    color: #ecfdf5;
+    box-shadow: 0 0 26px rgba(34, 197, 94, 0.9);
+}
+
+.nav-section {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .nav-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: none;
-    background: transparent;
+    width: 46px;
+    height: 46px;
+    border-radius: 18px;
+    border: 1px solid transparent;
+    background: radial-gradient(circle at 0 0, #020617, #000814 70%);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: 0.2s;
-    color: var(--text-secondary);
+    transition: 0.16s ease-out;
 }
 
 .nav-btn svg {
-    width: 22px;
-    height: 22px;
-    stroke: currentColor;
+    width: 20px;
+    height: 20px;
+    stroke: #9ca3af;
     stroke-width: 1.5;
     fill: none;
 }
 
 .nav-btn:hover {
-    background: #1e293b;
-    color: #fff;
+    border-color: #1f2937;
+    transform: translateY(-1px);
 }
 
 .nav-btn.active {
-    background: #111827;
-    color: var(--accent-primary);
-    border: 1px solid #1f2937;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+    border-color: rgba(59, 255, 100, 0.9);
+    background: radial-gradient(circle at 0 0, #020617, #020617 65%);
+    box-shadow: 0 0 22px rgba(34, 197, 94, 0.7);
 }
 
 .nav-bottom {
     margin-top: auto;
-    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--text-secondary);
 }
 
 .nav-sale-pill {
     font-size: 10px;
-    color: #000;
-    background: var(--accent-primary);
-    border-radius: 6px;
-    padding: 4px 6px;
+    color: #022c22;
+    background: #22c55e;
+    border-radius: 7px;
+    padding: 3px 7px;
     font-weight: 700;
-    text-align: center;
-    line-height: 1.2;
 }
 
 /* ===================== APP SHELL ===================== */
+
 .app-shell {
+    margin-left: var(--nav-width);
     flex: 1;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #020617, #000 80%);
     display: flex;
     flex-direction: column;
-    background: var(--bg-root);
-    overflow: hidden;
+    overflow-y: auto; /* page scroll instead of hiding Generate */
 }
 
 .topbar {
     height: var(--topbar-height);
-    padding: 0 30px;
+    padding: 0 24px 0 26px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--bg-root);
-    border-bottom: 1px solid transparent;
-    flex-shrink: 0;
+    background: linear-gradient(to right, #020617, #000814);
+    border-bottom: 1px solid #020617;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-title {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
 .topbar-title-main {
+    font-family: "Times New Roman", Times, serif;
     font-size: 18px;
-    font-weight: 600;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    font-weight: 700;
 }
 
 .topbar-title-sub {
-    font-size: 13px;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12px;
     color: var(--text-muted);
-    margin-top: 2px;
 }
 
-/* Model Dropdown matches screenshot */
 .model-selector {
-    background: #0f1116;
-    border: 1px solid #1f2937;
-    color: #cbd5e1;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: var(--radius-pill);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
+    border-radius: var(--radius-pill);
+    border: 1px solid #0b1120;
+    background: #020617;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 700;
 }
 
 .model-selector select {
-    background: transparent;
     border: none;
-    color: inherit;
-    font-size: inherit;
-    font-weight: inherit;
     outline: none;
-    appearance: none;
-    cursor: pointer;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-family: "Times New Roman", Times, serif;
 }
 
-.credits-pill {
-    font-size: 13px;
-    color: var(--text-secondary);
-    background: #0b0d12;
-    padding: 6px 14px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-subtle);
+.topbar-right {
     display: flex;
-    gap: 6px;
     align-items: center;
+    gap: 12px;
 }
-.credits-pill .value { color: #fff; font-weight: 700; }
 
+.credits-pill,
 .user-chip {
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 6px 4px 6px 16px;
     border-radius: var(--radius-pill);
-    display: flex;
+    border: 1px solid #0b1120;
+    background: radial-gradient(circle at 0 0, #020617, #020617 60%);
+    padding: 6px 14px;
+    font-size: 12px;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
+    gap: 6px;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
+
+.credits-pill .value {
+    color: #a7f3d0;
+    font-weight: 700;
+}
+
 .user-avatar {
-    width: 24px;
-    height: 14px; /* pill shape dot */
-    background: var(--accent-primary);
-    border-radius: 10px;
-    box-shadow: 0 0 10px var(--accent-glow);
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 0 0, #22c55e, #020617 70%);
 }
 
 /* ===================== MAIN GRID ===================== */
+
 .main-layout {
-    flex: 1;
+    min-height: calc(100vh - var(--topbar-height));
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 20px;
-    padding: 10px 30px 30px 10px;
-    overflow: hidden;
+    grid-template-columns: minmax(0, 430px) minmax(0, 1fr);
+    gap: 0;
+    padding: 14px 18px 24px;
 }
 
-/* LEFT PANEL (SCROLLABLE) */
 .panel {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-    padding-right: 10px;
+    min-width: 0;
+    min-height: 0;
 }
 
-/* Custom Scrollbar */
-.panel::-webkit-scrollbar { width: 6px; }
-.panel::-webkit-scrollbar-track { background: transparent; }
-.panel::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+.panel-right {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 94px;
+    gap: 10px;
+    min-width: 0;
+}
 
-.gen-header { margin-bottom: 20px; }
+/* ===================== GENERATOR CARD ===================== */
+
+.gen-header {
+    padding: 16px 18px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.gen-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .gen-title-label {
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
     color: var(--text-muted);
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-.gen-title-main {
-    font-size: 18px;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
 }
 
-/* MODE TABS - PILL STYLE */
+.gen-title-main {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* ===== Glossy pill tabs (image / video modes) ===== */
+
 .mode-toggle {
-    display: flex;
-    gap: 0;
-    margin-bottom: 20px;
+    display: inline-flex;
+    border-radius: var(--radius-pill);
+    border: 1px solid #0b1120;
+    background: radial-gradient(circle at 0 0, #020617, #020617 70%);
+    padding: 3px;
+    box-shadow: 0 0 16px rgba(15, 23, 42, 0.9);
 }
+
 .mode-toggle button {
-    flex: 1;
-    background: #0b0d12;
-    border: 1px solid var(--border-subtle);
+    border: none;
+    background: transparent;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 13px;
+    font-weight: 700;
     color: var(--text-secondary);
-    padding: 8px 10px;
-    font-size: 12px;
-    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
     cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
+    position: relative;
+    transition: all 0.18s ease-out;
 }
-.mode-toggle button:first-child { border-radius: 20px 0 0 20px; border-right: none; }
-.mode-toggle button:not(:first-child):not(:last-child) { border-radius: 0; border-right: none; }
-.mode-toggle button:last-child { border-radius: 0 20px 20px 0; }
+
+.mode-toggle button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.12),
+        transparent 55%
+    );
+    opacity: 0;
+    pointer-events: none;
+}
 
 .mode-toggle button.active {
-    background: var(--accent-soft);
-    color: var(--accent-primary);
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
-    z-index: 2;
+    color: #022c22;
+    background: radial-gradient(circle at 0 0, #4ade80, #16a34a);
+    box-shadow: 0 0 24px rgba(34, 197, 94, 0.9);
 }
 
-/* INPUTS */
-.group-label { display: none; /* Hidden to match clean screenshot look */ }
-.input-block { margin-bottom: 20px; }
+.mode-toggle button.active::after {
+    opacity: 1;
+}
+
+.mode-toggle button:hover:not(.active) {
+    color: #e5e7eb;
+}
+
+/* form body */
+
+.gen-body {
+    flex: 1;
+    background: radial-gradient(circle at top left, #050816, #020617 60%);
+    border-radius: var(--radius-card);
+    border: 1px solid #050b18;
+    padding: 16px 18px 14px;
+    margin: 0 14px 8px;
+    box-shadow: var(--shadow-soft);
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.group-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 10px;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.input-block {
+    margin-bottom: 14px;
+}
+
 .input-row-label {
     display: flex;
+    align-items: baseline;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+}
+
+.input-label {
     font-size: 12px;
     color: var(--text-secondary);
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 700;
 }
-.input-hint { color: var(--text-muted); }
 
-textarea, input[type="text"], input[type="number"] {
+.input-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+textarea,
+input[type="text"],
+input[type="number"],
+select {
     width: 100%;
-    background: var(--bg-input);
-    border: 1px solid var(--border-subtle);
     border-radius: 12px;
-    color: #fff;
-    padding: 12px;
-    font-size: 13px;
-    font-family: "Inter", sans-serif;
+    border: 1px solid #050b18;
+    background: #030712;
+    color: var(--text-primary);
+    font-size: 12px;
+    padding: 9px 10px;
     outline: none;
-    transition: 0.2s;
 }
-textarea:focus { border-color: #334155; background: #0b0d12; }
-textarea { min-height: 120px; resize: vertical; }
 
-/* PROMPT AREA WRAPPER */
-.prompt-area { border: none; background: transparent; padding: 0; }
-.prompt-area textarea { min-height: 120px; }
-.prompt-footer { margin-top: 6px; font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; }
-.prompt-helper-link { color: var(--accent-primary); cursor: pointer; }
+textarea {
+    resize: vertical;
+    min-height: 130px;
+}
 
-/* UPLOAD CARDS (THE DASHED BOXES) */
+.prompt-area {
+    border-radius: 16px;
+    border: 1px solid #050b18;
+    background: #020617;
+    padding: 10px 10px 8px;
+}
+
+.prompt-area textarea {
+    border: none;
+    background: transparent;
+    min-height: 150px;
+}
+
+.prompt-footer {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.prompt-helper-link {
+    color: #a7f3d0;
+    cursor: pointer;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 700;
+}
+
+.prompt-helper-link:hover {
+    text-decoration: underline;
+}
+
+.dual-row {
+    display: flex;
+    gap: 10px;
+}
+
+.dual-row > * {
+    flex: 1;
+}
+
 .upload-card {
-    border: 1px dashed var(--border-active);
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.02);
-    padding: 24px;
-    min-height: 180px;
+    position: relative;
+    border-radius: 16px;
+    border: 1px dashed #1f2937;
+    background: #020617;
+    padding: 18px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 6px;
     cursor: pointer;
-    position: relative;
-    transition: 0.2s;
-    text-align: center;
 }
-.upload-card:hover { border-color: var(--text-secondary); background: rgba(255, 255, 255, 0.04); }
+
 .upload-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--text-muted);
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid #111827;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     color: var(--text-secondary);
 }
-.upload-sub { font-size: 11px; color: var(--text-muted); }
-.upload-card input[type="file"] { opacity: 0; position: absolute; inset: 0; cursor: pointer; }
 
-/* CHIPS */
-.chip-row, .hints-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.chip {
-    background: #0b0d12;
-    border: 1px solid var(--border-subtle);
-    color: var(--text-secondary);
-    padding: 4px 10px;
-    font-size: 11px;
-    border-radius: var(--radius-pill);
+.upload-card input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
     cursor: pointer;
-    transition: 0.2s;
 }
-.chip:hover { color: #fff; border-color: var(--text-secondary); }
 
-/* FOOTER CONTROLS */
-.gen-footer-controls {
-    margin-top: auto;
-    border-top: 1px solid var(--border-subtle);
-    padding-top: 20px;
+.upload-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.link-small {
+    font-size: 11px;
+    color: #a7f3d0;
+    cursor: pointer;
+}
+
+.chip-row,
+.hints-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
+    margin-top: 6px;
 }
+
+/* small glossy chips */
+
+.chip {
+    border-radius: var(--radius-pill);
+    border: 1px solid #111827;
+    background: radial-gradient(circle at 0 0, #020617, #020617 70%);
+    font-size: 11px;
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 700;
+    transition: all 0.16s ease-out;
+}
+
+.chip.active,
+.chip:hover {
+    background: radial-gradient(circle at 0 0, #4ade80, #16a34a);
+    border-color: var(--accent-green);
+    color: #022c22;
+    box-shadow: 0 0 18px rgba(34, 197, 94, 0.9);
+}
+
+/* bottom strip */
+
+.gen-footer-controls {
+    padding: 10px 22px 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+}
+
 .gen-footer-controls select {
     width: auto;
-    min-width: 80px;
-    background: #0b0d12;
-    border: 1px solid var(--border-subtle);
-    color: var(--text-secondary);
-    padding: 8px 12px;
-    border-radius: 8px;
+    min-width: 90px;
+    border-radius: 999px;
+    border: 1px solid #111827;
+    background: #020617;
+    padding: 6px 12px;
     font-size: 12px;
-    font-weight: 500;
+    color: var(--text-secondary);
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 700;
 }
+
+/* glossy Generate button */
 
 .btn-generate {
-    width: 100%;
-    margin-top: 12px;
-    background: var(--accent-primary);
-    color: #000;
-    font-weight: 600;
-    padding: 12px;
-    border-radius: 10px;
+    margin-left: auto;
+    border-radius: 999px;
     border: none;
-    cursor: pointer;
+    padding: 10px 28px;
     font-size: 14px;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-    transition: 0.2s;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    color: #022c22;
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.95);
+    font-family: "Times New Roman", Times, serif;
+    letter-spacing: 0.03em;
 }
-.btn-generate:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
-}
-.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ===================== RIGHT PANEL ===================== */
-.panel-right {
+.btn-generate:disabled {
+    opacity: 0.55;
+    box-shadow: none;
+    cursor: default;
+}
+
+/* ===================== RIGHT SIDE ===================== */
+
+.preview-wrapper {
+    border-radius: var(--radius-card);
+    border: 1px solid #050b18;
+    background: radial-gradient(circle at top, #050816, #020617 60%);
+    padding: 12px 14px 10px;
+    box-shadow: var(--shadow-soft);
     display: flex;
     flex-direction: column;
     min-width: 0;
-    background: var(--bg-surface);
-    border-radius: 24px;
-    border: 1px solid var(--border-subtle);
-    overflow: hidden;
-    position: relative;
 }
 
 .preview-topbar {
-    padding: 20px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 8px;
 }
 
-/* Filter Pills */
-.preview-filters { display: flex; gap: 8px; }
+/* glossy preview filter pills */
+
+.preview-filters {
+    display: inline-flex;
+    border-radius: 999px;
+    border: 1px solid #0b1120;
+    background: radial-gradient(circle at 0 0, #020617, #020617 70%);
+    padding: 3px;
+    box-shadow: 0 0 16px rgba(15, 23, 42, 0.9);
+}
+
 .preview-filters button {
-    background: transparent;
     border: none;
-    color: var(--text-secondary);
+    background: transparent;
+    font-family: "Times New Roman", Times, serif;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 700;
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 999px;
     cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 20px;
+    position: relative;
+    transition: all 0.18s ease-out;
 }
+
+.preview-filters button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.12),
+        transparent 55%
+    );
+    opacity: 0;
+}
+
 .preview-filters button.active {
-    background: var(--accent-primary);
-    color: #000;
+    background: radial-gradient(circle at 0 0, #4ade80, #16a34a);
+    color: #022c22;
+    box-shadow: 0 0 22px rgba(34, 197, 94, 0.9);
 }
-.preview-filters button:hover:not(.active) { color: #fff; }
+
+.preview-filters button.active::after {
+    opacity: 1;
+}
+
+.preview-filters button:hover:not(.active)) {
+    color: #e5e7eb;
+}
+
+.btn-assets {
+    border-radius: var(--radius-pill);
+    border: 1px solid #0b1120;
+    background: radial-gradient(circle at 0 0, #020617, #020617 70%);
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 700;
+}
 
 .search-input {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 13px;
-    text-align: right;
+    border-radius: 999px;
+    border: 1px solid #0b1120;
+    background: #020617;
+    color: var(--text-secondary);
+    font-size: 11px;
+    padding: 6px 10px;
+    min-width: 140px;
     outline: none;
-    padding: 6px;
-    width: 120px;
-}
-.btn-assets {
-    background: #111827;
-    border: 1px solid #1f2937;
-    color: #fff;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    cursor: pointer;
-    margin-left: 10px;
 }
 
-/* MAIN STAGE */
 .preview-main {
     flex: 1;
-    border-top: 1px solid var(--border-subtle);
-    display: flex;
-    flex-direction: column;
-    background: #000;
-    position: relative;
+    display: grid;
+    grid-template-rows: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 10px;
+    min-height: 0;
 }
 
 .preview-stage {
-    flex: 1;
+    border-radius: 18px;
+    border: 1px solid #050b18;
+    background: radial-gradient(circle at top, #020617, #000814 80%);
+    padding: 14px 16px;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-    position: relative;
-    padding: 20px;
+    min-height: 0;
 }
 
-.preview-media {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: none;
+.preview-stage-inner {
+    width: 100%;
+    max-width: 820px;
+    height: 100%;
+    border-radius: 18px;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .preview-placeholder {
     font-size: 12px;
     color: var(--text-muted);
+    padding: 18px;
     text-align: center;
-    line-height: 1.6;
 }
-.preview-placeholder strong { color: var(--text-secondary); }
+
+.preview-media {
+    width: 100%;
+    height: 100%;
+    display: none;
+    object-fit: contain;
+    background: #000;
+}
 
 .preview-controls-row {
     position: absolute;
-    bottom: 20px;
-    left: 24px;
-    font-size: 12px;
-    color: var(--text-muted);
+    left: 22px;
+    bottom: 14px;
+    font-size: 11px;
+    color: var(--text-secondary);
     display: flex;
-    gap: 8px;
-    z-index: 10;
+    gap: 10px;
 }
 
-/* FEED (Hidden by default or below stage in old code, now overlay or bottom) 
-   We keep the logic but style it to fit the "clean" look. 
-   In this design, let's put the feed at the bottom like a filmstrip. */
 .preview-feed {
-    height: 120px;
-    border-top: 1px solid var(--border-subtle);
-    background: var(--bg-surface);
-    padding: 10px 20px;
-    display: flex;
-    flex-direction: column;
+    border-radius: 16px;
+    border: 1px solid #050b18;
+    background: #020617;
+    padding: 10px 10px 8px;
+    overflow-y: auto;
 }
+
 .feed-row-title {
     font-size: 11px;
     color: var(--text-secondary);
-    margin-bottom: 8px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    margin-bottom: 6px;
 }
+
 .feed-grid {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 5px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 9px;
 }
-.feed-grid::-webkit-scrollbar { height: 4px; }
-.feed-grid::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
 
 .feed-card {
-    min-width: 100px;
-    width: 100px;
-    height: 70px;
-    border-radius: 8px;
-    background: #000;
-    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    border: 1px solid #050b18;
+    background: #020617;
     overflow: hidden;
-    position: relative;
     cursor: pointer;
-    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
 }
-.feed-thumb { width: 100%; height: 100%; }
-.feed-thumb img, .feed-thumb video { width: 100%; height: 100%; object-fit: cover; }
-.feed-meta { display: none; /* Hide meta for clean filmstrip look */ }
 
-/* HIDE THUMB RAIL (Old Sidebar) */
-.thumb-rail { display: none; }
+.feed-thumb {
+    aspect-ratio: 4 / 3;
+    background: #000;
+}
 
-/* LIGHTBOX */
+.feed-thumb img,
+.feed-thumb video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.feed-meta {
+    padding: 5px 7px 6px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.feed-name {
+    max-width: 110px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.feed-heart {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* right-most thumbnail rail */
+
+.thumb-rail {
+    border-radius: 18px;
+    border: 1px solid #050b18;
+    background: #000;
+    padding: 10px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+.thumb-item {
+    border-radius: 12px;
+    border: 1px solid #050b18;
+    overflow: hidden;
+    height: 68px;
+    cursor: pointer;
+}
+
+.thumb-item img,
+.thumb-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumb-item.active {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.9);
+}
+
+/* ===================== LIGHTBOX ===================== */
+
 .lightbox-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.9);
-    z-index: 100;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.86);
     display: none;
-    align-items: center; justify-content: center;
-    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(18px);
+    z-index: 60;
 }
-.lightbox-backdrop.active { display: flex; }
+
+.lightbox-backdrop.active {
+    display: flex;
+}
+
 .lightbox {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: 20px;
-    width: 90vw; max-width: 1000px;
-    height: 85vh;
+    width: min(960px, 94vw);
+    max-height: 90vh;
+    border-radius: 26px;
+    border: 1px solid #111827;
+    background: #020617;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.96);
     display: grid;
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
     overflow: hidden;
 }
-.lightbox-media { background: #000; display: flex; align-items: center; justify-content: center; }
-.lightbox-media img, .lightbox-media video { max-width: 100%; max-height: 100%; }
-.lightbox-info { padding: 20px; display: flex; flex-direction: column; gap: 15px; border-left: 1px solid var(--border-subtle); }
-.lightbox-title { color: #fff; font-weight: 600; }
-.lightbox-actions button {
-    display: block; width: 100%; margin-bottom: 8px;
-    padding: 8px; background: #1e293b; border: none; color: #fff; border-radius: 6px; cursor: pointer;
-}
-.lightbox-actions button.danger { background: #7f1d1d; color: #fca5a5; }
 
-/* Responsive */
-@media (max-width: 1000px) {
-    .main-layout { grid-template-columns: 1fr; overflow-y: auto; }
-    .panel { overflow-y: visible; height: auto; padding-right: 0; margin-bottom: 20px; }
-    .nav-rail { display: none; }
-    .app-shell { margin-left: 0; }
-    .lightbox { grid-template-columns: 1fr; }
-    .lightbox-info { display: none; }
+.lightbox-media {
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+.lightbox-media img,
+.lightbox-media video {
+    width: 100%;
+    max-height: 86vh;
+    object-fit: contain;
+}
+
+.lightbox-info {
+    padding: 14px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 11px;
+}
+
+.lightbox-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.lightbox-title {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.lightbox-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.btn-close {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    border: 1px solid #111827;
+    background: #020617;
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.lightbox-meta {
+    display: grid;
+    gap: 2px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.lightbox-meta span.label {
+    color: var(--text-muted);
+}
+
+.lightbox-actions {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.lightbox-actions button {
+    border-radius: 999px;
+    border: 1px solid #111827;
+    background: #020617;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.lightbox-actions button.danger {
+    border-color: #ef4444;
+    color: #fecaca;
+}
+
+.lightbox-prompt {
+    margin-top: 6px;
+    border-radius: 12px;
+    border: 1px solid #050b18;
+    background: #020617;
+    padding: 8px 9px;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 1180px) {
+    .main-layout {
+        grid-template-columns: minmax(0, 410px) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 1040px) {
+    .main-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .panel-right {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .thumb-rail {
+        display: none;
+    }
+}
+
+@media (max-width: 820px) {
+    .nav-rail {
+        display: none;
+    }
+
+    .app-shell {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .topbar {
+        padding: 0 14px;
+    }
+
+    .gen-body {
+        margin: 0 6px 8px;
+    }
+
+    .lightbox {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 </style>
 </head>
 <body>
-
-    <nav class="nav-rail">
+    <!-- LEFT NAV -->
+    <aside class="nav-rail">
         <div class="nav-logo">S</div>
-        <button class="nav-btn" title="Home"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button>
-        <button class="nav-btn" title="Gallery"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
-        <button class="nav-btn" title="Settings"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></button>
-        <button class="nav-btn active" title="Generator"><svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg></button>
-        
-        <div class="nav-bottom">
-            <div class="nav-sale-pill">SALE<br>50%</div>
-        </div>
-    </nav>
 
+        <div class="nav-section">
+            <button class="nav-btn active" title="Explore">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 11.5 12 4l8 7.5-3 8H7l-3-8Z" />
+                    <circle cx="12" cy="12" r="2.2" />
+                </svg>
+            </button>
+            <button class="nav-btn" title="Assets">
+                <svg viewBox="0 0 24 24">
+                    <rect x="4" y="4" width="16" height="16" rx="3" />
+                    <path d="M4 10h16M10 4v16" />
+                </svg>
+            </button>
+            <button class="nav-btn" title="Image Lab">
+                <svg viewBox="0 0 24 24">
+                    <rect x="4" y="4" width="16" height="16" rx="3" />
+                    <path d="m7 16 3-4 3 3 2-3 3 4" />
+                </svg>
+            </button>
+            <button class="nav-btn" title="Video Lab">
+                <svg viewBox="0 0 24 24">
+                    <rect x="4" y="4" width="16" height="16" rx="2" />
+                    <path d="M10 8v8l6-4-6-4Z" />
+                </svg>
+            </button>
+            <button class="nav-btn" title="All Tools">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M4 8h6V4H4v4Zm10 0h6V4h-6v4ZM4 20h6v-6H4v6Zm10 0h6v-6h-6v6Z"
+                    />
+                </svg>
+            </button>
+        </div>
+
+        <div class="nav-bottom">
+            <div class="nav-plan">Standard</div>
+            <div class="nav-sale-pill">SALE · 50% off</div>
+        </div>
+    </aside>
+
+    <!-- APP SHELL -->
     <div class="app-shell">
+        <!-- TOP BAR -->
         <header class="topbar">
-            <div>
-                <div class="topbar-title-main" id="lab-title">
-                    AI Image Generator
-                    <div class="model-selector">
-                        <span>Model</span>
-                        <select id="model-select">
-                            <option>IMAGE 2.1</option>
-                            <option>IMAGE 2.0</option>
-                        </select>
+            <div class="topbar-left">
+                <div class="topbar-title">
+                    <div class="topbar-title-main" id="lab-title">
+                        AI Image Generator
+                    </div>
+                    <div class="topbar-title-sub">
+                        Text to Image · Image Reference · Restyle
                     </div>
                 </div>
-                <div class="topbar-title-sub">Text to Image · Image Reference · Restyle</div>
+                <div class="model-selector">
+                    <span>Model</span>
+                    <select id="model-select">
+                        <option>IMAGE 2.1</option>
+                        <option>IMAGE 2.0</option>
+                        <option>IMAGE 1.5</option>
+                    </select>
+                </div>
             </div>
 
-            <div style="display:flex; gap:16px; align-items:center;">
+            <div class="topbar-right">
                 <div class="credits-pill">
-                    Credits <span class="value" id="credits-value">691</span> / day
+                    Credits
+                    <span class="value" id="credits-value">691</span>
+                    <span>/ day</span>
                 </div>
                 <div class="user-chip">
-                    <span>Signed in</span>
                     <div class="user-avatar"></div>
+                    <div class="user-name">Signed in</div>
                 </div>
             </div>
         </header>
 
+        <!-- MAIN LAYOUT -->
         <main class="main-layout">
+            <!-- LEFT SETTINGS PANEL -->
             <section class="panel">
                 <div class="gen-header">
-                    <div class="gen-title-label">MODE</div>
-                    <div class="gen-title-main" id="mode-title">Text to Image</div>
-                </div>
+                    <div class="gen-title-block">
+                        <div class="gen-title-label">Mode</div>
+                        <div class="gen-title-main" id="mode-title">
+                            Text to Image
+                        </div>
+                    </div>
 
-                <div class="mode-toggle" id="mode-tabs-image">
-                    <button type="button" class="active" data-imagemode="text" onclick="setImageMode('text')">Text to Image</button>
-                    <button type="button" data-imagemode="ref" onclick="setImageMode('ref')">Image Reference</button>
-                    <button type="button" data-imagemode="restyle" onclick="setImageMode('restyle')">Restyle</button>
-                </div>
-                <div class="mode-toggle" id="mode-tabs-video" style="display: none">
-                    <button type="button" class="active" data-videomode="text" onclick="setVideoMode('text')">Text to Video</button>
-                    <button type="button" data-videomode="img2vid" onclick="setVideoMode('img2vid')">Image to Video</button>
-                    <button type="button" data-videomode="elements" onclick="setVideoMode('elements')">Elements</button>
-                    <button type="button" data-videomode="multi" onclick="setVideoMode('multi')">Multi-Elements</button>
+                    <div class="mode-toggle" id="mode-tabs-image">
+                        <button
+                            type="button"
+                            class="active"
+                            data-imagemode="text"
+                            onclick="setImageMode('text')"
+                        >
+                            Text to Image
+                        </button>
+                        <button
+                            type="button"
+                            data-imagemode="ref"
+                            onclick="setImageMode('ref')"
+                        >
+                            Image Reference
+                        </button>
+                        <button
+                            type="button"
+                            data-imagemode="restyle"
+                            onclick="setImageMode('restyle')"
+                        >
+                            Restyle
+                        </button>
+                    </div>
+
+                    <div
+                        class="mode-toggle"
+                        id="mode-tabs-video"
+                        style="display: none"
+                    >
+                        <button
+                            type="button"
+                            class="active"
+                            data-videomode="text"
+                            onclick="setVideoMode('text')"
+                        >
+                            Text to Video
+                        </button>
+                        <button
+                            type="button"
+                            data-videomode="img2vid"
+                            onclick="setVideoMode('img2vid')"
+                        >
+                            Image to Video
+                        </button>
+                        <button
+                            type="button"
+                            data-videomode="elements"
+                            onclick="setVideoMode('elements')"
+                        >
+                            Elements
+                        </button>
+                        <button
+                            type="button"
+                            data-videomode="multi"
+                            onclick="setVideoMode('multi')"
+                        >
+                            Multi-Elements
+                        </button>
+                    </div>
                 </div>
 
                 <div class="gen-body" id="gen-body">
-                    
+                    <!-- Image: Text to Image (default) -->
                     <div id="block-image-text">
+                        <div class="group-label">Prompt</div>
                         <div class="input-block">
                             <div class="prompt-area">
-                                <textarea id="prompt" placeholder="Please describe your creative idea for the image..."></textarea>
+                                <textarea
+                                    id="prompt"
+                                    placeholder="Please describe your creative idea for the image..."
+                                ></textarea>
                                 <div class="prompt-footer">
-                                    <span>Describe subject, lighting, camera...</span>
-                                    <span class="prompt-helper-link" onclick="askSiaForPrompt()">Let SIA write it</span>
+                                    <span>
+                                        Tip: describe subject, lighting, camera,
+                                        environment.
+                                    </span>
+                                    <span
+                                        class="prompt-helper-link"
+                                        onclick="askSiaForPrompt()"
+                                        >Let SIA write the prompt</span
+                                    >
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="input-block">
+                            <div class="input-row-label">
+                                <span class="input-label">Negative prompt</span>
+                                <span class="input-hint"
+                                    >Optional · things to avoid</span
+                                >
+                            </div>
+                            <textarea
+                                id="negative"
+                                placeholder="blurry, low quality, watermark, distorted hands…"
+                            ></textarea>
+                            <div class="hints-row">
+                                <button
+                                    type="button"
+                                    class="chip"
+                                    onclick="appendNegative('blurry')"
+                                >
+                                    blurry
+                                </button>
+                                <button
+                                    type="button"
+                                    class="chip"
+                                    onclick="appendNegative('extra limbs')"
+                                >
+                                    extra limbs
+                                </button>
+                                <button
+                                    type="button"
+                                    class="chip"
+                                    onclick="appendNegative('low resolution')"
+                                >
+                                    low resolution
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image: Image Reference -->
+                    <div id="block-image-ref" style="display: none">
+                        <div class="group-label">Image reference</div>
+                        <div class="input-block">
+                            <div class="dual-row">
+                                <div class="upload-card" id="upload-ref-main">
+                                    <div class="upload-icon">+</div>
+                                    <div>Upload “Subject” reference image</div>
+                                    <div class="upload-sub">
+                                        JPG / PNG · Select from History
+                                    </div>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onchange="onRefUpload(event, 'subject')"
+                                    />
+                                </div>
+                                <div class="upload-card" id="upload-ref-face">
+                                    <div class="upload-icon">+</div>
+                                    <div>Upload “Face” reference (optional)</div>
+                                    <div class="upload-sub">Close-up face</div>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onchange="onRefUpload(event, 'face')"
+                                    />
+                                </div>
+                            </div>
+                            <div
+                                class="link-small"
+                                style="margin-top: 6px"
+                                onclick="openHistoryFromRef()"
+                            >
+                                Open History · reuse files from previous runs
+                            </div>
+                        </div>
+
+                        <div class="input-block">
+                            <div class="input-row-label">
+                                <span class="input-label">Prompt</span>
+                                <span class="input-hint">Required</span>
+                            </div>
+                            <div class="prompt-area">
+                                <textarea
+                                    id="prompt-ref"
+                                    placeholder="Please describe how to use the reference image (pose, style, environment)…"
+                                ></textarea>
+                                <div class="prompt-footer">
+                                    <span>Explain what should stay the same.</span>
+                                    <span
+                                        class="prompt-helper-link"
+                                        onclick="askSiaForPrompt('ref')"
+                                        >Let SIA write the prompt</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image: Restyle -->
+                    <div id="block-image-restyle" style="display: none">
+                        <div class="group-label">Restyle</div>
+                        <div class="input-block">
+                            <div class="upload-card" id="upload-restyle">
+                                <div class="upload-icon">+</div>
+                                <div>Add image to restyle</div>
+                                <div class="upload-sub">
+                                    History · choose any previous image
+                                </div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onchange="onRestyleUpload(event)"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="input-block">
+                            <div class="input-row-label">
+                                <span class="input-label">Restyle prompt</span>
+                                <span class="input-hint">Required</span>
+                            </div>
+                            <textarea
+                                id="prompt-restyle"
+                                placeholder="For example: restyle to Japanese anime, cinematic film still, oil painting…"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Video modes share same prompt IDs but different helper text -->
+                    <div id="block-video-text" style="display: none">
+                        <div class="group-label">Text to Video</div>
+                        <div class="input-block">
+                            <div class="prompt-area">
+                                <textarea
+                                    id="prompt-video"
+                                    placeholder="Describe the actions, camera motion, and environment for the video…"
+                                ></textarea>
+                                <div class="prompt-footer">
+                                    <span>
+                                        Use quotes for dialogue: “character says
+                                        hello”.
+                                    </span>
+                                    <span
+                                        class="prompt-helper-link"
+                                        onclick="askSiaForPrompt('video')"
+                                        >Let SIA write the script</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="block-video-img2vid" style="display: none">
+                        <div class="group-label">Image to Video</div>
+                        <div class="input-block">
+                            <div class="upload-card" id="upload-start-frame">
+                                <div class="upload-icon">+</div>
+                                <div>Add a start frame</div>
+                                <div class="upload-sub">
+                                    MP4 / MOV not needed · image only
+                                </div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onchange="onVideoImgUpload(event)"
+                                />
                             </div>
                         </div>
                         <div class="input-block">
                             <div class="input-row-label">
-                                <span>Negative prompt</span>
-                                <span class="input-hint">Optional</span>
+                                <span class="input-label">Prompt</span>
+                                <span class="input-hint">Required</span>
                             </div>
-                            <textarea id="negative" placeholder="blurry, low quality..." style="min-height: 80px;"></textarea>
-                            <div class="hints-row">
-                                <button type="button" class="chip" onclick="appendNegative('blurry')">blurry</button>
-                                <button type="button" class="chip" onclick="appendNegative('low res')">low res</button>
-                            </div>
+                            <textarea
+                                id="prompt-video-img"
+                                placeholder="Describe how the scene should move from this starting frame…"
+                            ></textarea>
                         </div>
                     </div>
 
-                    <div id="block-image-ref" style="display: none">
-                        <div class="input-block" style="display:flex; gap:10px;">
-                            <div class="upload-card" id="upload-ref-main" style="flex:1">
+                    <div id="block-video-elements" style="display: none">
+                        <div class="group-label">Elements</div>
+                        <div class="input-block">
+                            <div class="upload-card">
                                 <div class="upload-icon">+</div>
-                                <div style="color:#fff; font-weight:500">Subject Ref</div>
-                                <div class="upload-sub">Upload image</div>
-                                <input type="file" accept="image/*" onchange="onRefUpload(event, 'subject')" />
-                            </div>
-                            <div class="upload-card" id="upload-ref-face" style="flex:1">
-                                <div class="upload-icon">+</div>
-                                <div style="color:#fff; font-weight:500">Face Ref</div>
-                                <div class="upload-sub">Optional</div>
-                                <input type="file" accept="image/*" onchange="onRefUpload(event, 'face')" />
+                                <div>Add 1-4 images as elements</div>
+                                <div class="upload-sub">
+                                    Supports JPG / PNG · or select from History
+                                </div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onchange="onVideoElementsUpload(event)"
+                                />
                             </div>
                         </div>
                         <div class="input-block">
-                            <div class="input-row-label"><span>Prompt</span> <span class="input-hint">Required</span></div>
-                            <textarea id="prompt-ref" placeholder="Describe how to use the reference..."></textarea>
+                            <div class="input-row-label">
+                                <span class="input-label">Actions prompt</span>
+                            </div>
+                            <textarea
+                                id="prompt-video-elements"
+                                placeholder="Describe actions / interactions between the elements…"
+                            ></textarea>
                         </div>
                     </div>
 
-                    <div id="block-image-restyle" style="display: none">
+                    <div id="block-video-multi" style="display: none">
+                        <div class="group-label">Multi-Elements (edit)</div>
                         <div class="input-block">
-                            <div class="upload-card" id="upload-restyle">
-                                <div class="upload-icon">+</div>
-                                <div style="color:#fff; font-size:15px; font-weight:500">Add image to restyle</div>
-                                <div class="upload-sub">History · choose any previous image</div>
-                                <input type="file" accept="image/*" onchange="onRestyleUpload(event)" />
+                            <div class="dual-row">
+                                <div class="upload-card">
+                                    <div class="upload-icon">+</div>
+                                    <div>Add a video to edit</div>
+                                    <div class="upload-sub">
+                                        MP4/MOV · 10s max · 720/1080p
+                                    </div>
+                                    <input
+                                        type="file"
+                                        accept="video/*"
+                                        onchange="onVideoEditUpload(event)"
+                                    />
+                                </div>
+                                <div class="upload-card">
+                                    <div class="upload-icon">+</div>
+                                    <div>Add an image for elements swap</div>
+                                    <div class="upload-sub">
+                                        Swap [x] from image into video
+                                    </div>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onchange="onVideoSwapUpload(event)"
+                                    />
+                                </div>
                             </div>
                         </div>
+
                         <div class="input-block">
-                            <div class="input-row-label"><span>Restyle prompt</span> <span class="input-hint">Required</span></div>
-                            <textarea id="prompt-restyle" placeholder="For example: restyle to Japanese anime, cinematic film still, oil painting..."></textarea>
+                            <div class="input-row-label">
+                                <span class="input-label">Edit prompt</span>
+                            </div>
+                            <textarea
+                                id="prompt-video-multi"
+                                placeholder="Explain how to swap or edit elements in the video…"
+                            ></textarea>
                         </div>
                     </div>
-
-                    <div id="block-video-text" style="display:none"><textarea id="prompt-video" placeholder="Video prompt..."></textarea></div>
-                    <div id="block-video-img2vid" style="display:none"><div class="upload-card"><input type="file" onchange="onVideoImgUpload(event)"></div><textarea id="prompt-video-img"></textarea></div>
-                    <div id="block-video-elements" style="display:none"><div class="upload-card"><input type="file" multiple onchange="onVideoElementsUpload(event)"></div><textarea id="prompt-video-elements"></textarea></div>
-                    <div id="block-video-multi" style="display:none"><div class="upload-card"><input type="file" onchange="onVideoEditUpload(event)"></div><textarea id="prompt-video-multi"></textarea></div>
-
                 </div>
 
+                <!-- bottom controls (aspect, duration, outputs, quality, generate) -->
                 <div class="gen-footer-controls">
-                    <select id="aspect-select"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option></select>
-                    <select id="duration-select"><option value="image">Image</option><option value="5s">5s</option><option value="10s" selected>10s</option></select>
-                    <select id="outputs-select"><option value="4">4 Outputs</option><option value="2">2 Outputs</option><option value="1">1 Output</option></select>
-                    <select id="quality-select"><option value="standard">Standard</option><option value="high">High-Res</option></select>
+                    <select id="aspect-select">
+                        <option value="9:16">9:16</option>
+                        <option value="16:9">16:9</option>
+                        <option value="1:1">1:1</option>
+                        <option value="4:5">4:5</option>
+                    </select>
+                    <select id="duration-select">
+                        <option value="image">Image</option>
+                        <option value="5s">5s</option>
+                        <option value="10s" selected>10s</option>
+                    </select>
+                    <select id="outputs-select">
+                        <option value="1">1 Output</option>
+                        <option value="2">2 Outputs</option>
+                        <option value="3">3 Outputs</option>
+                        <option value="4">4 Outputs</option>
+                    </select>
+                    <select id="quality-select">
+                        <option value="standard">Standard</option>
+                        <option value="high">High-Res</option>
+                        <option value="pro">Professional</option>
+                    </select>
 
-                    <button type="button" class="btn-generate" id="generate-btn" onclick="handleGenerate()">Generate</button>
+                    <button
+                        type="button"
+                        class="btn-generate"
+                        id="generate-btn"
+                        onclick="handleGenerate()"
+                    >
+                        Generate
+                    </button>
                 </div>
             </section>
 
+            <!-- RIGHT PREVIEW + FEED + THUMB RAIL -->
             <section class="panel-right">
-                <div class="preview-topbar">
-                    <div class="preview-filters" id="preview-filters">
-                        <button type="button" class="active" data-filter="all" onclick="setPreviewFilter('all')">All</button>
-                        <button type="button" data-filter="image" onclick="setPreviewFilter('image')">Images</button>
-                        <button type="button" data-filter="video" onclick="setPreviewFilter('video')">Videos</button>
-                        <button type="button" data-filter="fav" onclick="setPreviewFilter('fav')">Favorites</button>
-                    </div>
-                    <div style="display:flex; align-items:center;">
-                        <input type="text" class="search-input" placeholder="Search history" oninput="setSearchTerm(this.value)" />
-                        <button type="button" class="btn-assets" onclick="openAssetsFromTop()">Assets</button>
-                    </div>
-                </div>
-
-                <div class="preview-main">
-                    <div class="preview-stage">
-                        <div class="preview-placeholder" id="preview-placeholder">
-                            Generate or upload an image / video.<br><br>
-                            <strong>Every output will appear here.</strong>
+                <div class="preview-wrapper">
+                    <div class="preview-topbar">
+                        <div class="preview-filters" id="preview-filters">
+                            <button
+                                type="button"
+                                data-filter="all"
+                                class="active"
+                                onclick="setPreviewFilter('all')"
+                            >
+                                All
+                            </button>
+                            <button
+                                type="button"
+                                data-filter="image"
+                                onclick="setPreviewFilter('image')"
+                            >
+                                Images
+                            </button>
+                            <button
+                                type="button"
+                                data-filter="video"
+                                onclick="setPreviewFilter('video')"
+                            >
+                                Videos
+                            </button>
+                            <button
+                                type="button"
+                                data-filter="audio"
+                                onclick="setPreviewFilter('audio')"
+                            >
+                                Audio
+                            </button>
+                            <button
+                                type="button"
+                                data-filter="fav"
+                                onclick="setPreviewFilter('fav')"
+                            >
+                                Favorites
+                            </button>
                         </div>
-                        <img id="preview-image" class="preview-media" alt="Preview" />
-                        <video id="preview-video" class="preview-media" controls></video>
 
-                        <div class="preview-controls-row" id="preview-info">
-                            <span id="preview-kind">Idle</span> · <span id="preview-meta">Ready</span>
+                        <div style="display: flex; align-items: center; gap: 8px">
+                            <input
+                                type="text"
+                                class="search-input"
+                                placeholder="Search history"
+                                oninput="setSearchTerm(this.value)"
+                            />
+                            <button
+                                type="button"
+                                class="btn-assets"
+                                onclick="openAssetsFromTop()"
+                            >
+                                Assets
+                            </button>
                         </div>
                     </div>
 
-                    <div class="preview-feed">
-                        <div class="feed-row-title">
-                            <span>Recent results</span>
-                            <span id="feed-count">0 items</span>
-                        </div>
-                        <div class="feed-grid" id="feed-grid">
+                    <div class="preview-main">
+                        <div class="preview-stage">
+                            <div class="preview-stage-inner">
+                                <div
+                                    class="preview-placeholder"
+                                    id="preview-placeholder"
+                                >
+                                    Generate or upload an image / video.
+                                    <br /><br />
+                                    Every output will appear here with full
+                                    playback controls and also be saved in
+                                    <strong>Assets / History</strong>.
+                                </div>
+                                <img
+                                    id="preview-image"
+                                    class="preview-media"
+                                    alt="Preview"
+                                />
+                                <video
+                                    id="preview-video"
+                                    class="preview-media"
+                                    controls
+                                ></video>
                             </div>
+
+                            <div class="preview-controls-row" id="preview-info">
+                                <span id="preview-kind">Idle</span>
+                                <span>·</span>
+                                <span id="preview-meta">Ready</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-feed">
+                            <div class="feed-row-title">
+                                <span>Recent results</span>
+                                <span id="feed-count">0 items</span>
+                            </div>
+                            <div class="feed-grid" id="feed-grid"></div>
+                        </div>
                     </div>
                 </div>
+
+                <aside class="thumb-rail" id="thumb-rail"></aside>
             </section>
         </main>
     </div>
 
-    <div class="lightbox-backdrop" id="lightbox-backdrop" onclick="if(event.target.id==='lightbox-backdrop') closeLightbox();">
-        <div class="lightbox">
+    <!-- LIGHTBOX -->
+    <div
+        class="lightbox-backdrop"
+        id="lightbox-backdrop"
+        onclick="if(event.target.id==='lightbox-backdrop') closeLightbox();"
+    >
+        <div class="lightbox" id="lightbox">
             <div class="lightbox-media">
                 <img id="lb-image" style="display: none" />
                 <video id="lb-video" controls style="display: none"></video>
             </div>
             <div class="lightbox-info">
-                <div>
-                    <div class="lightbox-title" id="lb-title"></div>
-                    <div class="lightbox-sub" id="lb-sub" style="color:var(--text-muted); font-size:12px;"></div>
+                <div class="lightbox-header-row">
+                    <div>
+                        <div class="lightbox-title" id="lb-title"></div>
+                        <div class="lightbox-sub" id="lb-sub"></div>
+                    </div>
+                    <button type="button" class="btn-close" onclick="closeLightbox()">
+                        ×
+                    </button>
                 </div>
+
+                <div class="lightbox-meta">
+                    <div>
+                        <span class="label">Resolution:</span>
+                        <span id="lb-res"></span>
+                    </div>
+                    <div>
+                        <span class="label">Seed:</span>
+                        <span id="lb-seed"></span>
+                    </div>
+                    <div>
+                        <span class="label">Created:</span>
+                        <span id="lb-created"></span>
+                    </div>
+                    <div>
+                        <span class="label">Source:</span>
+                        <span id="lb-source"></span>
+                    </div>
+                </div>
+
                 <div class="lightbox-actions">
                     <button type="button" onclick="downloadCurrent()">Download</button>
                     <button type="button" onclick="recreateCurrent()">Recreate</button>
-                    <button type="button" class="danger" onclick="deleteCurrentAsset()">Delete</button>
+                    <button type="button" onclick="sendCurrentToCinema()">
+                        Send to Cinema
+                    </button>
+                    <button type="button" onclick="renameCurrent()">Rename</button>
+                    <button
+                        type="button"
+                        class="danger"
+                        onclick="deleteCurrentAsset()"
+                    >
+                        Delete
+                    </button>
                 </div>
-                <div class="lightbox-prompt" id="lb-prompt" style="font-size:12px; color:var(--text-secondary); margin-top:auto;"></div>
-                <button onclick="closeLightbox()" style="background:transparent; border:1px solid #333; color:#fff; padding:8px; border-radius:8px; cursor:pointer;">Close</button>
+
+                <div class="lightbox-prompt" id="lb-prompt"></div>
             </div>
         </div>
     </div>
@@ -835,40 +1669,66 @@ textarea { min-height: 120px; resize: vertical; }
         function setImageMode(mode) {
             state.imageMode = mode;
             document.getElementById("mode-title").innerText =
-                mode === "text" ? "Text to Image" : mode === "ref" ? "Image Reference" : "Restyle";
+                mode === "text"
+                    ? "Text to Image"
+                    : mode === "ref"
+                    ? "Image Reference"
+                    : "Restyle";
 
             // show blocks
-            document.getElementById("block-image-text").style.display = mode === "text" ? "block" : "none";
-            document.getElementById("block-image-ref").style.display = mode === "ref" ? "block" : "none";
-            document.getElementById("block-image-restyle").style.display = mode === "restyle" ? "block" : "none";
+            document.getElementById("block-image-text").style.display =
+                mode === "text" ? "block" : "none";
+            document.getElementById("block-image-ref").style.display =
+                mode === "ref" ? "block" : "none";
+            document.getElementById("block-image-restyle").style.display =
+                mode === "restyle" ? "block" : "none";
 
             document.getElementById("block-video-text").style.display = "none";
             document.getElementById("block-video-img2vid").style.display = "none";
             document.getElementById("block-video-elements").style.display = "none";
             document.getElementById("block-video-multi").style.display = "none";
 
-            document.querySelectorAll("#mode-tabs-image button")
-                .forEach((b) => b.classList.toggle("active", b.dataset.imagemode === mode));
+            document
+                .querySelectorAll("#mode-tabs-image button")
+                .forEach((b) =>
+                    b.classList.toggle("active", b.dataset.imagemode === mode)
+                );
         }
 
         function setVideoMode(mode) {
             state.videoMode = mode;
-            // ... video logic stubs ...
+            document.getElementById("mode-title").innerText =
+                mode === "text"
+                    ? "Text to Video"
+                    : mode === "img2vid"
+                    ? "Image to Video"
+                    : mode === "elements"
+                    ? "Elements"
+                    : "Multi-Elements";
+
             document.getElementById("block-image-text").style.display = "none";
             document.getElementById("block-image-ref").style.display = "none";
             document.getElementById("block-image-restyle").style.display = "none";
 
-            document.getElementById("block-video-text").style.display = mode === "text" ? "block" : "none";
-            document.getElementById("block-video-img2vid").style.display = mode === "img2vid" ? "block" : "none";
-            document.getElementById("block-video-elements").style.display = mode === "elements" ? "block" : "none";
-            document.getElementById("block-video-multi").style.display = mode === "multi" ? "block" : "none";
+            document.getElementById("block-video-text").style.display =
+                mode === "text" ? "block" : "none";
+            document.getElementById("block-video-img2vid").style.display =
+                mode === "img2vid" ? "block" : "none";
+            document.getElementById("block-video-elements").style.display =
+                mode === "elements" ? "block" : "none";
+            document.getElementById("block-video-multi").style.display =
+                mode === "multi" ? "block" : "none";
 
-            document.querySelectorAll("#mode-tabs-video button")
-                .forEach((b) => b.classList.toggle("active", b.dataset.videomode === mode));
+            document
+                .querySelectorAll("#mode-tabs-video button")
+                .forEach((b) =>
+                    b.classList.toggle("active", b.dataset.videomode === mode)
+                );
         }
 
+        // For now we keep lab fixed to image.
         window.addEventListener("DOMContentLoaded", () => {
-            setImageMode("text"); // default to text
+            setImageMode("text");
             renderFeed();
         });
 
@@ -882,8 +1742,12 @@ textarea { min-height: 120px; resize: vertical; }
             else if (!field.value.includes(text)) field.value += ", " + text;
         }
 
-        function askSiaForPrompt() {
-            alert("AI Prompt Assistant Triggered");
+        function askSiaForPrompt(kind = "image") {
+            alert(
+                "Hook this to SIA Brain. Scope: " +
+                    kind +
+                    " · Use current lab / mode to build a smart prompt."
+            );
         }
 
         // ================================================================
@@ -891,37 +1755,61 @@ textarea { min-height: 120px; resize: vertical; }
         // ================================================================
         function onRefUpload(event, slot) {
             if (!event.target.files?.length) return;
-            alert("Loaded " + slot + ": " + event.target.files[0].name);
+            const file = event.target.files[0];
+            const url = URL.createObjectURL(file);
+            alert(
+                "Loaded reference " +
+                    slot +
+                    " image: " +
+                    (file.name || "file") +
+                    " (stored client-side only here)."
+            );
         }
 
         function onRestyleUpload(e) {
             if (!e.target.files?.length) return;
-            // logic to show preview of uploaded file in the box could go here
             alert("Restyle image selected: " + e.target.files[0].name);
         }
-        
-        // Video stubs
-        function onVideoImgUpload(e) { alert("Video start frame: " + e.target.files[0].name); }
-        function onVideoElementsUpload(e) { alert("Elements: " + e.target.files.length); }
-        function onVideoEditUpload(e) { alert("Video to edit: " + e.target.files[0].name); }
 
-        function openAssetsFromTop() { alert("Opening Assets Library..."); }
+        function onVideoImgUpload(e) {
+            if (!e.target.files?.length) return;
+            alert("Start frame selected: " + e.target.files[0].name);
+        }
+
+        function onVideoElementsUpload(e) {
+            if (!e.target.files?.length) return;
+            alert(e.target.files.length + " element image(s) selected.");
+        }
+
+        function onVideoEditUpload(e) {
+            if (!e.target.files?.length) return;
+            alert("Video to edit: " + e.target.files[0].name);
+        }
+
+        function onVideoSwapUpload(e) {
+            if (!e.target.files?.length) return;
+            alert("Swap image: " + e.target.files[0].name);
+        }
+
+        function openHistoryFromRef() {
+            alert("Open History panel – wire to Assets history view.");
+        }
 
         // ================================================================
-        // GENERATE
+        // GENERATE (DEMO ONLY)
         // ================================================================
         function handleGenerate() {
-            const lab = state.lab; 
+            const lab = state.lab; // currently 'image'
             const isVideo = document.getElementById("duration-select").value !== "image";
 
-            // Find active prompt
-            let promptId = "prompt";
-            if(lab === "image") {
-                if(state.imageMode === "ref") promptId = "prompt-ref";
-                if(state.imageMode === "restyle") promptId = "prompt-restyle";
-            } else {
-                promptId = "prompt-video";
-            }
+            const promptId =
+                lab === "image"
+                    ? state.imageMode === "text"
+                        ? "prompt"
+                        : state.imageMode === "ref"
+                        ? "prompt-ref"
+                        : "prompt-restyle"
+                    : "prompt-video";
 
             const prompt = (document.getElementById(promptId) || {}).value || "";
             if (!prompt.trim()) {
@@ -929,42 +1817,56 @@ textarea { min-height: 120px; resize: vertical; }
                 return;
             }
 
-            const count = parseInt(document.getElementById("outputs-select").value, 10);
+            const count = parseInt(
+                document.getElementById("outputs-select").value,
+                10
+            );
             const aspect = document.getElementById("aspect-select").value;
             const quality = document.getElementById("quality-select").value;
             const duration = document.getElementById("duration-select").value;
 
             const generateBtn = document.getElementById("generate-btn");
             generateBtn.disabled = true;
-            generateBtn.innerText = "Generating...";
-            
-            document.getElementById("preview-kind").innerText = "Generating...";
-            document.getElementById("preview-meta").innerText = "Please wait";
+            document.getElementById("preview-kind").innerText = "Generating…";
+            document.getElementById("preview-meta").innerText =
+                (isVideo ? "Video" : "Image") +
+                " · " +
+                count +
+                " output(s) · " +
+                aspect +
+                " · " +
+                quality;
 
-            // Simulate API call
             setTimeout(() => {
                 for (let i = 0; i < count; i++) {
                     const id = "asset-" + state.nextId++;
                     const kind = isVideo ? "video" : "image";
-                    // Placeholders
-                    const url = kind === "image"
-                        ? "https://placehold.co/800x1200/10b981/ffffff?text=Generated+Image"
-                        : "https://placehold.co/1280x720/10b981/ffffff?text=Generated+Video";
+                    const url =
+                        kind === "image"
+                            ? "https://placehold.co/800x1200/020617/9ca3af?text=Sulandra+Image"
+                            : "https://placehold.co/1280x720/020617/9ca3af?text=Sulandra+Video";
 
                     state.assets.unshift({
-                        id, kind, createdAt: new Date().toLocaleString(),
-                        prompt, mode: lab === "image" ? state.imageMode : state.videoMode,
-                        aspect, quality, duration, url,
-                        favorite: false
+                        id,
+                        kind,
+                        createdAt: new Date().toLocaleString(),
+                        prompt,
+                        mode: lab === "image" ? state.imageMode : state.videoMode,
+                        aspect,
+                        quality,
+                        duration,
+                        url,
+                        seed: Math.floor(Math.random() * 999999),
+                        favorite: false,
+                        source: "generated"
                     });
                     state.previewId = id;
                 }
 
                 generateBtn.disabled = false;
-                generateBtn.innerText = "Generate";
                 updatePreviewFromCurrent();
                 renderFeed();
-            }, 1000);
+            }, 700);
         }
 
         // ================================================================
@@ -981,6 +1883,7 @@ textarea { min-height: 120px; resize: vertical; }
                 img.style.display = "none";
                 video.style.display = "none";
                 document.getElementById("preview-kind").innerText = "Idle";
+                document.getElementById("preview-meta").innerText = "Ready";
                 return;
             }
 
@@ -996,14 +1899,24 @@ textarea { min-height: 120px; resize: vertical; }
                 img.style.display = "none";
             }
 
-            document.getElementById("preview-kind").innerText = asset.kind === "image" ? "Image" : "Video";
-            document.getElementById("preview-meta").innerText = asset.aspect + " · " + asset.mode.toUpperCase();
+            document.getElementById("preview-kind").innerText =
+                asset.kind === "image" ? "Image" : "Video";
+            document.getElementById("preview-meta").innerText =
+                asset.aspect +
+                " · " +
+                (asset.duration === "image" ? "single frame" : asset.duration) +
+                " · " +
+                (asset.quality || "standard");
+            renderThumbRail();
         }
 
         function setPreviewFilter(filter) {
             state.previewFilter = filter;
-            document.querySelectorAll("#preview-filters button").forEach((b) =>
-                    b.classList.toggle("active", b.dataset.filter === filter));
+            document
+                .querySelectorAll("#preview-filters button")
+                .forEach((b) =>
+                    b.classList.toggle("active", b.dataset.filter === filter)
+                );
             renderFeed();
         }
 
@@ -1012,26 +1925,45 @@ textarea { min-height: 120px; resize: vertical; }
             renderFeed();
         }
 
-        function renderFeed() {
-            const grid = document.getElementById("feed-grid");
-            const assets = state.assets.filter(a => {
-                if (state.previewFilter === "image" && a.kind !== "image") return false;
-                if (state.previewFilter === "video" && a.kind !== "video") return false;
+        function filteredAssets() {
+            return state.assets.filter((a) => {
+                if (
+                    state.previewFilter === "image" &&
+                    a.kind !== "image"
+                )
+                    return false;
+                if (
+                    state.previewFilter === "video" &&
+                    a.kind !== "video"
+                )
+                    return false;
                 if (state.previewFilter === "fav" && !a.favorite) return false;
+                if (state.searchTerm) {
+                    const text =
+                        (a.prompt || "") +
+                        " " +
+                        (a.mode || "") +
+                        " " +
+                        (a.id || "");
+                    if (!text.toLowerCase().includes(state.searchTerm)) return false;
+                }
                 return true;
             });
-            
+        }
+
+        function renderFeed() {
+            const grid = document.getElementById("feed-grid");
+            const assets = filteredAssets();
             grid.innerHTML = "";
-            document.getElementById("feed-count").innerText = assets.length + " items";
+            document.getElementById("feed-count").innerText =
+                assets.length + " items";
 
             assets.forEach((asset) => {
                 const card = document.createElement("div");
                 card.className = "feed-card";
-                card.style.borderColor = asset.id === state.previewId ? "var(--accent-primary)" : "var(--border-subtle)";
                 card.onclick = () => {
                     state.previewId = asset.id;
                     updatePreviewFromCurrent();
-                    renderFeed(); // re-render to update border
                 };
 
                 const thumb = document.createElement("div");
@@ -1046,27 +1978,165 @@ textarea { min-height: 120px; resize: vertical; }
                     video.muted = true;
                     thumb.appendChild(video);
                 }
+
+                const meta = document.createElement("div");
+                meta.className = "feed-meta";
+                const name = document.createElement("div");
+                name.className = "feed-name";
+                name.textContent =
+                    (asset.kind === "image" ? "Image" : "Video") +
+                    " · " +
+                    asset.mode.toUpperCase();
+
+                const heart = document.createElement("div");
+                heart.className = "feed-heart";
+                heart.innerHTML = asset.favorite ? "★ 1" : "☆ 0";
+                heart.onclick = (e) => {
+                    e.stopPropagation();
+                    asset.favorite = !asset.favorite;
+                    renderFeed();
+                    renderThumbRail();
+                };
+
+                meta.appendChild(name);
+                meta.appendChild(heart);
+
                 card.appendChild(thumb);
+                card.appendChild(meta);
+
                 grid.appendChild(card);
+            });
+
+            renderThumbRail();
+        }
+
+        function renderThumbRail() {
+            const rail = document.getElementById("thumb-rail");
+            if (!rail) return;
+            rail.innerHTML = "";
+            const assets = filteredAssets();
+
+            assets.forEach((asset) => {
+                const item = document.createElement("div");
+                item.className =
+                    "thumb-item" +
+                    (asset.id === state.previewId ? " active" : "");
+                item.onclick = () => {
+                    state.previewId = asset.id;
+                    updatePreviewFromCurrent();
+                };
+
+                if (asset.kind === "image") {
+                    const img = document.createElement("img");
+                    img.src = asset.url;
+                    item.appendChild(img);
+                } else {
+                    const vid = document.createElement("video");
+                    vid.src = asset.url;
+                    vid.muted = true;
+                    item.appendChild(vid);
+                }
+
+                rail.appendChild(item);
             });
         }
 
-        // ================================================================
-        // LIGHTBOX
-        // ================================================================
-        function openLightbox(id) { /* ... stub or wire up to card click double tap ... */ }
-        function closeLightbox() { document.getElementById("lightbox-backdrop").classList.remove("active"); }
-        function downloadCurrent() { alert("Downloading..."); }
-        function recreateCurrent() { alert("Recreating..."); }
-        function deleteCurrentAsset() { 
-            if(!confirm("Delete?")) return;
-            state.assets = state.assets.filter(a => a.id !== state.previewId);
-            state.previewId = null;
-            updatePreviewFromCurrent();
-            renderFeed();
-            closeLightbox();
+        function openAssetsFromTop() {
+            alert("Wire this to open a full Assets / My Files view.");
         }
 
+        // ================================================================
+        // LIGHTBOX (DETAIL VIEW)
+        // ================================================================
+        function openLightbox(id) {
+            const asset = state.assets.find((a) => a.id === id);
+            if (!asset) return;
+            state.lightboxId = id;
+
+            const img = document.getElementById("lb-image");
+            const video = document.getElementById("lb-video");
+
+            img.style.display = "none";
+            video.style.display = "none";
+
+            if (asset.kind === "image") {
+                img.src = asset.url;
+                img.style.display = "block";
+            } else {
+                video.src = asset.url;
+                video.style.display = "block";
+            }
+
+            document.getElementById("lb-title").innerText =
+                (asset.kind === "image" ? "Image" : "Video") +
+                " · " +
+                asset.mode.toUpperCase();
+            document.getElementById("lb-sub").innerText = asset.createdAt;
+            document.getElementById("lb-res").innerText =
+                asset.aspect + " · " + (asset.duration || "image");
+            document.getElementById("lb-seed").innerText =
+                asset.seed || "Random";
+            document.getElementById("lb-created").innerText =
+                asset.createdAt || "";
+            document.getElementById("lb-source").innerText =
+                asset.source === "generated" ? "Generated in Vision" : "Upload";
+            document.getElementById("lb-prompt").innerText =
+                asset.prompt || "";
+
+            document
+                .getElementById("lightbox-backdrop")
+                .classList.add("active");
+        }
+
+        function closeLightbox() {
+            document
+                .getElementById("lightbox-backdrop")
+                .classList.remove("active");
+            state.lightboxId = null;
+        }
+
+        function getLbAsset() {
+            if (!state.lightboxId) return null;
+            return state.assets.find((a) => a.id === state.lightboxId);
+        }
+
+        function downloadCurrent() {
+            const a = getLbAsset();
+            if (!a) return;
+            alert("Download stub for " + a.id + " (wire real download).");
+        }
+
+        function recreateCurrent() {
+            const a = getLbAsset();
+            if (!a) return;
+            alert("Recreate using stored prompt. ID: " + a.id);
+        }
+
+        function sendCurrentToCinema() {
+            const a = getLbAsset();
+            if (!a) return;
+            alert("Send to Cinema stub for " + a.id);
+        }
+
+        function renameCurrent() {
+            const a = getLbAsset();
+            if (!a) return;
+            const name = prompt("Rename (nickname only):", a.id);
+            if (!name) return;
+            a.id = name;
+            renderFeed();
+            renderThumbRail();
+        }
+
+        function deleteCurrentAsset() {
+            const a = getLbAsset();
+            if (!a) return;
+            if (!confirm("Delete this item from local history?")) return;
+            state.assets = state.assets.filter((x) => x !== a);
+            closeLightbox();
+            renderFeed();
+            updatePreviewFromCurrent();
+        }
     </script>
 </body>
 </html>
