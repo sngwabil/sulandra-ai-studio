@@ -13,174 +13,113 @@
         rel="stylesheet"
     />
 <style>
-/* ==========================================================================
-   SULANDRA VISION – KLING-STYLE THEME
-   Rewritten full stylesheet for vision.html
-   ========================================================================== */
-
-/* ---------- Design tokens ---------- */
-
 :root {
-    /* Surfaces */
     --bg-root: #020617;
-    --bg-shell: #020617;
     --bg-surface: #050816;
     --bg-surface-soft: #050814;
     --bg-deep: #00010a;
 
-    /* Accent */
-    --accent: #22c55e;
-    --accent-soft: rgba(34, 197, 94, 0.14);
-    --accent-strong: #3bff64;
+    --accent-green: #3bff64;
+    --accent-green-soft: rgba(59, 255, 100, 0.12);
 
-    /* Text */
+    --border-subtle: #050b18;
     --text-primary: #f9fafb;
     --text-secondary: #9ca3af;
     --text-muted: #6b7280;
-    --text-danger: #f97373;
 
-    /* Borders & shadows */
-    --border-subtle: #050b18;
-    --shadow-soft: 0 16px 45px rgba(15, 23, 42, 0.9);
-    --shadow-cta: 0 0 32px rgba(34, 197, 94, 0.9);
-
-    /* Layout */
     --nav-width: 76px;
     --topbar-height: 64px;
-
-    /* Radii */
-    --radius-card: 22px;
+    --radius-card: 20px;
+    --radius-md: 14px;
     --radius-pill: 999px;
+    --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.85);
 }
 
-/* ---------- Global reset ---------- */
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-html,
-body {
+* {
     margin: 0;
     padding: 0;
-    height: 100%;
-}
-
-body {
-    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-    background:
-        radial-gradient(circle at 0 0, #0b1220 0, #020617 35%, #00010a 100%);
-    color: var(--text-primary);
+    box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Remove default button styles */
-button {
-    font-family: inherit;
-    border: none;
-    outline: none;
-    background: none;
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter",
+        "Segoe UI", sans-serif;
+    background: #000;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
 }
 
-/* Scrollbars – subtle */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #020617;
-}
-::-webkit-scrollbar-thumb {
-    background: #111827;
-    border-radius: 999px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #1f2937;
-}
-
-/* ==========================================================================
-   LEFT NAV RAIL
-   ========================================================================== */
+/* ===================== LEFT NAV – CLEANER ===================== */
 
 .nav-rail {
-    position: fixed;
-    inset: 0 auto 0 0;
     width: var(--nav-width);
-    padding: 16px 0 18px;
+    background: radial-gradient(circle at 0 0, #020617, #020817 40%, #000 100%);
+    border-right: 1px solid #020617;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-    background:
-        radial-gradient(circle at top, #020617 0, #020617 35%, #00010a 100%);
-    border-right: 1px solid rgba(15, 23, 42, 0.9);
-    box-shadow: 0 0 40px rgba(15, 23, 42, 0.85);
+    padding: 14px 10px 16px;
+    gap: 10px;
+    position: fixed;
+    inset-block: 0;
     z-index: 40;
 }
 
 .nav-logo {
-    width: 34px;
-    height: 34px;
-    border-radius: 14px;
-    background: radial-gradient(circle at 30% 0%, #22c55e 0, #16a34a 35%, #166534 80%);
+    width: 44px;
+    height: 44px;
+    border-radius: 18px;
+    background: radial-gradient(circle at 0 0, #22c55e, #020617 70%);
+    border: 1px solid rgba(148, 163, 184, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    font-size: 16px;
-    color: #020617;
-    box-shadow: 0 0 28px rgba(34, 197, 94, 0.85);
+    letter-spacing: 0.14em;
+    font-size: 20px;
+    color: #ecfdf5;
+    box-shadow: 0 0 26px rgba(34, 197, 94, 0.9);
 }
 
 .nav-section {
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .nav-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 999px;
-    border: 1px solid #020617;
-    background: radial-gradient(circle at 50% 0%, #050816 0, #020617 75%);
+    width: 46px;
+    height: 46px;
+    border-radius: 18px;
+    border: 1px solid transparent;
+    background: radial-gradient(circle at 0 0, #020617, #000814 70%);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-secondary);
     cursor: pointer;
-    transition:
-        background 0.18s ease,
-        box-shadow 0.18s ease,
-        border-color 0.18s ease,
-        transform 0.1s ease;
+    transition: 0.16s ease-out;
 }
 
 .nav-btn svg {
     width: 20px;
     height: 20px;
     stroke: #9ca3af;
+    stroke-width: 1.5;
     fill: none;
 }
 
 .nav-btn:hover {
-    border-color: rgba(148, 163, 184, 0.6);
-    background: radial-gradient(circle at 50% 0%, #020617 0, #020617 70%);
-    box-shadow: 0 0 0 1px rgba(55, 65, 81, 0.7);
-}
-
-.nav-btn.active {
-    border-color: rgba(34, 197, 94, 0.9);
-    background: radial-gradient(circle at 30% 0%, #22c55e 0, #16a34a 40%, #16a34a 100%);
-    box-shadow: var(--shadow-cta);
+    border-color: #1f2937;
     transform: translateY(-1px);
 }
 
-.nav-btn.active svg {
-    stroke: #022c22;
+.nav-btn.active {
+    border-color: rgba(59, 255, 100, 0.9);
+    background: radial-gradient(circle at 0 0, #020617, #020617 65%);
+    box-shadow: 0 0 22px rgba(34, 197, 94, 0.7);
 }
 
 .nav-bottom {
@@ -202,45 +141,41 @@ button {
     font-weight: 700;
 }
 
-/* ==========================================================================
-   APP SHELL & TOP BAR
-   ========================================================================== */
+/* ===================== APP SHELL ===================== */
 
 .app-shell {
     margin-left: var(--nav-width);
+    flex: 1;
     min-height: 100vh;
+    background: radial-gradient(circle at top, #020617, #000 80%);
     display: flex;
     flex-direction: column;
-    background:
-        radial-gradient(circle at 10% 0, #020617 0, #020617 35%, #00010a 100%);
 }
-
-/* Top bar */
 
 .topbar {
     height: var(--topbar-height);
-    padding: 10px 22px 10px;
+    padding: 0 24px 0 26px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: radial-gradient(circle at top, #020617 0, #020617 50%, #020617 100%);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.9);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+    background: linear-gradient(to right, #020617, #000814);
+    border-bottom: 1px solid #020617;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     position: sticky;
     top: 0;
-    z-index: 30;
+    z-index: 20;
 }
 
 .topbar-left {
     display: flex;
-    gap: 14px;
     align-items: center;
+    gap: 16px;
 }
 
 .topbar-title {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
 }
 
 .topbar-title-main {
@@ -252,8 +187,6 @@ button {
     font-size: 11px;
     color: var(--text-muted);
 }
-
-/* Model selector pill */
 
 .model-selector {
     display: inline-flex;
@@ -267,100 +200,79 @@ button {
     color: var(--text-secondary);
 }
 
-.model-selector span.value {
+.model-selector select {
+    border: none;
+    outline: none;
+    background: transparent;
     color: var(--text-primary);
-    font-weight: 500;
+    font-size: 11px;
 }
-
-/* Right area: search, credits, profile */
 
 .topbar-right {
     display: flex;
     align-items: center;
-    gap: 10px;
-}
-
-.search-input {
-    min-width: 220px;
-    border-radius: var(--radius-pill);
-    border: 1px solid #0b1120;
-    background: #020617;
-    color: var(--text-primary);
-    font-size: 12px;
-    padding: 7px 12px;
-}
-
-.search-input::placeholder {
-    color: var(--text-muted);
+    gap: 12px;
 }
 
 .credits-pill {
     border-radius: var(--radius-pill);
-    border: 1px solid rgba(34, 197, 94, 0.6);
-    padding: 4px 10px;
+    border: 1px solid #0b1120;
+    background: #020617;
+    padding: 6px 12px;
     font-size: 11px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(22, 163, 74, 0.25);
-    color: #bbf7d0;
-    box-shadow: 0 0 18px rgba(34, 197, 94, 0.7);
+}
+
+.credits-pill .value {
+    color: #a7f3d0;
+    font-weight: 600;
 }
 
 .user-chip {
+    border-radius: var(--radius-pill);
+    border: 1px solid #0b1120;
+    background: #020617;
+    padding: 5px 12px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 9px;
-    border-radius: 999px;
-    background: #020617;
-    border: 1px solid #0b1120;
+    gap: 8px;
     font-size: 11px;
     color: var(--text-secondary);
 }
 
 .user-avatar {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 999px;
-    background: radial-gradient(circle at 30% 0, #22c55e 0, #166534 60%);
+    background: radial-gradient(circle at 0 0, #22c55e, #020617 70%);
 }
 
-/* ==========================================================================
-   MAIN LAYOUT
-   ========================================================================== */
+/* ===================== MAIN GRID ===================== */
 
 .main-layout {
-    flex: 1;
     height: calc(100vh - var(--topbar-height));
     display: grid;
     grid-template-columns: minmax(0, 430px) minmax(0, 1fr);
-    gap: 14px;
+    gap: 0;
     padding: 14px 18px 18px;
-    min-width: 0;
 }
-
-/* Shared card surface */
-
-.panel,
-.preview-wrapper,
-.feed-panel {
-    border-radius: var(--radius-card);
-    border: 1px solid var(--border-subtle);
-    background: radial-gradient(circle at top, #050816 0, #020617 55%, #00010a 100%);
-    box-shadow: var(--shadow-soft);
-}
-
-/* Left settings panel */
 
 .panel {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    min-height: 0;
 }
 
-/* Generator header */
+.panel-right {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 94px;
+    gap: 10px;
+    min-width: 0;
+}
+
+/* ===================== GENERATOR CARD ===================== */
 
 .gen-header {
     padding: 16px 18px 10px;
@@ -372,90 +284,114 @@ button {
 .gen-title-block {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .gen-title-label {
     font-size: 11px;
     color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
 }
 
 .gen-title-main {
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
 }
-
-/* Mode tabs */
 
 .mode-toggle {
     display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    border-radius: 999px;
-    padding: 2px;
+    border-radius: var(--radius-pill);
+    border: 1px solid #0b1120;
     background: #020617;
-    border: 1px solid #020617;
+    padding: 2px;
 }
 
 .mode-toggle button {
-    border-radius: 999px;
-    padding: 5px 10px;
+    border: none;
+    background: transparent;
     font-size: 11px;
     color: var(--text-secondary);
-    background: transparent;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
     cursor: pointer;
 }
 
 .mode-toggle button.active {
-    background: #0f172a;
-    color: #e5e7eb;
+    background: #0b1120;
+    color: #f9fafb;
 }
-
-/* Body / scroll area */
 
 .gen-body {
     flex: 1;
-    min-height: 0;
-    padding: 4px 18px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    background: radial-gradient(circle at top left, #050816, #020617 60%);
+    border-radius: var(--radius-card);
+    border: 1px solid #050b18;
+    padding: 16px 18px 14px;
+    margin: 0 14px;
+    box-shadow: var(--shadow-soft);
     overflow-y: auto;
 }
 
-/* Groups */
-
 .group-label {
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
     color: var(--text-muted);
-    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 10px;
 }
 
 .input-block {
-    border-radius: 15px;
-    border: 1px solid rgba(15, 23, 42, 0.9);
-    background: radial-gradient(circle at top, #020617 0, #020617 55%, #00010a 100%);
-    padding: 10px 11px 9px;
+    margin-bottom: 14px;
 }
 
-/* Prompt areas */
+.input-row-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.input-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.input-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+textarea,
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #050b18;
+    background: #030712;
+    color: var(--text-primary);
+    font-size: 12px;
+    padding: 9px 10px;
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 130px;
+}
+
+.prompt-area {
+    border-radius: 16px;
+    border: 1px solid #050b18;
+    background: #020617;
+    padding: 10px 10px 8px;
+}
 
 .prompt-area textarea {
-    width: 100%;
-    min-height: 120px;
-    resize: vertical;
-    border-radius: 14px;
-    border: 1px solid #0b1120;
-    background: #020617;
-    padding: 9px 11px;
-    font-size: 12px;
-    color: var(--text-primary);
-}
-
-.prompt-area textarea::placeholder {
-    color: var(--text-muted);
+    border: none;
+    background: transparent;
+    min-height: 150px;
 }
 
 .prompt-footer {
@@ -471,31 +407,16 @@ button {
     color: #a7f3d0;
     cursor: pointer;
 }
+
 .prompt-helper-link:hover {
     text-decoration: underline;
 }
-
-/* Negative prompt chips */
-
-.chip {
-    border-radius: 999px;
-    padding: 4px 8px;
-    font-size: 11px;
-    border: 1px solid #0b1120;
-    background: #020617;
-    color: var(--text-secondary);
-    cursor: pointer;
-}
-.chip:hover {
-    border-color: rgba(148, 163, 184, 0.7);
-}
-
-/* Upload cards */
 
 .dual-row {
     display: flex;
     gap: 10px;
 }
+
 .dual-row > * {
     flex: 1;
 }
@@ -504,105 +425,118 @@ button {
     position: relative;
     border-radius: 16px;
     border: 1px dashed #1f2937;
-    background: radial-gradient(circle at top, #020617 0, #020617 55%, #00010a 100%);
-    padding: 18px 12px 15px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--text-secondary);
+    background: #020617;
+    padding: 18px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     cursor: pointer;
-    overflow: hidden;
 }
+
+.upload-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+
 .upload-card input[type="file"] {
     position: absolute;
     inset: 0;
     opacity: 0;
     cursor: pointer;
 }
-.upload-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 999px;
-    border: 1px solid #374151;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 8px;
-    font-size: 18px;
-}
+
 .upload-sub {
-    margin-top: 4px;
     font-size: 11px;
     color: var(--text-muted);
 }
 
-/* Select rows */
+.link-small {
+    font-size: 11px;
+    color: #a7f3d0;
+    cursor: pointer;
+}
+
+.chip-row,
+.hints-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.chip {
+    border-radius: var(--radius-pill);
+    border: 1px solid #111827;
+    background: #020617;
+    font-size: 10px;
+    color: var(--text-secondary);
+    padding: 4px 9px;
+    cursor: pointer;
+}
+
+.chip.active {
+    background: var(--accent-green-soft);
+    border-color: var(--accent-green);
+    color: #ecfdf5;
+}
+
+/* bottom strip */
 
 .gen-footer-controls {
-    padding: 8px 18px 13px;
-    border-top: 1px solid rgba(15, 23, 42, 0.9);
+    padding: 10px 22px 4px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    background: radial-gradient(circle at top, #020617 0, #020617 55%);
+    gap: 10px;
+    font-size: 11px;
 }
 
 .gen-footer-controls select {
-    height: 32px;
+    width: auto;
+    min-width: 80px;
     border-radius: 999px;
-    border: 1px solid #0b1120;
+    border: 1px solid #111827;
     background: #020617;
-    color: var(--text-secondary);
+    padding: 5px 10px;
     font-size: 11px;
-    padding: 0 9px;
+    color: var(--text-secondary);
 }
-
-/* Generate button */
 
 .btn-generate {
     margin-left: auto;
-    height: 34px;
-    padding: 0 26px;
     border-radius: 999px;
-    background: radial-gradient(circle at 20% 0, #22c55e 0, #16a34a 40%, #16a34a 100%);
-    color: #022c22;
+    border: none;
+    padding: 8px 22px;
+    font-size: 12px;
     font-weight: 600;
-    font-size: 13px;
     cursor: pointer;
-    box-shadow: var(--shadow-cta);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-}
-.btn-generate:hover {
-    filter: brightness(1.04);
-}
-.btn-generate:active {
-    transform: translateY(1px);
+    background: linear-gradient(to right, #22c55e, #4ade80);
+    color: #022c22;
+    box-shadow: 0 0 26px rgba(34, 197, 94, 0.8);
 }
 
-/* Danger text */
-
-.danger {
-    color: var(--text-danger);
+.btn-generate:disabled {
+    opacity: 0.55;
+    box-shadow: none;
+    cursor: default;
 }
 
-/* ==========================================================================
-   RIGHT PANEL – PREVIEW & THUMBNAILS
-   ========================================================================== */
-
-.panel-right {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 94px;
-    gap: 10px;
-    min-width: 0;
-}
-
-/* Preview surface */
+/* ===================== RIGHT SIDE ===================== */
 
 .preview-wrapper {
+    border-radius: var(--radius-card);
+    border: 1px solid #050b18;
+    background: radial-gradient(circle at top, #050816, #020617 60%);
     padding: 12px 14px 10px;
+    box-shadow: var(--shadow-soft);
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -616,8 +550,6 @@ button {
     margin-bottom: 8px;
 }
 
-/* Filter pills */
-
 .preview-filters {
     display: inline-flex;
     border-radius: 999px;
@@ -625,105 +557,109 @@ button {
     background: #020617;
     padding: 2px;
 }
+
 .preview-filters button {
-    border-radius: 999px;
-    padding: 4px 10px;
+    border: none;
+    background: transparent;
     font-size: 11px;
     color: var(--text-secondary);
+    padding: 4px 10px;
+    border-radius: 999px;
     cursor: pointer;
 }
-.preview-filters button.active {
-    background: #0f172a;
-    color: #e5e7eb;
-}
 
-/* Assets button */
+.preview-filters button.active {
+    background: #0b1120;
+    color: #f9fafb;
+}
 
 .btn-assets {
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     border: 1px solid #0b1120;
-    padding: 4px 10px;
+    background: #020617;
+    padding: 6px 12px;
     font-size: 11px;
     color: var(--text-secondary);
-    background: #020617;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
 }
 
-/* Main preview canvas */
+.search-input {
+    border-radius: 999px;
+    border: 1px solid #0b1120;
+    background: #020617;
+    color: var(--text-secondary);
+    font-size: 11px;
+    padding: 6px 10px;
+    min-width: 140px;
+    outline: none;
+}
 
 .preview-main {
     flex: 1;
+    display: grid;
+    grid-template-rows: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 10px;
     min-height: 0;
-    border-radius: 18px;
-    border: 1px solid #020617;
-    background: radial-gradient(circle at top, #020617 0, #020617 55%, #00010a 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
 }
 
 .preview-stage {
-    width: 100%;
-    height: 100%;
+    border-radius: 18px;
+    border: 1px solid #050b18;
+    background: radial-gradient(circle at top, #020617, #000814 80%);
+    padding: 14px 16px;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #020617;
+    min-height: 0;
 }
 
-.preview-stage img,
-.preview-stage video {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 16px;
-    display: block;
+.preview-stage-inner {
+    width: 100%;
+    max-width: 820px;
+    height: 100%;
+    border-radius: 18px;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Empty state */
-
-.preview-empty {
+.preview-placeholder {
     font-size: 12px;
     color: var(--text-muted);
+    padding: 18px;
     text-align: center;
 }
 
-/* Thumb rail */
-
-.thumb-rail {
-    border-radius: 18px;
-    border: 1px solid #020617;
-    background: radial-gradient(circle at top, #020617 0, #020617 55%, #00010a 100%);
-    padding: 6px 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    overflow-y: auto;
-}
-.thumb-rail button {
-    border-radius: 10px;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid transparent;
-    cursor: pointer;
-}
-.thumb-rail button.active {
-    border-color: var(--accent);
-}
-.thumb-rail img,
-.thumb-rail video {
+.preview-media {
     width: 100%;
-    display: block;
+    height: 100%;
+    display: none;
+    object-fit: contain;
+    background: #000;
 }
 
-/* ==========================================================================
-   FEED / EXPLORE GALLERY (for explore tab)
-   ========================================================================== */
+.preview-controls-row {
+    position: absolute;
+    left: 22px;
+    bottom: 14px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 10px;
+}
 
-.feed-panel {
-    margin-top: 14px;
-    padding: 10px 13px 12px;
-    border-radius: 20px;
+.preview-feed {
+    border-radius: 16px;
+    border: 1px solid #050b18;
+    background: #020617;
+    padding: 10px 10px 8px;
+    overflow-y: auto;
 }
 
 .feed-row-title {
@@ -737,56 +673,132 @@ button {
 
 .feed-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 9px;
 }
 
-/* ==========================================================================
-   LIGHTBOX
-   ========================================================================== */
+.feed-card {
+    border-radius: 14px;
+    border: 1px solid #050b18;
+    background: #020617;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.feed-thumb {
+    aspect-ratio: 4 / 3;
+    background: #000;
+}
+
+.feed-thumb img,
+.feed-thumb video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.feed-meta {
+    padding: 5px 7px 6px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.feed-name {
+    max-width: 110px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.feed-heart {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* right-most thumbnail rail */
+
+.thumb-rail {
+    border-radius: 18px;
+    border: 1px solid #050b18;
+    background: #000;
+    padding: 10px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+.thumb-item {
+    border-radius: 12px;
+    border: 1px solid #050b18;
+    overflow: hidden;
+    height: 68px;
+    cursor: pointer;
+}
+
+.thumb-item img,
+.thumb-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumb-item.active {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.9);
+}
+
+/* ===================== LIGHTBOX ===================== */
 
 .lightbox-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.88);
+    background: rgba(0, 0, 0, 0.86);
     display: none;
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(18px);
     z-index: 60;
 }
 
+.lightbox-backdrop.active {
+    display: flex;
+}
+
 .lightbox {
-    width: min(980px, 96vw);
-    max-height: 88vh;
+    width: min(960px, 94vw);
+    max-height: 90vh;
     border-radius: 26px;
-    border: 1px solid #020617;
-    background: radial-gradient(circle at top, #020617 0, #020617 55%, #00010a 100%);
-    box-shadow: var(--shadow-soft);
+    border: 1px solid #111827;
+    background: #020617;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.96);
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    gap: 10px;
-    padding: 12px;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    overflow: hidden;
 }
 
 .lightbox-media {
-    border-radius: 20px;
-    background: #020617;
+    background: #000;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    padding: 18px;
 }
+
 .lightbox-media img,
 .lightbox-media video {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 18px;
+    width: 100%;
+    max-height: 86vh;
+    object-fit: contain;
 }
 
 .lightbox-info {
-    border-radius: 18px;
-    border: 1px solid #020617;
-    background: radial-gradient(circle at top, #020617 0, #020617 55%, #00010a 100%);
     padding: 14px 14px 12px;
     display: flex;
     flex-direction: column;
@@ -805,6 +817,7 @@ button {
     font-size: 13px;
     font-weight: 500;
 }
+
 .lightbox-sub {
     font-size: 11px;
     color: var(--text-muted);
@@ -816,66 +829,101 @@ button {
     border-radius: 999px;
     border: 1px solid #111827;
     background: #020617;
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.lightbox-meta {
+    display: grid;
+    gap: 2px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.lightbox-meta span.label {
+    color: var(--text-muted);
+}
+
+.lightbox-actions {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.lightbox-actions button {
+    border-radius: 999px;
+    border: 1px solid #111827;
+    background: #020617;
+    padding: 4px 10px;
+    font-size: 11px;
     color: var(--text-secondary);
     cursor: pointer;
 }
 
-/* ==========================================================================
-   RESPONSIVE
-   ========================================================================== */
+.lightbox-actions button.danger {
+    border-color: #ef4444;
+    color: #fecaca;
+}
 
-@media (max-width: 1280px) {
+.lightbox-prompt {
+    margin-top: 6px;
+    border-radius: 12px;
+    border: 1px solid #050b18;
+    background: #020617;
+    padding: 8px 9px;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 1180px) {
     .main-layout {
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+        grid-template-columns: minmax(0, 410px) minmax(0, 1fr);
     }
 }
 
-@media (max-width: 1024px) {
-    .nav-rail {
-        position: fixed;
-        inset: auto 0 0 0;
-        flex-direction: row;
-        justify-content: center;
-        width: 100%;
-        height: 60px;
-        padding: 8px 14px;
-        border-right: none;
-        border-top: 1px solid rgba(15, 23, 42, 0.9);
-    }
-
-    .app-shell {
-        margin-left: 0;
-        padding-top: 0;
-    }
-
+@media (max-width: 1040px) {
     .main-layout {
-        height: calc(100vh - var(--topbar-height) - 60px);
         grid-template-columns: minmax(0, 1fr);
     }
 
     .panel-right {
         grid-template-columns: minmax(0, 1fr);
-        grid-auto-rows: auto;
     }
 
     .thumb-rail {
-        flex-direction: row;
-        height: 110px;
-        overflow-x: auto;
-        overflow-y: hidden;
+        display: none;
     }
 }
 
-/* Very small screens – stack sections with more padding */
-@media (max-width: 768px) {
-    .topbar {
-        padding-inline: 14px;
-    }
-    .topbar-right {
+@media (max-width: 820px) {
+    .nav-rail {
         display: none;
     }
-    .main-layout {
-        padding: 10px 10px 14px;
+
+    .app-shell {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .topbar {
+        padding: 0 14px;
+    }
+
+    .gen-body {
+        margin: 0 6px;
+    }
+
+    .lightbox {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 </style>
