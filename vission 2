@@ -2,2141 +2,2008 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Sulandra Vision · Image & Video Generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    />
-<style>
-:root {
-    --bg-root: #020617;
-    --bg-surface: #050816;
-    --bg-surface-soft: #050814;
-    --bg-deep: #00010a;
-
-    --accent-green: #3bff64;
-    --accent-green-soft: rgba(59, 255, 100, 0.12);
-
-    --border-subtle: #050b18;
-    --text-primary: #f9fafb;
-    --text-secondary: #9ca3af;
-    --text-muted: #6b7280;
-
-    --nav-width: 76px;
-    --topbar-height: 64px;
-    --radius-card: 20px;
-    --radius-md: 14px;
-    --radius-pill: 999px;
-    --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.85);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-}
-
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter",
-        "Segoe UI", sans-serif;
-    background: #000;
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-}
-
-/* ===================== LEFT NAV ===================== */
-
-.nav-rail {
-    width: var(--nav-width);
-    background: radial-gradient(circle at 0 0, #020617, #020817 40%, #000 100%);
-    border-right: 1px solid #020617;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 14px 10px 16px;
-    gap: 10px;
-    position: fixed;
-    inset-block: 0;
-    z-index: 40;
-}
-
-.nav-logo {
-    width: 44px;
-    height: 44px;
-    border-radius: 18px;
-    background: radial-gradient(circle at 0 0, #22c55e, #020617 70%);
-    border: 1px solid rgba(148, 163, 184, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    font-size: 20px;
-    color: #ecfdf5;
-    box-shadow: 0 0 26px rgba(34, 197, 94, 0.9);
-}
-
-.nav-section {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.nav-btn {
-    width: 46px;
-    height: 46px;
-    border-radius: 18px;
-    border: 1px solid transparent;
-    background: radial-gradient(circle at 0 0, #020617, #000814 70%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.16s ease-out;
-}
-
-.nav-btn svg {
-    width: 20px;
-    height: 20px;
-    stroke: #9ca3af;
-    stroke-width: 1.5;
-    fill: none;
-}
-
-.nav-btn:hover {
-    border-color: #1f2937;
-    transform: translateY(-1px);
-}
-
-.nav-btn.active {
-    border-color: rgba(59, 255, 100, 0.9);
-    background: radial-gradient(circle at 0 0, #020617, #020617 65%);
-    box-shadow: 0 0 22px rgba(34, 197, 94, 0.7);
-}
-
-.nav-bottom {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    font-size: 10px;
-    color: var(--text-secondary);
-}
-
-.nav-sale-pill {
-    font-size: 10px;
-    color: #022c22;
-    background: #22c55e;
-    border-radius: 7px;
-    padding: 3px 7px;
-    font-weight: 700;
-}
-
-/* ===================== APP SHELL ===================== */
-
-.app-shell {
-    margin-left: var(--nav-width);
-    flex: 1;
-    min-height: 100vh;
-    background: radial-gradient(circle at top, #020617, #000 80%);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto; /* page scroll instead of hiding Generate */
-}
-
-.topbar {
-    height: var(--topbar-height);
-    padding: 0 24px 0 26px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: linear-gradient(to right, #020617, #000814);
-    border-bottom: 1px solid #020617;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-    position: sticky;
-    top: 0;
-    z-index: 20;
-}
-
-.topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.topbar-title {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.topbar-title-main {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 18px;
-    font-weight: 700;
-}
-
-.topbar-title-sub {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.model-selector {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border-radius: var(--radius-pill);
-    border: 1px solid #0b1120;
-    background: #020617;
-    padding: 5px 12px;
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-family: "Times New Roman", Times, serif;
-    font-weight: 700;
-}
-
-.model-selector select {
-    border: none;
-    outline: none;
-    background: transparent;
-    color: var(--text-primary);
-    font-size: 12px;
-    font-family: "Times New Roman", Times, serif;
-}
-
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.credits-pill,
-.user-chip {
-    border-radius: var(--radius-pill);
-    border: 1px solid #0b1120;
-    background: radial-gradient(circle at 0 0, #020617, #020617 60%);
-    padding: 6px 14px;
-    font-size: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: "Times New Roman", Times, serif;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-}
-
-.credits-pill .value {
-    color: #a7f3d0;
-    font-weight: 700;
-}
-
-.user-avatar {
-    width: 22px;
-    height: 22px;
-    border-radius: 999px;
-    background: radial-gradient(circle at 0 0, #22c55e, #020617 70%);
-}
-
-/* ===================== MAIN GRID ===================== */
-
-.main-layout {
-    min-height: calc(100vh - var(--topbar-height));
-    display: grid;
-    grid-template-columns: minmax(0, 430px) minmax(0, 1fr);
-    gap: 0;
-    padding: 14px 18px 24px;
-}
-
-.panel {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    min-height: 0;
-}
-
-.panel-right {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 94px;
-    gap: 10px;
-    min-width: 0;
-}
-
-/* ===================== GENERATOR CARD ===================== */
-
-.gen-header {
-    padding: 16px 18px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.gen-title-block {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.gen-title-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-}
-
-.gen-title-main {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-/* ===== Glossy pill tabs (image / video modes) ===== */
-
-.mode-toggle {
-    display: inline-flex;
-    border-radius: var(--radius-pill);
-    border: 1px solid #0b1120;
-    background: radial-gradient(circle at 0 0, #020617, #020617 70%);
-    padding: 3px;
-    box-shadow: 0 0 16px rgba(15, 23, 42, 0.9);
-}
-
-.mode-toggle button {
-    border: none;
-    background: transparent;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    padding: 6px 14px;
-    border-radius: var(--radius-pill);
-    cursor: pointer;
-    position: relative;
-    transition: all 0.18s ease-out;
-}
-
-.mode-toggle button::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.12),
-        transparent 55%
-    );
-    opacity: 0;
-    pointer-events: none;
-}
-
-.mode-toggle button.active {
-    color: #022c22;
-    background: radial-gradient(circle at 0 0, #4ade80, #16a34a);
-    box-shadow: 0 0 24px rgba(34, 197, 94, 0.9);
-}
-
-.mode-toggle button.active::after {
-    opacity: 1;
-}
-
-.mode-toggle button:hover:not(.active) {
-    color: #e5e7eb;
-}
-
-/* form body */
-
-.gen-body {
-    flex: 1;
-    background: radial-gradient(circle at top left, #050816, #020617 60%);
-    border-radius: var(--radius-card);
-    border: 1px solid #050b18;
-    padding: 16px 18px 14px;
-    margin: 0 14px 8px;
-    box-shadow: var(--shadow-soft);
-    overflow-y: auto;
-    min-height: 0;
-}
-
-.group-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    margin-bottom: 10px;
-    font-family: "Times New Roman", Times, serif;
-}
-
-.input-block {
-    margin-bottom: 14px;
-}
-
-.input-row-label {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 4px;
-}
-
-.input-label {
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-family: "Times New Roman", Times, serif;
-    font-weight: 700;
-}
-
-.input-hint {
-    font-size: 10px;
-    color: var(--text-muted);
-}
-
-textarea,
-input[type="text"],
-input[type="number"],
-select {
-    width: 100%;
-    border-radius: 12px;
-    border: 1px solid #050b18;
-    background: #030712;
-    color: var(--text-primary);
-    font-size: 12px;
-    padding: 9px 10px;
-    outline: none;
-}
-
-textarea {
-    resize: vertical;
-    min-height: 130px;
-}
-
-.prompt-area {
-    border-radius: 16px;
-    border: 1px solid #050b18;
-    background: #020617;
-    padding: 10px 10px 8px;
-}
-
-.prompt-area textarea {
-    border: none;
-    background: transparent;
-    min-height: 150px;
-}
-
-.prompt-footer {
-    margin-top: 4px;
-    font-size: 11px;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.prompt-helper-link {
-    color: #a7f3d0;
-    cursor: pointer;
-    font-family: "Times New Roman", Times, serif;
-    font-weight: 700;
-}
-
-.prompt-helper-link:hover {
-    text-decoration: underline;
-}
-
-.dual-row {
-    display: flex;
-    gap: 10px;
-}
-
-.dual-row > * {
-    flex: 1;
-}
-
-.upload-card {
-    position: relative;
-    border-radius: 16px;
-    border: 1px dashed #1f2937;
-    background: #020617;
-    padding: 18px 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    cursor: pointer;
-}
-
-.upload-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 999px;
-    border: 1px solid #111827;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    color: var(--text-secondary);
-}
-
-.upload-card input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.upload-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-}
-
-.link-small {
-    font-size: 11px;
-    color: #a7f3d0;
-    cursor: pointer;
-}
-
-.chip-row,
-.hints-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 6px;
-}
-
-/* small glossy chips */
-
-.chip {
-    border-radius: var(--radius-pill);
-    border: 1px solid #111827;
-    background: radial-gradient(circle at 0 0, #020617, #020617 70%);
-    font-size: 11px;
-    color: var(--text-secondary);
-    padding: 4px 10px;
-    cursor: pointer;
-    font-family: "Times New Roman", Times, serif;
-    font-weight: 700;
-    transition: all 0.16s ease-out;
-}
-
-.chip.active,
-.chip:hover {
-    background: radial-gradient(circle at 0 0, #4ade80, #16a34a);
-    border-color: var(--accent-green);
-    color: #022c22;
-    box-shadow: 0 0 18px rgba(34, 197, 94, 0.9);
-}
-
-/* bottom strip */
-
-.gen-footer-controls {
-    padding: 10px 22px 4px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 11px;
-}
-
-.gen-footer-controls select {
-    width: auto;
-    min-width: 90px;
-    border-radius: 999px;
-    border: 1px solid #111827;
-    background: #020617;
-    padding: 6px 12px;
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-family: "Times New Roman", Times, serif;
-    font-weight: 700;
-}
-
-/* glossy Generate button */
-
-.btn-generate {
-    margin-left: auto;
-    border-radius: 999px;
-    border: none;
-    padding: 10px 28px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    background: linear-gradient(135deg, #22c55e, #4ade80);
-    color: #022c22;
-    box-shadow: 0 0 30px rgba(34, 197, 94, 0.95);
-    font-family: "Times New Roman", Times, serif;
-    letter-spacing: 0.03em;
-}
-
-.btn-generate:disabled {
-    opacity: 0.55;
-    box-shadow: none;
-    cursor: default;
-}
-
-/* ===================== RIGHT SIDE ===================== */
-
-.preview-wrapper {
-    border-radius: var(--radius-card);
-    border: 1px solid #050b18;
-    background: radial-gradient(circle at top, #050816, #020617 60%);
-    padding: 12px 14px 10px;
-    box-shadow: var(--shadow-soft);
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.preview-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    margin-bottom: 8px;
-}
-
-/* glossy preview filter pills */
-
-.preview-filters {
-    display: inline-flex;
-    border-radius: 999px;
-    border: 1px solid #0b1120;
-    background: radial-gradient(circle at 0 0, #020617, #020617 70%);
-    padding: 3px;
-    box-shadow: 0 0 16px rgba(15, 23, 42, 0.9);
-}
-
-.preview-filters button {
-    border: none;
-    background: transparent;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    padding: 6px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.18s ease-out;
-}
-
-.preview-filters button::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.12),
-        transparent 55%
-    );
-    opacity: 0;
-}
-
-.preview-filters button.active {
-    background: radial-gradient(circle at 0 0, #4ade80, #16a34a);
-    color: #022c22;
-    box-shadow: 0 0 22px rgba(34, 197, 94, 0.9);
-}
-
-.preview-filters button.active::after {
-    opacity: 1;
-}
-
-.preview-filters button:hover:not(.active)) {
-    color: #e5e7eb;
-}
-
-.btn-assets {
-    border-radius: var(--radius-pill);
-    border: 1px solid #0b1120;
-    background: radial-gradient(circle at 0 0, #020617, #020617 70%);
-    padding: 6px 14px;
-    font-size: 12px;
-    color: var(--text-secondary);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    font-family: "Times New Roman", Times, serif;
-    font-weight: 700;
-}
-
-.search-input {
-    border-radius: 999px;
-    border: 1px solid #0b1120;
-    background: #020617;
-    color: var(--text-secondary);
-    font-size: 11px;
-    padding: 6px 10px;
-    min-width: 140px;
-    outline: none;
-}
-
-.preview-main {
-    flex: 1;
-    display: grid;
-    grid-template-rows: minmax(0, 1.35fr) minmax(0, 1fr);
-    gap: 10px;
-    min-height: 0;
-}
-
-.preview-stage {
-    border-radius: 18px;
-    border: 1px solid #050b18;
-    background: radial-gradient(circle at top, #020617, #000814 80%);
-    padding: 14px 16px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-}
-
-.preview-stage-inner {
-    width: 100%;
-    max-width: 820px;
-    height: 100%;
-    border-radius: 18px;
-    background: #000;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.preview-placeholder {
-    font-size: 12px;
-    color: var(--text-muted);
-    padding: 18px;
-    text-align: center;
-}
-
-.preview-media {
-    width: 100%;
-    height: 100%;
-    display: none;
-    object-fit: contain;
-    background: #000;
-}
-
-.preview-controls-row {
-    position: absolute;
-    left: 22px;
-    bottom: 14px;
-    font-size: 11px;
-    color: var(--text-secondary);
-    display: flex;
-    gap: 10px;
-}
-
-.preview-feed {
-    border-radius: 16px;
-    border: 1px solid #050b18;
-    background: #020617;
-    padding: 10px 10px 8px;
-    overflow-y: auto;
-}
-
-.feed-row-title {
-    font-size: 11px;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
-}
-
-.feed-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 9px;
-}
-
-.feed-card {
-    border-radius: 14px;
-    border: 1px solid #050b18;
-    background: #020617;
-    overflow: hidden;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-}
-
-.feed-thumb {
-    aspect-ratio: 4 / 3;
-    background: #000;
-}
-
-.feed-thumb img,
-.feed-thumb video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.feed-meta {
-    padding: 5px 7px 6px;
-    font-size: 10px;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.feed-name {
-    max-width: 110px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.feed-heart {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-}
-
-/* right-most thumbnail rail */
-
-.thumb-rail {
-    border-radius: 18px;
-    border: 1px solid #050b18;
-    background: #000;
-    padding: 10px 6px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow-y: auto;
-}
-
-.thumb-item {
-    border-radius: 12px;
-    border: 1px solid #050b18;
-    overflow: hidden;
-    height: 68px;
-    cursor: pointer;
-}
-
-.thumb-item img,
-.thumb-item video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.thumb-item.active {
-    border-color: var(--accent-green);
-    box-shadow: 0 0 14px rgba(34, 197, 94, 0.9);
-}
-
-/* ===================== LIGHTBOX ===================== */
-
-.lightbox-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.86);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(18px);
-    z-index: 60;
-}
-
-.lightbox-backdrop.active {
-    display: flex;
-}
-
-.lightbox {
-    width: min(960px, 94vw);
-    max-height: 90vh;
-    border-radius: 26px;
-    border: 1px solid #111827;
-    background: #020617;
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.96);
-    display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    overflow: hidden;
-}
-
-.lightbox-media {
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 18px;
-}
-
-.lightbox-media img,
-.lightbox-media video {
-    width: 100%;
-    max-height: 86vh;
-    object-fit: contain;
-}
-
-.lightbox-info {
-    padding: 14px 14px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 11px;
-}
-
-.lightbox-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.lightbox-title {
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.lightbox-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-}
-
-.btn-close {
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
-    border: 1px solid #111827;
-    background: #020617;
-    color: #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.lightbox-meta {
-    display: grid;
-    gap: 2px;
-    font-size: 11px;
-    color: var(--text-secondary);
-}
-
-.lightbox-meta span.label {
-    color: var(--text-muted);
-}
-
-.lightbox-actions {
-    margin-top: 6px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.lightbox-actions button {
-    border-radius: 999px;
-    border: 1px solid #111827;
-    background: #020617;
-    padding: 4px 10px;
-    font-size: 11px;
-    color: var(--text-secondary);
-    cursor: pointer;
-}
-
-.lightbox-actions button.danger {
-    border-color: #ef4444;
-    color: #fecaca;
-}
-
-.lightbox-prompt {
-    margin-top: 6px;
-    border-radius: 12px;
-    border: 1px solid #050b18;
-    background: #020617;
-    padding: 8px 9px;
-    max-height: 120px;
-    overflow-y: auto;
-    font-size: 11px;
-    color: var(--text-secondary);
-}
-
-/* ===================== RESPONSIVE ===================== */
-
-@media (max-width: 1180px) {
-    .main-layout {
-        grid-template-columns: minmax(0, 410px) minmax(0, 1fr);
-    }
-}
-
-@media (max-width: 1040px) {
-    .main-layout {
-        grid-template-columns: minmax(0, 1fr);
+    <title>SULANDRA | AI Creative Studio</title>
+
+    <style>
+    /* ==========================================================================
+       1. GLOBAL THEME
+       ========================================================================== */
+    :root {
+        --bg-root: #020617;
+        --bg-app: #020617;
+        --bg-panel: #020617;
+        --bg-card: #050816;
+        --bg-card-soft: #050815;
+        --bg-elevated: #020617;
+        --border-subtle: #111827;
+        --border-strong: #1f2937;
+
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.16);
+        --accent-strong: #4ade80;
+
+        --text-primary: #f9fafb;
+        --text-secondary: #9ca3af;
+        --text-muted: #6b7280;
+        --text-dark: #020617;
+
+        --nav-width: 80px;
+        --history-width: 110px;
+        --header-height: 70px;
+
+        --radius-sm: 10px;
+        --radius-md: 16px;
+        --radius-lg: 22px;
+        --radius-pill: 999px;
+
+        --shadow-card: 0 26px 65px rgba(0, 0, 0, 0.95);
+        --shadow-pill: 0 20px 48px rgba(34, 197, 94, 0.8);
     }
 
-    .panel-right {
-        grid-template-columns: minmax(0, 1fr);
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
     }
 
-    .thumb-rail {
-        display: none;
-    }
-}
-
-@media (max-width: 820px) {
-    .nav-rail {
-        display: none;
+    html, body {
+        height: 100%;
+        width: 100%;
     }
 
+    body {
+        background:
+            radial-gradient(circle at -10% -40%, rgba(59, 130, 246, 0.22), transparent 60%),
+            radial-gradient(circle at 120% 0%, rgba(34, 197, 94, 0.22), transparent 58%),
+            radial-gradient(circle at 50% 140%, rgba(0, 0, 0, 0.9), #020617 70%);
+        color: var(--text-primary);
+        font-family: "Times New Roman", Times, serif;
+        display: flex;
+        overflow: hidden;
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    /* Scrollbars – sleek */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #1f2937;
+        border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #374151;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ==========================================================================
+       2. LEFT SIDEBAR (LABS)
+       ========================================================================== */
+    .sidebar {
+        width: var(--nav-width);
+        background: radial-gradient(circle at 0 0, #020617, #020617 35%, #000 100%);
+        border-right: 1px solid rgba(15, 23, 42, 0.9);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0 18px;
+        z-index: 40;
+        box-shadow: 22px 0 55px rgba(0, 0, 0, 0.95);
+        flex-shrink: 0;
+    }
+
+    .brand-logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 20% 0, #22c55e, #0f172a 60%, #020617);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 26px;
+        box-shadow:
+            0 0 0 1px rgba(148, 163, 184, 0.25),
+            0 26px 62px rgba(34, 197, 94, 0.7);
+    }
+
+    .brand-logo-inner {
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0, #0b1120, #020617 70%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #bbf7d0;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+    }
+
+    .nav-item {
+        width: 50px;
+        height: 50px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+        cursor: pointer;
+        position: relative;
+        transition:
+            background 120ms ease-out,
+            color 120ms ease-out,
+            transform 120ms ease-out,
+            box-shadow 120ms ease-out,
+            border-color 120ms ease-out;
+        border: 1px solid transparent;
+        background: radial-gradient(circle at 50% 0, rgba(15, 23, 42, 0.8), #020617 70%);
+    }
+
+    .nav-item svg {
+        width: 24px;
+        height: 24px;
+        stroke-width: 1.6;
+    }
+
+    .nav-item:hover {
+        color: #e5e7eb;
+        border-color: rgba(148, 163, 184, 0.45);
+        box-shadow: 0 12px 26px rgba(15, 23, 42, 0.85);
+        transform: translateY(-1px);
+    }
+
+    .nav-item.active {
+        color: #ecfeff;
+        background: radial-gradient(circle at 20% 0, #22c55e, #0f172a 55%, #020617);
+        border-color: rgba(34, 197, 94, 0.9);
+        box-shadow:
+            0 0 0 1px rgba(34, 197, 94, 0.7),
+            0 22px 48px rgba(34, 197, 94, 0.9);
+        transform: translateY(-1px);
+    }
+
+    .nav-item.active::before {
+        content: "";
+        position: absolute;
+        left: -13px;
+        top: 12px;
+        bottom: 12px;
+        width: 3px;
+        border-radius: 0 10px 10px 0;
+        background: linear-gradient(180deg, #22c55e, #a7f3d0);
+    }
+
+    .nav-footer {
+        margin-top: auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .credits-pill {
+        font-size: 12px;
+        color: var(--text-secondary);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .credits-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #22c55e;
+        box-shadow:
+            0 0 0 3px rgba(34, 197, 94, 0.35),
+            0 0 25px rgba(34, 197, 94, 0.8);
+        margin-bottom: 4px;
+    }
+
+    .sale-badge {
+        padding: 6px 9px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #22c55e, #a3e635);
+        color: #052e16;
+        font-size: 11px;
+        font-weight: 800;
+        text-align: center;
+        line-height: 1.2;
+        box-shadow: 0 14px 34px rgba(34, 197, 94, 0.8);
+    }
+
+    /* ==========================================================================
+       3. APP HEADER
+       ========================================================================== */
     .app-shell {
-        margin-left: 0;
-    }
-}
-
-@media (max-width: 760px) {
-    .topbar {
-        padding: 0 14px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
     }
 
-    .gen-body {
-        margin: 0 6px 8px;
+    .top-header {
+        height: var(--header-height);
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.95);
+        background:
+            linear-gradient(130deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.94), rgba(15, 23, 42, 0.98)),
+            radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.3), transparent 60%);
+        backdrop-filter: blur(22px);
+        box-shadow: 0 22px 55px rgba(0, 0, 0, 0.95);
+        flex-shrink: 0;
+        z-index: 20;
     }
 
-    .lightbox {
-        grid-template-columns: minmax(0, 1fr);
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
     }
-}
-</style>
+
+    .page-title {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+    }
+
+    .model-selector {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 16px;
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 20% 0, #020617, #020617 60%, #000 100%);
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.9),
+            0 18px 45px rgba(0, 0, 0, 0.9);
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #22c55e;
+        box-shadow:
+            0 0 0 3px rgba(34, 197, 94, 0.5),
+            0 0 32px rgba(34, 197, 94, 0.9);
+    }
+
+    /* View pills */
+    .view-controls {
+        display: inline-flex;
+        align-items: center;
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 30% 0, #020617, #020617 60%, #000 100%);
+        padding: 5px;
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.9),
+            0 18px 42px rgba(0, 0, 0, 0.9);
+        gap: 2px;
+    }
+
+    .view-btn {
+        padding: 8px 22px;
+        border-radius: var(--radius-pill);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        transition:
+            background 130ms ease-out,
+            color 130ms ease-out,
+            box-shadow 130ms ease-out,
+            transform 130ms ease-out;
+        white-space: nowrap;
+    }
+
+    .view-btn.active {
+        background: linear-gradient(135deg, #22c55e, #4ade80);
+        color: #020617;
+        box-shadow: var(--shadow-pill);
+        transform: translateY(-1px);
+    }
+
+    .view-btn:not(.active):hover {
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+    }
+
+    .view-check {
+        margin-left: 6px;
+        padding: 0 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        white-space: nowrap;
+    }
+
+    .view-check input {
+        accent-color: #9ca3af;
+    }
+
+    .assets-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 18px;
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: radial-gradient(circle at 30% 0, #020617, #020617 60%, #000 100%);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        color: #e5e7eb;
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.9),
+            0 18px 40px rgba(0, 0, 0, 0.9);
+        white-space: nowrap;
+    }
+
+    .assets-btn:hover {
+        border-color: rgba(209, 213, 219, 0.9);
+    }
+
+    /* ==========================================================================
+       4. MAIN LAYOUT
+       ========================================================================== */
+    .main-area {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: 410px minmax(0, 1fr);
+        overflow: hidden;
+    }
+
+    /* LEFT CONFIG PANEL ------------------------------------------------------ */
+    .config-panel {
+        background: radial-gradient(circle at top left, #020617, #020617 60%, #000 100%);
+        border-right: 1px solid rgba(15, 23, 42, 0.95);
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
+    }
+
+    .config-inner {
+        padding: 24px 24px 18px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .config-footer {
+        padding: 12px 24px 18px;
+        border-top: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+        position: sticky;
+        bottom: 0;
+        z-index: 5;
+    }
+
+    .panel-tabs {
+        display: flex;
+        gap: 28px;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+        margin-bottom: 20px;
+    }
+
+    .panel-tab {
+        padding: 0 0 14px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        position: relative;
+        white-space: nowrap;
+    }
+
+    .panel-tab:hover { color: #e5e7eb; }
+
+    .panel-tab.active {
+        color: #f9fafb;
+    }
+
+    .panel-tab.active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #22c55e, #4ade80);
+        box-shadow: 0 0 18px rgba(34, 197, 94, 0.8);
+    }
+
+    .promo-banner {
+        margin-bottom: 18px;
+        padding: 11px 13px;
+        border-radius: 16px;
+        background: radial-gradient(circle at 0 0, rgba(34, 197, 94, 0.16), rgba(15, 23, 42, 0.95));
+        border: 1px solid rgba(34, 197, 94, 0.4);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        font-size: 13px;
+        color: var(--text-secondary);
+        box-shadow: 0 18px 40px rgba(34, 197, 94, 0.35);
+    }
+
+    .promo-link {
+        color: #bbf7d0;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 4px;
+    }
+
+    .promo-link:hover {
+        text-decoration: underline;
+    }
+
+    .close-promo {
+        cursor: pointer;
+        font-size: 20px;
+        color: var(--text-muted);
+        padding-left: 10px;
+        line-height: 1;
+    }
+
+    .sub-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .sub-btn {
+        padding: 8px 16px;
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(31, 41, 55, 0.95);
+        background: radial-gradient(circle at 50% 0, #020617, #020617 65%, #000 100%);
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 140ms ease-out;
+        white-space: nowrap;
+    }
+
+    .sub-btn:hover {
+        color: #e5e7eb;
+        border-color: rgba(156, 163, 175, 0.9);
+    }
+
+    .sub-btn.active {
+        background: linear-gradient(135deg, #22c55e, #4ade80);
+        color: #020617;
+        border-color: transparent;
+        box-shadow: var(--shadow-pill);
+        transform: translateY(-1px);
+    }
+
+    .upload-zone {
+        background: radial-gradient(circle at 10% 0, #020617, #020617 60%, #000 100%);
+        border-radius: 18px;
+        border: 1px solid rgba(17, 24, 39, 0.95);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 140ms ease-out;
+        position: relative;
+        overflow: hidden;
+        padding: 18px 14px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+        text-align: center;
+    }
+
+    .upload-zone:hover {
+        border-color: rgba(148, 163, 184, 0.9);
+        background: radial-gradient(circle at 10% 0, #0b1120, #020617 70%);
+    }
+
+    .upload-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 999px;
+        border: 1px dashed rgba(148, 163, 184, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+    }
+
+    .prompt-box {
+        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+        border-radius: 18px;
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        display: flex;
+        flex-direction: column;
+        min-height: 150px;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+        margin-bottom: 20px;
+    }
+
+    .prompt-box textarea {
+        flex: 1;
+        padding: 18px 18px 10px;
+        background: transparent;
+        border: none;
+        resize: none;
+        color: #e5e7eb;
+        font-size: 14px;
+    }
+
+    .prompt-box textarea::placeholder {
+        color: var(--text-muted);
+    }
+
+    .prompt-footer {
+        padding: 9px 15px 10px;
+        border-top: 1px solid rgba(15, 23, 42, 0.95);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: var(--text-muted);
+        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+    }
+
+    .ask-sia-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 12px;
+        border-radius: var(--radius-pill);
+        background: radial-gradient(circle at 20% 0, rgba(59, 130, 246, 0.7), rgba(15, 23, 42, 0.95));
+        color: #e5e7eb;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid rgba(59, 130, 246, 0.7);
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.9),
+            0 18px 38px rgba(59, 130, 246, 0.8);
+        white-space: nowrap;
+    }
+
+    .ask-sia-btn:hover {
+        background: linear-gradient(135deg, #22c55e, #3b82f6);
+        border-color: rgba(34, 197, 94, 0.8);
+    }
+
+    .panel-footer-controls {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .pill-input {
+        height: 46px;
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 30% 0, #020617, #020617 60%, #000 100%);
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.95),
+            0 18px 40px rgba(0, 0, 0, 0.9);
+        min-width: 0;
+        white-space: nowrap;
+    }
+
+    .pill-input:hover {
+        color: #e5e7eb;
+        border-color: rgba(148, 163, 184, 0.95);
+    }
+
+    .neon-btn {
+        height: 48px;
+        border-radius: var(--radius-pill);
+        border: none;
+        background: linear-gradient(135deg, #22c55e, #4ade80);
+        color: #020617;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        box-shadow: var(--shadow-pill);
+        transition:
+            transform 120ms ease-out,
+            box-shadow 120ms ease-out,
+            filter 120ms ease-out;
+        white-space: nowrap;
+        padding: 0 18px;
+    }
+
+    .neon-btn:hover {
+        filter: brightness(1.07);
+        transform: translateY(-1px);
+    }
+
+    .neon-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 12px 28px rgba(34, 197, 94, 0.7);
+    }
+
+    .grid-2-col {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .effect-card {
+        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+        border-radius: 18px;
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        overflow: hidden;
+        cursor: pointer;
+        transition: 150ms ease-out;
+        position: relative;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .effect-card:hover {
+        border-color: rgba(148, 163, 184, 0.95);
+    }
+
+    .effect-card.selected {
+        border-color: #22c55e;
+        box-shadow:
+            0 0 0 1px rgba(34, 197, 94, 0.7),
+            0 18px 40px rgba(34, 197, 94, 0.7);
+    }
+
+    .effect-img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .effect-info {
+        padding: 11px 13px;
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    .effect-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #f9fafb;
+    }
+
+    .effect-badge {
+        position: absolute;
+        top: 9px;
+        right: 9px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #f97316, #fb923c);
+        color: #111827;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    /* ==========================================================================
+       5. RIGHT PREVIEW STAGE
+       ========================================================================== */
+    .stage-area {
+        background: radial-gradient(circle at top right, #020617, #020617 60%, #000 100%);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) var(--history-width);
+        min-width: 0;
+        min-height: 0;
+        border-left: 1px solid rgba(15, 23, 42, 0.95);
+    }
+
+    .stage-content {
+        padding: 26px 26px 20px 26px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        overflow-y: auto;
+        min-width: 0;
+    }
+
+    .meta-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 12px;
+    }
+
+    .meta-tag {
+        padding: 5px 11px;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 20% 0, #020617, #020617 60%, #000 100%);
+        color: var(--text-secondary);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .meta-tools {
+        margin-left: auto;
+        display: flex;
+        gap: 9px;
+    }
+
+    .icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 50% 0, #020617, #020617 60%, #000 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: 120ms ease-out;
+    }
+
+    .icon-btn:hover {
+        border-color: rgba(148, 163, 184, 0.95);
+        color: #e5e7eb;
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Preview gallery that mirrors history */
+    .preview-gallery {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding-bottom: 18px;
+    }
+
+    .preview-item {
+        border-radius: 24px;
+        border: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 10% 0, #0b1120, #020617 70%);
+        overflow: hidden;
+        position: relative;
+        box-shadow:
+            0 0 0 1px rgba(15, 23, 42, 0.95),
+            0 26px 60px rgba(0, 0, 0, 0.95);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .preview-media-wrapper {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        position: relative;
+        background: #020617;
+    }
+
+    .preview-media-wrapper img,
+    .preview-media-wrapper video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .preview-meta-bar {
+        padding: 10px 14px 11px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: var(--text-secondary);
+        border-top: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+    }
+
+    .preview-meta-title {
+        font-weight: 600;
+        color: #e5e7eb;
+    }
+
+    .preview-meta-tags {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .preview-item.active {
+        border-color: #22c55e;
+        box-shadow:
+            0 0 0 1px rgba(34, 197, 94, 0.7),
+            0 26px 60px rgba(34, 197, 94, 0.9);
+    }
+
+    .action-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+    }
+
+    .action-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .action-link:hover {
+        color: #e5e7eb;
+    }
+
+    .action-link-primary {
+        color: #f9fafb;
+        font-weight: 700;
+    }
+
+    .action-pill-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #22c55e, #4ade80);
+        box-shadow: var(--shadow-pill);
+    }
+
+    .divider-v {
+        width: 1px;
+        height: 16px;
+        background: rgba(31, 41, 55, 0.9);
+    }
+
+    .feed-header {
+        font-size: 15px;
+        font-weight: 700;
+        margin-top: 4px;
+    }
+
+    /* RIGHT HISTORY RAIL ------------------------------------------------------ */
+    .history-rail {
+        width: var(--history-width);
+        border-left: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+        padding: 16px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+        overflow-y: auto;
+        box-shadow: -18px 0 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .history-thumb {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 2px solid transparent;
+        cursor: pointer;
+        opacity: 0.78;
+        transition: 130ms ease-out;
+        background: #020617;
+        position: relative;
+    }
+
+    .history-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .history-thumb:hover {
+        opacity: 1;
+        border-color: rgba(148, 163, 184, 0.95);
+    }
+
+    .history-thumb.active {
+        opacity: 1;
+        border-color: #22c55e;
+        box-shadow:
+            0 0 0 1px rgba(34, 197, 94, 0.7),
+            0 0 22px rgba(34, 197, 94, 0.8);
+    }
+
+    .history-type-pill {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        padding: 2px 4px;
+        border-radius: 999px;
+        font-size: 9px;
+        background: rgba(15,23,42,0.9);
+        color: #e5e7eb;
+    }
+
+    /* ==========================================================================
+       6. RESPONSIVE
+       ========================================================================== */
+    @media (max-width: 1120px) {
+        .main-area {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .stage-area {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .history-rail {
+            display: none;
+        }
+    }
+
+    @media (max-width: 820px) {
+        .sidebar {
+            display: none;
+        }
+        .app-shell {
+            margin-left: 0;
+        }
+        .top-header {
+            padding-inline: 16px;
+        }
+        .main-area {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+    </style>
 </head>
 <body>
-    <!-- LEFT NAV -->
-    <aside class="nav-rail">
-        <div class="nav-logo">S</div>
 
-        <div class="nav-section">
-            <button class="nav-btn active" title="Explore">
-                <svg viewBox="0 0 24 24">
-                    <path d="M4 11.5 12 4l8 7.5-3 8H7l-3-8Z" />
-                    <circle cx="12" cy="12" r="2.2" />
-                </svg>
-            </button>
-            <button class="nav-btn" title="Assets">
-                <svg viewBox="0 0 24 24">
-                    <rect x="4" y="4" width="16" height="16" rx="3" />
-                    <path d="M4 10h16M10 4v16" />
-                </svg>
-            </button>
-            <button class="nav-btn" title="Image Lab">
-                <svg viewBox="0 0 24 24">
-                    <rect x="4" y="4" width="16" height="16" rx="3" />
-                    <path d="m7 16 3-4 3 3 2-3 3 4" />
-                </svg>
-            </button>
-            <button class="nav-btn" title="Video Lab">
-                <svg viewBox="0 0 24 24">
-                    <rect x="4" y="4" width="16" height="16" rx="2" />
-                    <path d="M10 8v8l6-4-6-4Z" />
-                </svg>
-            </button>
-            <button class="nav-btn" title="All Tools">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M4 8h6V4H4v4Zm10 0h6V4h-6v4ZM4 20h6v-6H4v6Zm10 0h6v-6h-6v6Z"
-                    />
-                </svg>
-            </button>
+    <!-- ==============================================================
+         SIDEBAR
+         ============================================================== -->
+    <aside class="sidebar">
+        <div class="brand-logo">
+            <div class="brand-logo-inner">S</div>
         </div>
 
-        <div class="nav-bottom">
-            <div class="nav-plan">Standard</div>
-            <div class="nav-sale-pill">SALE · 50% off</div>
+        <div class="nav-item" title="Home" id="nav-home">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+        </div>
+
+        <div class="nav-item" title="Image Gen" id="nav-image">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+        </div>
+
+        <div class="nav-item active" title="Video Gen" id="nav-video">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                <line x1="7" y1="2" x2="7" y2="22"></line>
+                <line x1="17" y1="2" x2="17" y2="22"></line>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+            </svg>
+        </div>
+
+        <div class="nav-item" title="Effects" id="nav-effects">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2v20M2 12h20"></path>
+                <path d="m4.93 4.93 14.14 14.14M4.93 19.07 19.07 4.93"></path>
+            </svg>
+        </div>
+
+        <div class="nav-item" title="Audio" id="nav-audio">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+            </svg>
+        </div>
+
+        <div class="nav-item" title="Virtual Try On" id="nav-tryon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
+            </svg>
+        </div>
+
+        <div class="nav-item" title="Avatar" id="nav-avatar">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+
+        <div class="nav-footer">
+            <div class="nav-item" style="margin-bottom:0;" id="nav-clock">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div class="credits-pill">
+                <div class="credits-dot"></div>
+                671
+            </div>
+            <div class="sale-badge">SALE<br>50%</div>
+            <div class="nav-item" style="border-radius:50%; width:40px; height:40px; margin-top:6px;" id="nav-profile">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
         </div>
     </aside>
 
-    <!-- APP SHELL -->
+    <!-- ==============================================================
+         MAIN APP
+         ============================================================== -->
     <div class="app-shell">
-        <!-- TOP BAR -->
-        <header class="topbar">
-            <div class="topbar-left">
-                <div class="topbar-title">
-                    <div class="topbar-title-main" id="lab-title">
-                        AI Image Generator
-                    </div>
-                    <div class="topbar-title-sub">
-                        Text to Image · Image Reference · Restyle
-                    </div>
-                </div>
+
+        <!-- HEADER -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="page-title" id="page-title">AI Video Generator</div>
                 <div class="model-selector">
-                    <span>Model</span>
-                    <select id="model-select">
-                        <option>IMAGE 2.1</option>
-                        <option>IMAGE 2.0</option>
-                        <option>IMAGE 1.5</option>
-                    </select>
+                    <span id="model-text">VIDEO 1.6</span>
+                    <div class="status-dot"></div>
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor">
+                        <path d="M1 1L5 5L9 1" />
+                    </svg>
                 </div>
             </div>
 
-            <div class="topbar-right">
-                <div class="credits-pill">
-                    Credits
-                    <span class="value" id="credits-value">691</span>
-                    <span>/ day</span>
-                </div>
-                <div class="user-chip">
-                    <div class="user-avatar"></div>
-                    <div class="user-name">Signed in</div>
+            <div class="view-controls" id="view-controls">
+                <div class="view-btn active" data-filter="all">All</div>
+                <div class="view-btn" data-filter="image">Images</div>
+                <div class="view-btn" data-filter="video">Videos</div>
+                <div class="view-btn" data-filter="audio">Audio</div>
+                <div class="view-check">
+                    <input type="checkbox" id="favorites-toggle" /> Favorites
                 </div>
             </div>
+
+            <button class="assets-btn" id="assets-btn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Assets
+            </button>
         </header>
 
-        <!-- MAIN LAYOUT -->
-        <main class="main-layout">
-            <!-- LEFT SETTINGS PANEL -->
-            <section class="panel">
-                <div class="gen-header">
-                    <div class="gen-title-block">
-                        <div class="gen-title-label">Mode</div>
-                        <div class="gen-title-main" id="mode-title">
-                            Text to Image
+        <!-- BODY LAYOUT -->
+        <div class="main-area">
+
+            <!-- VIDEO PANEL --------------------------------------------------- -->
+            <section class="config-panel" id="panel-video">
+                <div class="config-inner">
+                    <div class="panel-tabs">
+                        <div class="panel-tab active">Text to Video</div>
+                        <div class="panel-tab">Image to Video</div>
+                        <div class="panel-tab">Elements</div>
+                        <div class="panel-tab">Multi-Elements</div>
+                    </div>
+
+                    <div class="promo-banner">
+                        <span>
+                            Go to SULANDRA O1 Video Suite for the latest editing features.
+                            <a href="#" class="promo-link">Try Now</a>
+                        </span>
+                        <div class="close-promo">×</div>
+                    </div>
+
+                    <div class="sub-actions">
+                        <div class="sub-btn active">Swap</div>
+                        <div class="sub-btn">Add</div>
+                        <div class="sub-btn">Delete</div>
+                    </div>
+
+                    <div class="upload-zone" style="height: 190px; margin-bottom:14px;" id="video-upload-zone">
+                        <div class="upload-icon">
+                            <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                                <line x1="7" y1="2" x2="7" y2="22"></line>
+                                <line x1="17" y1="2" x2="17" y2="22"></line>
+                            </svg>
+                        </div>
+                        <div style="font-weight:700; margin-bottom:5px; font-size:14px;">Add a video to edit</div>
+                        <div style="font-size:12px; color:var(--text-secondary);">Supports MP4/MOV, 100MB max</div>
+                        <div style="font-size:12px; color:var(--text-secondary);">10s max duration, 720P/1080P</div>
+                        <div style="font-size:12px; text-decoration:underline; margin-top:12px; color:var(--text-secondary);">
+                            History
                         </div>
                     </div>
 
-                    <div class="mode-toggle" id="mode-tabs-image">
-                        <button
-                            type="button"
-                            class="active"
-                            data-imagemode="text"
-                            onclick="setImageMode('text')"
-                        >
-                            Text to Image
-                        </button>
-                        <button
-                            type="button"
-                            data-imagemode="ref"
-                            onclick="setImageMode('ref')"
-                        >
-                            Image Reference
-                        </button>
-                        <button
-                            type="button"
-                            data-imagemode="restyle"
-                            onclick="setImageMode('restyle')"
-                        >
-                            Restyle
-                        </button>
-                    </div>
-
-                    <div
-                        class="mode-toggle"
-                        id="mode-tabs-video"
-                        style="display: none"
-                    >
-                        <button
-                            type="button"
-                            class="active"
-                            data-videomode="text"
-                            onclick="setVideoMode('text')"
-                        >
-                            Text to Video
-                        </button>
-                        <button
-                            type="button"
-                            data-videomode="img2vid"
-                            onclick="setVideoMode('img2vid')"
-                        >
-                            Image to Video
-                        </button>
-                        <button
-                            type="button"
-                            data-videomode="elements"
-                            onclick="setVideoMode('elements')"
-                        >
-                            Elements
-                        </button>
-                        <button
-                            type="button"
-                            data-videomode="multi"
-                            onclick="setVideoMode('multi')"
-                        >
-                            Multi-Elements
-                        </button>
-                    </div>
-                </div>
-
-                <div class="gen-body" id="gen-body">
-                    <!-- Image: Text to Image (default) -->
-                    <div id="block-image-text">
-                        <div class="group-label">Prompt</div>
-                        <div class="input-block">
-                            <div class="prompt-area">
-                                <textarea
-                                    id="prompt"
-                                    placeholder="Please describe your creative idea for the image..."
-                                ></textarea>
-                                <div class="prompt-footer">
-                                    <span>
-                                        Tip: describe subject, lighting, camera,
-                                        environment.
-                                    </span>
-                                    <span
-                                        class="prompt-helper-link"
-                                        onclick="askSiaForPrompt()"
-                                        >Let SIA write the prompt</span
-                                    >
-                                </div>
-                            </div>
+                    <div class="upload-zone" style="height: 130px; margin-bottom:20px;" id="video-image-upload-zone">
+                        <div class="upload-icon">
+                            <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
                         </div>
-
-                        <div class="input-block">
-                            <div class="input-row-label">
-                                <span class="input-label">Negative prompt</span>
-                                <span class="input-hint"
-                                    >Optional · things to avoid</span
-                                >
-                            </div>
-                            <textarea
-                                id="negative"
-                                placeholder="blurry, low quality, watermark, distorted hands…"
-                            ></textarea>
-                            <div class="hints-row">
-                                <button
-                                    type="button"
-                                    class="chip"
-                                    onclick="appendNegative('blurry')"
-                                >
-                                    blurry
-                                </button>
-                                <button
-                                    type="button"
-                                    class="chip"
-                                    onclick="appendNegative('extra limbs')"
-                                >
-                                    extra limbs
-                                </button>
-                                <button
-                                    type="button"
-                                    class="chip"
-                                    onclick="appendNegative('low resolution')"
-                                >
-                                    low resolution
-                                </button>
-                            </div>
+                        <div style="font-weight:700; font-size:14px;">Add an image for elements swap</div>
+                        <div style="font-size:12px; text-decoration:underline; margin-top:8px; color:var(--text-secondary);">
+                            History · Stock Library
                         </div>
                     </div>
 
-                    <!-- Image: Image Reference -->
-                    <div id="block-image-ref" style="display: none">
-                        <div class="group-label">Image reference</div>
-                        <div class="input-block">
-                            <div class="dual-row">
-                                <div class="upload-card" id="upload-ref-main">
-                                    <div class="upload-icon">+</div>
-                                    <div>Upload “Subject” reference image</div>
-                                    <div class="upload-sub">
-                                        JPG / PNG · Select from History
-                                    </div>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onchange="onRefUpload(event, 'subject')"
-                                    />
-                                </div>
-                                <div class="upload-card" id="upload-ref-face">
-                                    <div class="upload-icon">+</div>
-                                    <div>Upload “Face” reference (optional)</div>
-                                    <div class="upload-sub">Close-up face</div>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onchange="onRefUpload(event, 'face')"
-                                    />
-                                </div>
+                    <div class="prompt-box">
+                        <textarea id="video-prompt">swap [x] from [Image] for [x] from [Video]</textarea>
+                        <div class="prompt-footer">
+                            <span>Detailed instructions help SULANDRA craft cleaner edits.</span>
+                            <div class="ask-sia-btn" data-source="video">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>
+                                </svg>
+                                Ask SIA
                             </div>
-                            <div
-                                class="link-small"
-                                style="margin-top: 6px"
-                                onclick="openHistoryFromRef()"
-                            >
-                                Open History · reuse files from previous runs
-                            </div>
-                        </div>
-
-                        <div class="input-block">
-                            <div class="input-row-label">
-                                <span class="input-label">Prompt</span>
-                                <span class="input-hint">Required</span>
-                            </div>
-                            <div class="prompt-area">
-                                <textarea
-                                    id="prompt-ref"
-                                    placeholder="Please describe how to use the reference image (pose, style, environment)…"
-                                ></textarea>
-                                <div class="prompt-footer">
-                                    <span>Explain what should stay the same.</span>
-                                    <span
-                                        class="prompt-helper-link"
-                                        onclick="askSiaForPrompt('ref')"
-                                        >Let SIA write the prompt</span
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Image: Restyle -->
-                    <div id="block-image-restyle" style="display: none">
-                        <div class="group-label">Restyle</div>
-                        <div class="input-block">
-                            <div class="upload-card" id="upload-restyle">
-                                <div class="upload-icon">+</div>
-                                <div>Add image to restyle</div>
-                                <div class="upload-sub">
-                                    History · choose any previous image
-                                </div>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onchange="onRestyleUpload(event)"
-                                />
-                            </div>
-                        </div>
-
-                        <div class="input-block">
-                            <div class="input-row-label">
-                                <span class="input-label">Restyle prompt</span>
-                                <span class="input-hint">Required</span>
-                            </div>
-                            <textarea
-                                id="prompt-restyle"
-                                placeholder="For example: restyle to Japanese anime, cinematic film still, oil painting…"
-                            ></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Video modes share same prompt IDs but different helper text -->
-                    <div id="block-video-text" style="display: none">
-                        <div class="group-label">Text to Video</div>
-                        <div class="input-block">
-                            <div class="prompt-area">
-                                <textarea
-                                    id="prompt-video"
-                                    placeholder="Describe the actions, camera motion, and environment for the video…"
-                                ></textarea>
-                                <div class="prompt-footer">
-                                    <span>
-                                        Use quotes for dialogue: “character says
-                                        hello”.
-                                    </span>
-                                    <span
-                                        class="prompt-helper-link"
-                                        onclick="askSiaForPrompt('video')"
-                                        >Let SIA write the script</span
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="block-video-img2vid" style="display: none">
-                        <div class="group-label">Image to Video</div>
-                        <div class="input-block">
-                            <div class="upload-card" id="upload-start-frame">
-                                <div class="upload-icon">+</div>
-                                <div>Add a start frame</div>
-                                <div class="upload-sub">
-                                    MP4 / MOV not needed · image only
-                                </div>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onchange="onVideoImgUpload(event)"
-                                />
-                            </div>
-                        </div>
-                        <div class="input-block">
-                            <div class="input-row-label">
-                                <span class="input-label">Prompt</span>
-                                <span class="input-hint">Required</span>
-                            </div>
-                            <textarea
-                                id="prompt-video-img"
-                                placeholder="Describe how the scene should move from this starting frame…"
-                            ></textarea>
-                        </div>
-                    </div>
-
-                    <div id="block-video-elements" style="display: none">
-                        <div class="group-label">Elements</div>
-                        <div class="input-block">
-                            <div class="upload-card">
-                                <div class="upload-icon">+</div>
-                                <div>Add 1-4 images as elements</div>
-                                <div class="upload-sub">
-                                    Supports JPG / PNG · or select from History
-                                </div>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    multiple
-                                    onchange="onVideoElementsUpload(event)"
-                                />
-                            </div>
-                        </div>
-                        <div class="input-block">
-                            <div class="input-row-label">
-                                <span class="input-label">Actions prompt</span>
-                            </div>
-                            <textarea
-                                id="prompt-video-elements"
-                                placeholder="Describe actions / interactions between the elements…"
-                            ></textarea>
-                        </div>
-                    </div>
-
-                    <div id="block-video-multi" style="display: none">
-                        <div class="group-label">Multi-Elements (edit)</div>
-                        <div class="input-block">
-                            <div class="dual-row">
-                                <div class="upload-card">
-                                    <div class="upload-icon">+</div>
-                                    <div>Add a video to edit</div>
-                                    <div class="upload-sub">
-                                        MP4/MOV · 10s max · 720/1080p
-                                    </div>
-                                    <input
-                                        type="file"
-                                        accept="video/*"
-                                        onchange="onVideoEditUpload(event)"
-                                    />
-                                </div>
-                                <div class="upload-card">
-                                    <div class="upload-icon">+</div>
-                                    <div>Add an image for elements swap</div>
-                                    <div class="upload-sub">
-                                        Swap [x] from image into video
-                                    </div>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onchange="onVideoSwapUpload(event)"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="input-block">
-                            <div class="input-row-label">
-                                <span class="input-label">Edit prompt</span>
-                            </div>
-                            <textarea
-                                id="prompt-video-multi"
-                                placeholder="Explain how to swap or edit elements in the video…"
-                            ></textarea>
                         </div>
                     </div>
                 </div>
 
-                <!-- bottom controls (aspect, duration, outputs, quality, generate) -->
-                <div class="gen-footer-controls">
-                    <select id="aspect-select">
-                        <option value="9:16">9:16</option>
-                        <option value="16:9">16:9</option>
-                        <option value="1:1">1:1</option>
-                        <option value="4:5">4:5</option>
-                    </select>
-                    <select id="duration-select">
-                        <option value="image">Image</option>
-                        <option value="5s">5s</option>
-                        <option value="10s" selected>10s</option>
-                    </select>
-                    <select id="outputs-select">
-                        <option value="1">1 Output</option>
-                        <option value="2">2 Outputs</option>
-                        <option value="3">3 Outputs</option>
-                        <option value="4">4 Outputs</option>
-                    </select>
-                    <select id="quality-select">
-                        <option value="standard">Standard</option>
-                        <option value="high">High-Res</option>
-                        <option value="pro">Professional</option>
-                    </select>
-
-                    <button
-                        type="button"
-                        class="btn-generate"
-                        id="generate-btn"
-                        onclick="handleGenerate()"
-                    >
-                        Generate
-                    </button>
+                <div class="config-footer">
+                    <div class="panel-footer-controls">
+                        <div class="pill-input" style="flex:1;">
+                            Professional
+                            <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
+                                <path d="M1 1L5 5L9 1" />
+                            </svg>
+                        </div>
+                        <div class="pill-input" style="width:96px;">
+                            5s
+                            <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
+                                <path d="M1 1L5 5L9 1" />
+                            </svg>
+                        </div>
+                        <div class="pill-input" style="width:130px;">
+                            1 Output
+                            <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
+                                <path d="M1 1L5 5L9 1" />
+                            </svg>
+                        </div>
+                        <button class="neon-btn" id="btn-generate-video" style="flex:2;">Generate</button>
+                    </div>
                 </div>
             </section>
 
-            <!-- RIGHT PREVIEW + FEED + THUMB RAIL -->
-            <section class="panel-right">
-                <div class="preview-wrapper">
-                    <div class="preview-topbar">
-                        <div class="preview-filters" id="preview-filters">
-                            <button
-                                type="button"
-                                data-filter="all"
-                                class="active"
-                                onclick="setPreviewFilter('all')"
-                            >
-                                All
-                            </button>
-                            <button
-                                type="button"
-                                data-filter="image"
-                                onclick="setPreviewFilter('image')"
-                            >
-                                Images
-                            </button>
-                            <button
-                                type="button"
-                                data-filter="video"
-                                onclick="setPreviewFilter('video')"
-                            >
-                                Videos
-                            </button>
-                            <button
-                                type="button"
-                                data-filter="audio"
-                                onclick="setPreviewFilter('audio')"
-                            >
-                                Audio
-                            </button>
-                            <button
-                                type="button"
-                                data-filter="fav"
-                                onclick="setPreviewFilter('fav')"
-                            >
-                                Favorites
-                            </button>
-                        </div>
+            <!-- IMAGE PANEL ---------------------------------------------------- -->
+            <section class="config-panel hidden" id="panel-image">
+                <div class="config-inner">
+                    <div class="panel-tabs">
+                        <div class="panel-tab active">Text to Image</div>
+                        <div class="panel-tab">Image to Image</div>
+                        <div class="panel-tab">Styles</div>
+                        <div class="panel-tab">Multi-Prompt</div>
+                    </div>
 
-                        <div style="display: flex; align-items: center; gap: 8px">
-                            <input
-                                type="text"
-                                class="search-input"
-                                placeholder="Search history"
-                                oninput="setSearchTerm(this.value)"
-                            />
-                            <button
-                                type="button"
-                                class="btn-assets"
-                                onclick="openAssetsFromTop()"
-                            >
-                                Assets
-                            </button>
+                    <div class="promo-banner">
+                        <span>
+                            Unlock SULANDRA O1+ for cinematic image presets and batch upscaling.
+                            <a href="#" class="promo-link">Upgrade</a>
+                        </span>
+                        <div class="close-promo">×</div>
+                    </div>
+
+                    <div class="sub-actions">
+                        <div class="sub-btn active">Standard</div>
+                        <div class="sub-btn">Ultra HD</div>
+                        <div class="sub-btn">Reference</div>
+                    </div>
+
+                    <div class="upload-zone" style="height: 160px; margin-bottom:18px;" id="image-upload-zone">
+                        <div class="upload-icon">
+                            <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>
+                        <div style="font-weight:700; margin-bottom:5px; font-size:14px;">Optional reference image</div>
+                        <div style="font-size:12px; color:var(--text-secondary);">Drag & drop or browse · PNG/JPG · 10MB</div>
+                        <div style="font-size:12px; text-decoration:underline; margin-top:10px; color:var(--text-secondary);">
+                            History · Style Library
                         </div>
                     </div>
 
-                    <div class="preview-main">
-                        <div class="preview-stage">
-                            <div class="preview-stage-inner">
-                                <div
-                                    class="preview-placeholder"
-                                    id="preview-placeholder"
-                                >
-                                    Generate or upload an image / video.
-                                    <br /><br />
-                                    Every output will appear here with full
-                                    playback controls and also be saved in
-                                    <strong>Assets / History</strong>.
-                                </div>
-                                <img
-                                    id="preview-image"
-                                    class="preview-media"
-                                    alt="Preview"
-                                />
-                                <video
-                                    id="preview-video"
-                                    class="preview-media"
-                                    controls
-                                ></video>
+                    <div class="prompt-box">
+                        <textarea id="image-prompt" placeholder="Describe the image you want SULANDRA to create in precise detail..."></textarea>
+                        <div class="prompt-footer">
+                            <span>Clear prompts give cleaner SULANDRA O1 visuals.</span>
+                            <div class="ask-sia-btn" data-source="image">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>
+                                </svg>
+                                Ask SIA
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="preview-controls-row" id="preview-info">
-                                <span id="preview-kind">Idle</span>
-                                <span>·</span>
-                                <span id="preview-meta">Ready</span>
+                    <div class="grid-2-col" id="image-style-grid">
+                        <div class="effect-card" data-style="portrait">
+                            <span class="effect-badge">NEW</span>
+                            <div class="effect-img" style="background:linear-gradient(135deg,#22c55e,#0ea5e9);"></div>
+                            <div class="effect-info">
+                                <div class="effect-title">Portrait Studio</div>
+                                <div>Sharp, soft-light portraits tuned for SULANDRA O1.</div>
                             </div>
                         </div>
 
-                        <div class="preview-feed">
-                            <div class="feed-row-title">
-                                <span>Recent results</span>
-                                <span id="feed-count">0 items</span>
+                        <div class="effect-card" data-style="cinematic">
+                            <div class="effect-img" style="background:linear-gradient(135deg,#a855f7,#0ea5e9);"></div>
+                            <div class="effect-info">
+                                <div class="effect-title">Cinematic Frames</div>
+                                <div>Filmic stills with realistic depth and lighting.</div>
                             </div>
-                            <div class="feed-grid" id="feed-grid"></div>
+                        </div>
+
+                        <div class="effect-card" data-style="product">
+                            <div class="effect-img" style="background:linear-gradient(135deg,#f97316,#22c55e);"></div>
+                            <div class="effect-info">
+                                <div class="effect-title">Product Glow</div>
+                                <div>High-contrast ads with premium reflections.</div>
+                            </div>
+                        </div>
+
+                        <div class="effect-card" data-style="concept">
+                            <div class="effect-img" style="background:linear-gradient(135deg,#0f172a,#6366f1);"></div>
+                            <div class="effect-info">
+                                <div class="effect-title">Concept Art</div>
+                                <div>Wide angle, painterly concept pieces.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <aside class="thumb-rail" id="thumb-rail"></aside>
+                <div class="config-footer">
+                    <div class="panel-footer-controls">
+                        <div class="pill-input" style="flex:1;">
+                            1024 × 576
+                            <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
+                                <path d="M1 1L5 5L9 1" />
+                            </svg>
+                        </div>
+                        <div class="pill-input" style="width:110px;">
+                            SULANDRA O1
+                            <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
+                                <path d="M1 1L5 5L9 1" />
+                            </svg>
+                        </div>
+                        <div class="pill-input" style="width:130px;">
+                            4 Outputs
+                            <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
+                                <path d="M1 1L5 5L9 1" />
+                            </svg>
+                        </div>
+                        <button class="neon-btn" id="btn-generate-image" style="flex:2;">Generate</button>
+                    </div>
+                </div>
             </section>
-        </main>
-    </div>
 
-    <!-- LIGHTBOX -->
-    <div
-        class="lightbox-backdrop"
-        id="lightbox-backdrop"
-        onclick="if(event.target.id==='lightbox-backdrop') closeLightbox();"
-    >
-        <div class="lightbox" id="lightbox">
-            <div class="lightbox-media">
-                <img id="lb-image" style="display: none" />
-                <video id="lb-video" controls style="display: none"></video>
-            </div>
-            <div class="lightbox-info">
-                <div class="lightbox-header-row">
-                    <div>
-                        <div class="lightbox-title" id="lb-title"></div>
-                        <div class="lightbox-sub" id="lb-sub"></div>
+            <!-- PLACEHOLDER PANELS FOR OTHER LABS (HIDDEN BY DEFAULT) ----------- -->
+            <section class="config-panel hidden" id="panel-effects">
+                <div class="config-inner">
+                    <div class="panel-tabs">
+                        <div class="panel-tab active">Video Effects</div>
+                        <div class="panel-tab">Image FX</div>
+                        <div class="panel-tab">Audio FX</div>
                     </div>
-                    <button type="button" class="btn-close" onclick="closeLightbox()">
-                        ×
-                    </button>
-                </div>
-
-                <div class="lightbox-meta">
-                    <div>
-                        <span class="label">Resolution:</span>
-                        <span id="lb-res"></span>
-                    </div>
-                    <div>
-                        <span class="label">Seed:</span>
-                        <span id="lb-seed"></span>
-                    </div>
-                    <div>
-                        <span class="label">Created:</span>
-                        <span id="lb-created"></span>
-                    </div>
-                    <div>
-                        <span class="label">Source:</span>
-                        <span id="lb-source"></span>
+                    <div style="font-size:13px; color:var(--text-secondary); margin-top:10px;">
+                        Effects Lab coming soon – apply SULANDRA-grade transitions, overlays, and motion presets.
                     </div>
                 </div>
+                <div class="config-footer">
+                    <div class="panel-footer-controls">
+                        <div class="pill-input" style="flex:1;">
+                            Default Stack
+                            <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
+                                <path d="M1 1L5 5L9 1" />
+                            </svg>
+                        </div>
+                        <button class="neon-btn" style="flex:2;">Apply</button>
+                    </div>
+                </div>
+            </section>
 
-                <div class="lightbox-actions">
-                    <button type="button" onclick="downloadCurrent()">Download</button>
-                    <button type="button" onclick="recreateCurrent()">Recreate</button>
-                    <button type="button" onclick="sendCurrentToCinema()">
-                        Send to Cinema
-                    </button>
-                    <button type="button" onclick="renameCurrent()">Rename</button>
-                    <button
-                        type="button"
-                        class="danger"
-                        onclick="deleteCurrentAsset()"
-                    >
-                        Delete
-                    </button>
+            <section class="config-panel hidden" id="panel-audio">
+                <div class="config-inner">
+                    <div class="panel-tabs">
+                        <div class="panel-tab active">Text to Audio</div>
+                        <div class="panel-tab">Voice Over</div>
+                        <div class="panel-tab">Sound Design</div>
+                    </div>
+                    <div style="font-size:13px; color:var(--text-secondary); margin-top:10px;">
+                        Audio Lab – generate stems and cinematic sound beds synced to SULANDRA visuals.
+                    </div>
+                </div>
+                <div class="config-footer">
+                    <div class="panel-footer-controls">
+                        <div class="pill-input" style="flex:1;">
+                            Stereo · 44.1kHz
+                            <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
+                                <path d="M1 1L5 5L9 1" />
+                            </svg>
+                        </div>
+                        <button class="neon-btn" style="flex:2;">Render</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="config-panel hidden" id="panel-tryon">
+                <div class="config-inner">
+                    <div class="panel-tabs">
+                        <div class="panel-tab active">Virtual Try-On</div>
+                        <div class="panel-tab">Look Builder</div>
+                    </div>
+                    <div style="font-size:13px; color:var(--text-secondary); margin-top:10px;">
+                        Upload a person and garments to preview outfits in real time.
+                    </div>
+                </div>
+                <div class="config-footer">
+                    <button class="neon-btn" style="width:100%;">Open Fitting Room</button>
+                </div>
+            </section>
+
+            <section class="config-panel hidden" id="panel-avatar">
+                <div class="config-inner">
+                    <div class="panel-tabs">
+                        <div class="panel-tab active">Create Avatar</div>
+                        <div class="panel-tab">Animate</div>
+                    </div>
+                    <div style="font-size:13px; color:var(--text-secondary); margin-top:10px;">
+                        Build digital doubles and sync them to SULANDRA videos and SIA-generated audio.
+                    </div>
+                </div>
+                <div class="config-footer">
+                    <button class="neon-btn" style="width:100%;">Create Avatar</button>
+                </div>
+            </section>
+
+            <!-- ==========================================================
+                 RIGHT STAGE · PREVIEW + HISTORY
+                 ========================================================== -->
+            <section class="stage-area">
+                <div class="stage-content">
+                    <div class="meta-row">
+                        <div class="meta-tag">
+                            <span class="action-pill-dot"></span>
+                            <span id="stage-type-label">Video Preview</span>
+                        </div>
+                        <div class="meta-tag" id="engine-pill">
+                            SULANDRA Engine · 16:9
+                        </div>
+                        <div class="meta-tools">
+                            <button class="icon-btn" title="Download" id="btn-download">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" title="Share" id="btn-share">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <circle cx="18" cy="5" r="3"></circle>
+                                    <circle cx="6" cy="12" r="3"></circle>
+                                    <circle cx="18" cy="19" r="3"></circle>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" title="More" id="btn-more">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <circle cx="5" cy="12" r="1"></circle>
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="19" cy="12" r="1"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="action-bar">
+                        <div class="action-link action-link-primary" id="action-open-studio">
+                            <span>Open in Studio</span>
+                        </div>
+                        <div class="divider-v"></div>
+                        <div class="action-link" id="action-upscale">
+                            <span>Upscale with O1</span>
+                        </div>
+                        <div class="action-link" id="action-send-covers">
+                            <span>Send to Covers</span>
+                        </div>
+                        <div class="action-link" id="action-duplicate">
+                            <span>Duplicate</span>
+                        </div>
+                        <div class="action-link" id="action-archive">
+                            <span>Archive</span>
+                        </div>
+                    </div>
+
+                    <div class="feed-header" id="preview-header">Recent SULANDRA Renders</div>
+
+                    <!-- PREVIEW GALLERY: mirrors history rail -->
+                    <div class="preview-gallery" id="preview-gallery">
+                        <!-- Filled by JS -->
+                    </div>
                 </div>
 
-                <div class="lightbox-prompt" id="lb-prompt"></div>
-            </div>
-        </div>
-    </div>
+                <!-- HISTORY RAIL -->
+                <aside class="history-rail" id="history-rail">
+                    <!-- Filled by JS -->
+                </aside>
+            </section>
+        </div> <!-- /main-area -->
+    </div> <!-- /app-shell -->
 
     <script>
-        // ================================================================
-        // STATE
-        // ================================================================
-        const state = {
-            lab: "image", // 'image' | 'video'
-            imageMode: "text", // 'text' | 'ref' | 'restyle'
-            videoMode: "text", // 'text' | 'img2vid' | 'elements' | 'multi'
-            assets: [], // all outputs + uploads
-            nextId: 1,
-            previewFilter: "all",
-            searchTerm: "",
-            previewId: null,
-            lightboxId: null
+        // ============================
+        //  CONFIG: API PLACEHOLDERS
+        // ============================
+        const RUNPOD_API_KEY = "";         // <- put your RunPod API key
+        const RUNPOD_VIDEO_ENDPOINT = "";  // <- e.g. https://api.runpod.io/...
+        const RUNPOD_IMAGE_ENDPOINT = "";  // <- e.g. https://api.runpod.io/...
+        const SIA_BRAIN_ENDPOINT = "";     // <- your SIA Brain endpoint on RunPod
+
+        // In-memory asset list (images / videos / audio)
+        // NOTE: In later sections we'll load these from backend.
+        let sulandraAssets = [
+            {
+                id: "asset-1",
+                type: "video",
+                title: "Cyber City Fly-through",
+                thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                duration: "00:10",
+                resolution: "1080p",
+                favorite: false
+            },
+            {
+                id: "asset-2",
+                type: "image",
+                title: "Portrait Glow Pack",
+                thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                duration: null,
+                resolution: "4× PNG",
+                favorite: true
+            },
+            {
+                id: "asset-3",
+                type: "video",
+                title: "Product Spin 360°",
+                thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                duration: "00:08",
+                resolution: "Loop",
+                favorite: false
+            },
+            {
+                id: "asset-4",
+                type: "image",
+                title: "Stylized Cover Grid",
+                thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                duration: null,
+                resolution: "Album Art",
+                favorite: false
+            }
+        ];
+
+        let currentFilter = "all";
+        let favoritesOnly = false;
+        let activeAssetId = sulandraAssets[0]?.id || null;
+
+        // Panels for main labs
+        const panels = {
+            video: document.getElementById("panel-video"),
+            image: document.getElementById("panel-image"),
+            effects: document.getElementById("panel-effects"),
+            audio: document.getElementById("panel-audio"),
+            tryon: document.getElementById("panel-tryon"),
+            avatar: document.getElementById("panel-avatar")
         };
 
-        // ================================================================
-        // MODE SWITCHING
-        // ================================================================
-        function setLab(lab) {
-            state.lab = lab;
-        }
+        const pageTitle = document.getElementById("page-title");
+        const modelText = document.getElementById("model-text");
+        const stageTypeLabel = document.getElementById("stage-type-label");
+        const previewHeader = document.getElementById("preview-header");
+        const enginePill = document.getElementById("engine-pill");
 
-        function setImageMode(mode) {
-            state.imageMode = mode;
-            document.getElementById("mode-title").innerText =
-                mode === "text"
-                    ? "Text to Image"
-                    : mode === "ref"
-                    ? "Image Reference"
-                    : "Restyle";
+        const previewGalleryEl = document.getElementById("preview-gallery");
+        const historyRailEl = document.getElementById("history-rail");
 
-            // show blocks
-            document.getElementById("block-image-text").style.display =
-                mode === "text" ? "block" : "none";
-            document.getElementById("block-image-ref").style.display =
-                mode === "ref" ? "block" : "none";
-            document.getElementById("block-image-restyle").style.display =
-                mode === "restyle" ? "block" : "none";
-
-            document.getElementById("block-video-text").style.display = "none";
-            document.getElementById("block-video-img2vid").style.display = "none";
-            document.getElementById("block-video-elements").style.display = "none";
-            document.getElementById("block-video-multi").style.display = "none";
-
-            document
-                .querySelectorAll("#mode-tabs-image button")
-                .forEach((b) =>
-                    b.classList.toggle("active", b.dataset.imagemode === mode)
-                );
-        }
-
-        function setVideoMode(mode) {
-            state.videoMode = mode;
-            document.getElementById("mode-title").innerText =
-                mode === "text"
-                    ? "Text to Video"
-                    : mode === "img2vid"
-                    ? "Image to Video"
-                    : mode === "elements"
-                    ? "Elements"
-                    : "Multi-Elements";
-
-            document.getElementById("block-image-text").style.display = "none";
-            document.getElementById("block-image-ref").style.display = "none";
-            document.getElementById("block-image-restyle").style.display = "none";
-
-            document.getElementById("block-video-text").style.display =
-                mode === "text" ? "block" : "none";
-            document.getElementById("block-video-img2vid").style.display =
-                mode === "img2vid" ? "block" : "none";
-            document.getElementById("block-video-elements").style.display =
-                mode === "elements" ? "block" : "none";
-            document.getElementById("block-video-multi").style.display =
-                mode === "multi" ? "block" : "none";
-
-            document
-                .querySelectorAll("#mode-tabs-video button")
-                .forEach((b) =>
-                    b.classList.toggle("active", b.dataset.videomode === mode)
-                );
-        }
-
-        // For now we keep lab fixed to image.
-        window.addEventListener("DOMContentLoaded", () => {
-            setImageMode("text");
-            renderFeed();
+        // ----------------------
+        // PROMO BANNER CLOSE
+        // ----------------------
+        document.querySelectorAll(".close-promo").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const banner = btn.closest(".promo-banner");
+                if (banner) banner.style.display = "none";
+            });
         });
 
-        // ================================================================
-        // HELPERS
-        // ================================================================
-        function appendNegative(text) {
-            const field = document.getElementById("negative");
-            if (!field) return;
-            if (!field.value) field.value = text;
-            else if (!field.value.includes(text)) field.value += ", " + text;
+        // ----------------------
+        // PANEL TAB SWITCH (visual only per panel)
+        // ----------------------
+        document.querySelectorAll(".panel-tabs").forEach((tabs) => {
+            tabs.addEventListener("click", (e) => {
+                const tab = e.target.closest(".panel-tab");
+                if (!tab) return;
+                tabs.querySelectorAll(".panel-tab").forEach((t) => t.classList.remove("active"));
+                tab.classList.add("active");
+            });
+        });
+
+        // ----------------------
+        // SUB-ACTIONS (Swap / Add / Delete etc.)
+        // ----------------------
+        document.querySelectorAll(".sub-actions").forEach((group) => {
+            group.addEventListener("click", (e) => {
+                const btn = e.target.closest(".sub-btn");
+                if (!btn) return;
+                group.querySelectorAll(".sub-btn").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+            });
+        });
+
+        // ----------------------
+        // EFFECT CARD SELECTION
+        // ----------------------
+        const imageStyleGrid = document.getElementById("image-style-grid");
+        if (imageStyleGrid) {
+            imageStyleGrid.addEventListener("click", (e) => {
+                const card = e.target.closest(".effect-card");
+                if (!card) return;
+                imageStyleGrid.querySelectorAll(".effect-card").forEach((c) => c.classList.remove("selected"));
+                card.classList.add("selected");
+
+                const styleKey = card.getAttribute("data-style");
+                const imagePrompt = document.getElementById("image-prompt");
+                if (!imagePrompt) return;
+
+                if (styleKey === "portrait") {
+                    imagePrompt.value = "High-detail portrait photography, soft key light, SULANDRA O1, 85mm lens, skin tones accurate.";
+                } else if (styleKey === "cinematic") {
+                    imagePrompt.value = "Cinematic still frame, dramatic contrast, shallow depth of field, SULANDRA O1 grading.";
+                } else if (styleKey === "product") {
+                    imagePrompt.value = "Premium product on reflective surface, studio lighting, SULANDRA O1 advertising style.";
+                } else if (styleKey === "concept") {
+                    imagePrompt.value = "Wide-angle concept art environment, volumetric lighting, detailed textures, SULANDRA O1 painting.";
+                }
+            });
         }
 
-        function askSiaForPrompt(kind = "image") {
-            alert(
-                "Hook this to SIA Brain. Scope: " +
-                    kind +
-                    " · Use current lab / mode to build a smart prompt."
-            );
+        // ----------------------
+        // VIEW FILTERS (All / Images / Videos / Audio)
+        // ----------------------
+        const viewControls = document.getElementById("view-controls");
+        const favoritesToggle = document.getElementById("favorites-toggle");
+
+        if (viewControls) {
+            viewControls.addEventListener("click", (e) => {
+                const btn = e.target.closest(".view-btn");
+                if (!btn) return;
+                const filter = btn.getAttribute("data-filter");
+                if (!filter) return;
+
+                currentFilter = filter;
+                viewControls.querySelectorAll(".view-btn").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                renderAssets();
+            });
         }
 
-        // ================================================================
-        // UPLOAD STUB HANDLERS
-        // ================================================================
-        function onRefUpload(event, slot) {
-            if (!event.target.files?.length) return;
-            const file = event.target.files[0];
-            const url = URL.createObjectURL(file);
-            alert(
-                "Loaded reference " +
-                    slot +
-                    " image: " +
-                    (file.name || "file") +
-                    " (stored client-side only here)."
-            );
+        if (favoritesToggle) {
+            favoritesToggle.addEventListener("change", (e) => {
+                favoritesOnly = e.target.checked;
+                renderAssets();
+            });
         }
 
-        function onRestyleUpload(e) {
-            if (!e.target.files?.length) return;
-            alert("Restyle image selected: " + e.target.files[0].name);
+        // ----------------------
+        // NAV SWITCHING
+        // ----------------------
+        function showPanel(key) {
+            Object.values(panels).forEach((p) => p.classList.add("hidden"));
+            if (panels[key]) panels[key].classList.remove("hidden");
+
+            if (key === "video") {
+                pageTitle.textContent = "AI Video Generator";
+                modelText.textContent = "VIDEO 1.6";
+                stageTypeLabel.textContent = "Video Preview";
+                enginePill.textContent = "SULANDRA Engine · 16:9";
+                currentFilter = "video";
+            } else if (key === "image") {
+                pageTitle.textContent = "AI Image Generator";
+                modelText.textContent = "SULANDRA O1";
+                stageTypeLabel.textContent = "Image Preview";
+                enginePill.textContent = "SULANDRA O1 · 16:9";
+                currentFilter = "image";
+            } else if (key === "audio") {
+                pageTitle.textContent = "AI Audio Lab";
+                modelText.textContent = "AUDIO O1";
+                stageTypeLabel.textContent = "Audio Session";
+                enginePill.textContent = "SULANDRA Audio · Waveform";
+                currentFilter = "audio";
+            } else if (key === "effects") {
+                pageTitle.textContent = "Effects Lab";
+                modelText.textContent = "FX STACK";
+                stageTypeLabel.textContent = "Effect Timeline";
+            } else if (key === "tryon") {
+                pageTitle.textContent = "Virtual Try-On";
+                modelText.textContent = "FASHION O1";
+                stageTypeLabel.textContent = "Look Preview";
+            } else if (key === "avatar") {
+                pageTitle.textContent = "Avatar Studio";
+                modelText.textContent = "AVATAR O1";
+                stageTypeLabel.textContent = "Avatar Preview";
+            }
+
+            // Update view pills visual state on lab switch
+            if (viewControls) {
+                viewControls.querySelectorAll(".view-btn").forEach((b) => {
+                    const filter = b.getAttribute("data-filter");
+                    if (filter === currentFilter) {
+                        b.classList.add("active");
+                    } else if (filter !== "all") {
+                        b.classList.remove("active");
+                    }
+                });
+            }
+
+            renderAssets();
         }
 
-        function onVideoImgUpload(e) {
-            if (!e.target.files?.length) return;
-            alert("Start frame selected: " + e.target.files[0].name);
+        function wireNav(id, key) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener("click", () => {
+                document.querySelectorAll(".nav-item").forEach((i) => i.classList.remove("active"));
+                if (key !== "home") {
+                    el.classList.add("active");
+                    showPanel(key);
+                }
+            });
         }
 
-        function onVideoElementsUpload(e) {
-            if (!e.target.files?.length) return;
-            alert(e.target.files.length + " element image(s) selected.");
+        wireNav("nav-video", "video");
+        wireNav("nav-image", "image");
+        wireNav("nav-effects", "effects");
+        wireNav("nav-audio", "audio");
+        wireNav("nav-tryon", "tryon");
+        wireNav("nav-avatar", "avatar");
+
+        // Home just recent / default video
+        const navHome = document.getElementById("nav-home");
+        if (navHome) {
+            navHome.addEventListener("click", () => {
+                document.querySelectorAll(".nav-item").forEach((i) => i.classList.remove("active"));
+                navHome.classList.add("active");
+                showPanel("video");
+            });
         }
 
-        function onVideoEditUpload(e) {
-            if (!e.target.files?.length) return;
-            alert("Video to edit: " + e.target.files[0].name);
+        // ----------------------
+        // PREVIEW + HISTORY RENDERING
+        // ----------------------
+        function getFilteredAssets() {
+            return sulandraAssets.filter((asset) => {
+                if (favoritesOnly && !asset.favorite) return false;
+                if (currentFilter === "all") return true;
+                return asset.type === currentFilter;
+            });
         }
 
-        function onVideoSwapUpload(e) {
-            if (!e.target.files?.length) return;
-            alert("Swap image: " + e.target.files[0].name);
-        }
+        function renderAssets() {
+            const assets = getFilteredAssets();
 
-        function openHistoryFromRef() {
-            alert("Open History panel – wire to Assets history view.");
-        }
+            previewGalleryEl.innerHTML = "";
+            historyRailEl.innerHTML = "";
 
-        // ================================================================
-        // GENERATE (DEMO ONLY)
-        // ================================================================
-        function handleGenerate() {
-            const lab = state.lab; // currently 'image'
-            const isVideo = document.getElementById("duration-select").value !== "image";
-
-            const promptId =
-                lab === "image"
-                    ? state.imageMode === "text"
-                        ? "prompt"
-                        : state.imageMode === "ref"
-                        ? "prompt-ref"
-                        : "prompt-restyle"
-                    : "prompt-video";
-
-            const prompt = (document.getElementById(promptId) || {}).value || "";
-            if (!prompt.trim()) {
-                alert("Please enter a prompt first.");
+            if (!assets.length) {
+                const empty = document.createElement("div");
+                empty.style.fontSize = "13px";
+                empty.style.color = "#6b7280";
+                empty.textContent = "No renders to show yet. Generate something with SULANDRA.";
+                previewGalleryEl.appendChild(empty);
                 return;
             }
 
-            const count = parseInt(
-                document.getElementById("outputs-select").value,
-                10
-            );
-            const aspect = document.getElementById("aspect-select").value;
-            const quality = document.getElementById("quality-select").value;
-            const duration = document.getElementById("duration-select").value;
-
-            const generateBtn = document.getElementById("generate-btn");
-            generateBtn.disabled = true;
-            document.getElementById("preview-kind").innerText = "Generating…";
-            document.getElementById("preview-meta").innerText =
-                (isVideo ? "Video" : "Image") +
-                " · " +
-                count +
-                " output(s) · " +
-                aspect +
-                " · " +
-                quality;
-
-            setTimeout(() => {
-                for (let i = 0; i < count; i++) {
-                    const id = "asset-" + state.nextId++;
-                    const kind = isVideo ? "video" : "image";
-                    const url =
-                        kind === "image"
-                            ? "https://placehold.co/800x1200/020617/9ca3af?text=Sulandra+Image"
-                            : "https://placehold.co/1280x720/020617/9ca3af?text=Sulandra+Video";
-
-                    state.assets.unshift({
-                        id,
-                        kind,
-                        createdAt: new Date().toLocaleString(),
-                        prompt,
-                        mode: lab === "image" ? state.imageMode : state.videoMode,
-                        aspect,
-                        quality,
-                        duration,
-                        url,
-                        seed: Math.floor(Math.random() * 999999),
-                        favorite: false,
-                        source: "generated"
-                    });
-                    state.previewId = id;
-                }
-
-                generateBtn.disabled = false;
-                updatePreviewFromCurrent();
-                renderFeed();
-            }, 700);
-        }
-
-        // ================================================================
-        // PREVIEW + FEED
-        // ================================================================
-        function updatePreviewFromCurrent() {
-            const asset = state.assets.find((a) => a.id === state.previewId);
-            const placeholder = document.getElementById("preview-placeholder");
-            const img = document.getElementById("preview-image");
-            const video = document.getElementById("preview-video");
-
-            if (!asset) {
-                placeholder.style.display = "block";
-                img.style.display = "none";
-                video.style.display = "none";
-                document.getElementById("preview-kind").innerText = "Idle";
-                document.getElementById("preview-meta").innerText = "Ready";
-                return;
+            // If current active asset is not in filtered list, pick the first.
+            if (!assets.some((a) => a.id === activeAssetId)) {
+                activeAssetId = assets[0].id;
             }
-
-            placeholder.style.display = "none";
-
-            if (asset.kind === "image") {
-                img.src = asset.url;
-                img.style.display = "block";
-                video.style.display = "none";
-            } else {
-                video.src = asset.url;
-                video.style.display = "block";
-                img.style.display = "none";
-            }
-
-            document.getElementById("preview-kind").innerText =
-                asset.kind === "image" ? "Image" : "Video";
-            document.getElementById("preview-meta").innerText =
-                asset.aspect +
-                " · " +
-                (asset.duration === "image" ? "single frame" : asset.duration) +
-                " · " +
-                (asset.quality || "standard");
-            renderThumbRail();
-        }
-
-        function setPreviewFilter(filter) {
-            state.previewFilter = filter;
-            document
-                .querySelectorAll("#preview-filters button")
-                .forEach((b) =>
-                    b.classList.toggle("active", b.dataset.filter === filter)
-                );
-            renderFeed();
-        }
-
-        function setSearchTerm(text) {
-            state.searchTerm = text.trim().toLowerCase();
-            renderFeed();
-        }
-
-        function filteredAssets() {
-            return state.assets.filter((a) => {
-                if (
-                    state.previewFilter === "image" &&
-                    a.kind !== "image"
-                )
-                    return false;
-                if (
-                    state.previewFilter === "video" &&
-                    a.kind !== "video"
-                )
-                    return false;
-                if (state.previewFilter === "fav" && !a.favorite) return false;
-                if (state.searchTerm) {
-                    const text =
-                        (a.prompt || "") +
-                        " " +
-                        (a.mode || "") +
-                        " " +
-                        (a.id || "");
-                    if (!text.toLowerCase().includes(state.searchTerm)) return false;
-                }
-                return true;
-            });
-        }
-
-        function renderFeed() {
-            const grid = document.getElementById("feed-grid");
-            const assets = filteredAssets();
-            grid.innerHTML = "";
-            document.getElementById("feed-count").innerText =
-                assets.length + " items";
 
             assets.forEach((asset) => {
-                const card = document.createElement("div");
-                card.className = "feed-card";
-                card.onclick = () => {
-                    state.previewId = asset.id;
-                    updatePreviewFromCurrent();
-                };
-
-                const thumb = document.createElement("div");
-                thumb.className = "feed-thumb";
-                if (asset.kind === "image") {
-                    const img = document.createElement("img");
-                    img.src = asset.url;
-                    thumb.appendChild(img);
-                } else {
-                    const video = document.createElement("video");
-                    video.src = asset.url;
-                    video.muted = true;
-                    thumb.appendChild(video);
+                // PREVIEW ITEM
+                const previewItem = document.createElement("div");
+                previewItem.className = "preview-item";
+                previewItem.dataset.assetId = asset.id;
+                if (asset.id === activeAssetId) {
+                    previewItem.classList.add("active");
                 }
 
-                const meta = document.createElement("div");
-                meta.className = "feed-meta";
-                const name = document.createElement("div");
-                name.className = "feed-name";
-                name.textContent =
-                    (asset.kind === "image" ? "Image" : "Video") +
-                    " · " +
-                    asset.mode.toUpperCase();
+                const mediaWrapper = document.createElement("div");
+                mediaWrapper.className = "preview-media-wrapper";
 
-                const heart = document.createElement("div");
-                heart.className = "feed-heart";
-                heart.innerHTML = asset.favorite ? "★ 1" : "☆ 0";
-                heart.onclick = (e) => {
-                    e.stopPropagation();
-                    asset.favorite = !asset.favorite;
-                    renderFeed();
-                    renderThumbRail();
-                };
-
-                meta.appendChild(name);
-                meta.appendChild(heart);
-
-                card.appendChild(thumb);
-                card.appendChild(meta);
-
-                grid.appendChild(card);
-            });
-
-            renderThumbRail();
-        }
-
-        function renderThumbRail() {
-            const rail = document.getElementById("thumb-rail");
-            if (!rail) return;
-            rail.innerHTML = "";
-            const assets = filteredAssets();
-
-            assets.forEach((asset) => {
-                const item = document.createElement("div");
-                item.className =
-                    "thumb-item" +
-                    (asset.id === state.previewId ? " active" : "");
-                item.onclick = () => {
-                    state.previewId = asset.id;
-                    updatePreviewFromCurrent();
-                };
-
-                if (asset.kind === "image") {
+                if (asset.type === "video") {
                     const img = document.createElement("img");
-                    img.src = asset.url;
-                    item.appendChild(img);
-                } else {
-                    const vid = document.createElement("video");
-                    vid.src = asset.url;
-                    vid.muted = true;
-                    item.appendChild(vid);
+                    img.src = asset.thumb;
+                    img.alt = asset.title;
+                    mediaWrapper.appendChild(img);
+                } else if (asset.type === "image") {
+                    const img = document.createElement("img");
+                    img.src = asset.src;
+                    img.alt = asset.title;
+                    mediaWrapper.appendChild(img);
+                } else if (asset.type === "audio") {
+                    const placeholder = document.createElement("div");
+                    placeholder.style.display = "flex";
+                    placeholder.style.alignItems = "center";
+                    placeholder.style.justifyContent = "center";
+                    placeholder.style.height = "100%";
+                    placeholder.style.color = "#22c55e";
+                    placeholder.textContent = "Audio Waveform Preview";
+                    mediaWrapper.appendChild(placeholder);
                 }
 
-                rail.appendChild(item);
+                const metaBar = document.createElement("div");
+                metaBar.className = "preview-meta-bar";
+
+                const leftMeta = document.createElement("div");
+                leftMeta.className = "preview-meta-title";
+                leftMeta.textContent = asset.title;
+
+                const rightMeta = document.createElement("div");
+                rightMeta.className = "preview-meta-tags";
+
+                const typeTag = document.createElement("span");
+                typeTag.textContent = asset.type.toUpperCase();
+                typeTag.style.padding = "3px 7px";
+                typeTag.style.borderRadius = "999px";
+                typeTag.style.border = "1px solid rgba(31,41,55,0.95)";
+                typeTag.style.fontSize = "10px";
+
+                rightMeta.appendChild(typeTag);
+
+                if (asset.duration) {
+                    const d = document.createElement("span");
+                    d.textContent = asset.duration;
+                    rightMeta.appendChild(d);
+                }
+                if (asset.resolution) {
+                    const r = document.createElement("span");
+                    r.textContent = asset.resolution;
+                    rightMeta.appendChild(r);
+                }
+
+                metaBar.appendChild(leftMeta);
+                metaBar.appendChild(rightMeta);
+
+                previewItem.appendChild(mediaWrapper);
+                previewItem.appendChild(metaBar);
+                previewGalleryEl.appendChild(previewItem);
+
+                previewItem.addEventListener("click", () => {
+                    setActiveAsset(asset.id, true);
+                });
+
+                // HISTORY THUMB
+                const historyThumb = document.createElement("div");
+                historyThumb.className = "history-thumb";
+                historyThumb.dataset.assetId = asset.id;
+                if (asset.id === activeAssetId) historyThumb.classList.add("active");
+
+                const imgThumb = document.createElement("img");
+                imgThumb.src = asset.thumb || asset.src;
+                imgThumb.alt = asset.title;
+                historyThumb.appendChild(imgThumb);
+
+                const typePill = document.createElement("span");
+                typePill.className = "history-type-pill";
+                typePill.textContent = asset.type[0].toUpperCase();
+                historyThumb.appendChild(typePill);
+
+                historyThumb.addEventListener("click", () => {
+                    setActiveAsset(asset.id, true);
+                });
+
+                historyRailEl.appendChild(historyThumb);
+            });
+
+            updatePreviewHeader();
+        }
+
+        function setActiveAsset(assetId, scrollIntoView) {
+            activeAssetId = assetId;
+
+            // Update preview highlight
+            previewGalleryEl.querySelectorAll(".preview-item").forEach((item) => {
+                if (item.dataset.assetId === assetId) {
+                    item.classList.add("active");
+                    if (scrollIntoView) {
+                        item.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                } else {
+                    item.classList.remove("active");
+                }
+            });
+
+            // Update history highlight
+            historyRailEl.querySelectorAll(".history-thumb").forEach((thumb) => {
+                if (thumb.dataset.assetId === assetId) {
+                    thumb.classList.add("active");
+                } else {
+                    thumb.classList.remove("active");
+                }
             });
         }
 
-        function openAssetsFromTop() {
-            alert("Wire this to open a full Assets / My Files view.");
+        function updatePreviewHeader() {
+            const assets = getFilteredAssets();
+            const count = assets.length;
+            const label =
+                currentFilter === "image"
+                    ? "Images"
+                    : currentFilter === "video"
+                    ? "Videos"
+                    : currentFilter === "audio"
+                    ? "Audio Clips"
+                    : "Renders";
+
+            previewHeader.textContent = `Recent SULANDRA ${label} · ${count}`;
         }
 
-        // ================================================================
-        // LIGHTBOX (DETAIL VIEW)
-        // ================================================================
-        function openLightbox(id) {
-            const asset = state.assets.find((a) => a.id === id);
-            if (!asset) return;
-            state.lightboxId = id;
+        // ----------------------
+        // GENERATE BUTTONS (mock wiring for now)
+        // ----------------------
+        const btnGenerateVideo = document.getElementById("btn-generate-video");
+        const btnGenerateImage = document.getElementById("btn-generate-image");
 
-            const img = document.getElementById("lb-image");
-            const video = document.getElementById("lb-video");
-
-            img.style.display = "none";
-            video.style.display = "none";
-
-            if (asset.kind === "image") {
-                img.src = asset.url;
-                img.style.display = "block";
-            } else {
-                video.src = asset.url;
-                video.style.display = "block";
+        async function mockGenerateAsset(type) {
+            const id = "asset-" + (Date.now());
+            if (type === "video") {
+                sulandraAssets.unshift({
+                    id,
+                    type: "video",
+                    title: "New SULANDRA Video",
+                    thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    duration: "00:06",
+                    resolution: "1080p",
+                    favorite: false
+                });
+                currentFilter = "video";
+            } else if (type === "image") {
+                sulandraAssets.unshift({
+                    id,
+                    type: "image",
+                    title: "New SULANDRA Image",
+                    thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    duration: null,
+                    resolution: "1024×576",
+                    favorite: false
+                });
+                currentFilter = "image";
             }
 
-            document.getElementById("lb-title").innerText =
-                (asset.kind === "image" ? "Image" : "Video") +
-                " · " +
-                asset.mode.toUpperCase();
-            document.getElementById("lb-sub").innerText = asset.createdAt;
-            document.getElementById("lb-res").innerText =
-                asset.aspect + " · " + (asset.duration || "image");
-            document.getElementById("lb-seed").innerText =
-                asset.seed || "Random";
-            document.getElementById("lb-created").innerText =
-                asset.createdAt || "";
-            document.getElementById("lb-source").innerText =
-                asset.source === "generated" ? "Generated in Vision" : "Upload";
-            document.getElementById("lb-prompt").innerText =
-                asset.prompt || "";
-
-            document
-                .getElementById("lightbox-backdrop")
-                .classList.add("active");
+            activeAssetId = id;
+            renderAssets();
+            setActiveAsset(id, true);
         }
 
-        function closeLightbox() {
-            document
-                .getElementById("lightbox-backdrop")
-                .classList.remove("active");
-            state.lightboxId = null;
+        if (btnGenerateVideo) {
+            btnGenerateVideo.addEventListener("click", async () => {
+                // Later: callRunpodVideoGenerate()
+                await mockGenerateAsset("video");
+            });
         }
 
-        function getLbAsset() {
-            if (!state.lightboxId) return null;
-            return state.assets.find((a) => a.id === state.lightboxId);
+        if (btnGenerateImage) {
+            btnGenerateImage.addEventListener("click", async () => {
+                // Later: callRunpodImageGenerate()
+                await mockGenerateAsset("image");
+            });
         }
 
-        function downloadCurrent() {
-            const a = getLbAsset();
-            if (!a) return;
-            alert("Download stub for " + a.id + " (wire real download).");
-        }
+        // ----------------------
+        // ASK SIA (placeholder hook)
+        // ----------------------
+        document.querySelectorAll(".ask-sia-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const source = btn.getAttribute("data-source") || "general";
+                let prompt = "";
+                if (source === "video") {
+                    prompt = document.getElementById("video-prompt")?.value || "";
+                } else if (source === "image") {
+                    prompt = document.getElementById("image-prompt")?.value || "";
+                }
+                if (!prompt.trim()) {
+                    alert("Ask SIA: Please enter a prompt first.");
+                    return;
+                }
+                // Later: real fetch to SIA_BRAIN_ENDPOINT
+                alert("Ask SIA (stub):\n\nSource: " + source + "\nPrompt:\n" + prompt);
+            });
+        });
 
-        function recreateCurrent() {
-            const a = getLbAsset();
-            if (!a) return;
-            alert("Recreate using stored prompt. ID: " + a.id);
-        }
+        // ----------------------
+        // SIMPLE CLICK FEEDBACK FOR TOP ACTIONS
+        // ----------------------
+        document.getElementById("assets-btn")?.addEventListener("click", () => {
+            alert("Assets panel coming in a later section.\nFor now this confirms the button works.");
+        });
+        document.getElementById("btn-download")?.addEventListener("click", () => {
+            alert("Download would trigger for the active asset.\nWe will wire actual file links when RunPod integration is added.");
+        });
+        document.getElementById("btn-share")?.addEventListener("click", () => {
+            alert("Share options will be implemented later.");
+        });
+        document.getElementById("btn-more")?.addEventListener("click", () => {
+            alert("More actions will appear here (rename, duplicate, delete, etc.).");
+        });
 
-        function sendCurrentToCinema() {
-            const a = getLbAsset();
-            if (!a) return;
-            alert("Send to Cinema stub for " + a.id);
-        }
+        document.getElementById("action-open-studio")?.addEventListener("click", () => {
+            alert("Open in Studio will route the active asset to SULANDRA Studio in later sections.");
+        });
+        document.getElementById("action-upscale")?.addEventListener("click", () => {
+            alert("Upscale with O1 will call a dedicated upscaling endpoint.");
+        });
+        document.getElementById("action-send-covers")?.addEventListener("click", () => {
+            alert("Send to Covers will send this asset to the Covers lab.");
+        });
+        document.getElementById("action-duplicate")?.addEventListener("click", () => {
+            alert("Duplicate will clone the active asset entry.");
+        });
+        document.getElementById("action-archive")?.addEventListener("click", () => {
+            alert("Archive will hide this asset from recent view.");
+        });
 
-        function renameCurrent() {
-            const a = getLbAsset();
-            if (!a) return;
-            const name = prompt("Rename (nickname only):", a.id);
-            if (!name) return;
-            a.id = name;
-            renderFeed();
-            renderThumbRail();
-        }
-
-        function deleteCurrentAsset() {
-            const a = getLbAsset();
-            if (!a) return;
-            if (!confirm("Delete this item from local history?")) return;
-            state.assets = state.assets.filter((x) => x !== a);
-            closeLightbox();
-            renderFeed();
-            updatePreviewFromCurrent();
-        }
+        // ----------------------
+        // INITIAL STATE
+        // ----------------------
+        showPanel("video");
+        renderAssets();
     </script>
 </body>
 </html>
