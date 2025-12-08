@@ -2692,11 +2692,6 @@ function switchAssetsView(view, el) {
         switchLab('image');
         return;
     }
-    
-    // Update the view
-    renderAssetsView();
-} // <--- THIS CLOSING BRACE WAS MISSING
-
 function setAssetsSidebarMode(mode, el) {
     currentAssetsSidebarMode = mode;
 
@@ -2707,11 +2702,8 @@ function setAssetsSidebarMode(mode, el) {
     list.classList.toggle('is-list', mode === 'list');
 
     document.querySelectorAll('.assets-sidebar-mode-btn').forEach(btn => {
-        btn.classList.toggle('active', btn === el);
+    btn.classList.toggle('active', btn === el);
     });
-    
-    // Re-render to apply grid/list class
-    renderAssetsView();
 }
 
 function openSidebarPreview(item) {
