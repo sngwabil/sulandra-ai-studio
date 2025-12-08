@@ -2683,6 +2683,7 @@ function switchAssetsView(view, el) {
         currentAssetsView = view;
     }
 
+    // Highlight the active tab (Images / Videos / Films / Favorites / Create)
     document.querySelectorAll('.lab-mode-view').forEach(btn => {
         btn.classList.toggle('active', btn === el);
     });
@@ -2692,6 +2693,11 @@ function switchAssetsView(view, el) {
         switchLab('image');
         return;
     }
+
+    // Actually update labels + thumbnails + right gallery
+    renderAssetsView();
+}
+
 function setAssetsSidebarMode(mode, el) {
     currentAssetsSidebarMode = mode;
 
@@ -2702,7 +2708,7 @@ function setAssetsSidebarMode(mode, el) {
     list.classList.toggle('is-list', mode === 'list');
 
     document.querySelectorAll('.assets-sidebar-mode-btn').forEach(btn => {
-    btn.classList.toggle('active', btn === el);
+        btn.classList.toggle('active', btn === el);
     });
 }
 
@@ -2726,7 +2732,7 @@ function openSidebarPreview(item) {
         </button>
     `;
 
-    list.style.display = 'flex';
+    list.style.display    = 'flex';
     preview.style.display = 'flex';
 }
 
@@ -2737,8 +2743,6 @@ function closeSidebarPreview() {
 
     preview.style.display = 'none';
     list.style.display    = 'flex';
-}
-    renderAssetsView();
 }
 
 function renderAssetsView() {
@@ -2769,21 +2773,21 @@ function renderAssetsView() {
     let filtered = [];
     if (currentAssetsView === 'images') {
         filtered = history.filter(item => item.type === 'image');
-        if (label)     label.textContent = 'My Images';
-        if (labelSub)  labelSub.textContent = 'All images you created in Sulandra Creative Lab';
+        if (label)    label.textContent    = 'My Images';
+        if (labelSub) labelSub.textContent = 'All images you created in Sulandra Creative Lab';
     } else if (currentAssetsView === 'videos') {
         filtered = history.filter(item => item.type === 'video');
-        if (label)     label.textContent = 'My Videos';
-        if (labelSub)  labelSub.textContent = 'All videos you created in Sulandra Creative Lab';
+        if (label)    label.textContent    = 'My Videos';
+        if (labelSub) labelSub.textContent = 'All videos you created in Sulandra Creative Lab';
     } else if (currentAssetsView === 'films') {
         filtered = history.filter(item => item.type === 'film');
-        if (label)     label.textContent = 'My Films';
-        if (labelSub)  labelSub.textContent = 'All short films you created in Sulandra Creative Lab';
+        if (label)    label.textContent    = 'My Films';
+        if (labelSub) labelSub.textContent = 'All short films you created in Sulandra Creative Lab';
     } else if (currentAssetsView === 'favorites') {
         const favIds = new Set(favorites.map(f => f.id));
         filtered = history.filter(item => favIds.has(item.id));
-        if (label)     label.textContent = 'Favorites';
-        if (labelSub)  labelSub.textContent = 'Images, videos, and films you starred';
+        if (label)    label.textContent    = 'Favorites';
+        if (labelSub) labelSub.textContent = 'Images, videos, and films you starred';
     }
 
     // Clear old UI
@@ -2801,7 +2805,7 @@ function renderAssetsView() {
         // 1. Fill the big gallery on the right (standard layout)
         addToGallery(item, { saveToHistory: false });
 
-        // 2. Add a thumbnail row in the sidebar
+        // 2. Add a thumbnail row in the left sidebar (THIS is the content you want)
         const url   = item.previewUrl || item.url || item.thumbnail || '';
         const title = item.prompt || item.title || item.filename || 'Untitled item';
 
@@ -2815,13 +2819,16 @@ function renderAssetsView() {
         img.alt       = 'Thumbnail';
 
         const meta = document.createElement('div');
-        meta.className = 'assets-sidebar-meta';
+        meta.className   = 'assets-sidebar-meta';
         meta.textContent = title;
 
         row.appendChild(img);
         row.appendChild(meta);
 
-        // Double-click to open the zoomed preview inside sidebar
+        // Click / double-click behaviour
+        row.addEventListener('click', () => {
+            // highlight / focus etc if you want later
+        });
         row.addEventListener('dblclick', () => openSidebarPreview(item));
 
         sidebarList.appendChild(row);
