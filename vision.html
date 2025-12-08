@@ -2717,15 +2717,22 @@ function switchAssetsView(view, el) {
         currentAssetsView = view;
     }
 
-    document.querySelectorAll('.lab-mode-view').forEach(btn => {
-        btn.classList.toggle('active', btn === el);
-    });
+    if (el) {
+        document.querySelectorAll('.lab-mode-view').forEach(btn => {
+            btn.classList.toggle('active', btn === el);
+        });
+    }
 
     // "Create" inside My Files just routes back to the main create lab
     if (view === 'create') {
         switchLab('image');
         return;
     }
+    
+    // Update the view
+    renderAssetsView();
+}
+
 function setAssetsSidebarMode(mode, el) {
     currentAssetsSidebarMode = mode;
 
@@ -2735,9 +2742,14 @@ function setAssetsSidebarMode(mode, el) {
     list.classList.toggle('is-grid', mode === 'grid');
     list.classList.toggle('is-list', mode === 'list');
 
-    document.querySelectorAll('.assets-sidebar-mode-btn').forEach(btn => {
-    btn.classList.toggle('active', btn === el);
-    });
+    if (el) {
+        document.querySelectorAll('.assets-sidebar-mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn === el);
+        });
+    }
+    
+    // Re-render to apply grid/list class
+    renderAssetsView();
 }
 
 function openSidebarPreview(item) {
