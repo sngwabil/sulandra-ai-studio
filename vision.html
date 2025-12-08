@@ -1,178 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Generator - Studio</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Creative Studio</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    />
 
 <style>
-/* =========================================
-   CORE THEME & RESET
-   ========================================= */
+/* ==========================================================================
+   1. GLOBAL THEME VARIABLES
+   ========================================================================== */
 :root {
-    --bg-app: #050505;       /* Main window bg */
-    --bg-panel: #09090b;     /* Panel bg */
-    --bg-card: #101012;      /* Card/Input bg */
-    --bg-hover: #1c1c1f;
-    
-    --border-base: #202024;
-    --border-light: #2c2c30;
-    
-    --accent-primary: #33ff00; /* Neon Green */
-    --accent-dim: rgba(51, 255, 0, 0.1);
-    
+    /* Colors extracted from screenshots */
+    --bg-app: #050505;          /* Deepest black background */
+    --bg-panel: #09090b;        /* Panel background */
+    --bg-card: #101012;         /* Card background */
+    --bg-card-hover: #18181b;
+    --bg-input: #121214;
+
+    --border-base: #222225;
+    --border-highlight: #333336;
+
+    --accent-neon: #4dff00;     /* The bright neon green */
+    --accent-dim: rgba(77, 255, 0, 0.1);
+    --accent-hover: #5eff1a;
+
     --text-main: #ffffff;
-    --text-muted: #8a8a93;
-    --text-dim: #52525b;
-    
-    --sidebar-width: 64px;
-    --history-width: 80px; /* Far right strip */
-    --header-height: 60px;
-    
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
+    --text-secondary: #a1a1aa;
+    --text-muted: #52525b;
+
+    /* Dimensions */
+    --nav-width: 72px;
+    --header-height: 64px;
+    --history-width: 90px;
+
+    /* Radius */
+    --rad-sm: 8px;
+    --rad-md: 12px;
+    --rad-lg: 16px;
+    --rad-pill: 999px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    -webkit-font-smoothing: antialiased;
+}
 
 body {
-    background-color: var(--bg-app);
+    background: var(--bg-app);
     color: var(--text-main);
     font-family: 'Inter', sans-serif;
     height: 100vh;
-    width: 100vw;
     display: flex;
     overflow: hidden;
     font-size: 13px;
 }
 
-/* Scrollbar Styling */
+/* Scrollbars */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #444; }
 
-/* =========================================
-   1. NAVIGATION RAIL (Left)
-   ========================================= */
+/* Utility Classes */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-4 { gap: 16px; }
+.text-neon { color: var(--accent-neon); }
+.full-h { height: 100%; }
+
+/* Buttons & Inputs */
+button { border: none; background: none; cursor: pointer; color: inherit; }
+input, textarea, select {
+    background: var(--bg-input);
+    border: 1px solid var(--border-base);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 13px;
+    border-radius: var(--rad-sm);
+    transition: 0.2s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--text-muted); }
+
+/* Common Components */
+.neon-btn {
+    background: var(--accent-neon);
+    color: #000;
+    font-weight: 700;
+    padding: 0 20px;
+    height: 40px;
+    border-radius: var(--rad-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+.neon-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+.pill-select {
+    height: 36px;
+    padding: 0 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-base);
+    color: var(--text-secondary);
+    border-radius: var(--rad-sm);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.upload-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-base);
+    border-radius: var(--rad-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+.upload-box:hover { background: var(--bg-card-hover); border-color: var(--border-highlight); }
+.upload-icon-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px dashed var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   2. SIDEBAR NAVIGATION
+   ========================================================================== */
 .sidebar {
-    width: var(--sidebar-width);
+    width: var(--nav-width);
     background: var(--bg-app);
     border-right: 1px solid var(--border-base);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 16px 0;
-    gap: 24px;
-    z-index: 100;
+    z-index: 50;
     flex-shrink: 0;
 }
 
-.menu-burger {
-    color: var(--text-main);
-    cursor: pointer;
-    padding: 8px;
-}
-
-.brand-logo {
-    width: 32px;
-    height: 32px;
-    /* Gradient Green Circle Logo */
-    background: conic-gradient(from 180deg at 50% 50%, #1f4410 0deg, #33ff00 180deg, #1f4410 360deg);
+.logo-area {
+    width: 40px; height: 40px;
     border-radius: 50%;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
+    background: conic-gradient(from 0deg, #2a2a2a, var(--accent-neon), #2a2a2a);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    box-shadow: 0 0 15px rgba(77,255,0,0.2);
 }
-.brand-logo::after {
-    content: ''; position: absolute; inset: 6px; background: #000; border-radius: 50%;
-}
-
-.nav-group {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-    align-items: center;
-}
+.logo-inner { width: 34px; height: 34px; background: #000; border-radius: 50%; display: flex; align-items:center; justify-content:center; }
 
 .nav-item {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    cursor: pointer;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
     position: relative;
     transition: all 0.2s;
 }
-
-.nav-item:hover { color: var(--text-main); background: var(--bg-hover); }
-
-.nav-item.active {
-    color: var(--accent-primary);
-    background: var(--accent-dim);
-}
+.nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.nav-item.active { color: var(--accent-neon); background: var(--accent-dim); }
 .nav-item.active::before {
-    content: '';
-    position: absolute; left: -12px; top: 8px; bottom: 8px; width: 3px;
-    background: var(--accent-primary);
-    border-radius: 0 4px 4px 0;
+    content: ''; position: absolute; left: -14px; top: 10px; bottom: 10px; width: 3px; background: var(--accent-neon); border-radius: 0 4px 4px 0;
 }
-
 .nav-item svg { width: 22px; height: 22px; stroke-width: 1.5; }
 
-.bottom-actions {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-.credits-count {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--text-main);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-}
-.credits-icon { width: 12px; height: 12px; background: var(--accent-primary); border-radius: 50%; box-shadow: 0 0 8px var(--accent-primary); }
-
+.bottom-nav { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .sale-badge {
-    background: var(--accent-primary);
-    color: #000;
-    font-size: 9px;
-    font-weight: 800;
-    padding: 4px 6px;
-    border-radius: 6px;
-    text-align: center;
-    line-height: 1.1;
-    width: 44px;
+    background: var(--accent-neon); color: #000; font-size: 9px; font-weight: 800;
+    padding: 4px 6px; border-radius: 6px; text-align: center; line-height: 1.1;
 }
 
-/* =========================================
-   2. MAIN LAYOUT
-   ========================================= */
-.app-content {
+/* ==========================================================================
+   3. APP SHELL & HEADER
+   ========================================================================== */
+.app-shell {
     flex: 1;
     display: flex;
     flex-direction: column;
     min-width: 0;
 }
 
-/* TOP HEADER */
 .top-header {
     height: var(--header-height);
     border-bottom: 1px solid var(--border-base);
@@ -180,70 +211,39 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
-    background: var(--bg-app);
+    flex-shrink: 0;
 }
 
-.header-left { display: flex; align-items: center; gap: 16px; }
-.page-title { font-size: 16px; font-weight: 600; color: #fff; }
-
-.model-dropdown {
-    background: var(--bg-card);
-    border: 1px solid var(--border-base);
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    font-size: 12px;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
+.page-title { font-size: 16px; font-weight: 600; margin-right: 16px; }
+.model-pill {
+    background: var(--bg-card); border: 1px solid var(--border-base);
+    padding: 4px 12px; border-radius: var(--rad-pill); font-size: 11px;
+    display: flex; align-items: center; gap: 6px; color: var(--text-secondary); cursor: pointer;
 }
-.red-dot { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; }
+.dot { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; }
 
-.header-center {
-    display: flex;
-    background: var(--bg-panel);
-    padding: 4px;
-    border-radius: 8px;
-    border: 1px solid var(--border-base);
+.view-tabs {
+    background: var(--bg-panel); border: 1px solid var(--border-base);
+    padding: 4px; border-radius: 8px; display: flex;
 }
 .view-tab {
-    padding: 6px 16px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-muted);
-    cursor: pointer;
+    padding: 6px 16px; border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 12px; font-weight: 500;
 }
-.view-tab.active { background: var(--bg-card); color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-.view-check { display: flex; align-items: center; gap: 6px; margin-left: 12px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+.view-tab.active { background: var(--bg-card); color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 
-.header-right { display: flex; align-items: center; gap: 12px; }
-.btn-assets {
-    background: var(--bg-card);
-    border: 1px solid var(--border-base);
-    color: var(--text-main);
-    padding: 8px 16px;
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-/* WORKSPACE GRID */
+/* ==========================================================================
+   4. WORKSPACE LAYOUT
+   ========================================================================== */
 .workspace {
     flex: 1;
     display: grid;
-    grid-template-columns: 420px 1fr; /* Config Panel | Preview */
+    grid-template-columns: 360px 1fr; /* Config Panel | Preview Area */
     overflow: hidden;
 }
 
-/* =========================================
-   3. LEFT CONFIGURATION PANEL
-   ========================================= */
+/* ==========================================================================
+   5. CONFIG PANEL (Generic & Specifics)
+   ========================================================================== */
 .config-panel {
     background: var(--bg-app);
     border-right: 1px solid var(--border-base);
@@ -253,617 +253,527 @@ body {
     overflow-y: auto;
 }
 
-/* Mode Tabs (Text to Video, etc) */
-.mode-tabs {
-    display: flex;
-    gap: 24px;
-    border-bottom: 1px solid var(--border-base);
-    margin-bottom: 20px;
-    padding-bottom: 2px;
+.tabs-line {
+    display: flex; gap: 20px; border-bottom: 1px solid var(--border-base); margin-bottom: 20px;
 }
-.mode-tab {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    padding-bottom: 10px;
-    cursor: pointer;
-    position: relative;
+.tab-text {
+    padding-bottom: 12px; color: var(--text-secondary); cursor: pointer; font-size: 13px; font-weight: 500; position: relative;
 }
-.mode-tab.active { color: #fff; }
-.mode-tab.active::after {
-    content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 2px; background: #fff;
+.tab-text.active { color: #fff; }
+.tab-text.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: #fff;
 }
 
-/* Promo Banner */
-.promo-banner {
-    background: linear-gradient(90deg, rgba(35,35,40,0.6), rgba(20,20,25,0.6));
-    border: 1px solid var(--border-base);
-    border-radius: var(--radius-sm);
-    padding: 12px;
-    font-size: 12px;
-    color: var(--text-muted);
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
+/* Promo Box (seen in Video UI) */
+.promo-box {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border-base);
+    padding: 12px; border-radius: var(--rad-sm); font-size: 12px; color: var(--text-secondary);
+    margin-bottom: 20px; display: flex; justify-content: space-between;
 }
-.promo-link { color: var(--accent-primary); text-decoration: none; font-weight: 600; margin-left: 4px; }
-.btn-close-promo { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; line-height: 1; }
+.promo-box a { color: var(--accent-neon); text-decoration: none; margin-left: 4px; }
 
-/* Sub Tabs (Swap, Add, Delete) */
-.sub-tabs { display: flex; gap: 16px; margin-bottom: 16px; }
-.sub-tab {
-    background: var(--bg-card);
-    border: 1px solid var(--border-base);
-    color: var(--text-muted);
-    padding: 6px 16px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
+/* Sub Tabs (Swap/Add/Delete) */
+.sub-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.sub-btn {
+    background: var(--bg-card); border: 1px solid var(--border-base);
+    color: var(--text-secondary); padding: 6px 14px; border-radius: 6px; font-size: 12px;
 }
-.sub-tab.active { background: #222; color: #fff; border-color: #444; }
+.sub-btn.active { background: #222; color: #fff; border-color: #444; }
 
-/* Upload Cards */
-.upload-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-base);
-    border-radius: var(--radius-md);
-    height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-    cursor: pointer;
-    transition: 0.2s;
-    position: relative;
-    overflow: hidden;
+/* Text Areas */
+.prompt-area textarea {
+    width: 100%; min-height: 100px; padding: 12px;
+    background: var(--bg-app); border: none; resize: none;
 }
-.upload-card:hover { border-color: var(--border-light); background: var(--bg-hover); }
-
-.card-icon-circle {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: #1a1a1d;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 12px;
-    color: var(--text-muted);
-    border: 1px dashed var(--text-dim);
+.prompt-container {
+    background: var(--bg-input); border: 1px solid var(--border-base);
+    border-radius: var(--rad-md); overflow: hidden; margin-bottom: 20px;
 }
-.card-title { color: #fff; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
-.card-sub { color: var(--text-dim); font-size: 11px; }
-.link-history { font-size: 11px; text-decoration: underline; color: var(--text-muted); margin-top: 8px; cursor: pointer; }
-
-/* Prompt Input */
-.prompt-area {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-.prompt-input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 13px;
-    font-family: inherit;
-    resize: none;
-    padding: 0;
+.prompt-footer {
+    padding: 8px 12px; display: flex; justify-content: space-between;
+    border-top: 1px solid var(--border-base); color: var(--text-muted); font-size: 11px;
 }
 
-/* Config Footer (Bottom fixed controls within panel) */
-.config-footer {
-    margin-top: auto;
-    display: flex;
-    gap: 12px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-base);
+/* Grid for Effects/Avatars */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid-card {
+    background: var(--bg-card); border: 1px solid var(--border-base); border-radius: var(--rad-md);
+    overflow: hidden; cursor: pointer; transition: 0.2s; position: relative;
+}
+.grid-card:hover { border-color: var(--text-secondary); }
+.grid-card img { width: 100%; height: 120px; object-fit: cover; }
+.grid-card-title { padding: 8px; font-size: 12px; font-weight: 500; color: #fff; }
+.hot-tag {
+    position: absolute; top: 6px; right: 6px; background: #ff4500; color: #fff;
+    font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 700;
 }
 
-.control-dropdown {
-    background: var(--bg-card);
-    border: 1px solid var(--border-base);
-    color: var(--text-muted);
-    padding: 0 12px;
-    height: 44px;
-    border-radius: var(--radius-sm);
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-width: 80px;
-    cursor: pointer;
-    flex: 1;
+/* Bottom Actions Fixed in Panel */
+.panel-footer {
+    margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-base);
+    display: flex; gap: 10px;
 }
 
-.btn-generate {
-    background: var(--accent-primary);
-    color: #000;
-    font-weight: 700;
-    font-size: 14px;
-    border: none;
-    border-radius: var(--radius-sm);
-    height: 44px;
-    padding: 0 24px;
-    cursor: pointer;
-    flex: 2;
-    transition: 0.2s;
-}
-.btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
-
-/* =========================================
-   4. RIGHT PREVIEW PANEL
-   ========================================= */
-.preview-container {
+/* ==========================================================================
+   6. PREVIEW AREA (Right)
+   ========================================================================== */
+.preview-area {
     background: var(--bg-panel);
     display: flex;
     position: relative;
-    overflow: hidden;
 }
 
-.preview-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    overflow-y: auto;
+.stage {
+    flex: 1; display: flex; flex-direction: column; padding: 24px; overflow-y: auto;
 }
 
-/* Video Header Info */
-.video-meta-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+.stage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.tag {
+    background: var(--bg-card); border: 1px solid var(--border-base); padding: 4px 10px;
+    border-radius: 4px; font-size: 11px; color: var(--text-secondary); display: flex; align-items:center; gap:6px;
 }
-.meta-tag {
-    background: var(--bg-card);
-    border: 1px solid var(--border-base);
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    color: var(--text-muted);
-    display: flex; align-items: center; gap: 6px;
-}
-.thumb-small { width: 20px; height: 20px; border-radius: 2px; object-fit: cover; }
 
-.meta-actions { margin-left: auto; display: flex; gap: 8px; }
-.icon-btn {
-    width: 32px; height: 32px;
+.video-box {
+    width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--rad-md);
+    border: 1px solid var(--border-base); position: relative; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
-    background: var(--bg-card); border: 1px solid var(--border-base);
-    border-radius: 6px; color: var(--text-muted); cursor: pointer;
 }
-.icon-btn:hover { color: #fff; border-color: var(--border-light); }
-
-.prompt-display {
-    color: var(--text-muted);
-    font-size: 13px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.video-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 16px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    display: flex; justify-content: space-between; align-items: center;
 }
 
-/* Video Player Stage */
-.video-stage {
-    flex: 1;
-    background: #000;
-    border-radius: var(--radius-md);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    border: 1px solid var(--border-base);
+.action-row {
+    margin-top: 20px; display: flex; align-items: center; gap: 20px; color: var(--text-secondary); font-size: 12px;
 }
+.action-item { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.action-item:hover { color: #fff; }
 
-.video-content {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    /* Simulate the "split" effect from screenshot */
-    background: url('https://placehold.co/1200x800/111/444?text=Video+Preview') center/cover no-repeat;
-}
-
-/* Custom Player Controls Overlay */
-.player-controls {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 16px 20px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #fff;
-}
-.play-group { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 500; }
-.play-btn { cursor: pointer; fill: #fff; }
-.control-group { display: flex; gap: 12px; }
-
-/* Action Bar below video */
-.action-bar {
-    margin-top: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.primary-action {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-}
-.o1-logo { width: 16px; height: 16px; border-radius: 50%; background: var(--accent-primary); }
-
-.action-divider { width: 1px; height: 16px; background: var(--border-base); }
-
-.secondary-action {
-    color: var(--text-muted);
-    font-size: 12px;
-    display: flex; align-items: center; gap: 6px; cursor: pointer;
-}
-.secondary-action:hover { color: #fff; }
-
-.right-actions { margin-left: auto; display: flex; gap: 16px; color: var(--text-muted); }
-.action-icon { cursor: pointer; }
-.action-icon:hover { color: #fff; }
-
-/* Bottom Toast */
-.toast-notification {
-    background: #0f2912;
-    border: 1px solid #1a4d20;
-    color: var(--accent-primary);
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 12px;
-    position: absolute;
-    bottom: 20px;
-    right: 320px; /* Offset from history rail */
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-.toast-link { color: #fff; margin-left: auto; cursor: pointer; font-size: 11px; text-decoration: none; display: flex; align-items: center; gap: 4px; }
-
-/* =========================================
-   5. HISTORY RAIL (Far Right)
-   ========================================= */
+/* History Rail */
 .history-rail {
-    width: 90px;
-    background: #000;
-    border-left: 1px solid var(--border-base);
-    display: flex;
-    flex-direction: column;
-    padding: 12px 8px;
-    gap: 8px;
-    overflow-y: auto;
+    width: var(--history-width);
+    background: var(--bg-app); border-left: 1px solid var(--border-base);
+    display: flex; flex-direction: column; gap: 10px; padding: 12px 8px; overflow-y: auto;
 }
-
-.history-item {
-    width: 100%;
-    aspect-ratio: 1/1;
-    background: #222;
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid transparent;
-    position: relative;
+.hist-thumb {
+    width: 100%; aspect-ratio: 1/1; border-radius: 8px; background: #222; overflow: hidden;
+    border: 2px solid transparent; cursor: pointer; opacity: 0.7;
 }
-.history-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 0.2s; }
-.history-item:hover img { opacity: 1; }
-.history-item.active { border-color: #fff; }
-.history-item.active img { opacity: 1; }
+.hist-thumb:hover { opacity: 1; }
+.hist-thumb.active { border-color: #fff; opacity: 1; }
+.hist-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
 </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="menu-burger">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-        </div>
-
-        <div class="brand-logo">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
-
-        <div class="nav-group">
-            <div class="nav-item" title="Gallery">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-            </div>
-            <div class="nav-item active" title="Video">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
-            </div>
-            <div class="nav-item" title="Community">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-            </div>
-            <div class="nav-item" title="Effects">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m19 14-7 7-7-7"></path><path d="m5 9 7 7 7-7"></path><path d="m12 2v10"></path></svg>
-            </div>
-            <div class="nav-item" title="Audio">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-            </div>
-            <div class="nav-item" title="Try On">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
-            </div>
-            <div class="nav-item" title="History">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <div class="logo-area">
+            <div class="logo-inner">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent-neon)"><path d="M21 12l-9-9-9 9 9 9 9-9z"/></svg>
             </div>
         </div>
 
-        <div class="bottom-actions">
-            <div class="nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            </div>
-            <div class="credits-count">
-                <div class="credits-icon"></div>
-                671
-            </div>
-            <div style="font-size:10px; color:var(--text-dim); margin-top:-10px;">Standard</div>
-            
-            <div class="sale-badge">
-                SALE<br>50% off
-            </div>
-            <div style="color:var(--text-dim);">...</div>
+        <div class="nav-item" id="nav-home" title="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
+        
+        <div class="nav-item active" id="nav-video" title="Video Gen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line></svg></div>
+        
+        <div class="nav-item" id="nav-effects" title="Effects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M2 12h20"></path><path d="m4.93 4.93 14.14 14.14M4.93 19.07 19.07 4.93"></path></svg></div>
+        
+        <div class="nav-item" id="nav-audio" title="Sound Effects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg></div>
+        
+        <div class="nav-item" id="nav-tryon" title="Virtual Try On"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg></div>
+        
+        <div class="nav-item" id="nav-avatar" title="Avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+
+        <div class="bottom-nav">
+            <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+            <div style="font-size:10px; font-weight:700;">671</div>
+            <div class="sale-badge">SALE<br>50%</div>
+            <div class="nav-item" style="border-radius:50%; background:#222;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
         </div>
     </aside>
 
-    <main class="app-content">
+    <div class="app-shell">
+        
         <header class="top-header">
-            <div class="header-left">
-                <div class="page-title">AI Video Generator</div>
-                <div class="model-dropdown">
-                    VIDEO 1.6
-                    <div class="red-dot"></div>
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1"></path></svg>
+            <div class="flex items-center">
+                <div class="page-title" id="page-title">AI Video Generator</div>
+                <div class="model-pill">
+                    <span id="model-name">VIDEO 1.6</span>
+                    <div class="dot"></div>
                 </div>
             </div>
 
-            <div class="header-center">
+            <div class="view-tabs">
                 <div class="view-tab active">All</div>
                 <div class="view-tab">Images</div>
                 <div class="view-tab">Videos</div>
                 <div class="view-tab">Audio</div>
-                <div class="view-check">
+                <div class="view-tab flex items-center gap-2">
                     <input type="checkbox"> Favorites
                 </div>
             </div>
 
-            <div class="header-right">
-                <button class="btn-assets">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                    Assets
-                </button>
-            </div>
+            <button class="pill-select" style="background:var(--bg-input); color:#fff;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                Assets
+            </button>
         </header>
 
         <div class="workspace">
             
-            <section class="config-panel">
-                <div class="mode-tabs">
-                    <div class="mode-tab">Text to Video</div>
-                    <div class="mode-tab">Image to Video</div>
-                    <div class="mode-tab">Elements</div>
-                    <div class="mode-tab active">Multi-Elements</div>
+            <section class="config-panel" id="panel-video">
+                <div class="tabs-line">
+                    <div class="tab-text">Text to Video</div>
+                    <div class="tab-text">Image to Video</div>
+                    <div class="tab-text">Elements</div>
+                    <div class="tab-text active">Multi-Elements</div>
                 </div>
 
-                <div class="promo-banner">
-                    <div>
-                        Go to Kling O1 for the latest and most versatile video editing features. 
-                        <a href="#" class="promo-link">Try Now</a>
-                    </div>
-                    <button class="btn-close-promo">×</button>
+                <div class="promo-box">
+                    <span>Go to Kling O1 for latest features. <a href="#">Try Now</a></span>
+                    <span>×</span>
                 </div>
 
                 <div class="sub-tabs">
-                    <div class="sub-tab active">Swap</div>
-                    <div class="sub-tab">Add</div>
-                    <div class="sub-tab">Delete</div>
+                    <div class="sub-btn active">Swap</div>
+                    <div class="sub-btn">Add</div>
+                    <div class="sub-btn">Delete</div>
                 </div>
 
-                <div class="upload-card">
-                    <div class="card-icon-circle">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-                        <span style="position:absolute; bottom:65px; right:190px; font-size:10px;">+</span>
-                    </div>
-                    <div class="card-title">Add a video to edit</div>
-                    <div class="card-sub">Supports MP4/MOV files, 100MB max file size</div>
-                    <div class="card-sub">10s max duration, 720P/1080P in resolution</div>
-                    <div class="link-history">History</div>
+                <div class="upload-box" style="height: 180px; margin-bottom:12px;">
+                    <div class="upload-icon-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line></svg></div>
+                    <div style="font-weight:500; margin-bottom:4px;">Add a video to edit</div>
+                    <div style="font-size:11px; color:var(--text-secondary);">MP4/MOV, 100MB max</div>
+                    <div style="font-size:11px; text-decoration:underline; margin-top:8px;">History</div>
                 </div>
 
-                <div class="upload-card" style="height:140px;">
-                    <div class="card-icon-circle">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                        <span style="position:absolute; bottom:55px; right:190px; font-size:10px;">+</span>
-                    </div>
-                    <div class="card-title">Add an image for elements swap</div>
-                    <div class="link-history">History · Stock Library</div>
+                <div class="upload-box" style="height: 120px; margin-bottom:20px;">
+                    <div class="upload-icon-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+                    <div style="font-weight:500;">Add an image for swap</div>
                 </div>
 
-                <div class="prompt-area">
-                    <textarea class="prompt-input" rows="2" placeholder="swap [x] from [Image] for [x] from [Video]">swap [x] from [Image] for [x] from [Video]</textarea>
+                <div class="prompt-container">
+                    <textarea placeholder="swap [x] from [Image] for [x] from [Video]">swap [x] from [Image] for [x] from [Video]</textarea>
+                    <div class="prompt-footer">
+                        <span>DeepSeek</span>
+                    </div>
                 </div>
 
-                <div class="config-footer">
-                    <div class="control-dropdown">
-                        Professional
-                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1"></path></svg>
-                    </div>
-                    <div class="control-dropdown" style="min-width:60px; flex:0.5">
-                        5s
-                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1"></path></svg>
-                    </div>
-                    <div class="control-dropdown">
-                        1 Output
-                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor"><path d="M1 1L5 5L9 1"></path></svg>
-                    </div>
-                    <button class="btn-generate">Generate</button>
+                <div class="panel-footer">
+                    <div class="pill-select" style="flex:1;">Professional</div>
+                    <div class="pill-select" style="flex:0.5;">5s</div>
+                    <div class="pill-select" style="flex:1;">1 Output</div>
+                    <button class="neon-btn" style="flex:2;">Generate</button>
                 </div>
-
             </section>
 
-            <div class="preview-container">
-                <div class="preview-main">
-                    
-                    <div class="video-meta-bar">
-                        <div class="meta-tag">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-                            Video
-                        </div>
-                        <div class="meta-tag">
-                            <img src="https://placehold.co/20/333/fff" class="thumb-small">
-                            Start
-                        </div>
-                        <div class="meta-tag">Video 2.5 Turbo</div>
-                        <div class="meta-tag">Professional Mode</div>
 
-                        <div class="meta-actions">
-                            <div class="icon-btn" title="Edit">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                            </div>
-                            <div class="icon-btn" title="Undo">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 4v6h6"></path><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-                            </div>
-                        </div>
-                    </div>
+            <section class="config-panel hidden" id="panel-effects">
+                <div class="tabs-line">
+                    <div class="tab-text active">Effects</div>
+                </div>
 
-                    <div class="prompt-display">
-                        Make her dance an African Makossa highlife at 120 BPM playing 1454
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    </div>
-
-                    <div class="video-stage">
-                        <div class="video-content" style="background-image: url('https://placehold.co/1200x800/151515/ddd?text=Video+Element+Mock'); display:flex; align-items:center; justify-content:center;">
-                            <div style="display:grid; grid-template-columns: 1fr 1fr; width:100%; height:100%; gap:2px;">
-                                <div style="background:#222 url('https://placehold.co/600x800/222/555?text=Dancer+Full') center/cover;"></div>
-                                <div style="display:grid; grid-template-rows:1fr 1fr; gap:2px;">
-                                     <div style="background:#222 url('https://placehold.co/600x400/222/555?text=Upper+Body') center/cover;"></div>
-                                     <div style="background:#222 url('https://placehold.co/600x400/222/555?text=Movement') center/cover;"></div>
-                                </div>
-                            </div>
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:12px; color:var(--text-secondary); display:block; margin-bottom:8px;">Select an effect</label>
+                    <div class="pill-select justify-between" style="width:100%;">
+                        <div class="flex items-center gap-2">
+                            <img src="https://placehold.co/20" style="border-radius:4px;">
+                            <span>Xmas Match</span>
+                            <span class="hot-tag" style="position:static;">Hot</span>
                         </div>
-                        
-                        <div class="player-controls">
-                            <div class="play-group">
-                                <svg class="play-btn" width="16" height="16" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                00:05 / 00:10
-                            </div>
-                            <div class="control-group">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="action-bar">
-                        <div class="primary-action">
-                            <div class="o1-logo"></div>
-                            Go to O1 to create
-                        </div>
-                        <div class="action-divider"></div>
-                        <div class="secondary-action">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                            Multi-Elements
-                        </div>
-                        <div class="action-divider"></div>
-                        <div class="secondary-action">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            Lip Sync
-                        </div>
-                        <div class="action-divider"></div>
-                        <div class="secondary-action">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
-                            AI Sound
-                        </div>
-
-                        <div class="right-actions">
-                            <svg class="action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
-                            <svg class="action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>
-                            <svg class="action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"></path></svg>
-                            <svg class="action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-                            <svg class="action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                        </div>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
                     </div>
                 </div>
 
-                <div class="toast-notification">
-                    <span>1 Task Completed (1/1)</span>
-                    <a href="#" class="toast-link">
-                        View 
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-                    </a>
+                <div class="upload-box" style="height: 200px; margin-bottom:20px;">
+                    <div class="upload-icon-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></div>
+                    <div style="font-weight:500;">Add an image</div>
+                    <div style="font-size:11px; text-decoration:underline; margin-top:8px;">History</div>
+                </div>
+
+                <div class="tabs-line" style="border:none; gap:10px; flex-wrap:wrap;">
+                    <div class="sub-btn active">All</div>
+                    <div class="sub-btn">Laugh Hype</div>
+                    <div class="sub-btn">Move Groove</div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="grid-card">
+                        <span class="hot-tag">Hot</span>
+                        <img src="https://placehold.co/300x400/111/fff?text=Tree">
+                        <div class="grid-card-title">Xmas Match</div>
+                    </div>
+                    <div class="grid-card">
+                        <span class="hot-tag">Hot</span>
+                        <img src="https://placehold.co/300x400/222/fff?text=Scream">
+                        <div class="grid-card-title">Mind Reader</div>
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <button class="neon-btn" style="width:100%;">Generate</button>
+                </div>
+            </section>
+
+
+            <section class="config-panel hidden" id="panel-tryon">
+                <div class="tabs-line">
+                    <div class="tab-text active">Virtual Model</div>
+                    <div class="tab-text">AI Virtual Try-On</div>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Gender:</label>
+                    <div class="flex gap-2">
+                        <button class="pill-select justify-center" style="flex:1;">Male</button>
+                        <button class="pill-select justify-center" style="flex:1; border-color:var(--text-secondary);">Female</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Age:</label>
+                    <div class="flex gap-2">
+                        <button class="pill-select justify-center" style="flex:1;">Children</button>
+                        <button class="pill-select justify-center" style="flex:1; border-color:var(--text-secondary);">Youth</button>
+                        <button class="pill-select justify-center" style="flex:1;">Elderly</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:24px;">
+                    <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Skin Tone:</label>
+                    <div class="flex gap-4">
+                        <div style="width:32px; height:32px; border-radius:50%; background:#f5d0a9; border:2px solid #fff; cursor:pointer;"></div>
+                        <div style="width:32px; height:32px; border-radius:50%; background:#eac096; cursor:pointer;"></div>
+                        <div style="width:32px; height:32px; border-radius:50%; background:#a97e56; cursor:pointer;"></div>
+                        <div style="width:32px; height:32px; border-radius:50%; background:#5c3e2e; cursor:pointer;"></div>
+                    </div>
+                </div>
+
+                <div class="prompt-container" style="flex:1;">
+                    <textarea placeholder="Describe the model..." style="height:100%;"></textarea>
+                    <div class="prompt-footer">
+                        <span>DeepSeek</span>
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="pill-select">3:4</div>
+                    <div class="pill-select">4 Outputs</div>
+                    <button class="neon-btn" style="flex:1;">Generate</button>
+                </div>
+            </section>
+
+
+            <section class="config-panel hidden" id="panel-avatar">
+                <div class="tabs-line">
+                    <div class="tab-text active">Build Avatar 2.0</div>
+                    <div class="tab-text">Lip Sync</div>
+                </div>
+
+                <div class="flex gap-2 mb-4">
+                     <div style="width:60px; height:60px; border-radius:8px; background:url('https://placehold.co/100') center/cover;"></div>
+                     <div class="flex-col justify-between" style="font-size:12px;">
+                         <div>Build your Avatar with steps</div>
+                         <div class="flex gap-2">
+                             <button class="sub-btn">Avatar Library</button>
+                             <button class="sub-btn">AI Image</button>
+                         </div>
+                     </div>
+                </div>
+
+                <div class="upload-box" style="height: 160px; margin-bottom:20px;">
+                    <div class="upload-icon-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></div>
+                    <div style="font-weight:500;">Upload Image</div>
+                </div>
+
+                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Speech</label>
+                <div class="prompt-container" style="margin-bottom:10px;">
+                    <textarea placeholder="Please input text character to say..." style="min-height:80px;"></textarea>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="pill-select">Professional</div>
+                    <div class="pill-select">1 Output</div>
+                    <button class="neon-btn" style="flex:1;">Generate</button>
+                </div>
+            </section>
+
+
+            <section class="config-panel hidden" id="panel-audio">
+                <div class="tabs-line">
+                    <div class="tab-text active">Text to Audio</div>
+                    <div class="tab-text">Video to Audio</div>
+                </div>
+
+                <div class="prompt-container" style="height:200px; margin-bottom:20px;">
+                    <textarea placeholder="Please enter prompt for sound effects" style="height:100%;"></textarea>
+                    <div class="prompt-footer">
+                        <span>DeepSeek</span>
+                    </div>
+                </div>
+
+                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:10px; display:block;">Recommended Sound Effects:</label>
+                <div class="grid-2" style="gap:8px;">
+                     <div class="pill-select" style="background:#1a1a1d; border:none; justify-content:start;">
+                         <div style="width:20px; height:20px; background:linear-gradient(45deg, #f09, #30f); border-radius:50%;"></div>
+                         <span style="font-size:11px;">Dog Chewing</span>
+                     </div>
+                     <div class="pill-select" style="background:#1a1a1d; border:none; justify-content:start;">
+                         <div style="width:20px; height:20px; background:linear-gradient(45deg, #f09, #30f); border-radius:50%;"></div>
+                         <span style="font-size:11px;">Zippo Lighter</span>
+                     </div>
+                     <div class="pill-select" style="background:#1a1a1d; border:none; justify-content:start;">
+                         <div style="width:20px; height:20px; background:linear-gradient(45deg, #f09, #30f); border-radius:50%;"></div>
+                         <span style="font-size:11px;">Monster Eating</span>
+                     </div>
+                     <div class="pill-select" style="background:#1a1a1d; border:none; justify-content:start;">
+                         <div style="width:20px; height:20px; background:linear-gradient(45deg, #f09, #30f); border-radius:50%;"></div>
+                         <span style="font-size:11px;">Space Echo</span>
+                     </div>
+                     <div class="pill-select" style="background:#1a1a1d; border:none; justify-content:start;">
+                         <div style="width:20px; height:20px; background:linear-gradient(45deg, #f09, #30f); border-radius:50%;"></div>
+                         <span style="font-size:11px;">Racing Crowd</span>
+                     </div>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="pill-select">10s</div>
+                    <div class="pill-select">4 Outputs</div>
+                    <button class="neon-btn" style="flex:1;">Generate</button>
+                </div>
+            </section>
+
+
+            <div class="preview-area">
+                <div class="stage">
+                    <div class="stage-header">
+                        <div class="tag">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line></svg>
+                            Video
+                        </div>
+                        <div class="tag">
+                            <img src="https://placehold.co/16" style="border-radius:2px; margin-right:4px;"> Start
+                        </div>
+                        <div class="tag">Video 2.5 Turbo</div>
+                        <div class="tag">Professional</div>
+                        
+                        <div class="flex gap-2" style="margin-left:auto;">
+                            <div class="tag" style="padding:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></div>
+                            <div class="tag" style="padding:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></div>
+                        </div>
+                    </div>
+
+                    <div style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+                        Make her dance an African Makossa highlife at 120 BPM...
+                    </div>
+
+                    <div class="video-box">
+                        <img src="https://placehold.co/1200x675/111/444?text=Preview+Stage" style="width:100%; height:100%; object-fit:contain;">
+                        <div class="video-overlay">
+                            <div class="flex items-center gap-2" style="font-size:12px; font-weight:600;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                00:05 / 00:10
+                            </div>
+                            <div class="flex gap-2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <div class="action-item" style="color:var(--text-main); font-weight:600;">
+                            <div style="width:16px; height:16px; background:var(--accent-neon); border-radius:50%;"></div>
+                            Go to O1 to create
+                        </div>
+                        <div style="width:1px; height:16px; background:var(--border-base);"></div>
+                        <div class="action-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Multi-Elements</div>
+                        <div style="width:1px; height:16px; background:var(--border-base);"></div>
+                        <div class="action-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg> AI Sound</div>
+                        
+                        <div class="flex gap-4" style="margin-left:auto;">
+                             <svg class="action-item" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                             <svg class="action-item" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>
+                             <svg class="action-item" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                             <svg class="action-item" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </div>
+                    </div>
                 </div>
 
                 <aside class="history-rail">
-                    <div class="history-item"><img src="https://placehold.co/100/3a4/fff"></div>
-                    <div class="history-item"><img src="https://placehold.co/100/456/fff"></div>
-                    <div class="history-item"><img src="https://placehold.co/100/512/fff"></div>
-                    <div class="history-item"><img src="https://placehold.co/100/663/fff"></div>
-                    <div class="history-item active"><img src="https://placehold.co/100/222/fff"></div>
-                    <div class="history-item"><img src="https://placehold.co/100/881/fff"></div>
-                    <div class="history-item"><img src="https://placehold.co/100/222/fff"></div>
-                    <div class="history-item"><img src="https://placehold.co/100/559/fff"></div>
-                    <div class="history-item"><img src="https://placehold.co/100/123/fff"></div>
+                    <div class="hist-thumb"><img src="https://placehold.co/100/111/fff"></div>
+                    <div class="hist-thumb"><img src="https://placehold.co/100/222/fff"></div>
+                    <div class="hist-thumb active"><img src="https://placehold.co/100/333/fff"></div>
+                    <div class="hist-thumb"><img src="https://placehold.co/100/444/fff"></div>
+                    <div class="hist-thumb"><img src="https://placehold.co/100/555/fff"></div>
+                    <div class="hist-thumb"><img src="https://placehold.co/100/666/fff"></div>
                 </aside>
-
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
-        // --- INTERACTIVITY STUBS ---
+        // Mapping Nav IDs to Panel IDs and Titles
+        const navMap = {
+            'nav-video': { panel: 'panel-video', title: 'AI Video Generator', model: 'VIDEO 1.6' },
+            'nav-effects': { panel: 'panel-effects', title: 'Effects', model: 'EFFECTS 1.0' },
+            'nav-tryon': { panel: 'panel-tryon', title: 'AI Virtual Try-On', model: 'MODEL 2.0' },
+            'nav-avatar': { panel: 'panel-avatar', title: 'Avatar 2.0', model: 'AVATAR 2.0' },
+            'nav-audio': { panel: 'panel-audio', title: 'AI Sound Generator', model: 'AUDIO 1.0' },
+            'nav-home': { panel: 'panel-video', title: 'Home', model: 'DASHBOARD' } // Fallback
+        };
 
-        // 1. Sidebar selection
-        const navItems = document.querySelectorAll('.nav-item');
+        const navItems = document.querySelectorAll('.sidebar .nav-item');
+        const panels = document.querySelectorAll('.config-panel');
+        const pageTitle = document.getElementById('page-title');
+        const modelName = document.getElementById('model-name');
+
         navItems.forEach(item => {
             item.addEventListener('click', () => {
+                const navId = item.id;
+                if (!navMap[navId]) return; // ignore non-mapped items
+
+                // 1. Update Sidebar Active State
                 navItems.forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
+
+                // 2. Hide All Panels
+                panels.forEach(p => p.classList.add('hidden'));
+
+                // 3. Show Target Panel
+                const config = navMap[navId];
+                document.getElementById(config.panel).classList.remove('hidden');
+
+                // 4. Update Header Text
+                pageTitle.innerText = config.title;
+                modelName.innerText = config.model;
             });
         });
 
-        // 2. Tab switching
-        const tabs = document.querySelectorAll('.mode-tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
+        // Generate Button Animation Logic
+        const genButtons = document.querySelectorAll('.neon-btn');
+        genButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const original = btn.innerHTML;
+                btn.innerHTML = `<svg class="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg> Generating`;
+                btn.style.opacity = 0.8;
+                setTimeout(() => {
+                    btn.innerHTML = original;
+                    btn.style.opacity = 1;
+                }, 2000);
             });
         });
 
-        // 3. Sub Tabs
-        const subTabs = document.querySelectorAll('.sub-tab');
-        subTabs.forEach(sub => {
-            sub.addEventListener('click', () => {
-                subTabs.forEach(s => s.classList.remove('active'));
-                sub.classList.add('active');
-            });
-        });
-
-        // 4. Promo close
-        document.querySelector('.btn-close-promo').addEventListener('click', function() {
-            this.parentElement.style.display = 'none';
-        });
-
-        // 5. Generate Button Animation
-        document.querySelector('.btn-generate').addEventListener('click', function() {
-            const originalText = this.innerText;
-            this.innerText = "Generating...";
-            this.style.opacity = "0.7";
-            setTimeout(() => {
-                this.innerText = originalText;
-                this.style.opacity = "1";
-                // alert("Task sent to queue!");
-            }, 1500);
-        });
+        // Add Simple Spin Keyframe for JS button
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes spin { 100% { transform: rotate(360deg); } }
+            .animate-spin { animation: spin 1s linear infinite; }
+        `;
+        document.head.appendChild(styleSheet);
     </script>
 </body>
 </html>
