@@ -1968,6 +1968,32 @@ function sendCurrentItemToCinema(){
     GENERATE IMAGE
 </button>
         </div>
+ <div class="assets-actions-row">
+    <div class="assets-view-toggle">
+        <button type="button"
+                class="assets-sidebar-mode-btn active"
+                onclick="setAssetsSidebarMode('grid', this)">
+            Grid
+        </button>
+        <button type="button"
+                class="assets-sidebar-mode-btn"
+                onclick="setAssetsSidebarMode('list', this)">
+            Vertical
+        </button>
+    </div>
+
+    <button
+        type="button"
+        class="btn-ask-sia"
+        onclick="openSiaForField('image-prompt','Image Prompt', 'image')">
+        <span class="sia-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 3.5l1.4 3.3 3.3 1.4-3.3 1.4-1.4 3.3-1.4-3.3-3.3-1.4 3.3-1.4z"/>
+            </svg>
+        </span>
+        <span class="sia-label">Ask SIA before generating Image</span>
+    </button>
+</div>
         
         <!-- VIDEO CONTROLS -->
         <div id="video-controls" style="display:none;">
@@ -2385,41 +2411,6 @@ function sendCurrentItemToCinema(){
 
     </div>
 </div>
-<div id="assets-sidebar-container" style="display:none; flex-direction:column; min-height:400px; height:100%;">
-            
-            <div class="assets-actions-row" style="margin-bottom:12px; flex-shrink: 0;">
-                <div class="assets-view-toggle">
-                    <button type="button"
-                            class="assets-sidebar-mode-btn active"
-                            onclick="setAssetsSidebarMode('grid', this)">
-                        Grid
-                    </button>
-                    <button type="button"
-                            class="assets-sidebar-mode-btn"
-                            onclick="setAssetsSidebarMode('list', this)">
-                        Vertical
-                    </button>
-                </div>
-                
-                <button type="button" class="btn-ask-sia" style="flex:1;"
-                        onclick="openSiaForField('image-prompt','Image Prompt', 'image')">
-                    <span class="sia-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 3.5l1.4 3.3 3.3 1.4-3.3 1.4-1.4 3.3-1.4-3.3-3.3-1.4 3.3-1.4z"/></svg>
-                    </span>
-                    <span class="sia-label">Ask SIA</span>
-                </button>
-            </div>
-
-            <div id="assets-sidebar-list" class="assets-sidebar-list is-grid" 
-                 style="flex:1; overflow-y:auto; display:flex; flex-wrap:wrap; gap:6px; align-content: flex-start;">
-                </div>
-
-            <div id="assets-sidebar-preview" class="assets-sidebar-preview" style="display:none;"></div>
-        </div>
-
-            <div id="assets-sidebar-preview" class="assets-sidebar-preview" style="display:none;">
-                </div>
-        </div>
 
 <!-- MAIN STAGE -->
 <div class="stage">
@@ -2653,32 +2644,29 @@ function switchLab(lab){
     const imageControls     = document.getElementById('image-controls');
     const videoControls     = document.getElementById('video-controls');
     const shortfilmControls = document.getElementById('shortfilm-controls');
-    // NEW: The container for the sidebar thumbnails
-    const assetsContainer   = document.getElementById('assets-sidebar-container');
+    const assetsControls    = document.getElementById('assets-controls');
 
     if (imageControls)     imageControls.style.display     = (lab === 'image')     ? 'block' : 'none';
     if (videoControls)     videoControls.style.display     = (lab === 'video')     ? 'block' : 'none';
     if (shortfilmControls) shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
+    if (assetsControls)    assetsControls.style.display    = (lab === 'assets')    ? 'block' : 'none';
 
-    // Crucial change: Show the assets container ONLY when in assets lab
-    if (assetsContainer) {
-         // Use flex so it fills height correctly per the HTML style added
-        assetsContainer.style.display = (lab === 'assets')    ? 'flex' : 'none';
-    }
-
-    // 5. Always keep the standard gallery layout
+    // 5. Always keep the standard gallery layout; never show the old assets-layout
     const standardLayout = document.getElementById('standard-gallery-layout');
-    if (standardLayout) standardLayout.style.display = 'block';
+    const assetsLayout   = document.getElementById('assets-layout');
 
-    // 6. Populate the content
+    if (standardLayout) standardLayout.style.display = 'block';
+    if (assetsLayout)   assetsLayout.style.display   = 'none';
+
+    // 6. Populate the right-hand gallery
     if (lab === 'assets') {
-        // View mode: render by type (images / videos / films / favorites) to BOTH sidebar and main gallery
+        // View mode: render by type (images / videos / films / favorites)
         if (typeof switchAssetsView === 'function') {
             // Use whatever view was active, default to images
             switchAssetsView(currentAssetsView || 'images');
         }
     } else {
-        // Create mode: normal history behavior (main gallery only)
+        // Create mode: normal history / favorites behaviour
         if (typeof renderHistoryGrid === 'function') {
             currentGalleryTab = 'history';
             renderHistoryGrid();
@@ -2756,44 +2744,49 @@ function closeSidebarPreview() {
 function renderAssetsView() {
     const grid        = document.getElementById('gallery-grid');
     const emptyState  = document.getElementById('empty-state');
-    // Targeting the sidebar list inside the new container
     const sidebarList = document.getElementById('assets-sidebar-list');
+    const label       = document.getElementById('assets-label');
+    const labelSub    = document.getElementById('assets-label-sub');
     const preview     = document.getElementById('assets-sidebar-preview');
 
     if (!grid || !emptyState || !sidebarList || typeof loadHistoryFromStorage !== 'function') {
-        console.warn("Missing DOM elements for My Files view.");
         return;
     }
 
-    // Reset sidebar preview area
+    // Reset sidebar preview + list mode each time
     if (preview) {
         preview.style.display = 'none';
         preview.innerHTML = '';
     }
-
-    // Force sidebar list to be visible
     sidebarList.style.display = 'flex';
     sidebarList.classList.toggle('is-grid', currentAssetsSidebarMode === 'grid');
     sidebarList.classList.toggle('is-list', currentAssetsSidebarMode !== 'grid');
 
-    // Pull data
+    // Pull everything from history / favorites
     const history   = loadHistoryFromStorage() || [];
     const favorites = loadFavoritesFromStorage ? loadFavoritesFromStorage() : [];
 
-    // Filter based on current tab selection
     let filtered = [];
     if (currentAssetsView === 'images') {
         filtered = history.filter(item => item.type === 'image');
+        if (label)     label.textContent = 'My Images';
+        if (labelSub)  labelSub.textContent = 'All images you created in Sulandra Creative Lab';
     } else if (currentAssetsView === 'videos') {
         filtered = history.filter(item => item.type === 'video');
+        if (label)     label.textContent = 'My Videos';
+        if (labelSub)  labelSub.textContent = 'All videos you created in Sulandra Creative Lab';
     } else if (currentAssetsView === 'films') {
-        filtered = history.filter(item => item.type === 'shortfilm' || item.type === 'film');
+        filtered = history.filter(item => item.type === 'film');
+        if (label)     label.textContent = 'My Films';
+        if (labelSub)  labelSub.textContent = 'All short films you created in Sulandra Creative Lab';
     } else if (currentAssetsView === 'favorites') {
         const favIds = new Set(favorites.map(f => f.id));
-        filtered = history.filter(item => favIds.has(item.id) || item.isFavorite);
+        filtered = history.filter(item => favIds.has(item.id));
+        if (label)     label.textContent = 'Favorites';
+        if (labelSub)  labelSub.textContent = 'Images, videos, and films you starred';
     }
 
-    // Clear both containers
+    // Clear old UI
     grid.innerHTML = '';
     sidebarList.innerHTML = '';
 
@@ -2804,28 +2797,23 @@ function renderAssetsView() {
 
     emptyState.style.display = 'none';
 
-    // Loop through filtered items and populate BOTH containers
     filtered.forEach(item => {
-        // --- 1. Populate Main Gallery (Right Side) ---
+        // 1. Fill the big gallery on the right (standard layout)
         addToGallery(item, { saveToHistory: false });
 
-        // --- 2. Populate Sidebar Thumbnail List (Left Side) ---
+        // 2. Add a thumbnail row in the sidebar
         const url   = item.previewUrl || item.url || item.thumbnail || '';
-        const title = item.prompt ? (item.prompt.substring(0, 40) + '...') : (item.displayName || 'Untitled');
+        const title = item.prompt || item.title || item.filename || 'Untitled item';
 
         const row = document.createElement('div');
         row.className = 'assets-sidebar-item';
-        row.title     = item.prompt || title;
+        row.title     = title;
 
-        // Thumbnail image
         const img = document.createElement('img');
         img.className = 'assets-sidebar-thumb';
         img.src       = url;
-        // Fallback for videos without thumbnails
-        if (item.type !== 'image' && !item.thumb && item.url && item.url.endsWith('.mp4')){
-             img.style.backgroundColor = "#000"; // Black placeholder
-        }
-        
+        img.alt       = 'Thumbnail';
+
         const meta = document.createElement('div');
         meta.className = 'assets-sidebar-meta';
         meta.textContent = title;
@@ -2833,8 +2821,8 @@ function renderAssetsView() {
         row.appendChild(img);
         row.appendChild(meta);
 
-        // Click to open main lightbox
-        row.addEventListener('click', () => openLightbox(item.id));
+        // Double-click to open the zoomed preview inside sidebar
+        row.addEventListener('dblclick', () => openSidebarPreview(item));
 
         sidebarList.appendChild(row);
     });
