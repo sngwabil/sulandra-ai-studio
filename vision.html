@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Creative Studio - Full Suite</title>
+    <title>SULANDRA | AI Creative Studio</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,20 +14,20 @@
 
 <style>
 /* ==========================================================================
-   1. CORE VARIABLES & RESET
+   1. GLOBAL THEME VARIABLES
    ========================================================================== */
 :root {
-    /* Theme Colors */
-    --bg-app: #050505;           /* Main App Background */
-    --bg-panel: #09090b;         /* Secondary Panel Background */
-    --bg-card: #101012;          /* Input/Card Background */
+    /* SULANDRA Brand Colors */
+    --bg-app: #050505;           /* Deepest black background */
+    --bg-panel: #09090b;         /* Panel background */
+    --bg-card: #101012;          /* Card background */
     --bg-card-hover: #18181b;    /* Hover State */
     --bg-input: #000000;         /* Deep Black Inputs */
     
     --border-subtle: #1f1f23;
     --border-active: #2f2f35;
     
-    /* The Signature Neon Green */
+    /* Neon Green Accent */
     --accent-neon: #4dff00;
     --accent-dim: rgba(77, 255, 0, 0.12);
     --accent-hover: #5eff1a;
@@ -64,12 +64,12 @@ body {
     height: 100vh;
     width: 100vw;
     display: flex;
-    overflow: hidden;
+    overflow: hidden; /* Prevents whole-page scroll */
     font-size: 13px;
     line-height: 1.5;
 }
 
-/* Custom Scrollbar Styling */
+/* Custom Scrollbar Styling (The "Independent" Look) */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -234,6 +234,9 @@ button, input, textarea, select {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 800;
+    color: var(--accent-neon);
+    font-size: 20px;
 }
 
 .nav-item {
@@ -402,7 +405,7 @@ button, input, textarea, select {
     display: flex;
     flex-direction: column;
     padding: 24px;
-    overflow-y: auto;
+    overflow-y: auto; /* Independent scroll for config */
 }
 
 /* Tab Navigation inside Panels */
@@ -482,7 +485,18 @@ button, input, textarea, select {
     font-size: 11px;
     color: var(--text-muted);
 }
-.deepseek-logo { display: flex; align-items: center; gap: 4px; color: #fff; font-weight: 600; }
+.ask-sia-btn { 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+    color: #fff; 
+    font-weight: 600; 
+    cursor: pointer; 
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+}
+.ask-sia-btn:hover { background: rgba(255,255,255,0.1); }
 
 /* Promo Banners */
 .promo-banner {
@@ -548,13 +562,14 @@ button, input, textarea, select {
 }
 
 /* ==========================================================================
-   5. RIGHT PREVIEW STAGE
+   5. RIGHT PREVIEW STAGE (The "Independent Scroll" Area)
    ========================================================================== */
 .stage-area {
     background: var(--bg-panel);
     display: flex;
     position: relative;
     flex: 1;
+    overflow: hidden; /* Container doesn't scroll, content does */
 }
 
 .stage-content {
@@ -562,7 +577,8 @@ button, input, textarea, select {
     display: flex;
     flex-direction: column;
     padding: 30px;
-    overflow-y: auto;
+    overflow-y: auto; /* THIS IS THE INDEPENDENT SCROLL */
+    height: 100%;
 }
 
 /* Metadata Tags above Video */
@@ -571,6 +587,7 @@ button, input, textarea, select {
     align-items: center;
     gap: 10px;
     margin-bottom: 16px;
+    flex-shrink: 0;
 }
 .meta-tag {
     background: var(--bg-card);
@@ -598,6 +615,7 @@ button, input, textarea, select {
     align-items: center;
     justify-content: center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    flex-shrink: 0;
 }
 
 .player-overlay {
@@ -616,11 +634,13 @@ button, input, textarea, select {
 /* Action Bar Below Player */
 .action-bar {
     margin-top: 20px;
+    margin-bottom: 40px;
     display: flex;
     align-items: center;
     gap: 20px;
     font-size: 12px;
     color: var(--text-secondary);
+    flex-shrink: 0;
 }
 .action-link {
     display: flex;
@@ -632,6 +652,47 @@ button, input, textarea, select {
 .action-link:hover { color: #fff; }
 .divider-v { width: 1px; height: 14px; background: var(--border-subtle); }
 
+/* === NEW: CONTINUOUS SCROLL FEED (Recent Generations) === */
+.feed-header {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.feed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding-bottom: 40px;
+}
+
+.feed-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.feed-card:hover { border-color: var(--text-secondary); }
+.feed-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #111;
+    position: relative;
+}
+.feed-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.feed-meta {
+    padding: 10px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+
 /* Right History Rail */
 .history-rail {
     width: var(--history-width);
@@ -641,7 +702,8 @@ button, input, textarea, select {
     flex-direction: column;
     gap: 12px;
     padding: 16px 12px;
-    overflow-y: auto;
+    overflow-y: auto; /* Independent Scroll */
+    flex-shrink: 0;
 }
 .history-thumb {
     width: 100%;
@@ -665,9 +727,7 @@ button, input, textarea, select {
 
     <aside class="sidebar">
         <div class="brand-logo">
-            <div class="brand-logo-inner">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent-neon)"><path d="M21 12l-9-9-9 9 9 9 9-9z"/></svg>
-            </div>
+            <div class="brand-logo-inner">S</div>
         </div>
 
         <div class="nav-item" title="Home">
@@ -750,7 +810,7 @@ button, input, textarea, select {
                 </div>
 
                 <div class="promo-banner">
-                    <span>Go to Kling O1 for the latest video editing features. <a href="#" class="promo-link">Try Now</a></span>
+                    <span>Go to SULANDRA O1 for the latest video editing features. <a href="#" class="promo-link">Try Now</a></span>
                     <div class="close-promo">×</div>
                 </div>
 
@@ -777,10 +837,10 @@ button, input, textarea, select {
                 <div class="prompt-box">
                     <textarea placeholder="swap [x] from [Image] for [x] from [Video]">swap [x] from [Image] for [x] from [Video]</textarea>
                     <div class="prompt-footer">
-                         <span>swap [x] from [Image] for [x] from [Video]</span>
-                         <div class="deepseek-logo">
+                         <span>Detailed instructions...</span>
+                         <div class="ask-sia-btn">
                              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-                             DeepSeek
+                             Ask SIA
                          </div>
                     </div>
                 </div>
@@ -810,7 +870,7 @@ button, input, textarea, select {
                 <div class="prompt-box" style="height:120px;">
                     <textarea placeholder="Enter your prompt for restyle. For example: restyle to Japanese anime style"></textarea>
                     <div class="prompt-footer" style="justify-content:flex-end;">
-                         <div class="deepseek-logo">DeepSeek</div>
+                         <div class="ask-sia-btn">Ask SIA</div>
                     </div>
                 </div>
 
@@ -916,7 +976,7 @@ button, input, textarea, select {
                 <div class="prompt-box" style="flex:1;">
                     <textarea placeholder="Describe the model..."></textarea>
                     <div class="prompt-footer">
-                        <span>AI Virtual Try-On Generator</span>
+                        <div class="ask-sia-btn">Ask SIA</div>
                     </div>
                 </div>
 
@@ -978,7 +1038,7 @@ button, input, textarea, select {
                 <div class="prompt-box" style="height:200px; margin-bottom:20px;">
                     <textarea placeholder="Please enter prompt for sound effects"></textarea>
                     <div class="prompt-footer">
-                        <span>DeepSeek</span>
+                        <div class="ask-sia-btn">Ask SIA</div>
                     </div>
                 </div>
 
@@ -1053,7 +1113,7 @@ button, input, textarea, select {
                     <div class="action-bar">
                         <div class="action-link" style="color:var(--text-primary); font-weight:600;">
                             <div style="width:16px; height:16px; background:var(--accent-neon); border-radius:50%;"></div>
-                            Go to O1 to create
+                            Go to SULANDRA O1 to create
                         </div>
                         <div class="divider-v"></div>
                         <div class="action-link"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Multi-Elements</div>
@@ -1061,6 +1121,55 @@ button, input, textarea, select {
                         <div class="action-link"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> Lip Sync</div>
                         <div class="divider-v"></div>
                         <div class="action-link"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg> AI Sound</div>
+                    </div>
+
+                    <div class="feed-header">Recent Creations</div>
+                    <div class="feed-grid">
+                        <div class="feed-card">
+                            <div class="feed-thumb">
+                                <img src="https://placehold.co/400x225/222/555?text=Creation+1">
+                            </div>
+                            <div class="feed-meta">
+                                <span>Video 1.6</span>
+                                <span>00:05</span>
+                            </div>
+                        </div>
+                        <div class="feed-card">
+                            <div class="feed-thumb">
+                                <img src="https://placehold.co/400x225/222/555?text=Creation+2">
+                            </div>
+                            <div class="feed-meta">
+                                <span>Video 1.6</span>
+                                <span>00:10</span>
+                            </div>
+                        </div>
+                        <div class="feed-card">
+                            <div class="feed-thumb">
+                                <img src="https://placehold.co/400x225/222/555?text=Creation+3">
+                            </div>
+                            <div class="feed-meta">
+                                <span>Video 1.6</span>
+                                <span>00:05</span>
+                            </div>
+                        </div>
+                        <div class="feed-card">
+                            <div class="feed-thumb">
+                                <img src="https://placehold.co/400x225/222/555?text=Creation+4">
+                            </div>
+                            <div class="feed-meta">
+                                <span>Video 1.6</span>
+                                <span>00:08</span>
+                            </div>
+                        </div>
+                        <div class="feed-card">
+                            <div class="feed-thumb">
+                                <img src="https://placehold.co/400x225/222/555?text=Creation+5">
+                            </div>
+                            <div class="feed-meta">
+                                <span>Video 1.6</span>
+                                <span>00:12</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1071,6 +1180,9 @@ button, input, textarea, select {
                     <div class="history-thumb active"><img src="https://placehold.co/100/444/fff"></div>
                     <div class="history-thumb"><img src="https://placehold.co/100/555/fff"></div>
                     <div class="history-thumb"><img src="https://placehold.co/100/666/fff"></div>
+                    <div class="history-thumb"><img src="https://placehold.co/100/111/fff"></div>
+                    <div class="history-thumb"><img src="https://placehold.co/100/222/fff"></div>
+                    <div class="history-thumb"><img src="https://placehold.co/100/333/fff"></div>
                 </aside>
             </div>
 
