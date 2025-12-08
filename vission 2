@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>AI Image Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
+<style>
+:root {
+    /* THEME: Matte Black & Mint Green (From Screenshot) */
+    --bg-root: #010203;
+    --bg-surface: #050609;
+    --bg-element: #0b0d12;
+    --bg-input: #080a0f;
+
+    --border-subtle: #1a1d26;
+    --border-active: #2d3342;
+
+    --accent-primary: #10b981; /* Mint Green */
+    --accent-glow: rgba(16, 185, 129, 0.4);
+    --accent-soft: rgba(16, 185, 129, 0.1);
+
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --text-muted: #475569;
+
+    --nav-width: 72px;
+    --topbar-height: 68px;
+    --radius-card: 20px;
+    --radius-md: 12px;
+    --radius-pill: 99px;
+    
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-family: "Inter", system-ui, sans-serif;
+    background: var(--bg-root);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden; /* App-feel */
+}
+
+/* ===================== LEFT NAV ===================== */
+.nav-rail {
+    width: var(--nav-width);
+    background: var(--bg-root);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    gap: 16px;
+    z-index: 40;
+}
+
+.nav-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    color: #000;
+    font-weight: 700;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.nav-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    color: var(--text-secondary);
+}
+
+.nav-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.nav-btn:hover {
+    background: #1e293b;
+    color: #fff;
+}
+
+.nav-btn.active {
+    background: #111827;
+    color: var(--accent-primary);
+    border: 1px solid #1f2937;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+.nav-bottom {
+    margin-top: auto;
+    padding-bottom: 20px;
+}
+
+.nav-sale-pill {
+    font-size: 10px;
+    color: #000;
+    background: var(--accent-primary);
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* ===================== APP SHELL ===================== */
+.app-shell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-root);
+    overflow: hidden;
+}
+
+.topbar {
+    height: var(--topbar-height);
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-root);
+    border-bottom: 1px solid transparent;
+    flex-shrink: 0;
+}
+
+.topbar-title-main {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar-title-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* Model Dropdown matches screenshot */
+.model-selector {
+    background: #0f1116;
+    border: 1px solid #1f2937;
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.model-selector select {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.credits-pill {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: #0b0d12;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.credits-pill .value { color: #fff; font-weight: 700; }
+
+.user-chip {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 4px 6px 16px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+.user-avatar {
+    width: 24px;
+    height: 14px; /* pill shape dot */
+    background: var(--accent-primary);
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* ===================== MAIN GRID ===================== */
+.main-layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 20px;
+    padding: 10px 30px 30px 10px;
+    overflow: hidden;
+}
+
+/* LEFT PANEL (SCROLLABLE) */
+.panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Custom Scrollbar */
+.panel::-webkit-scrollbar { width: 6px; }
+.panel::-webkit-scrollbar-track { background: transparent; }
+.panel::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+
+.gen-header { margin-bottom: 20px; }
+.gen-title-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.gen-title-main {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+/* MODE TABS - PILL STYLE */
+.mode-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+}
+.mode-toggle button {
+    flex: 1;
+    background: #0b0d12;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.mode-toggle button:first-child { border-radius: 20px 0 0 20px; border-right: none; }
+.mode-toggle button:not(:first-child):not(:last-child) { border-radius: 0; border-right: none; }
+.mode-toggle button:last-child { border-radius: 0 20px 20px 0; }
+
+.mode-toggle button.active {
+    background: var(--accent-soft);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+    z-index: 2;
+}
+
+/* INPUTS */
+.group-label { display: none; /* Hidden to match clean screenshot look */ }
+.input-block { margin-bottom: 20px; }
+.input-row-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+.input-hint { color: var(--text-muted); }
+
+textarea, input[type="text"], input[type="number"] {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    color: #fff;
+    padding: 12px;
+    font-size: 13px;
+    font-family: "Inter", sans-serif;
+    outline: none;
+    transition: 0.2s;
+}
+textarea:focus { border-color: #334155; background: #0b0d12; }
+textarea { min-height: 120px; resize: vertical; }
+
+/* PROMPT AREA WRAPPER */
+.prompt-area { border: none; background: transparent; padding: 0; }
+.prompt-area textarea { min-height: 120px; }
+.prompt-footer { margin-top: 6px; font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; }
+.prompt-helper-link { color: var(--accent-primary); cursor: pointer; }
+
+/* UPLOAD CARDS (THE DASHED BOXES) */
+.upload-card {
+    border: 1px dashed var(--border-active);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 24px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    position: relative;
+    transition: 0.2s;
+    text-align: center;
+}
+.upload-card:hover { border-color: var(--text-secondary); background: rgba(255, 255, 255, 0.04); }
+.upload-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+.upload-sub { font-size: 11px; color: var(--text-muted); }
+.upload-card input[type="file"] { opacity: 0; position: absolute; inset: 0; cursor: pointer; }
+
+/* CHIPS */
+.chip-row, .hints-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.chip {
+    background: #0b0d12;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.chip:hover { color: #fff; border-color: var(--text-secondary); }
+
+/* FOOTER CONTROLS */
+.gen-footer-controls {
+    margin-top: auto;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.gen-footer-controls select {
+    width: auto;
+    min-width: 80px;
+    background: #0b0d12;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.btn-generate {
+    width: 100%;
+    margin-top: 12px;
+    background: var(--accent-primary);
+    color: #000;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    transition: 0.2s;
+}
+.btn-generate:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+}
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ===================== RIGHT PANEL ===================== */
+.panel-right {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--bg-surface);
+    border-radius: 24px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    position: relative;
+}
+
+.preview-topbar {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Filter Pills */
+.preview-filters { display: flex; gap: 8px; }
+.preview-filters button {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+.preview-filters button.active {
+    background: var(--accent-primary);
+    color: #000;
+}
+.preview-filters button:hover:not(.active) { color: #fff; }
+
+.search-input {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: right;
+    outline: none;
+    padding: 6px;
+    width: 120px;
+}
+.btn-assets {
+    background: #111827;
+    border: 1px solid #1f2937;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* MAIN STAGE */
+.preview-main {
+    flex: 1;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    position: relative;
+}
+
+.preview-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    padding: 20px;
+}
+
+.preview-media {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+}
+
+.preview-placeholder {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.6;
+}
+.preview-placeholder strong { color: var(--text-secondary); }
+
+.preview-controls-row {
+    position: absolute;
+    bottom: 20px;
+    left: 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+/* FEED (Hidden by default or below stage in old code, now overlay or bottom) 
+   We keep the logic but style it to fit the "clean" look. 
+   In this design, let's put the feed at the bottom like a filmstrip. */
+.preview-feed {
+    height: 120px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+}
+.feed-row-title {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+.feed-grid {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+.feed-grid::-webkit-scrollbar { height: 4px; }
+.feed-grid::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+.feed-card {
+    min-width: 100px;
+    width: 100px;
+    height: 70px;
+    border-radius: 8px;
+    background: #000;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.feed-thumb { width: 100%; height: 100%; }
+.feed-thumb img, .feed-thumb video { width: 100%; height: 100%; object-fit: cover; }
+.feed-meta { display: none; /* Hide meta for clean filmstrip look */ }
+
+/* HIDE THUMB RAIL (Old Sidebar) */
+.thumb-rail { display: none; }
+
+/* LIGHTBOX */
+.lightbox-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 100;
+    display: none;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(5px);
+}
+.lightbox-backdrop.active { display: flex; }
+.lightbox {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    width: 90vw; max-width: 1000px;
+    height: 85vh;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    overflow: hidden;
+}
+.lightbox-media { background: #000; display: flex; align-items: center; justify-content: center; }
+.lightbox-media img, .lightbox-media video { max-width: 100%; max-height: 100%; }
+.lightbox-info { padding: 20px; display: flex; flex-direction: column; gap: 15px; border-left: 1px solid var(--border-subtle); }
+.lightbox-title { color: #fff; font-weight: 600; }
+.lightbox-actions button {
+    display: block; width: 100%; margin-bottom: 8px;
+    padding: 8px; background: #1e293b; border: none; color: #fff; border-radius: 6px; cursor: pointer;
+}
+.lightbox-actions button.danger { background: #7f1d1d; color: #fca5a5; }
+
+/* Responsive */
+@media (max-width: 1000px) {
+    .main-layout { grid-template-columns: 1fr; overflow-y: auto; }
+    .panel { overflow-y: visible; height: auto; padding-right: 0; margin-bottom: 20px; }
+    .nav-rail { display: none; }
+    .app-shell { margin-left: 0; }
+    .lightbox { grid-template-columns: 1fr; }
+    .lightbox-info { display: none; }
+}
+</style>
+</head>
+<body>
+
+    <nav class="nav-rail">
+        <div class="nav-logo">S</div>
+        <button class="nav-btn" title="Home"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></button>
+        <button class="nav-btn" title="Gallery"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
+        <button class="nav-btn" title="Settings"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></button>
+        <button class="nav-btn active" title="Generator"><svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg></button>
+        
+        <div class="nav-bottom">
+            <div class="nav-sale-pill">SALE<br>50%</div>
+        </div>
+    </nav>
+
+    <div class="app-shell">
+        <header class="topbar">
+            <div>
+                <div class="topbar-title-main" id="lab-title">
+                    AI Image Generator
+                    <div class="model-selector">
+                        <span>Model</span>
+                        <select id="model-select">
+                            <option>IMAGE 2.1</option>
+                            <option>IMAGE 2.0</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="topbar-title-sub">Text to Image · Image Reference · Restyle</div>
+            </div>
+
+            <div style="display:flex; gap:16px; align-items:center;">
+                <div class="credits-pill">
+                    Credits <span class="value" id="credits-value">691</span> / day
+                </div>
+                <div class="user-chip">
+                    <span>Signed in</span>
+                    <div class="user-avatar"></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-layout">
+            <section class="panel">
+                <div class="gen-header">
+                    <div class="gen-title-label">MODE</div>
+                    <div class="gen-title-main" id="mode-title">Text to Image</div>
+                </div>
+
+                <div class="mode-toggle" id="mode-tabs-image">
+                    <button type="button" class="active" data-imagemode="text" onclick="setImageMode('text')">Text to Image</button>
+                    <button type="button" data-imagemode="ref" onclick="setImageMode('ref')">Image Reference</button>
+                    <button type="button" data-imagemode="restyle" onclick="setImageMode('restyle')">Restyle</button>
+                </div>
+                <div class="mode-toggle" id="mode-tabs-video" style="display: none">
+                    <button type="button" class="active" data-videomode="text" onclick="setVideoMode('text')">Text to Video</button>
+                    <button type="button" data-videomode="img2vid" onclick="setVideoMode('img2vid')">Image to Video</button>
+                    <button type="button" data-videomode="elements" onclick="setVideoMode('elements')">Elements</button>
+                    <button type="button" data-videomode="multi" onclick="setVideoMode('multi')">Multi-Elements</button>
+                </div>
+
+                <div class="gen-body" id="gen-body">
+                    
+                    <div id="block-image-text">
+                        <div class="input-block">
+                            <div class="prompt-area">
+                                <textarea id="prompt" placeholder="Please describe your creative idea for the image..."></textarea>
+                                <div class="prompt-footer">
+                                    <span>Describe subject, lighting, camera...</span>
+                                    <span class="prompt-helper-link" onclick="askSiaForPrompt()">Let SIA write it</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-block">
+                            <div class="input-row-label">
+                                <span>Negative prompt</span>
+                                <span class="input-hint">Optional</span>
+                            </div>
+                            <textarea id="negative" placeholder="blurry, low quality..." style="min-height: 80px;"></textarea>
+                            <div class="hints-row">
+                                <button type="button" class="chip" onclick="appendNegative('blurry')">blurry</button>
+                                <button type="button" class="chip" onclick="appendNegative('low res')">low res</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="block-image-ref" style="display: none">
+                        <div class="input-block" style="display:flex; gap:10px;">
+                            <div class="upload-card" id="upload-ref-main" style="flex:1">
+                                <div class="upload-icon">+</div>
+                                <div style="color:#fff; font-weight:500">Subject Ref</div>
+                                <div class="upload-sub">Upload image</div>
+                                <input type="file" accept="image/*" onchange="onRefUpload(event, 'subject')" />
+                            </div>
+                            <div class="upload-card" id="upload-ref-face" style="flex:1">
+                                <div class="upload-icon">+</div>
+                                <div style="color:#fff; font-weight:500">Face Ref</div>
+                                <div class="upload-sub">Optional</div>
+                                <input type="file" accept="image/*" onchange="onRefUpload(event, 'face')" />
+                            </div>
+                        </div>
+                        <div class="input-block">
+                            <div class="input-row-label"><span>Prompt</span> <span class="input-hint">Required</span></div>
+                            <textarea id="prompt-ref" placeholder="Describe how to use the reference..."></textarea>
+                        </div>
+                    </div>
+
+                    <div id="block-image-restyle" style="display: none">
+                        <div class="input-block">
+                            <div class="upload-card" id="upload-restyle">
+                                <div class="upload-icon">+</div>
+                                <div style="color:#fff; font-size:15px; font-weight:500">Add image to restyle</div>
+                                <div class="upload-sub">History · choose any previous image</div>
+                                <input type="file" accept="image/*" onchange="onRestyleUpload(event)" />
+                            </div>
+                        </div>
+                        <div class="input-block">
+                            <div class="input-row-label"><span>Restyle prompt</span> <span class="input-hint">Required</span></div>
+                            <textarea id="prompt-restyle" placeholder="For example: restyle to Japanese anime, cinematic film still, oil painting..."></textarea>
+                        </div>
+                    </div>
+
+                    <div id="block-video-text" style="display:none"><textarea id="prompt-video" placeholder="Video prompt..."></textarea></div>
+                    <div id="block-video-img2vid" style="display:none"><div class="upload-card"><input type="file" onchange="onVideoImgUpload(event)"></div><textarea id="prompt-video-img"></textarea></div>
+                    <div id="block-video-elements" style="display:none"><div class="upload-card"><input type="file" multiple onchange="onVideoElementsUpload(event)"></div><textarea id="prompt-video-elements"></textarea></div>
+                    <div id="block-video-multi" style="display:none"><div class="upload-card"><input type="file" onchange="onVideoEditUpload(event)"></div><textarea id="prompt-video-multi"></textarea></div>
+
+                </div>
+
+                <div class="gen-footer-controls">
+                    <select id="aspect-select"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option></select>
+                    <select id="duration-select"><option value="image">Image</option><option value="5s">5s</option><option value="10s" selected>10s</option></select>
+                    <select id="outputs-select"><option value="4">4 Outputs</option><option value="2">2 Outputs</option><option value="1">1 Output</option></select>
+                    <select id="quality-select"><option value="standard">Standard</option><option value="high">High-Res</option></select>
+
+                    <button type="button" class="btn-generate" id="generate-btn" onclick="handleGenerate()">Generate</button>
+                </div>
+            </section>
+
+            <section class="panel-right">
+                <div class="preview-topbar">
+                    <div class="preview-filters" id="preview-filters">
+                        <button type="button" class="active" data-filter="all" onclick="setPreviewFilter('all')">All</button>
+                        <button type="button" data-filter="image" onclick="setPreviewFilter('image')">Images</button>
+                        <button type="button" data-filter="video" onclick="setPreviewFilter('video')">Videos</button>
+                        <button type="button" data-filter="fav" onclick="setPreviewFilter('fav')">Favorites</button>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <input type="text" class="search-input" placeholder="Search history" oninput="setSearchTerm(this.value)" />
+                        <button type="button" class="btn-assets" onclick="openAssetsFromTop()">Assets</button>
+                    </div>
+                </div>
+
+                <div class="preview-main">
+                    <div class="preview-stage">
+                        <div class="preview-placeholder" id="preview-placeholder">
+                            Generate or upload an image / video.<br><br>
+                            <strong>Every output will appear here.</strong>
+                        </div>
+                        <img id="preview-image" class="preview-media" alt="Preview" />
+                        <video id="preview-video" class="preview-media" controls></video>
+
+                        <div class="preview-controls-row" id="preview-info">
+                            <span id="preview-kind">Idle</span> · <span id="preview-meta">Ready</span>
+                        </div>
+                    </div>
+
+                    <div class="preview-feed">
+                        <div class="feed-row-title">
+                            <span>Recent results</span>
+                            <span id="feed-count">0 items</span>
+                        </div>
+                        <div class="feed-grid" id="feed-grid">
+                            </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="lightbox-backdrop" id="lightbox-backdrop" onclick="if(event.target.id==='lightbox-backdrop') closeLightbox();">
+        <div class="lightbox">
+            <div class="lightbox-media">
+                <img id="lb-image" style="display: none" />
+                <video id="lb-video" controls style="display: none"></video>
+            </div>
+            <div class="lightbox-info">
+                <div>
+                    <div class="lightbox-title" id="lb-title"></div>
+                    <div class="lightbox-sub" id="lb-sub" style="color:var(--text-muted); font-size:12px;"></div>
+                </div>
+                <div class="lightbox-actions">
+                    <button type="button" onclick="downloadCurrent()">Download</button>
+                    <button type="button" onclick="recreateCurrent()">Recreate</button>
+                    <button type="button" class="danger" onclick="deleteCurrentAsset()">Delete</button>
+                </div>
+                <div class="lightbox-prompt" id="lb-prompt" style="font-size:12px; color:var(--text-secondary); margin-top:auto;"></div>
+                <button onclick="closeLightbox()" style="background:transparent; border:1px solid #333; color:#fff; padding:8px; border-radius:8px; cursor:pointer;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // STATE
+        // ================================================================
+        const state = {
+            lab: "image", // 'image' | 'video'
+            imageMode: "text", // 'text' | 'ref' | 'restyle'
+            videoMode: "text", // 'text' | 'img2vid' | 'elements' | 'multi'
+            assets: [], // all outputs + uploads
+            nextId: 1,
+            previewFilter: "all",
+            searchTerm: "",
+            previewId: null,
+            lightboxId: null
+        };
+
+        // ================================================================
+        // MODE SWITCHING
+        // ================================================================
+        function setLab(lab) {
+            state.lab = lab;
+        }
+
+        function setImageMode(mode) {
+            state.imageMode = mode;
+            document.getElementById("mode-title").innerText =
+                mode === "text" ? "Text to Image" : mode === "ref" ? "Image Reference" : "Restyle";
+
+            // show blocks
+            document.getElementById("block-image-text").style.display = mode === "text" ? "block" : "none";
+            document.getElementById("block-image-ref").style.display = mode === "ref" ? "block" : "none";
+            document.getElementById("block-image-restyle").style.display = mode === "restyle" ? "block" : "none";
+
+            document.getElementById("block-video-text").style.display = "none";
+            document.getElementById("block-video-img2vid").style.display = "none";
+            document.getElementById("block-video-elements").style.display = "none";
+            document.getElementById("block-video-multi").style.display = "none";
+
+            document.querySelectorAll("#mode-tabs-image button")
+                .forEach((b) => b.classList.toggle("active", b.dataset.imagemode === mode));
+        }
+
+        function setVideoMode(mode) {
+            state.videoMode = mode;
+            // ... video logic stubs ...
+            document.getElementById("block-image-text").style.display = "none";
+            document.getElementById("block-image-ref").style.display = "none";
+            document.getElementById("block-image-restyle").style.display = "none";
+
+            document.getElementById("block-video-text").style.display = mode === "text" ? "block" : "none";
+            document.getElementById("block-video-img2vid").style.display = mode === "img2vid" ? "block" : "none";
+            document.getElementById("block-video-elements").style.display = mode === "elements" ? "block" : "none";
+            document.getElementById("block-video-multi").style.display = mode === "multi" ? "block" : "none";
+
+            document.querySelectorAll("#mode-tabs-video button")
+                .forEach((b) => b.classList.toggle("active", b.dataset.videomode === mode));
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            setImageMode("text"); // default to text
+            renderFeed();
+        });
+
+        // ================================================================
+        // HELPERS
+        // ================================================================
+        function appendNegative(text) {
+            const field = document.getElementById("negative");
+            if (!field) return;
+            if (!field.value) field.value = text;
+            else if (!field.value.includes(text)) field.value += ", " + text;
+        }
+
+        function askSiaForPrompt() {
+            alert("AI Prompt Assistant Triggered");
+        }
+
+        // ================================================================
+        // UPLOAD STUB HANDLERS
+        // ================================================================
+        function onRefUpload(event, slot) {
+            if (!event.target.files?.length) return;
+            alert("Loaded " + slot + ": " + event.target.files[0].name);
+        }
+
+        function onRestyleUpload(e) {
+            if (!e.target.files?.length) return;
+            // logic to show preview of uploaded file in the box could go here
+            alert("Restyle image selected: " + e.target.files[0].name);
+        }
+        
+        // Video stubs
+        function onVideoImgUpload(e) { alert("Video start frame: " + e.target.files[0].name); }
+        function onVideoElementsUpload(e) { alert("Elements: " + e.target.files.length); }
+        function onVideoEditUpload(e) { alert("Video to edit: " + e.target.files[0].name); }
+
+        function openAssetsFromTop() { alert("Opening Assets Library..."); }
+
+        // ================================================================
+        // GENERATE
+        // ================================================================
+        function handleGenerate() {
+            const lab = state.lab; 
+            const isVideo = document.getElementById("duration-select").value !== "image";
+
+            // Find active prompt
+            let promptId = "prompt";
+            if(lab === "image") {
+                if(state.imageMode === "ref") promptId = "prompt-ref";
+                if(state.imageMode === "restyle") promptId = "prompt-restyle";
+            } else {
+                promptId = "prompt-video";
+            }
+
+            const prompt = (document.getElementById(promptId) || {}).value || "";
+            if (!prompt.trim()) {
+                alert("Please enter a prompt first.");
+                return;
+            }
+
+            const count = parseInt(document.getElementById("outputs-select").value, 10);
+            const aspect = document.getElementById("aspect-select").value;
+            const quality = document.getElementById("quality-select").value;
+            const duration = document.getElementById("duration-select").value;
+
+            const generateBtn = document.getElementById("generate-btn");
+            generateBtn.disabled = true;
+            generateBtn.innerText = "Generating...";
+            
+            document.getElementById("preview-kind").innerText = "Generating...";
+            document.getElementById("preview-meta").innerText = "Please wait";
+
+            // Simulate API call
+            setTimeout(() => {
+                for (let i = 0; i < count; i++) {
+                    const id = "asset-" + state.nextId++;
+                    const kind = isVideo ? "video" : "image";
+                    // Placeholders
+                    const url = kind === "image"
+                        ? "https://placehold.co/800x1200/10b981/ffffff?text=Generated+Image"
+                        : "https://placehold.co/1280x720/10b981/ffffff?text=Generated+Video";
+
+                    state.assets.unshift({
+                        id, kind, createdAt: new Date().toLocaleString(),
+                        prompt, mode: lab === "image" ? state.imageMode : state.videoMode,
+                        aspect, quality, duration, url,
+                        favorite: false
+                    });
+                    state.previewId = id;
+                }
+
+                generateBtn.disabled = false;
+                generateBtn.innerText = "Generate";
+                updatePreviewFromCurrent();
+                renderFeed();
+            }, 1000);
+        }
+
+        // ================================================================
+        // PREVIEW + FEED
+        // ================================================================
+        function updatePreviewFromCurrent() {
+            const asset = state.assets.find((a) => a.id === state.previewId);
+            const placeholder = document.getElementById("preview-placeholder");
+            const img = document.getElementById("preview-image");
+            const video = document.getElementById("preview-video");
+
+            if (!asset) {
+                placeholder.style.display = "block";
+                img.style.display = "none";
+                video.style.display = "none";
+                document.getElementById("preview-kind").innerText = "Idle";
+                return;
+            }
+
+            placeholder.style.display = "none";
+
+            if (asset.kind === "image") {
+                img.src = asset.url;
+                img.style.display = "block";
+                video.style.display = "none";
+            } else {
+                video.src = asset.url;
+                video.style.display = "block";
+                img.style.display = "none";
+            }
+
+            document.getElementById("preview-kind").innerText = asset.kind === "image" ? "Image" : "Video";
+            document.getElementById("preview-meta").innerText = asset.aspect + " · " + asset.mode.toUpperCase();
+        }
+
+        function setPreviewFilter(filter) {
+            state.previewFilter = filter;
+            document.querySelectorAll("#preview-filters button").forEach((b) =>
+                    b.classList.toggle("active", b.dataset.filter === filter));
+            renderFeed();
+        }
+
+        function setSearchTerm(text) {
+            state.searchTerm = text.trim().toLowerCase();
+            renderFeed();
+        }
+
+        function renderFeed() {
+            const grid = document.getElementById("feed-grid");
+            const assets = state.assets.filter(a => {
+                if (state.previewFilter === "image" && a.kind !== "image") return false;
+                if (state.previewFilter === "video" && a.kind !== "video") return false;
+                if (state.previewFilter === "fav" && !a.favorite) return false;
+                return true;
+            });
+            
+            grid.innerHTML = "";
+            document.getElementById("feed-count").innerText = assets.length + " items";
+
+            assets.forEach((asset) => {
+                const card = document.createElement("div");
+                card.className = "feed-card";
+                card.style.borderColor = asset.id === state.previewId ? "var(--accent-primary)" : "var(--border-subtle)";
+                card.onclick = () => {
+                    state.previewId = asset.id;
+                    updatePreviewFromCurrent();
+                    renderFeed(); // re-render to update border
+                };
+
+                const thumb = document.createElement("div");
+                thumb.className = "feed-thumb";
+                if (asset.kind === "image") {
+                    const img = document.createElement("img");
+                    img.src = asset.url;
+                    thumb.appendChild(img);
+                } else {
+                    const video = document.createElement("video");
+                    video.src = asset.url;
+                    video.muted = true;
+                    thumb.appendChild(video);
+                }
+                card.appendChild(thumb);
+                grid.appendChild(card);
+            });
+        }
+
+        // ================================================================
+        // LIGHTBOX
+        // ================================================================
+        function openLightbox(id) { /* ... stub or wire up to card click double tap ... */ }
+        function closeLightbox() { document.getElementById("lightbox-backdrop").classList.remove("active"); }
+        function downloadCurrent() { alert("Downloading..."); }
+        function recreateCurrent() { alert("Recreating..."); }
+        function deleteCurrentAsset() { 
+            if(!confirm("Delete?")) return;
+            state.assets = state.assets.filter(a => a.id !== state.previewId);
+            state.previewId = null;
+            updatePreviewFromCurrent();
+            renderFeed();
+            closeLightbox();
+        }
+
+    </script>
+</body>
+</html>
