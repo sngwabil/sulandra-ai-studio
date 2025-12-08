@@ -1,283 +1,366 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sulandra Creative Lab · Professional</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sulandra Creative Lab · Professional Suite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* -------------------------------------------------------------------------- */
-/* THEME: "VOID & GLASS" (Professional AI Tool Look)                          */
+/* 1. DESIGN TOKENS (KLING AI / RUNWAY STYLE)                                 */
 /* -------------------------------------------------------------------------- */
 :root {
-    --bg-app: #09090b;       /* Deepest Void */
-    --bg-panel: #101012;     /* Panel Background */
-    --bg-element: #18181b;   /* Input Background */
-    --bg-hover: #27272a;     /* Hover State */
+    /* Base Backgrounds - Deep Void Theme */
+    --bg-app: #050505;        /* Main background */
+    --bg-panel: #0a0a0a;      /* Sidebars */
+    --bg-surface: #121212;    /* Cards/Inputs */
+    --bg-surface-hover: #1a1a1a;
     
-    --border: rgba(255,255,255,0.08);
-    --border-hover: rgba(255,255,255,0.15);
+    /* Borders & Separators */
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.15);
     
-    --accent: #6366f1;       /* Primary Brand (Indigo) */
-    --accent-glow: rgba(99, 102, 241, 0.4);
-    --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    /* Brand Accents */
+    --primary: #6366f1;       /* Indigo */
+    --primary-hover: #4f46e5;
+    --accent: #d946ef;        /* Fuchsia */
+    --gradient-brand: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #d946ef 100%);
     
-    --text-primary: #ffffff;
-    --text-secondary: #a1a1aa;
-    --text-muted: #52525b;
+    /* Typography */
+    --font-ui: 'Inter', -apple-system, sans-serif;
+    --font-brand: 'Cinzel', serif;
+    --font-mono: 'JetBrains Mono', monospace;
     
+    --text-main: #ffffff;
+    --text-muted: #a1a1aa;
+    --text-dim: #52525b;
+
+    /* Spacing & Layout */
+    --nav-width: 72px;
+    --sidebar-width: 420px;
+    --header-height: 64px;
     --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    
-    --header-height: 60px;
-    --nav-width: 64px;
-    --sidebar-width: 400px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
 }
 
-* { box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
-
+/* Reset & Base */
+* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 body {
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     background: var(--bg-app);
-    color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    font-family: var(--font-ui);
     height: 100vh;
     overflow: hidden;
     display: flex;
+    font-size: 13px;
 }
-
-/* Typography Overrides */
-h1, h2, h3, .brand-font { font-family: 'Cinzel', serif; }
-.mono { font-family: 'JetBrains Mono', monospace; }
 
 /* Scrollbars */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #52525b; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
 
 /* -------------------------------------------------------------------------- */
-/* BUTTONS & INPUTS                                                           */
+/* 2. COMPONENT SYSTEM                                                        */
 /* -------------------------------------------------------------------------- */
+
+/* Buttons */
 .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 0 16px; height: 40px;
-    border-radius: var(--radius-md); font-size: 13px; font-weight: 500;
-    cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
+    height: 40px; padding: 0 16px;
+    border-radius: var(--radius-md);
+    font-weight: 600; font-size: 13px;
+    border: 1px solid transparent;
+    cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    user-select: none;
 }
-.btn-primary {
-    background: var(--text-primary); color: var(--bg-app);
-}
-.btn-primary:hover { background: #e4e4e7; transform: translateY(-1px); }
+.btn:active { transform: scale(0.98); }
 
-.btn-accent {
-    background: var(--accent-gradient); color: white;
-    box-shadow: 0 0 15px var(--accent-glow);
+.btn-primary {
+    background: var(--text-main); color: var(--bg-app);
 }
-.btn-accent:hover { filter: brightness(1.1); }
+.btn-primary:hover { background: #e5e5e5; }
+
+.btn-gradient {
+    background: var(--gradient-brand); color: white;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+.btn-gradient:hover { filter: brightness(1.1); box-shadow: 0 0 30px rgba(99, 102, 241, 0.5); }
+.btn-gradient:disabled { filter: grayscale(1); cursor: not-allowed; }
 
 .btn-ghost {
-    background: transparent; color: var(--text-secondary);
+    background: transparent; color: var(--text-muted);
 }
-.btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+.btn-ghost:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
 
 .btn-icon {
     width: 36px; height: 36px; padding: 0;
-    border-radius: var(--radius-md); background: transparent; color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    color: var(--text-muted); background: transparent;
+    border: 1px solid transparent;
 }
-.btn-icon:hover { background: var(--bg-hover); color: white; }
-.btn-icon.active { background: var(--bg-hover); color: var(--accent); }
+.btn-icon:hover { background: var(--bg-surface-hover); color: var(--text-main); }
+.btn-icon.active { background: rgba(99, 102, 241, 0.15); color: var(--primary); border-color: rgba(99, 102, 241, 0.3); }
 
-/* Inputs */
-.input-group { margin-bottom: 20px; }
-.label-row { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
-.label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.05em; }
-
-input[type="text"], textarea, select {
-    width: 100%; background: var(--bg-element);
-    border: 1px solid var(--border); border-radius: var(--radius-md);
-    padding: 10px 12px; color: white; font-family: 'Inter', sans-serif; font-size: 13px;
-    transition: 0.2s; resize: none;
-}
-input[type="text"]:focus, textarea:focus, select:focus {
-    border-color: var(--accent); background: var(--bg-app);
+/* Inputs & Forms */
+.input-group { margin-bottom: 24px; }
+.label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.label { 
+    font-size: 11px; font-weight: 700; text-transform: uppercase; 
+    letter-spacing: 0.05em; color: var(--text-muted); 
 }
 
-/* Custom Range Slider */
+.input-field, .textarea-field, .select-field {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    color: white;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    transition: 0.2s;
+}
+.input-field:focus, .textarea-field:focus, .select-field:focus {
+    border-color: var(--primary);
+    background: var(--bg-app);
+    box-shadow: 0 0 0 1px var(--primary);
+}
+.textarea-field { resize: vertical; min-height: 100px; line-height: 1.5; }
+
+/* Custom Slider */
+.range-wrapper { position: relative; height: 30px; display: flex; align-items: center; }
 input[type=range] {
-    -webkit-appearance: none; width: 100%; background: transparent; margin: 10px 0;
+    -webkit-appearance: none; width: 100%; background: transparent; z-index: 2; cursor: pointer;
 }
 input[type=range]::-webkit-slider-runnable-track {
-    width: 100%; height: 4px; background: var(--bg-hover); border-radius: 2px;
+    width: 100%; height: 4px; background: var(--bg-surface-hover); border-radius: 2px;
 }
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
-    background: var(--text-primary); margin-top: -6px; cursor: pointer;
-    box-shadow: 0 0 0 2px var(--bg-app);
+    background: white; margin-top: -6px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    transition: transform 0.1s;
 }
+input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
+
+/* Tabs & Switchers */
+.segmented-control {
+    display: flex; background: var(--bg-surface);
+    padding: 4px; border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+}
+.segment-btn {
+    flex: 1; text-align: center; padding: 6px;
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s;
+}
+.segment-btn.active { background: var(--bg-app); color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+/* Aspect Ratio Grid */
+.grid-ratios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ratio-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 12px 8px;
+    text-align: center; cursor: pointer; transition: 0.2s;
+}
+.ratio-card:hover { border-color: var(--text-muted); }
+.ratio-card.active { background: rgba(99, 102, 241, 0.1); border-color: var(--primary); color: white; }
+.ratio-icon {
+    display: block; width: 24px; height: 16px; border: 2px solid currentColor;
+    margin: 0 auto 6px auto; border-radius: 2px; opacity: 0.7;
+}
+.ratio-card.active .ratio-icon { opacity: 1; border-color: var(--primary); }
 
 /* -------------------------------------------------------------------------- */
-/* LAYOUT: NAV RAIL                                                           */
+/* 3. LAYOUT STRUCTURE                                                        */
 /* -------------------------------------------------------------------------- */
+
+/* Navigation Rail (Left) */
 .nav-rail {
     width: var(--nav-width); background: var(--bg-app);
     border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; align-items: center; padding: 20px 0; z-index: 50;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 0; z-index: 50;
 }
-.brand-logo {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: var(--accent-gradient); color: white;
-    font-family: 'Cinzel', serif; font-weight: 700; font-size: 20px;
+.logo {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: var(--gradient-brand);
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 30px; box-shadow: 0 0 20px var(--accent-glow);
+    font-family: var(--font-brand); font-weight: 700; font-size: 20px; color: white;
+    margin-bottom: 32px; box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
 }
 .nav-item {
-    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-    border-radius: 12px; color: var(--text-secondary); margin-bottom: 12px; cursor: pointer;
-    transition: 0.2s; position: relative;
+    width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); border-radius: 12px; margin-bottom: 8px;
+    cursor: pointer; transition: 0.2s; position: relative;
 }
-.nav-item:hover { background: var(--bg-hover); color: white; }
-.nav-item.active { background: var(--bg-hover); color: var(--accent); }
-.nav-item.active::before {
-    content: ''; position: absolute; left: -10px; width: 3px; height: 20px;
-    background: var(--accent); border-radius: 0 4px 4px 0;
+.nav-item:hover { background: var(--bg-surface); color: white; }
+.nav-item.active { background: var(--bg-surface); color: var(--primary); }
+.nav-item.active::after {
+    content: ''; position: absolute; left: 0; width: 3px; height: 24px;
+    background: var(--primary); border-radius: 0 4px 4px 0;
 }
+.nav-item svg { width: 22px; height: 22px; stroke-width: 1.8px; }
 
-/* -------------------------------------------------------------------------- */
-/* LAYOUT: SIDEBAR (CONTROLS)                                                 */
-/* -------------------------------------------------------------------------- */
+/* Sidebar (Middle Controls) */
 .sidebar {
     width: var(--sidebar-width); background: var(--bg-panel);
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column; z-index: 40;
 }
 .sidebar-header {
-    height: var(--header-height); padding: 0 20px;
+    height: var(--header-height); padding: 0 24px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid var(--border);
 }
+.sidebar-title { font-family: var(--font-brand); font-weight: 700; letter-spacing: 0.05em; }
+.pro-badge { 
+    font-size: 10px; font-weight: 800; color: #000; 
+    background: linear-gradient(90deg, #fbbf24, #d97706);
+    padding: 2px 6px; border-radius: 4px;
+}
 .sidebar-content {
-    flex: 1; overflow-y: auto; padding: 20px;
+    flex: 1; overflow-y: auto; padding: 24px;
 }
 
-/* Mode Switcher Tabs */
-.tabs {
-    display: flex; background: var(--bg-element); padding: 4px;
-    border-radius: var(--radius-md); margin-bottom: 24px;
-}
-.tab {
-    flex: 1; text-align: center; padding: 8px; font-size: 12px; font-weight: 600;
-    color: var(--text-secondary); border-radius: 6px; cursor: pointer;
-}
-.tab:hover { color: white; }
-.tab.active { background: var(--bg-hover); color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-
-/* Aspect Ratio Grid */
-.ratio-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-}
-.ratio-item {
-    background: var(--bg-element); border: 1px solid var(--border);
-    border-radius: var(--radius-md); padding: 10px; text-align: center;
-    cursor: pointer; transition: 0.2s;
-}
-.ratio-item:hover { border-color: var(--text-secondary); }
-.ratio-item.active { background: var(--bg-hover); border-color: var(--accent); color: white; }
-.ratio-val { font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px; }
-.ratio-lbl { font-size: 10px; color: var(--text-secondary); opacity: 0.8; }
-
-/* -------------------------------------------------------------------------- */
-/* LAYOUT: MAIN STAGE (GALLERY)                                               */
-/* -------------------------------------------------------------------------- */
+/* Stage (Right Content) */
 .stage {
-    flex: 1; background: #000; position: relative;
-    display: flex; flex-direction: column;
+    flex: 1; background: #000; display: flex; flex-direction: column; position: relative;
 }
 .stage-header {
     height: var(--header-height); padding: 0 24px;
     display: flex; align-items: center; justify-content: space-between;
-    background: rgba(9,9,11,0.8); backdrop-filter: blur(10px);
+    background: rgba(5,5,5,0.8); backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border); z-index: 10;
 }
+.stage-tabs { display: flex; gap: 24px; }
+.stage-tab {
+    font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer;
+    padding: 8px 0; border-bottom: 2px solid transparent; transition: 0.2s;
+}
+.stage-tab:hover { color: white; }
+.stage-tab.active { color: white; border-bottom-color: var(--primary); }
+
 .stage-content {
     flex: 1; overflow-y: auto; padding: 24px;
-    background: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #000000 60%);
+    background: radial-gradient(circle at 50% 0%, #111111 0%, #000000 70%);
 }
 
-/* Gallery Grid */
+/* -------------------------------------------------------------------------- */
+/* 4. GALLERY GRID & ASSETS                                                   */
+/* -------------------------------------------------------------------------- */
 .gallery-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 .card {
-    background: var(--bg-panel); border: 1px solid var(--border);
+    background: var(--bg-surface); border: 1px solid var(--border);
     border-radius: var(--radius-lg); overflow: hidden;
-    position: relative; transition: transform 0.2s; aspect-ratio: 1/1;
+    position: relative; aspect-ratio: 1/1;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 .card.video { aspect-ratio: 16/9; }
-.card:hover { transform: translateY(-4px); border-color: var(--text-secondary); }
-.card img, .card video { width: 100%; height: 100%; object-fit: cover; }
-
+.card:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-color: var(--text-muted);
+}
+.card-media { width: 100%; height: 100%; object-fit: cover; }
 .card-overlay {
-    position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%);
     opacity: 0; transition: opacity 0.2s; padding: 16px;
     display: flex; flex-direction: column; justify-content: flex-end;
 }
 .card:hover .card-overlay { opacity: 1; }
-.card-prompt { font-size: 12px; line-height: 1.4; color: #e4e4e7; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.card-prompt {
+    font-size: 12px; line-height: 1.4; color: #eee;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    margin-bottom: 12px;
+}
 .card-actions { display: flex; gap: 8px; }
 
-/* -------------------------------------------------------------------------- */
-/* ASSETS SIDEBAR (The Missing Piece from your old code)                      */
-/* -------------------------------------------------------------------------- */
-.assets-list {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;
+/* ASSETS SIDEBAR LIST (THE REQUESTED FEATURE) */
+.assets-container { display: flex; flex-direction: column; height: 100%; }
+.assets-filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.chip {
+    padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 600;
+    background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-muted);
+    cursor: pointer; white-space: nowrap; transition: 0.2s;
 }
-.assets-list.is-list { grid-template-columns: 1fr; }
-.asset-item {
-    background: var(--bg-element); border-radius: var(--radius-md);
-    padding: 6px; display: flex; gap: 10px; align-items: center; cursor: pointer;
-    border: 1px solid transparent; transition: 0.15s;
+.chip.active { background: var(--bg-surface-hover); color: white; border-color: var(--primary); }
+
+.assets-list { 
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
+    overflow-y: auto; padding-bottom: 20px;
 }
-.asset-item:hover { background: var(--bg-hover); border-color: var(--border-hover); }
-.asset-thumb {
-    width: 48px; height: 48px; border-radius: 4px; object-fit: cover; background: #000; flex-shrink: 0;
+.assets-list.list-view { grid-template-columns: 1fr; }
+
+.asset-thumb-item {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: var(--radius-md); overflow: hidden; cursor: pointer;
+    transition: 0.15s; position: relative;
 }
-.asset-meta {
-    font-size: 11px; color: var(--text-secondary); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+.asset-thumb-item:hover { border-color: var(--text-muted); }
+.asset-thumb-item img { width: 100%; height: 80px; object-fit: cover; display: block; }
+.list-view .asset-thumb-item { display: flex; align-items: center; padding: 6px; height: auto; }
+.list-view .asset-thumb-item img { width: 48px; height: 48px; border-radius: 4px; }
+.asset-thumb-meta {
+    padding: 8px; font-size: 11px; color: var(--text-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.is-grid .asset-meta { display: none; } /* Hide text in grid mode */
-.is-grid .asset-thumb { width: 100%; height: 80px; }
-.is-grid .asset-item { display: block; padding: 0; overflow: hidden; border: 1px solid var(--border); }
+.list-view .asset-thumb-meta { border: none; padding: 0 0 0 10px; flex: 1; }
 
 /* -------------------------------------------------------------------------- */
-/* UTILS & EXTRAS                                                             */
+/* 5. SPECIAL FEATURES (Short Film, Ask SIA)                                  */
 /* -------------------------------------------------------------------------- */
-.badge-pro {
-    background: linear-gradient(90deg, #fbbf24, #d97706);
-    color: black; font-weight: 700; font-size: 10px; padding: 2px 6px; border-radius: 4px;
-}
-.ask-sia-btn {
-    position: absolute; right: 8px; top: 8px;
-    background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3);
-    color: var(--accent); font-size: 11px; font-weight: 600;
-    padding: 4px 10px; border-radius: 100px; cursor: pointer; display: flex; align-items: center; gap: 4px;
-}
-.ask-sia-btn:hover { background: rgba(99, 102, 241, 0.25); }
 
-/* Loading Animation */
-.loading-card {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    border: 1px dashed var(--border); background: rgba(255,255,255,0.02);
+/* Storyboard */
+.storyboard-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px; padding: 8px; border: 2px dashed var(--border);
+    border-radius: var(--radius-md); min-height: 200px; background: rgba(0,0,0,0.2);
 }
+.shot-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 8px; aspect-ratio: 16/9; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--text-muted); cursor: grab;
+}
+.shot-card:hover { border-color: var(--primary); }
+.shot-number { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.6); padding: 2px 4px; border-radius: 4px; }
+
+/* Ask SIA Button */
+.ask-sia-trigger {
+    background: linear-gradient(90deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1));
+    border: 1px solid rgba(168,85,247,0.3); color: #d8b4fe;
+    font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 100px;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+}
+.ask-sia-trigger:hover { background: rgba(168,85,247,0.2); }
+
+/* Floating Elements */
+.toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+.toast {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    padding: 12px 16px; border-radius: var(--radius-md);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    font-size: 13px; font-weight: 500;
+    transform: translateY(20px); opacity: 0; animation: slideIn 0.3s forwards;
+}
+@keyframes slideIn { to { transform: translateY(0); opacity: 1; } }
+
+/* Loaders */
 .spinner {
-    width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--accent);
-    border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 12px;
+    width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -286,150 +369,160 @@ input[type=range]::-webkit-slider-thumb {
 <body>
 
 <div class="nav-rail">
-    <div class="brand-logo">S</div>
+    <div class="logo">S</div>
     
-    <div class="nav-item active" id="nav-image" onclick="switchLab('image')" title="Image Lab">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    <div class="nav-item active" id="nav-image" onclick="switchLab('image')" title="Image Generator">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
     </div>
     
-    <div class="nav-item" id="nav-video" onclick="switchLab('video')" title="Video Lab">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    <div class="nav-item" id="nav-video" onclick="switchLab('video')" title="Video Generator">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
     </div>
     
-    <div class="nav-item" id="nav-shortfilm" onclick="switchLab('shortfilm')" title="Short Film / Storyboard">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M6 2l2 4M10 2l2 4M14 2l2 4M18 2l2 4"/></svg>
+    <div class="nav-item" id="nav-shortfilm" onclick="switchLab('shortfilm')" title="Short Film Director">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" /></svg>
     </div>
     
-    <div class="nav-item" id="nav-assets" onclick="switchLab('assets')" title="My Files">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+    <div class="nav-item" id="nav-assets" onclick="switchLab('assets')" title="My Files / Assets">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" /></svg>
     </div>
 
     <div style="margin-top: auto;"></div>
-    <div class="nav-item" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82A1.65 1.65 0 0 0 3 13H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9A1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82A1.65 1.65 0 0 0 21 11h.09A2 2 0 0 1 21 15z"/></svg></div>
+    <div class="nav-item" title="Settings"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
 </div>
 
 <div class="sidebar">
     <div class="sidebar-header">
-        <span class="brand-font" style="font-weight: 700; letter-spacing: 1px;">CREATIVE LAB</span>
-        <div class="badge-pro">PRO</div>
+        <span class="sidebar-title">CREATIVE LAB</span>
+        <div class="pro-badge">PRO</div>
     </div>
 
     <div class="sidebar-content">
-        
-        <div id="image-controls">
-            <div class="tabs">
-                <div class="tab active" onclick="setImageMode('txt2img', this)">Text to Image</div>
-                <div class="tab" onclick="setImageMode('img2img', this)">Image to Image</div>
+
+        <div id="controls-image">
+            <div class="segmented-control">
+                <div class="segment-btn active" onclick="setMode(this, 'txt2img')">Text to Image</div>
+                <div class="segment-btn" onclick="setMode(this, 'img2img')">Image to Image</div>
             </div>
 
             <div class="input-group">
                 <div class="label-row">
                     <span class="label">Prompt</span>
-                    <button class="ask-sia-btn" onclick="openSiaForField('prompt-input')">
+                    <button class="ask-sia-trigger" onclick="openSia('prompt')">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
                         Ask SIA
                     </button>
                 </div>
-                <textarea id="prompt-input" rows="5" placeholder="Describe your imagination... e.g. An astronaut riding a horse in a photorealistic style, 8k resolution"></textarea>
+                <textarea id="img-prompt" class="textarea-field" placeholder="A futuristic cyberpunk street in Tokyo, neon lights, rain reflections, highly detailed..."></textarea>
             </div>
 
             <div class="input-group">
                 <div class="label-row"><span class="label">Aspect Ratio</span></div>
-                <div class="ratio-grid">
-                    <div class="ratio-item active" onclick="setRatio('1:1', this)"><span class="ratio-val">1:1</span><span class="ratio-lbl">Square</span></div>
-                    <div class="ratio-item" onclick="setRatio('16:9', this)"><span class="ratio-val">16:9</span><span class="ratio-lbl">Landscape</span></div>
-                    <div class="ratio-item" onclick="setRatio('9:16', this)"><span class="ratio-val">9:16</span><span class="ratio-lbl">Portrait</span></div>
+                <div class="grid-ratios">
+                    <div class="ratio-card active" onclick="setRatio(this)"><div class="ratio-icon" style="width:16px; height:16px"></div>1:1</div>
+                    <div class="ratio-card" onclick="setRatio(this)"><div class="ratio-icon" style="width:24px; height:14px"></div>16:9</div>
+                    <div class="ratio-card" onclick="setRatio(this)"><div class="ratio-icon" style="width:14px; height:24px"></div>9:16</div>
                 </div>
             </div>
 
             <div class="input-group">
                 <div class="label-row"><span class="label">Settings</span></div>
-                <select style="margin-bottom: 8px;">
-                    <option>Flux Pro (Best Quality)</option>
-                    <option>Flux Schnell (Fast)</option>
-                    <option>Midjourney V6 (Simulated)</option>
-                </select>
-                
-                <div style="display:flex; justify-content:space-between; font-size: 11px; margin-top:8px;">
-                    <span>Guidance Scale</span><span id="guidance-val">3.5</span>
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:11px; color:var(--text-muted);">
+                    <span>Guidance Scale</span><span id="img-guidance-val">3.5</span>
                 </div>
-                <input type="range" min="1" max="20" value="3.5" step="0.5" oninput="document.getElementById('guidance-val').innerText=this.value">
+                <div class="range-wrapper">
+                    <input type="range" min="1" max="10" step="0.5" value="3.5" oninput="document.getElementById('img-guidance-val').innerText = this.value">
+                </div>
+                
+                <div style="margin-top:16px;">
+                    <span class="label" style="display:block; margin-bottom:8px;">Model Version</span>
+                    <select class="select-field">
+                        <option>Flux Professional (Best)</option>
+                        <option>Flux Schnell (Fastest)</option>
+                        <option>Sulandra Realistic v4</option>
+                    </select>
+                </div>
             </div>
 
-            <button class="btn btn-accent" style="width: 100%; height: 48px; font-weight: 600; font-size: 14px;" onclick="generateImage(this)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-                GENERATE
+            <button class="btn btn-gradient" style="width:100%; height:48px;" onclick="generate('image')">
+                Generate Image
             </button>
         </div>
 
-        <div id="video-controls" style="display:none;">
-            <div class="tabs">
-                <div class="tab active" onclick="setVideoMode('text', this)">Text to Video</div>
-                <div class="tab" onclick="setVideoMode('image', this)">Image to Video</div>
-            </div>
-
-            <div class="input-group" id="video-upload-group" style="display:none;">
-                <div class="label-row"><span class="label">Source Image</span></div>
-                <div style="border: 2px dashed var(--border); border-radius: 8px; height: 120px; display:flex; align-items:center; justify-content:center; color: var(--text-secondary); font-size: 12px; cursor: pointer;">
-                    Click to Upload Image
-                </div>
+        <div id="controls-video" style="display:none;">
+            <div class="segmented-control">
+                <div class="segment-btn active">Text to Video</div>
+                <div class="segment-btn">Image to Video</div>
             </div>
 
             <div class="input-group">
-                <div class="label-row"><span class="label">Video Prompt</span></div>
-                <textarea id="video-prompt" rows="4" placeholder="Describe the motion... e.g. Camera pans right, character smiles..."></textarea>
+                <div class="label-row"><span class="label">Description</span></div>
+                <textarea id="vid-prompt" class="textarea-field" placeholder="A drone shot flying over a majestic waterfall, slow motion, cinematic lighting..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <div class="label-row"><span class="label">Camera Control</span></div>
+                <select class="select-field">
+                    <option>Static Camera</option>
+                    <option>Horizontal Pan</option>
+                    <option>Zoom In</option>
+                    <option>Orbit</option>
+                </select>
             </div>
 
             <div class="input-group">
                 <div class="label-row"><span class="label">Duration</span></div>
-                <select>
-                    <option>5 Seconds</option>
-                    <option>10 Seconds</option>
-                </select>
+                <div class="grid-ratios">
+                    <div class="ratio-card active">5s</div>
+                    <div class="ratio-card">10s</div>
+                </div>
             </div>
 
-            <button class="btn btn-accent" style="width: 100%; height: 48px;" onclick="generateVideo()">GENERATE VIDEO</button>
+            <button class="btn btn-gradient" style="width:100%; height:48px;" onclick="generate('video')">
+                Generate Video
+            </button>
         </div>
 
-        <div id="shortfilm-controls" style="display:none;">
-            <div class="label-row" style="margin-bottom:12px;">
+        <div id="controls-shortfilm" style="display:none;">
+            <div class="label-row">
                 <span class="label">Storyboard</span>
-                <span style="font-size:10px; color:var(--text-secondary);">0/20 Shots</span>
+                <span class="label">0 / 20 Shots</span>
             </div>
             
-            <div style="height: 200px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-element); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px;">
-                Storyboard Timeline Empty
+            <div class="storyboard-grid" id="storyboard-dropzone">
+                <div style="grid-column: 1/-1; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:11px;">
+                    Drag images here to build shots
+                </div>
             </div>
 
-            <div class="input-group">
-                <span class="label">Shot Description</span>
-                <textarea style="margin-top:8px;" rows="3" placeholder="Describe this specific shot..."></textarea>
+            <div class="input-group" style="margin-top:20px;">
+                <span class="label">Timeline Script</span>
+                <textarea class="textarea-field" style="margin-top:8px;" placeholder="Narrator: In a world where..."></textarea>
             </div>
 
-            <button class="btn btn-accent" style="width: 100%;">RENDER FILM</button>
+            <button class="btn btn-gradient" style="width:100%; margin-top:10px;">Render Film</button>
         </div>
 
-        <div id="assets-controls" style="display:none;">
-            <div class="label-row" style="margin-bottom: 16px;">
-                <span class="label" style="font-size: 13px; color: white;">My Files</span>
-                <div style="display:flex; gap: 4px;">
-                    <button class="btn-icon active" onclick="setAssetsView('grid', this)" title="Grid View">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    </button>
-                    <button class="btn-icon" onclick="setAssetsView('list', this)" title="List View">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                    </button>
+        <div id="controls-assets" style="display:none; height: 100%;">
+            <div class="assets-container">
+                <div class="assets-filter-bar">
+                    <div class="chip active" onclick="filterAssets('all', this)">All</div>
+                    <div class="chip" onclick="filterAssets('image', this)">Images</div>
+                    <div class="chip" onclick="filterAssets('video', this)">Videos</div>
+                    <div class="chip" onclick="filterAssets('favorites', this)">Favorites</div>
                 </div>
-            </div>
 
-            <div class="tabs">
-                <div class="tab active" onclick="filterAssets('image')">Images</div>
-                <div class="tab" onclick="filterAssets('video')">Videos</div>
-                <div class="tab" onclick="filterAssets('favorites')">Starred</div>
-            </div>
-
-            <div id="assets-sidebar-list" class="assets-list is-grid">
+                <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                    <span class="label">Recent Files</span>
+                    <div style="display:flex; gap:4px;">
+                        <button class="btn-icon active" onclick="setAssetView('grid', this)"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg></button>
+                        <button class="btn-icon" onclick="setAssetView('list', this)"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></button>
+                    </div>
                 </div>
+
+                <div id="assets-sidebar-list" class="assets-list">
+                    </div>
+            </div>
         </div>
 
     </div>
@@ -437,205 +530,232 @@ input[type=range]::-webkit-slider-thumb {
 
 <div class="stage">
     <div class="stage-header">
-        <div style="display: flex; gap: 20px;">
-            <span class="label" style="cursor: pointer; color: white;" onclick="setGalleryTab('history')">History</span>
-            <span class="label" style="cursor: pointer;" onclick="setGalleryTab('community')">Community</span>
-            <span class="label" style="cursor: pointer;" onclick="setGalleryTab('favorites')">Favorites</span>
+        <div class="stage-tabs">
+            <div class="stage-tab active" onclick="switchStageTab('history', this)">History</div>
+            <div class="stage-tab" onclick="switchStageTab('community', this)">Community Feed</div>
+            <div class="stage-tab" onclick="switchStageTab('favorites', this)">Favorites</div>
         </div>
-        <div class="badge-pro" style="background: var(--bg-element); border: 1px solid var(--border); color: var(--text-secondary); font-weight: 500;">
-            50 Credits Available
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted);">50 CREDITS</div>
+            <button class="btn-primary" style="height:30px; font-size:11px; padding:0 12px;">Upgrade</button>
         </div>
     </div>
 
     <div class="stage-content" id="gallery-container">
-        <div class="gallery-grid" id="gallery-grid">
-            </div>
-
-        <div id="empty-state" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height: 100%; opacity: 0.5;">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="color: var(--text-secondary); margin-bottom: 16px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-            <div style="font-size: 16px; font-weight: 600;">Start Creating</div>
-            <div style="font-size: 13px; margin-top: 4px; color: var(--text-secondary);">Your generated creations will appear here.</div>
         </div>
-    </div>
 </div>
+
+<div class="toast-container" id="toast-container"></div>
 
 <script>
     // --- STATE MANAGEMENT ---
-    const STORAGE_KEY = 'sulandra_history_v2';
-    let currentLab = 'image';
-    let currentAssetsMode = 'grid';
-    let currentAssetFilter = 'image';
+    const APP_STATE = {
+        currentLab: 'image',
+        history: [], // Stores {id, type, url, prompt, timestamp, favorite}
+        assetsFilter: 'all',
+        assetsView: 'grid'
+    };
 
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
-        renderHistory();
-        renderAssetsSidebar(); // Populate sidebar initially
+        // Load mock history
+        seedMockData();
+        renderGallery();
     });
 
-    // --- NAVIGATION LOGIC ---
-    function switchLab(labName) {
-        currentLab = labName;
+    // --- NAVIGATION ---
+    function switchLab(labId) {
+        APP_STATE.currentLab = labId;
         
-        // Update Nav Rail Icons
+        // Update Nav Rail
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById(`nav-${labName}`).classList.add('active');
+        document.getElementById(`nav-${labId}`).classList.add('active');
 
-        // Toggle Control Panels
-        const panels = ['image-controls', 'video-controls', 'shortfilm-controls', 'assets-controls'];
-        panels.forEach(id => {
-            document.getElementById(id).style.display = (id === `${labName}-controls`) ? 'block' : 'none';
+        // Toggle Sidebar Panels
+        ['image', 'video', 'shortfilm', 'assets'].forEach(id => {
+            const el = document.getElementById(`controls-${id}`);
+            if (el) el.style.display = (id === labId) ? (id === 'assets' ? 'block' : 'block') : 'none';
         });
 
-        // If switching to Assets, ensure list is rendered
-        if (labName === 'assets') {
+        // Specific logic for Assets tab
+        if (labId === 'assets') {
             renderAssetsSidebar();
         }
     }
 
-    // --- ASSETS SIDEBAR LOGIC (The Fixed Part) ---
-    function setAssetsView(mode, btn) {
-        currentAssetsMode = mode;
-        const list = document.getElementById('assets-sidebar-list');
-        list.className = `assets-list is-${mode}`;
-        
-        // Update button states
-        btn.parentElement.querySelectorAll('.btn-icon').forEach(b => b.classList.remove('active'));
+    function switchStageTab(tab, btn) {
+        document.querySelectorAll('.stage-tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        // Filter main gallery based on tab (Implementation simplified for demo)
+        renderGallery(tab === 'favorites' ? 'favorites' : 'all');
     }
 
-    function filterAssets(type) {
-        currentAssetFilter = type;
-        // Update tabs styling
-        const tabs = document.querySelectorAll('#assets-controls .tab');
-        tabs.forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active'); // highlight clicked tab
+    // --- GENERATION SIMULATION ---
+    function generate(type) {
+        const promptInput = type === 'image' ? document.getElementById('img-prompt') : document.getElementById('vid-prompt');
+        const prompt = promptInput.value;
+
+        if (!prompt) {
+            showToast('Please enter a prompt first', 'error');
+            return;
+        }
+
+        // Show loading state
+        showToast('Sending job to H200 Engine...', 'info');
         
-        renderAssetsSidebar();
+        // Add "Pending" card to gallery
+        const grid = document.getElementById('gallery-container');
+        const pendingCard = document.createElement('div');
+        pendingCard.className = `card ${type === 'video' ? 'video' : ''}`;
+        pendingCard.innerHTML = `
+            <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--bg-surface);">
+                <div class="spinner"></div>
+                <div style="margin-top:12px; font-size:11px; color:var(--text-muted);">Generating...</div>
+            </div>
+        `;
+        // Insert at top
+        const firstCard = grid.firstChild;
+        if(firstCard) grid.insertBefore(pendingCard, firstCard);
+        else grid.appendChild(pendingCard);
+
+        // Simulate API delay
+        setTimeout(() => {
+            // Replace pending with result
+            grid.removeChild(pendingCard);
+            
+            const newItem = {
+                id: Date.now(),
+                type: type,
+                url: type === 'image' ? `https://picsum.photos/seed/${Date.now()}/512/512` : 'https://media.istockphoto.com/id/1346563637/video/abstract-background-motion-design.jpg?s=640x640&k=20&c=6N35pL2hMvEw8qT2T2yY2y2y2y2y2y2y2y2y2y2y2y2=', 
+                prompt: prompt,
+                timestamp: new Date(),
+                favorite: false
+            };
+
+            APP_STATE.history.unshift(newItem);
+            renderGallery();
+            
+            // If assets sidebar is open, update it too
+            if(APP_STATE.currentLab === 'assets') renderAssetsSidebar();
+            
+            showToast(`${type === 'image' ? 'Image' : 'Video'} generated successfully!`, 'success');
+        }, 2500);
     }
 
-    function renderAssetsSidebar() {
-        const list = document.getElementById('assets-sidebar-list');
-        const history = getHistory();
-        
-        // Filter Items
-        const items = history.filter(item => {
-            if (currentAssetFilter === 'favorites') return item.favorite;
-            return item.type === currentAssetFilter;
+    // --- RENDERING ---
+    function renderGallery(filter = 'all') {
+        const grid = document.getElementById('gallery-container');
+        grid.innerHTML = '<div class="gallery-grid" id="grid-inner"></div>';
+        const inner = document.getElementById('grid-inner');
+
+        const items = APP_STATE.history.filter(item => {
+            if (filter === 'favorites') return item.favorite;
+            return true;
         });
 
+        items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = `card ${item.type === 'video' ? 'video' : ''}`;
+            card.innerHTML = `
+                <img src="${item.url}" class="card-media">
+                <div class="card-overlay">
+                    <div class="card-prompt">${item.prompt}</div>
+                    <div class="card-actions">
+                        <button class="btn btn-primary" style="height:28px; font-size:11px; padding:0 10px;">Download</button>
+                        <button class="btn btn-ghost" style="height:28px; width:28px; padding:0; background:rgba(255,255,255,0.2); color:white;" onclick="toggleFav(${item.id})">
+                            ${item.favorite ? '★' : '☆'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            inner.appendChild(card);
+        });
+    }
+
+    // --- ASSETS SIDEBAR LOGIC (THE FIX) ---
+    function renderAssetsSidebar() {
+        const list = document.getElementById('assets-sidebar-list');
+        list.className = `assets-list ${APP_STATE.assetsView === 'list' ? 'list-view' : ''}`;
         list.innerHTML = '';
-        
+
+        const items = APP_STATE.history.filter(item => {
+            if (APP_STATE.assetsFilter === 'all') return true;
+            if (APP_STATE.assetsFilter === 'favorites') return item.favorite;
+            return item.type === APP_STATE.assetsFilter;
+        });
+
         items.forEach(item => {
             const div = document.createElement('div');
-            div.className = 'asset-item';
+            div.className = 'asset-thumb-item';
+            div.onclick = () => { showToast('Asset selected', 'info') };
             div.innerHTML = `
-                <img src="${item.url}" class="asset-thumb">
-                <div class="asset-meta">${item.prompt}</div>
+                <img src="${item.url}">
+                <div class="asset-thumb-meta">${item.prompt}</div>
             `;
-            div.onclick = () => {
-                // On click, maybe show in main stage or open preview
-                openLightbox(item);
-            };
             list.appendChild(div);
         });
     }
 
-    // --- GENERATION LOGIC (Simulation) ---
-    function generateImage(btn) {
-        const prompt = document.getElementById('prompt-input').value;
-        if(!prompt) return alert("Please enter a prompt");
-
-        // UI Loading State
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border-width:2px; display:inline-block; margin:0;"></span> Generating...`;
-
-        // Create Pending Card
-        const grid = document.getElementById('gallery-grid');
-        const pendingCard = document.createElement('div');
-        pendingCard.className = 'card loading-card';
-        pendingCard.innerHTML = `<div class="spinner"></div><div style="font-size:11px;">Rendering...</div>`;
-        grid.prepend(pendingCard);
-        document.getElementById('empty-state').style.display = 'none';
-
-        // Simulate API Call (2 seconds)
-        setTimeout(() => {
-            // Mock Result
-            const newItem = {
-                id: Date.now(),
-                type: 'image',
-                url: 'https://picsum.photos/seed/' + Date.now() + '/512/512', // Placeholder
-                prompt: prompt,
-                favorite: false
-            };
-
-            saveToHistory(newItem);
-            
-            // Remove pending, render all
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-            renderHistory();
-            if (currentLab === 'assets') renderAssetsSidebar(); // Sync sidebar if open
-        }, 2000);
+    function filterAssets(type, btn) {
+        APP_STATE.assetsFilter = type;
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        renderAssetsSidebar();
     }
 
-    // --- GALLERY LOGIC ---
-    function getHistory() {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
+    function setAssetView(view, btn) {
+        APP_STATE.assetsView = view;
+        btn.parentElement.querySelectorAll('.btn-icon').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderAssetsSidebar();
     }
 
-    function saveToHistory(item) {
-        const history = getHistory();
-        history.unshift(item);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-    }
-
-    function renderHistory() {
-        const grid = document.getElementById('gallery-grid');
-        const history = getHistory();
-        
-        grid.innerHTML = '';
-        
-        if (history.length === 0) {
-            document.getElementById('empty-state').style.display = 'flex';
-            return;
+    // --- UTILS ---
+    function toggleFav(id) {
+        const item = APP_STATE.history.find(i => i.id === id);
+        if (item) {
+            item.favorite = !item.favorite;
+            renderGallery(); // Re-render to show star state
         }
-        document.getElementById('empty-state').style.display = 'none';
-
-        history.forEach(item => {
-            const card = document.createElement('div');
-            card.className = `card ${item.type}`;
-            card.innerHTML = `
-                <img src="${item.url}" loading="lazy">
-                <div class="card-overlay">
-                    <div class="card-prompt">${item.prompt}</div>
-                    <div class="card-actions">
-                        <button class="btn btn-primary" style="height:30px; font-size:11px;">Download</button>
-                        <button class="btn btn-ghost" style="height:30px; color:white; background:rgba(255,255,255,0.2);">Use</button>
-                    </div>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
     }
 
-    // --- UI HELPERS ---
-    function setImageMode(mode, el) {
-        document.querySelectorAll('#image-controls .tab').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        // Logic to toggle Upload input vs Text input would go here
-    }
-
-    function setRatio(ratio, el) {
-        document.querySelectorAll('.ratio-item').forEach(i => i.classList.remove('active'));
+    function setRatio(el) {
+        el.parentElement.querySelectorAll('.ratio-card').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
     }
 
-    function openSiaForField(id) {
-        alert("SIA AI Assistant would open here to help optimize: " + document.getElementById(id).value);
+    function setMode(el, mode) {
+        el.parentElement.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
     }
 
+    function openSia(context) {
+        showToast('Ask SIA Assistant Activated', 'info');
+    }
+
+    function showToast(msg, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.borderLeftColor = type === 'success' ? '#22c55e' : (type === 'error' ? '#ef4444' : '#6366f1');
+        toast.innerText = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    function seedMockData() {
+        // Create some fake history for demonstration
+        for(let i=0; i<8; i++) {
+            APP_STATE.history.push({
+                id: i,
+                type: i % 3 === 0 ? 'video' : 'image',
+                url: i % 3 === 0 ? 'https://media.istockphoto.com/id/1336449767/video/colorful-abstract-glowing-lines.jpg?s=640x640&k=20&c=6P4sF1aFjFv1zW2y2y2y2y2y2y2y2y2y2y2y2y2y2y=' : `https://picsum.photos/seed/${i}/512/512`,
+                prompt: `Demo creation ${i} - A cinematic scene with lighting...`,
+                timestamp: new Date(),
+                favorite: i % 4 === 0
+            });
+        }
+    }
 </script>
 </body>
 </html>
