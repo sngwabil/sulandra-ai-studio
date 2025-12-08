@@ -2683,6 +2683,7 @@ function switchAssetsView(view, el) {
         currentAssetsView = view;
     }
 
+    // Highlight the active button
     document.querySelectorAll('.lab-mode-view').forEach(btn => {
         btn.classList.toggle('active', btn === el);
     });
@@ -2692,6 +2693,10 @@ function switchAssetsView(view, el) {
         switchLab('image');
         return;
     }
+    
+    // Update the sidebar and gallery view
+    renderAssetsView();
+}
 function setAssetsSidebarMode(mode, el) {
     currentAssetsSidebarMode = mode;
 
