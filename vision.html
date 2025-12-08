@@ -62,7 +62,7 @@
         font-family: "Times New Roman", Times, serif;
         display: flex;
         overflow: hidden;
-        font-size: 14px; /* UPGRADE: global font slightly larger */
+        font-size: 14px;
         line-height: 1.55;
     }
 
@@ -257,7 +257,7 @@
     }
 
     .page-title {
-        font-size: 20px;  /* UPGRADE */
+        font-size: 20px;
         font-weight: 700;
         letter-spacing: 0.05em;
     }
@@ -271,7 +271,7 @@
         border: 1px solid rgba(15, 23, 42, 0.95);
         background: radial-gradient(circle at 20% 0, #020617, #020617 60%, #000 100%);
         color: var(--text-secondary);
-        font-size: 12px;  /* UPGRADE */
+        font-size: 12px;
         font-weight: 600;
         box-shadow:
             0 0 0 1px rgba(15, 23, 42, 0.9),
@@ -288,7 +288,7 @@
             0 0 32px rgba(34, 197, 94, 0.9);
     }
 
-    /* Kling-style view pills */
+    /* View pills */
     .view-controls {
         display: inline-flex;
         align-items: center;
@@ -303,9 +303,9 @@
     }
 
     .view-btn {
-        padding: 8px 22px; /* BIGGER pill */
+        padding: 8px 22px;
         border-radius: var(--radius-pill);
-        font-size: 13px;   /* UPGRADE */
+        font-size: 13px;
         font-weight: 700;
         color: var(--text-secondary);
         cursor: pointer;
@@ -337,7 +337,7 @@
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        font-size: 12px; /* UPGRADE */
+        font-size: 12px;
         color: var(--text-secondary);
         white-space: nowrap;
     }
@@ -350,11 +350,11 @@
         display: inline-flex;
         align-items: center;
         gap: 9px;
-        padding: 9px 18px; /* UPGRADE */
+        padding: 9px 18px;
         border-radius: var(--radius-pill);
         border: 1px solid rgba(148, 163, 184, 0.5);
         background: radial-gradient(circle at 30% 0, #020617, #020617 60%, #000 100%);
-        font-size: 13px; /* UPGRADE */
+        font-size: 13px;
         font-weight: 600;
         cursor: pointer;
         color: #e5e7eb;
@@ -375,7 +375,7 @@
         flex: 1;
         min-height: 0;
         display: grid;
-        grid-template-columns: 410px minmax(0, 1fr); /* slightly wider left */
+        grid-template-columns: 410px minmax(0, 1fr);
         overflow: hidden;
     }
 
@@ -413,7 +413,7 @@
 
     .panel-tab {
         padding: 0 0 14px;
-        font-size: 14px; /* UPGRADE */
+        font-size: 14px;
         font-weight: 600;
         color: var(--text-secondary);
         cursor: pointer;
@@ -448,7 +448,7 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        font-size: 13px; /* UPGRADE */
+        font-size: 13px;
         color: var(--text-secondary);
         box-shadow: 0 18px 40px rgba(34, 197, 94, 0.35);
     }
@@ -479,12 +479,12 @@
     }
 
     .sub-btn {
-        padding: 8px 16px; /* UPGRADE */
+        padding: 8px 16px;
         border-radius: var(--radius-pill);
         border: 1px solid rgba(31, 41, 55, 0.95);
         background: radial-gradient(circle at 50% 0, #020617, #020617 65%, #000 100%);
         color: var(--text-secondary);
-        font-size: 13px; /* UPGRADE */
+        font-size: 13px;
         font-weight: 600;
         cursor: pointer;
         transition: 140ms ease-out;
@@ -516,7 +516,7 @@
         transition: 140ms ease-out;
         position: relative;
         overflow: hidden;
-        padding: 18px 14px; /* UPGRADE */
+        padding: 18px 14px;
         box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
         text-align: center;
     }
@@ -544,7 +544,7 @@
         border: 1px solid rgba(15, 23, 42, 0.95);
         display: flex;
         flex-direction: column;
-        min-height: 150px; /* slightly taller */
+        min-height: 150px;
         overflow: hidden;
         box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
         margin-bottom: 20px;
@@ -557,7 +557,7 @@
         border: none;
         resize: none;
         color: #e5e7eb;
-        font-size: 14px; /* UPGRADE */
+        font-size: 14px;
     }
 
     .prompt-box textarea::placeholder {
@@ -570,7 +570,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 12px; /* UPGRADE */
+        font-size: 12px;
         color: var(--text-muted);
         background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
     }
@@ -579,11 +579,11 @@
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        padding: 6px 12px;  /* UPGRADE */
+        padding: 6px 12px;
         border-radius: var(--radius-pill);
         background: radial-gradient(circle at 20% 0, rgba(59, 130, 246, 0.7), rgba(15, 23, 42, 0.95));
         color: #e5e7eb;
-        font-size: 12px;   /* UPGRADE */
+        font-size: 12px;
         font-weight: 700;
         cursor: pointer;
         border: 1px solid rgba(59, 130, 246, 0.7);
@@ -604,9 +604,8 @@
         align-items: center;
     }
 
-    /* BIG GLOSSY PILLS (dropdowns) */
     .pill-input {
-        height: 46px;  /* UPGRADE */
+        height: 46px;
         border-radius: var(--radius-pill);
         border: 1px solid rgba(15, 23, 42, 0.95);
         background: radial-gradient(circle at 30% 0, #020617, #020617 60%, #000 100%);
@@ -615,7 +614,7 @@
         align-items: center;
         gap: 8px;
         color: var(--text-secondary);
-        font-size: 13px; /* UPGRADE */
+        font-size: 13px;
         font-weight: 700;
         cursor: pointer;
         box-shadow:
@@ -630,14 +629,13 @@
         border-color: rgba(148, 163, 184, 0.95);
     }
 
-    /* GENERATE BUTTON – big glossy */
     .neon-btn {
-        height: 48px;  /* UPGRADE */
+        height: 48px;
         border-radius: var(--radius-pill);
         border: none;
         background: linear-gradient(135deg, #22c55e, #4ade80);
         color: #020617;
-        font-size: 14px;  /* UPGRADE */
+        font-size: 14px;
         font-weight: 800;
         letter-spacing: 0.09em;
         text-transform: uppercase;
@@ -665,7 +663,6 @@
         box-shadow: 0 12px 28px rgba(34, 197, 94, 0.7);
     }
 
-    /* Effect cards / grids ---------------------------------------------------- */
     .grid-2-col {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -686,6 +683,13 @@
 
     .effect-card:hover {
         border-color: rgba(148, 163, 184, 0.95);
+    }
+
+    .effect-card.selected {
+        border-color: #22c55e;
+        box-shadow:
+            0 0 0 1px rgba(34, 197, 94, 0.7),
+            0 18px 40px rgba(34, 197, 94, 0.7);
     }
 
     .effect-img {
@@ -745,7 +749,7 @@
         align-items: center;
         flex-wrap: wrap;
         gap: 10px;
-        font-size: 12px; /* UPGRADE */
+        font-size: 12px;
     }
 
     .meta-tag {
@@ -785,9 +789,15 @@
         box-shadow: 0 14px 32px rgba(0, 0, 0, 0.8);
     }
 
-    .player-container {
-        width: 100%;
-        aspect-ratio: 16 / 9;
+    /* Preview gallery that mirrors history */
+    .preview-gallery {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding-bottom: 18px;
+    }
+
+    .preview-item {
         border-radius: 24px;
         border: 1px solid rgba(15, 23, 42, 0.95);
         background: radial-gradient(circle at 10% 0, #0b1120, #020617 70%);
@@ -797,28 +807,52 @@
             0 0 0 1px rgba(15, 23, 42, 0.95),
             0 26px 60px rgba(0, 0, 0, 0.95);
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
     }
 
-    .player-overlay {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 14px 18px;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.96), transparent);
+    .preview-media-wrapper {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        position: relative;
+        background: #020617;
+    }
+
+    .preview-media-wrapper img,
+    .preview-media-wrapper video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .preview-meta-bar {
+        padding: 10px 14px 11px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-size: 12px;
+        color: var(--text-secondary);
+        border-top: 1px solid rgba(15, 23, 42, 0.95);
+        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
     }
 
-    .time-display {
-        display: inline-flex;
-        align-items: center;
+    .preview-meta-title {
+        font-weight: 600;
+        color: #e5e7eb;
+    }
+
+    .preview-meta-tags {
+        display: flex;
         gap: 8px;
-        font-weight: 700;
+        align-items: center;
+    }
+
+    .preview-item.active {
+        border-color: #22c55e;
+        box-shadow:
+            0 0 0 1px rgba(34, 197, 94, 0.7),
+            0 26px 60px rgba(34, 197, 94, 0.9);
     }
 
     .action-bar {
@@ -867,48 +901,6 @@
         margin-top: 4px;
     }
 
-    .feed-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 14px;
-        padding-bottom: 18px;
-    }
-
-    .feed-card {
-        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
-        border-radius: 18px;
-        border: 1px solid rgba(15, 23, 42, 0.95);
-        overflow: hidden;
-        cursor: pointer;
-        transition: 140ms ease-out;
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
-    }
-
-    .feed-card:hover {
-        border-color: rgba(148, 163, 184, 0.95);
-    }
-
-    .feed-thumb {
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        background: #020617;
-    }
-
-    .feed-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-
-    .feed-meta {
-        padding: 9px 11px 10px;
-        font-size: 12px;
-        color: var(--text-secondary);
-        display: flex;
-        justify-content: space-between;
-    }
-
     /* RIGHT HISTORY RAIL ------------------------------------------------------ */
     .history-rail {
         width: var(--history-width);
@@ -932,6 +924,7 @@
         opacity: 0.78;
         transition: 130ms ease-out;
         background: #020617;
+        position: relative;
     }
 
     .history-thumb img {
@@ -952,6 +945,17 @@
         box-shadow:
             0 0 0 1px rgba(34, 197, 94, 0.7),
             0 0 22px rgba(34, 197, 94, 0.8);
+    }
+
+    .history-type-pill {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        padding: 2px 4px;
+        border-radius: 999px;
+        font-size: 9px;
+        background: rgba(15,23,42,0.9);
+        color: #e5e7eb;
     }
 
     /* ==========================================================================
@@ -997,7 +1001,7 @@
             <div class="brand-logo-inner">S</div>
         </div>
 
-        <div class="nav-item" title="Home">
+        <div class="nav-item" title="Home" id="nav-home">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -1050,7 +1054,7 @@
         </div>
 
         <div class="nav-footer">
-            <div class="nav-item" style="margin-bottom:0;">
+            <div class="nav-item" style="margin-bottom:0;" id="nav-clock">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
@@ -1061,7 +1065,7 @@
                 671
             </div>
             <div class="sale-badge">SALE<br>50%</div>
-            <div class="nav-item" style="border-radius:50%; width:40px; height:40px; margin-top:6px;">
+            <div class="nav-item" style="border-radius:50%; width:40px; height:40px; margin-top:6px;" id="nav-profile">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
@@ -1088,17 +1092,17 @@
                 </div>
             </div>
 
-            <div class="view-controls">
-                <div class="view-btn active">All</div>
-                <div class="view-btn">Images</div>
-                <div class="view-btn">Videos</div>
-                <div class="view-btn">Audio</div>
+            <div class="view-controls" id="view-controls">
+                <div class="view-btn active" data-filter="all">All</div>
+                <div class="view-btn" data-filter="image">Images</div>
+                <div class="view-btn" data-filter="video">Videos</div>
+                <div class="view-btn" data-filter="audio">Audio</div>
                 <div class="view-check">
-                    <input type="checkbox" /> Favorites
+                    <input type="checkbox" id="favorites-toggle" /> Favorites
                 </div>
             </div>
 
-            <button class="assets-btn">
+            <button class="assets-btn" id="assets-btn">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                 </svg>
@@ -1113,15 +1117,15 @@
             <section class="config-panel" id="panel-video">
                 <div class="config-inner">
                     <div class="panel-tabs">
-                        <div class="panel-tab">Text to Video</div>
+                        <div class="panel-tab active">Text to Video</div>
                         <div class="panel-tab">Image to Video</div>
                         <div class="panel-tab">Elements</div>
-                        <div class="panel-tab active">Multi-Elements</div>
+                        <div class="panel-tab">Multi-Elements</div>
                     </div>
 
                     <div class="promo-banner">
                         <span>
-                            Go to SULANDRA O1 for the latest video editing features.
+                            Go to SULANDRA O1 Video Suite for the latest editing features.
                             <a href="#" class="promo-link">Try Now</a>
                         </span>
                         <div class="close-promo">×</div>
@@ -1133,7 +1137,7 @@
                         <div class="sub-btn">Delete</div>
                     </div>
 
-                    <div class="upload-zone" style="height: 190px; margin-bottom:14px;">
+                    <div class="upload-zone" style="height: 190px; margin-bottom:14px;" id="video-upload-zone">
                         <div class="upload-icon">
                             <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
@@ -1149,7 +1153,7 @@
                         </div>
                     </div>
 
-                    <div class="upload-zone" style="height: 130px; margin-bottom:20px;">
+                    <div class="upload-zone" style="height: 130px; margin-bottom:20px;" id="video-image-upload-zone">
                         <div class="upload-icon">
                             <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -1164,10 +1168,10 @@
                     </div>
 
                     <div class="prompt-box">
-                        <textarea>swap [x] from [Image] for [x] from [Video]</textarea>
+                        <textarea id="video-prompt">swap [x] from [Image] for [x] from [Video]</textarea>
                         <div class="prompt-footer">
-                            <span>Detailed instructions...</span>
-                            <div class="ask-sia-btn">
+                            <span>Detailed instructions help SULANDRA craft cleaner edits.</span>
+                            <div class="ask-sia-btn" data-source="video">
                                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>
                                 </svg>
@@ -1197,7 +1201,7 @@
                                 <path d="M1 1L5 5L9 1" />
                             </svg>
                         </div>
-                        <button class="neon-btn" style="flex:2;">Generate</button>
+                        <button class="neon-btn" id="btn-generate-video" style="flex:2;">Generate</button>
                     </div>
                 </div>
             </section>
@@ -1206,8 +1210,7 @@
             <section class="config-panel hidden" id="panel-image">
                 <div class="config-inner">
                     <div class="panel-tabs">
-                        <div class="panel-tab
-                                                <div class="panel-tab active">Text to Image</div>
+                        <div class="panel-tab active">Text to Image</div>
                         <div class="panel-tab">Image to Image</div>
                         <div class="panel-tab">Styles</div>
                         <div class="panel-tab">Multi-Prompt</div>
@@ -1227,7 +1230,7 @@
                         <div class="sub-btn">Reference</div>
                     </div>
 
-                    <div class="upload-zone" style="height: 160px; margin-bottom:18px;">
+                    <div class="upload-zone" style="height: 160px; margin-bottom:18px;" id="image-upload-zone">
                         <div class="upload-icon">
                             <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -1243,10 +1246,10 @@
                     </div>
 
                     <div class="prompt-box">
-                        <textarea placeholder="Describe the image you want SULANDRA to create in precise detail..."></textarea>
+                        <textarea id="image-prompt" placeholder="Describe the image you want SULANDRA to create in precise detail..."></textarea>
                         <div class="prompt-footer">
-                            <span>Clear prompts give cleaner Kling-O1 visuals</span>
-                            <div class="ask-sia-btn">
+                            <span>Clear prompts give cleaner SULANDRA O1 visuals.</span>
+                            <div class="ask-sia-btn" data-source="image">
                                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path>
                                 </svg>
@@ -1255,37 +1258,37 @@
                         </div>
                     </div>
 
-                    <div class="grid-2-col">
-                        <div class="effect-card">
+                    <div class="grid-2-col" id="image-style-grid">
+                        <div class="effect-card" data-style="portrait">
                             <span class="effect-badge">NEW</span>
                             <div class="effect-img" style="background:linear-gradient(135deg,#22c55e,#0ea5e9);"></div>
                             <div class="effect-info">
                                 <div class="effect-title">Portrait Studio</div>
-                                <div>Sharp, soft-light portraits tuned for Kling-O1</div>
+                                <div>Sharp, soft-light portraits tuned for SULANDRA O1.</div>
                             </div>
                         </div>
 
-                        <div class="effect-card">
+                        <div class="effect-card" data-style="cinematic">
                             <div class="effect-img" style="background:linear-gradient(135deg,#a855f7,#0ea5e9);"></div>
                             <div class="effect-info">
                                 <div class="effect-title">Cinematic Frames</div>
-                                <div>Filmic stills with realistic depth and lighting</div>
+                                <div>Filmic stills with realistic depth and lighting.</div>
                             </div>
                         </div>
 
-                        <div class="effect-card">
+                        <div class="effect-card" data-style="product">
                             <div class="effect-img" style="background:linear-gradient(135deg,#f97316,#22c55e);"></div>
                             <div class="effect-info">
                                 <div class="effect-title">Product Glow</div>
-                                <div>High-contrast ads with premium reflections</div>
+                                <div>High-contrast ads with premium reflections.</div>
                             </div>
                         </div>
 
-                        <div class="effect-card">
+                        <div class="effect-card" data-style="concept">
                             <div class="effect-img" style="background:linear-gradient(135deg,#0f172a,#6366f1);"></div>
                             <div class="effect-info">
                                 <div class="effect-title">Concept Art</div>
-                                <div>Wide angle, painterly concept pieces</div>
+                                <div>Wide angle, painterly concept pieces.</div>
                             </div>
                         </div>
                     </div>
@@ -1300,7 +1303,7 @@
                             </svg>
                         </div>
                         <div class="pill-input" style="width:110px;">
-                            Kling-O1
+                            SULANDRA O1
                             <svg width="10" height="6" style="margin-left:auto" fill="none" stroke="currentColor" viewBox="0 0 10 6">
                                 <path d="M1 1L5 5L9 1" />
                             </svg>
@@ -1311,7 +1314,7 @@
                                 <path d="M1 1L5 5L9 1" />
                             </svg>
                         </div>
-                        <button class="neon-btn" style="flex:2;">Generate</button>
+                        <button class="neon-btn" id="btn-generate-image" style="flex:2;">Generate</button>
                     </div>
                 </div>
             </section>
@@ -1325,7 +1328,7 @@
                         <div class="panel-tab">Audio FX</div>
                     </div>
                     <div style="font-size:13px; color:var(--text-secondary); margin-top:10px;">
-                        Effects Lab coming soon – apply Kling-grade transitions, overlays, and motion presets.
+                        Effects Lab coming soon – apply SULANDRA-grade transitions, overlays, and motion presets.
                     </div>
                 </div>
                 <div class="config-footer">
@@ -1349,7 +1352,7 @@
                         <div class="panel-tab">Sound Design</div>
                     </div>
                     <div style="font-size:13px; color:var(--text-secondary); margin-top:10px;">
-                        Audio Lab – generate stems and cinematic sound beds synced to Kling-O1 visuals.
+                        Audio Lab – generate stems and cinematic sound beds synced to SULANDRA visuals.
                     </div>
                 </div>
                 <div class="config-footer">
@@ -1387,7 +1390,7 @@
                         <div class="panel-tab">Animate</div>
                     </div>
                     <div style="font-size:13px; color:var(--text-secondary); margin-top:10px;">
-                        Build digital doubles and sync them to Kling-O1 videos and SIA-generated audio.
+                        Build digital doubles and sync them to SULANDRA videos and SIA-generated audio.
                     </div>
                 </div>
                 <div class="config-footer">
@@ -1405,18 +1408,18 @@
                             <span class="action-pill-dot"></span>
                             <span id="stage-type-label">Video Preview</span>
                         </div>
-                        <div class="meta-tag">
-                            Kling-O1 Engine · 16:9
+                        <div class="meta-tag" id="engine-pill">
+                            SULANDRA Engine · 16:9
                         </div>
                         <div class="meta-tools">
-                            <button class="icon-btn" title="Download">
+                            <button class="icon-btn" title="Download" id="btn-download">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
                                     <line x1="12" y1="15" x2="12" y2="3"></line>
                                 </svg>
                             </button>
-                            <button class="icon-btn" title="Share">
+                            <button class="icon-btn" title="Share" id="btn-share">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <circle cx="18" cy="5" r="3"></circle>
                                     <circle cx="6" cy="12" r="3"></circle>
@@ -1425,7 +1428,7 @@
                                     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                                 </svg>
                             </button>
-                            <button class="icon-btn" title="More">
+                            <button class="icon-btn" title="More" id="btn-more">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <circle cx="5" cy="12" r="1"></circle>
                                     <circle cx="12" cy="12" r="1"></circle>
@@ -1435,190 +1438,572 @@
                         </div>
                     </div>
 
-                    <div class="player-container">
-                        <!-- Replace with <video> / <img> dynamically -->
-                        <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#4ade80">
-                            <circle cx="12" cy="12" r="10" stroke-width="1.5" />
-                            <polygon points="10 8 16 12 10 16" fill="#4ade80" />
-                        </svg>
-
-                        <div class="player-overlay">
-                            <div class="time-display">
-                                <button class="icon-btn" style="width:32px;height:32px;">
-                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                    </svg>
-                                </button>
-                                <span>00:00 / 00:10</span>
-                            </div>
-                            <div style="display:flex;gap:8px;align-items:center;">
-                                <div style="width:170px;height:4px;border-radius:999px;background:rgba(31,41,55,0.9);overflow:hidden;">
-                                    <div style="width:26%;height:100%;background:linear-gradient(90deg,#22c55e,#4ade80);"></div>
-                                </div>
-                                <div class="meta-tag">Preview Only</div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="action-bar">
-                        <div class="action-link action-link-primary">
+                        <div class="action-link action-link-primary" id="action-open-studio">
                             <span>Open in Studio</span>
                         </div>
                         <div class="divider-v"></div>
-                        <div class="action-link">
+                        <div class="action-link" id="action-upscale">
                             <span>Upscale with O1</span>
                         </div>
-                        <div class="action-link">
+                        <div class="action-link" id="action-send-covers">
                             <span>Send to Covers</span>
                         </div>
-                        <div class="action-link">
+                        <div class="action-link" id="action-duplicate">
                             <span>Duplicate</span>
                         </div>
-                        <div class="action-link">
+                        <div class="action-link" id="action-archive">
                             <span>Archive</span>
                         </div>
                     </div>
 
-                    <div class="feed-header">Recent Kling-O1 Renders</div>
-                    <div class="feed-grid">
-                        <div class="feed-card">
-                            <div class="feed-thumb">
-                                <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                            </div>
-                            <div class="feed-meta">
-                                <span>Cyber City Fly-through</span>
-                                <span style="color:#6b7280;">10s · 1080p</span>
-                            </div>
-                        </div>
+                    <div class="feed-header" id="preview-header">Recent SULANDRA Renders</div>
 
-                        <div class="feed-card">
-                            <div class="feed-thumb">
-                                <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                            </div>
-                            <div class="feed-meta">
-                                <span>Portrait Glow Pack</span>
-                                <span style="color:#6b7280;">4× PNG</span>
-                            </div>
-                        </div>
-
-                        <div class="feed-card">
-                            <div class="feed-thumb">
-                                <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                            </div>
-                            <div class="feed-meta">
-                                <span>Product Spin 360°</span>
-                                <span style="color:#6b7280;">8s · Loop</span>
-                            </div>
-                        </div>
-
-                        <div class="feed-card">
-                            <div class="feed-thumb">
-                                <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                            </div>
-                            <div class="feed-meta">
-                                <span>Stylized Cover Grid</span>
-                                <span style="color:#6b7280;">Album Art</span>
-                            </div>
-                        </div>
+                    <!-- PREVIEW GALLERY: mirrors history rail -->
+                    <div class="preview-gallery" id="preview-gallery">
+                        <!-- Filled by JS -->
                     </div>
                 </div>
 
                 <!-- HISTORY RAIL -->
-                <aside class="history-rail">
-                    <div class="history-thumb active">
-                        <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                    </div>
-                    <div class="history-thumb">
-                        <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                    </div>
-                    <div class="history-thumb">
-                        <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                    </div>
-                    <div class="history-thumb">
-                        <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                    </div>
-                    <div class="history-thumb">
-                        <img src="https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800" alt="">
-                    </div>
+                <aside class="history-rail" id="history-rail">
+                    <!-- Filled by JS -->
                 </aside>
             </section>
         </div> <!-- /main-area -->
     </div> <!-- /app-shell -->
 
     <script>
-        // Close promo banners
-        document.querySelectorAll('.close-promo').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const banner = btn.closest('.promo-banner');
-                if (banner) banner.style.display = 'none';
+        // ============================
+        //  CONFIG: API PLACEHOLDERS
+        // ============================
+        const RUNPOD_API_KEY = "";         // <- put your RunPod API key
+        const RUNPOD_VIDEO_ENDPOINT = "";  // <- e.g. https://api.runpod.io/...
+        const RUNPOD_IMAGE_ENDPOINT = "";  // <- e.g. https://api.runpod.io/...
+        const SIA_BRAIN_ENDPOINT = "";     // <- your SIA Brain endpoint on RunPod
+
+        // In-memory asset list (images / videos / audio)
+        // NOTE: In later sections we'll load these from backend.
+        let sulandraAssets = [
+            {
+                id: "asset-1",
+                type: "video",
+                title: "Cyber City Fly-through",
+                thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                duration: "00:10",
+                resolution: "1080p",
+                favorite: false
+            },
+            {
+                id: "asset-2",
+                type: "image",
+                title: "Portrait Glow Pack",
+                thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                duration: null,
+                resolution: "4× PNG",
+                favorite: true
+            },
+            {
+                id: "asset-3",
+                type: "video",
+                title: "Product Spin 360°",
+                thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                duration: "00:08",
+                resolution: "Loop",
+                favorite: false
+            },
+            {
+                id: "asset-4",
+                type: "image",
+                title: "Stylized Cover Grid",
+                thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                duration: null,
+                resolution: "Album Art",
+                favorite: false
+            }
+        ];
+
+        let currentFilter = "all";
+        let favoritesOnly = false;
+        let activeAssetId = sulandraAssets[0]?.id || null;
+
+        // Panels for main labs
+        const panels = {
+            video: document.getElementById("panel-video"),
+            image: document.getElementById("panel-image"),
+            effects: document.getElementById("panel-effects"),
+            audio: document.getElementById("panel-audio"),
+            tryon: document.getElementById("panel-tryon"),
+            avatar: document.getElementById("panel-avatar")
+        };
+
+        const pageTitle = document.getElementById("page-title");
+        const modelText = document.getElementById("model-text");
+        const stageTypeLabel = document.getElementById("stage-type-label");
+        const previewHeader = document.getElementById("preview-header");
+        const enginePill = document.getElementById("engine-pill");
+
+        const previewGalleryEl = document.getElementById("preview-gallery");
+        const historyRailEl = document.getElementById("history-rail");
+
+        // ----------------------
+        // PROMO BANNER CLOSE
+        // ----------------------
+        document.querySelectorAll(".close-promo").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const banner = btn.closest(".promo-banner");
+                if (banner) banner.style.display = "none";
             });
         });
 
-        // Simple nav switching for main panels
-        const panels = {
-            video: document.getElementById('panel-video'),
-            image: document.getElementById('panel-image'),
-            effects: document.getElementById('panel-effects'),
-            audio: document.getElementById('panel-audio'),
-            tryon: document.getElementById('panel-tryon'),
-            avatar: document.getElementById('panel-avatar')
-        };
+        // ----------------------
+        // PANEL TAB SWITCH (visual only per panel)
+        // ----------------------
+        document.querySelectorAll(".panel-tabs").forEach((tabs) => {
+            tabs.addEventListener("click", (e) => {
+                const tab = e.target.closest(".panel-tab");
+                if (!tab) return;
+                tabs.querySelectorAll(".panel-tab").forEach((t) => t.classList.remove("active"));
+                tab.classList.add("active");
+            });
+        });
 
-        const pageTitle = document.getElementById('page-title');
-        const modelText = document.getElementById('model-text');
-        const stageTypeLabel = document.getElementById('stage-type-label');
+        // ----------------------
+        // SUB-ACTIONS (Swap / Add / Delete etc.)
+        // ----------------------
+        document.querySelectorAll(".sub-actions").forEach((group) => {
+            group.addEventListener("click", (e) => {
+                const btn = e.target.closest(".sub-btn");
+                if (!btn) return;
+                group.querySelectorAll(".sub-btn").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+            });
+        });
 
+        // ----------------------
+        // EFFECT CARD SELECTION
+        // ----------------------
+        const imageStyleGrid = document.getElementById("image-style-grid");
+        if (imageStyleGrid) {
+            imageStyleGrid.addEventListener("click", (e) => {
+                const card = e.target.closest(".effect-card");
+                if (!card) return;
+                imageStyleGrid.querySelectorAll(".effect-card").forEach((c) => c.classList.remove("selected"));
+                card.classList.add("selected");
+
+                const styleKey = card.getAttribute("data-style");
+                const imagePrompt = document.getElementById("image-prompt");
+                if (!imagePrompt) return;
+
+                if (styleKey === "portrait") {
+                    imagePrompt.value = "High-detail portrait photography, soft key light, SULANDRA O1, 85mm lens, skin tones accurate.";
+                } else if (styleKey === "cinematic") {
+                    imagePrompt.value = "Cinematic still frame, dramatic contrast, shallow depth of field, SULANDRA O1 grading.";
+                } else if (styleKey === "product") {
+                    imagePrompt.value = "Premium product on reflective surface, studio lighting, SULANDRA O1 advertising style.";
+                } else if (styleKey === "concept") {
+                    imagePrompt.value = "Wide-angle concept art environment, volumetric lighting, detailed textures, SULANDRA O1 painting.";
+                }
+            });
+        }
+
+        // ----------------------
+        // VIEW FILTERS (All / Images / Videos / Audio)
+        // ----------------------
+        const viewControls = document.getElementById("view-controls");
+        const favoritesToggle = document.getElementById("favorites-toggle");
+
+        if (viewControls) {
+            viewControls.addEventListener("click", (e) => {
+                const btn = e.target.closest(".view-btn");
+                if (!btn) return;
+                const filter = btn.getAttribute("data-filter");
+                if (!filter) return;
+
+                currentFilter = filter;
+                viewControls.querySelectorAll(".view-btn").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                renderAssets();
+            });
+        }
+
+        if (favoritesToggle) {
+            favoritesToggle.addEventListener("change", (e) => {
+                favoritesOnly = e.target.checked;
+                renderAssets();
+            });
+        }
+
+        // ----------------------
+        // NAV SWITCHING
+        // ----------------------
         function showPanel(key) {
-            Object.values(panels).forEach(p => p.classList.add('hidden'));
-            if (panels[key]) panels[key].classList.remove('hidden');
+            Object.values(panels).forEach((p) => p.classList.add("hidden"));
+            if (panels[key]) panels[key].classList.remove("hidden");
 
-            if (key === 'video') {
-                pageTitle.textContent = 'AI Video Generator';
-                modelText.textContent = 'VIDEO 1.6';
-                stageTypeLabel.textContent = 'Video Preview';
-            } else if (key === 'image') {
-                pageTitle.textContent = 'AI Image Generator';
-                modelText.textContent = 'Kling-O1';
-                stageTypeLabel.textContent = 'Image Preview';
-            } else if (key === 'audio') {
-                pageTitle.textContent = 'AI Audio Lab';
-                modelText.textContent = 'AUDIO O1';
-                stageTypeLabel.textContent = 'Audio Session';
-            } else if (key === 'effects') {
-                pageTitle.textContent = 'Effects Lab';
-                modelText.textContent = 'FX STACK';
-                stageTypeLabel.textContent = 'Effect Timeline';
-            } else if (key === 'tryon') {
-                pageTitle.textContent = 'Virtual Try-On';
-                modelText.textContent = 'FASHION O1';
-                stageTypeLabel.textContent = 'Look Preview';
-            } else if (key === 'avatar') {
-                pageTitle.textContent = 'Avatar Studio';
-                modelText.textContent = 'AVATAR O1';
-                stageTypeLabel.textContent = 'Avatar Preview';
+            if (key === "video") {
+                pageTitle.textContent = "AI Video Generator";
+                modelText.textContent = "VIDEO 1.6";
+                stageTypeLabel.textContent = "Video Preview";
+                enginePill.textContent = "SULANDRA Engine · 16:9";
+                currentFilter = "video";
+            } else if (key === "image") {
+                pageTitle.textContent = "AI Image Generator";
+                modelText.textContent = "SULANDRA O1";
+                stageTypeLabel.textContent = "Image Preview";
+                enginePill.textContent = "SULANDRA O1 · 16:9";
+                currentFilter = "image";
+            } else if (key === "audio") {
+                pageTitle.textContent = "AI Audio Lab";
+                modelText.textContent = "AUDIO O1";
+                stageTypeLabel.textContent = "Audio Session";
+                enginePill.textContent = "SULANDRA Audio · Waveform";
+                currentFilter = "audio";
+            } else if (key === "effects") {
+                pageTitle.textContent = "Effects Lab";
+                modelText.textContent = "FX STACK";
+                stageTypeLabel.textContent = "Effect Timeline";
+            } else if (key === "tryon") {
+                pageTitle.textContent = "Virtual Try-On";
+                modelText.textContent = "FASHION O1";
+                stageTypeLabel.textContent = "Look Preview";
+            } else if (key === "avatar") {
+                pageTitle.textContent = "Avatar Studio";
+                modelText.textContent = "AVATAR O1";
+                stageTypeLabel.textContent = "Avatar Preview";
             }
+
+            // Update view pills visual state on lab switch
+            if (viewControls) {
+                viewControls.querySelectorAll(".view-btn").forEach((b) => {
+                    const filter = b.getAttribute("data-filter");
+                    if (filter === currentFilter) {
+                        b.classList.add("active");
+                    } else if (filter !== "all") {
+                        b.classList.remove("active");
+                    }
+                });
+            }
+
+            renderAssets();
         }
 
         function wireNav(id, key) {
             const el = document.getElementById(id);
             if (!el) return;
-            el.addEventListener('click', () => {
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                el.classList.add('active');
-                showPanel(key);
+            el.addEventListener("click", () => {
+                document.querySelectorAll(".nav-item").forEach((i) => i.classList.remove("active"));
+                if (key !== "home") {
+                    el.classList.add("active");
+                    showPanel(key);
+                }
             });
         }
 
-        wireNav('nav-video', 'video');
-        wireNav('nav-image', 'image');
-        wireNav('nav-effects', 'effects');
-        wireNav('nav-audio', 'audio');
-        wireNav('nav-tryon', 'tryon');
-        wireNav('nav-avatar', 'avatar');
+        wireNav("nav-video", "video");
+        wireNav("nav-image", "image");
+        wireNav("nav-effects", "effects");
+        wireNav("nav-audio", "audio");
+        wireNav("nav-tryon", "tryon");
+        wireNav("nav-avatar", "avatar");
 
-        // Initial state
-        showPanel('video');
+        // Home just recent / default video
+        const navHome = document.getElementById("nav-home");
+        if (navHome) {
+            navHome.addEventListener("click", () => {
+                document.querySelectorAll(".nav-item").forEach((i) => i.classList.remove("active"));
+                navHome.classList.add("active");
+                showPanel("video");
+            });
+        }
+
+        // ----------------------
+        // PREVIEW + HISTORY RENDERING
+        // ----------------------
+        function getFilteredAssets() {
+            return sulandraAssets.filter((asset) => {
+                if (favoritesOnly && !asset.favorite) return false;
+                if (currentFilter === "all") return true;
+                return asset.type === currentFilter;
+            });
+        }
+
+        function renderAssets() {
+            const assets = getFilteredAssets();
+
+            previewGalleryEl.innerHTML = "";
+            historyRailEl.innerHTML = "";
+
+            if (!assets.length) {
+                const empty = document.createElement("div");
+                empty.style.fontSize = "13px";
+                empty.style.color = "#6b7280";
+                empty.textContent = "No renders to show yet. Generate something with SULANDRA.";
+                previewGalleryEl.appendChild(empty);
+                return;
+            }
+
+            // If current active asset is not in filtered list, pick the first.
+            if (!assets.some((a) => a.id === activeAssetId)) {
+                activeAssetId = assets[0].id;
+            }
+
+            assets.forEach((asset) => {
+                // PREVIEW ITEM
+                const previewItem = document.createElement("div");
+                previewItem.className = "preview-item";
+                previewItem.dataset.assetId = asset.id;
+                if (asset.id === activeAssetId) {
+                    previewItem.classList.add("active");
+                }
+
+                const mediaWrapper = document.createElement("div");
+                mediaWrapper.className = "preview-media-wrapper";
+
+                if (asset.type === "video") {
+                    const img = document.createElement("img");
+                    img.src = asset.thumb;
+                    img.alt = asset.title;
+                    mediaWrapper.appendChild(img);
+                } else if (asset.type === "image") {
+                    const img = document.createElement("img");
+                    img.src = asset.src;
+                    img.alt = asset.title;
+                    mediaWrapper.appendChild(img);
+                } else if (asset.type === "audio") {
+                    const placeholder = document.createElement("div");
+                    placeholder.style.display = "flex";
+                    placeholder.style.alignItems = "center";
+                    placeholder.style.justifyContent = "center";
+                    placeholder.style.height = "100%";
+                    placeholder.style.color = "#22c55e";
+                    placeholder.textContent = "Audio Waveform Preview";
+                    mediaWrapper.appendChild(placeholder);
+                }
+
+                const metaBar = document.createElement("div");
+                metaBar.className = "preview-meta-bar";
+
+                const leftMeta = document.createElement("div");
+                leftMeta.className = "preview-meta-title";
+                leftMeta.textContent = asset.title;
+
+                const rightMeta = document.createElement("div");
+                rightMeta.className = "preview-meta-tags";
+
+                const typeTag = document.createElement("span");
+                typeTag.textContent = asset.type.toUpperCase();
+                typeTag.style.padding = "3px 7px";
+                typeTag.style.borderRadius = "999px";
+                typeTag.style.border = "1px solid rgba(31,41,55,0.95)";
+                typeTag.style.fontSize = "10px";
+
+                rightMeta.appendChild(typeTag);
+
+                if (asset.duration) {
+                    const d = document.createElement("span");
+                    d.textContent = asset.duration;
+                    rightMeta.appendChild(d);
+                }
+                if (asset.resolution) {
+                    const r = document.createElement("span");
+                    r.textContent = asset.resolution;
+                    rightMeta.appendChild(r);
+                }
+
+                metaBar.appendChild(leftMeta);
+                metaBar.appendChild(rightMeta);
+
+                previewItem.appendChild(mediaWrapper);
+                previewItem.appendChild(metaBar);
+                previewGalleryEl.appendChild(previewItem);
+
+                previewItem.addEventListener("click", () => {
+                    setActiveAsset(asset.id, true);
+                });
+
+                // HISTORY THUMB
+                const historyThumb = document.createElement("div");
+                historyThumb.className = "history-thumb";
+                historyThumb.dataset.assetId = asset.id;
+                if (asset.id === activeAssetId) historyThumb.classList.add("active");
+
+                const imgThumb = document.createElement("img");
+                imgThumb.src = asset.thumb || asset.src;
+                imgThumb.alt = asset.title;
+                historyThumb.appendChild(imgThumb);
+
+                const typePill = document.createElement("span");
+                typePill.className = "history-type-pill";
+                typePill.textContent = asset.type[0].toUpperCase();
+                historyThumb.appendChild(typePill);
+
+                historyThumb.addEventListener("click", () => {
+                    setActiveAsset(asset.id, true);
+                });
+
+                historyRailEl.appendChild(historyThumb);
+            });
+
+            updatePreviewHeader();
+        }
+
+        function setActiveAsset(assetId, scrollIntoView) {
+            activeAssetId = assetId;
+
+            // Update preview highlight
+            previewGalleryEl.querySelectorAll(".preview-item").forEach((item) => {
+                if (item.dataset.assetId === assetId) {
+                    item.classList.add("active");
+                    if (scrollIntoView) {
+                        item.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                } else {
+                    item.classList.remove("active");
+                }
+            });
+
+            // Update history highlight
+            historyRailEl.querySelectorAll(".history-thumb").forEach((thumb) => {
+                if (thumb.dataset.assetId === assetId) {
+                    thumb.classList.add("active");
+                } else {
+                    thumb.classList.remove("active");
+                }
+            });
+        }
+
+        function updatePreviewHeader() {
+            const assets = getFilteredAssets();
+            const count = assets.length;
+            const label =
+                currentFilter === "image"
+                    ? "Images"
+                    : currentFilter === "video"
+                    ? "Videos"
+                    : currentFilter === "audio"
+                    ? "Audio Clips"
+                    : "Renders";
+
+            previewHeader.textContent = `Recent SULANDRA ${label} · ${count}`;
+        }
+
+        // ----------------------
+        // GENERATE BUTTONS (mock wiring for now)
+        // ----------------------
+        const btnGenerateVideo = document.getElementById("btn-generate-video");
+        const btnGenerateImage = document.getElementById("btn-generate-image");
+
+        async function mockGenerateAsset(type) {
+            const id = "asset-" + (Date.now());
+            if (type === "video") {
+                sulandraAssets.unshift({
+                    id,
+                    type: "video",
+                    title: "New SULANDRA Video",
+                    thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    duration: "00:06",
+                    resolution: "1080p",
+                    favorite: false
+                });
+                currentFilter = "video";
+            } else if (type === "image") {
+                sulandraAssets.unshift({
+                    id,
+                    type: "image",
+                    title: "New SULANDRA Image",
+                    thumb: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    src: "https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    duration: null,
+                    resolution: "1024×576",
+                    favorite: false
+                });
+                currentFilter = "image";
+            }
+
+            activeAssetId = id;
+            renderAssets();
+            setActiveAsset(id, true);
+        }
+
+        if (btnGenerateVideo) {
+            btnGenerateVideo.addEventListener("click", async () => {
+                // Later: callRunpodVideoGenerate()
+                await mockGenerateAsset("video");
+            });
+        }
+
+        if (btnGenerateImage) {
+            btnGenerateImage.addEventListener("click", async () => {
+                // Later: callRunpodImageGenerate()
+                await mockGenerateAsset("image");
+            });
+        }
+
+        // ----------------------
+        // ASK SIA (placeholder hook)
+        // ----------------------
+        document.querySelectorAll(".ask-sia-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const source = btn.getAttribute("data-source") || "general";
+                let prompt = "";
+                if (source === "video") {
+                    prompt = document.getElementById("video-prompt")?.value || "";
+                } else if (source === "image") {
+                    prompt = document.getElementById("image-prompt")?.value || "";
+                }
+                if (!prompt.trim()) {
+                    alert("Ask SIA: Please enter a prompt first.");
+                    return;
+                }
+                // Later: real fetch to SIA_BRAIN_ENDPOINT
+                alert("Ask SIA (stub):\n\nSource: " + source + "\nPrompt:\n" + prompt);
+            });
+        });
+
+        // ----------------------
+        // SIMPLE CLICK FEEDBACK FOR TOP ACTIONS
+        // ----------------------
+        document.getElementById("assets-btn")?.addEventListener("click", () => {
+            alert("Assets panel coming in a later section.\nFor now this confirms the button works.");
+        });
+        document.getElementById("btn-download")?.addEventListener("click", () => {
+            alert("Download would trigger for the active asset.\nWe will wire actual file links when RunPod integration is added.");
+        });
+        document.getElementById("btn-share")?.addEventListener("click", () => {
+            alert("Share options will be implemented later.");
+        });
+        document.getElementById("btn-more")?.addEventListener("click", () => {
+            alert("More actions will appear here (rename, duplicate, delete, etc.).");
+        });
+
+        document.getElementById("action-open-studio")?.addEventListener("click", () => {
+            alert("Open in Studio will route the active asset to SULANDRA Studio in later sections.");
+        });
+        document.getElementById("action-upscale")?.addEventListener("click", () => {
+            alert("Upscale with O1 will call a dedicated upscaling endpoint.");
+        });
+        document.getElementById("action-send-covers")?.addEventListener("click", () => {
+            alert("Send to Covers will send this asset to the Covers lab.");
+        });
+        document.getElementById("action-duplicate")?.addEventListener("click", () => {
+            alert("Duplicate will clone the active asset entry.");
+        });
+        document.getElementById("action-archive")?.addEventListener("click", () => {
+            alert("Archive will hide this asset from recent view.");
+        });
+
+        // ----------------------
+        // INITIAL STATE
+        // ----------------------
+        showPanel("video");
+        renderAssets();
     </script>
 </body>
 </html>
-
