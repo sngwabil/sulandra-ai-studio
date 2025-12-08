@@ -2627,18 +2627,57 @@ function switchLab(lab){
         el.classList.toggle('active', mode === lab);
     });
 
-    // 3. Toggle which top bar row is visible in the sidebar
-    const createSwitch = document.getElementById('lab-switch-create');
-    const viewSwitch   = document.getElementById('lab-switch-view');
-    if (createSwitch && viewSwitch){
-        if (lab === 'assets'){
-            createSwitch.style.display = 'none';
-            viewSwitch.style.display   = 'flex';
-        } else {
-            createSwitch.style.display = 'flex';
-            viewSwitch.style.display   = 'none';
+   // 3. Toggle which top bar row is visible in the sidebar
+const createSwitch = document.getElementById('lab-switch-create');
+const viewSwitch   = document.getElementById('lab-switch-view');
+const imageControls     = document.getElementById('image-controls');
+const videoControls     = document.getElementById('video-controls');
+const shortfilmControls = document.getElementById('shortfilm-controls');
+const assetsControls    = document.getElementById('assets-controls');
+const assetsActionsRow  = document.querySelector('.assets-actions-row');
+
+if (createSwitch && viewSwitch) {
+    if (lab === 'assets') {
+        // Show VIEW-MODE top row, hide CREATE-MODE top row
+        createSwitch.style.display = 'none';
+        viewSwitch.style.display   = 'flex';
+
+        // Hide all create controls
+        if (imageControls)     imageControls.style.display     = 'none';
+        if (videoControls)     videoControls.style.display     = 'none';
+        if (shortfilmControls) shortfilmControls.style.display = 'none';
+
+        // Show the My Files sidebar controls (grid/vertical + label + thumbnails)
+        if (assetsControls)    assetsControls.style.display    = 'block';
+
+        // Hide Ask SIA button in view mode
+        if (assetsActionsRow) {
+            const askBtn = assetsActionsRow.querySelector('.btn-ask-sia');
+            if (askBtn) askBtn.style.display = 'none';
+        }
+
+        // Render current library (images / videos / films / favorites)
+        switchAssetsView(currentAssetsView || 'images', 
+            document.querySelector('.lab-mode-view[data-view="' + (currentAssetsView || 'images') + '"]')
+        );
+    } else {
+        // Back to CREATE mode
+        createSwitch.style.display = 'flex';
+        viewSwitch.style.display   = 'none';
+
+        // Show the appropriate create controls
+        if (assetsControls)    assetsControls.style.display    = 'none';
+        if (imageControls)     imageControls.style.display     = (lab === 'image')     ? 'block' : 'none';
+        if (videoControls)     videoControls.style.display     = (lab === 'video')     ? 'block' : 'none';
+        if (shortfilmControls) shortfilmControls.style.display = (lab === 'shortfilm') ? 'block' : 'none';
+
+        // Make sure Ask SIA is visible again in create mode
+        if (assetsActionsRow) {
+            const askBtn = assetsActionsRow.querySelector('.btn-ask-sia');
+            if (askBtn) askBtn.style.display = 'inline-flex';
         }
     }
+}
 
     // 4. Show the correct control panel on the left
     const imageControls     = document.getElementById('image-controls');
