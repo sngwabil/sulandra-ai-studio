@@ -1208,6 +1208,286 @@
 .sulandra-upload-box.compact .sulandra-placeholder-sub {
     display: none; /* Hide subtitle to save space */
 }
+/* ====================================================================== */
+/* ASK SIA - SIDE PANEL & STYLES                                        */
+/* ====================================================================== */
+
+.ask-sia-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none; /* Hidden by default */
+    justify-content: flex-end;
+    z-index: 99999; /* Above everything */
+    backdrop-filter: blur(2px);
+}
+
+.ask-sia-panel {
+    width: 380px;
+    max-width: 90%;
+    height: 100%;
+    background: radial-gradient(circle at 0% 0%, rgba(69,241,255,0.1), transparent 60%),
+                radial-gradient(circle at 100% 100%, rgba(34, 197, 94, 0.1), transparent 60%),
+                #020617;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    box-shadow: -8px 0 40px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.ask-sia-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.ask-sia-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.ask-sia-icon-large {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: conic-gradient(from 210deg, #ff5af1, #45f1ff, #ffd15a, #ff5af1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #000;
+    box-shadow: 0 0 15px rgba(69,241,255,0.5);
+}
+
+.ask-sia-close {
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 4px;
+}
+.ask-sia-close:hover { color: #fff; }
+
+.ask-sia-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.ask-sia-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.ask-sia-context-box {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 11px;
+    color: #9ca3af;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.ask-sia-textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px;
+    color: #fff;
+    font-size: 12px;
+    resize: vertical;
+    min-height: 80px;
+}
+.ask-sia-textarea:focus { border-color: #4ade80; }
+
+.ask-sia-answer-box {
+    flex: 1;
+    background: rgba(34, 197, 94, 0.03);
+    border: 1px solid rgba(34, 197, 94, 0.15);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 12px;
+    color: #e5e7eb;
+    line-height: 1.6;
+}
+
+.ask-sia-main-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 99px;
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    color: #022c22;
+    font-weight: 600;
+    font-size: 12px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.ask-sia-main-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+/* ====================================================================== */
+/* ASK SIA - SIDE PANEL STYLES                                            */
+/* ====================================================================== */
+
+.ask-sia-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none; /* Hidden by default */
+    justify-content: flex-end;
+    z-index: 99999;
+    backdrop-filter: blur(2px);
+}
+
+.ask-sia-panel {
+    width: 380px;
+    max-width: 90%;
+    height: 100%;
+    background: radial-gradient(circle at 0% 0%, rgba(69,241,255,0.1), transparent 60%),
+                radial-gradient(circle at 100% 100%, rgba(34, 197, 94, 0.1), transparent 60%),
+                #020617;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    box-shadow: -8px 0 40px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.ask-sia-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.ask-sia-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.ask-sia-icon-large {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: conic-gradient(from 210deg, #ff5af1, #45f1ff, #ffd15a, #ff5af1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #000;
+    box-shadow: 0 0 15px rgba(69,241,255,0.5);
+}
+
+.ask-sia-close {
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 4px;
+}
+.ask-sia-close:hover { color: #fff; }
+
+.ask-sia-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.ask-sia-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.ask-sia-context-box {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 11px;
+    color: #9ca3af;
+    font-family: 'JetBrains Mono', monospace;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.ask-sia-textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px;
+    color: #fff;
+    font-size: 12px;
+    resize: vertical;
+    min-height: 80px;
+}
+.ask-sia-textarea:focus { border-color: #4ade80; }
+
+.ask-sia-answer-box {
+    flex: 1;
+    background: rgba(34, 197, 94, 0.03);
+    border: 1px solid rgba(34, 197, 94, 0.15);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 12px;
+    color: #e5e7eb;
+    line-height: 1.6;
+    overflow-y: auto;
+}
+
+.ask-sia-main-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 99px;
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    color: #022c22;
+    font-weight: 600;
+    font-size: 12px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+.ask-sia-main-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 </style>
 </head>
 <body>
@@ -2048,6 +2328,56 @@
     </div>
 </div>
 </body>
+<div class="ask-sia-panel-backdrop" id="askSiaBackdrop">
+    <div class="ask-sia-panel">
+        <div class="ask-sia-header">
+            <div class="ask-sia-title">
+                <div class="ask-sia-icon-large">S</div>
+                <div>
+                    <div>Ask SIA</div>
+                    <div style="font-size: 10px; font-weight:400; color:#9ca3af; margin-top:2px;">
+                        Sulandra Intelligent Assistant
+                    </div>
+                </div>
+            </div>
+            <div class="ask-sia-close" onclick="closeAskSia()">
+                <svg viewBox="0 0 24 24" fill="none" style="width:20px;height:20px;">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="ask-sia-body">
+            <div>
+                <div class="ask-sia-label">Current Context</div>
+                <div class="ask-sia-context-box" id="askSiaContext">
+                    No active context.
+                </div>
+            </div>
+
+            <div>
+                <div class="ask-sia-label">Your Request</div>
+                <textarea
+                    id="askSiaQuestion"
+                    class="ask-sia-textarea"
+                    placeholder="E.g. 'Make this prompt more cinematic', 'Fix the lighting description', 'Suggest a camera angle'..."
+                ></textarea>
+            </div>
+
+            <div style="flex:1; display:flex; flex-direction:column;">
+                <div class="ask-sia-label">SIA Response</div>
+                <div class="ask-sia-answer-box" id="askSiaAnswer">
+                    <span style="color:#6b7280; font-style:italic;">Waiting for input...</span>
+                </div>
+            </div>
+
+            <button type="button" class="ask-sia-main-btn" onclick="sendAskSia()">
+                <span>Generate Suggestion</span>
+                <svg viewBox="0 0 24 24" fill="none" style="width:14px;height:14px;"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
 <script>
 /* ====================================================================== */
 /*  SULANDRA VISION LAB – SECTION 3                                       */
@@ -3774,16 +4104,14 @@ function addShortFilmSegmentRow() {
         });
     }
 
-    // 2. Ask SIA Listener
+    // 2. Ask SIA Listener (Updated for Side Panel)
     const askBtn = row.querySelector(".dynamic-ask-btn");
     if (askBtn) {
         askBtn.addEventListener("click", () => {
             const txt = document.getElementById(promptId);
-            if (txt && txt.value.trim()) {
-                window.alert(`SIA is optimizing segment ${id}...`);
-            } else {
-                window.alert("Please write a draft description first.");
-            }
+            const content = txt ? txt.value : "";
+            // Open the panel with the segment text
+            openAskSia('shortfilm-segment', content || `Segment ${id} (Empty)`);
         });
     }
 
@@ -4462,7 +4790,84 @@ function wireMainButtonsAndToggles() {
 
     // Random prompt button
     wireRandomPromptButton();
+// --- ASK SIA BUTTONS WIRING ---
+    document.querySelectorAll(".ask-sia-prompt-btn").forEach(btn => {
+        // Remove old listeners (clone node trick) to prevent duplicates if function runs twice
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const targetId = newBtn.dataset.targetPrompt;
+            const textarea = document.getElementById(targetId);
+            
+            let contextText = "General Help";
+            if (textarea && textarea.value.trim()) {
+                contextText = textarea.value.trim();
+            } else if (textarea) {
+                contextText = "Empty prompt field";
+            }
+
+            // Open the panel with the text from the prompt box
+            openAskSia(currentLab, contextText);
+        });
+    });
 }
+/* =============================== */
+/* ASK SIA LOGIC                   */
+/* =============================== */
+let askSiaState = {
+  mode: 'general',
+  context: ''
+};
+
+function openAskSia(mode, contextText) {
+  askSiaState.mode = mode || 'general';
+  askSiaState.context = contextText || '';
+
+  const backdrop = document.getElementById('askSiaBackdrop');
+  const ctxBox = document.getElementById('askSiaContext');
+  const answerBox = document.getElementById('askSiaAnswer');
+  const questionBox = document.getElementById('askSiaQuestion');
+
+  // Populate UI
+  ctxBox.textContent = contextText || "No context selected.";
+  questionBox.value = ""; // Clear previous question
+  answerBox.innerHTML = '<span style="color:#6b7280; font-style:italic;">How can I help with this prompt?</span>';
+  
+  // Show Panel
+  backdrop.style.display = 'flex';
+}
+
+function closeAskSia() {
+  document.getElementById('askSiaBackdrop').style.display = 'none';
+}
+
+async function sendAskSia() {
+  const question = document.getElementById('askSiaQuestion').value;
+  const answerBox = document.getElementById('askSiaAnswer');
+  
+  if (!question.trim()) {
+      answerBox.innerHTML = '<span style="color:#ef4444;">Please type a request first.</span>';
+      return;
+  }
+
+  // Loading State
+  answerBox.innerHTML = '<span style="color:#4ade80;">SIA is thinking...</span>';
+
+  // 🔌 SIMULATED API CALL (Replace with your Real API)
+  setTimeout(() => {
+      const mockResponse = `<strong>Suggestion for ${askSiaState.mode}:</strong><br><br>Based on your input "${askSiaState.context}", try adding "volumetric lighting, 8k resolution, shot on 35mm" to enhance the cinematic feel.`;
+      answerBox.innerHTML = mockResponse;
+  }, 1500);
+}
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAskSia();
+});
 
 /* -------------------------- INITIAL UI WIRING ENTRY --------------------- */
 
