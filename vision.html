@@ -1241,6 +1241,39 @@
                                 </button>
                             </div>
                         </div>
+                                                <!-- Image → Video reference upload (shown before prompts) -->
+                        <div class="upload-zone" style="height: 160px; margin: 16px 0 18px;">
+                            <input
+                                type="file"
+                                id="video-reference-input"
+                                accept="image/*"
+                                style="display:none"
+                                onchange="handleReferenceImageChange(this, 'video-reference-preview')"
+                            />
+                            <div
+                                class="upload-icon"
+                                onclick="document.getElementById('video-reference-input').click()"
+                                style="cursor:pointer;"
+                            >
+                                <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                            </div>
+                            <div style="font-weight:700; margin-bottom:5px; font-size:14px;">
+                                Optional reference frame (Image → Video)
+                            </div>
+                            <div style="font-size:12px; color:var(--text-secondary);">
+                                Drag &amp; drop or browse · PNG / JPG · 10MB
+                            </div>
+
+                            <!-- Live thumbnail preview -->
+                            <div
+                                id="video-reference-preview"
+                                style="margin-top:10px; display:none; border-radius:14px; overflow:hidden; border:1px solid rgba(31,41,55,0.9);"
+                            ></div>
+                        </div>
 
                         <!-- Prompt blocks -->
                         <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
@@ -1487,31 +1520,6 @@
                             style="margin-bottom:16px;display:none;"
                         >
                             <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                                Reference image (Image → Video)
-                            </div>
-                            <label
-                                for="video-reference-input"
-                                style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
-                            >
-                                <div>
-                                    <div style="font-size:12px;">Upload reference frame</div>
-                                    <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
-                                </div>
-                                <div
-                                    style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
-                                        <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                        <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                            </label>
-                            <input id="video-reference-input" type="file" accept="image/*" class="visually-hidden" />
-                            <div
-                                id="video-reference-preview"
-                                style="margin-top:8px;font-size:11px;color:var(--text-secondary);display:none;"
-                            ></div>
-                        </div>
 
                         <!-- Duration / resolution / audio -->
                         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
