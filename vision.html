@@ -1541,85 +1541,87 @@
                     <!--  SHORT FILM LAB CONFIG                             -->
                     <!-- =================================================== -->
                     <div class="lab-config hidden" id="lab-config-shortfilm" data-lab="shortfilm">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                            <div>
-                                <div style="font-size:15px;font-weight:600;">Short Film Builder</div>
-                                <div class="text-muted" style="font-size:12px;margin-top:2px;">
-                                    Multi-segment storytelling · Scenes · Transitions · Narrative prompts
-                                </div>
-                            </div>
-                            <div class="badge-pill">
-                                <span class="tag-dot"></span>
-                                <span>Storyboard mode</span>
-                            </div>
-                        </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+            <div style="font-size:15px;font-weight:600;">Short Film Builder</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px;">
+                Multi-segment storytelling · Scenes · Transitions · Narrative prompts
+            </div>
+        </div>
+        <div class="badge-pill">
+            <span class="tag-dot"></span>
+            <span>Storyboard mode</span>
+        </div>
+    </div>
 
-                        <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                            Film title &amp; global prompt
-                        </div>
-                        <input
-                            id="shortfilm-title-input"
-                            type="text"
-                            placeholder="Title of your short film"
-                            style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);font-size:12px;margin-bottom:8px;"
-                        />
-                        <textarea
-                            id="shortfilm-global-prompt"
-                            rows="3"
-                            placeholder="Describe the overall story, tone, characters, and style..."
-                            style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:70px;margin-bottom:12px;"
-                        ></textarea>
+    <div class="prompt-label-row">
+        <div class="text-soft" style="font-size:12px;">Film title &amp; global prompt</div>
+        <button type="button" class="ask-sia-prompt-btn" data-target-prompt="shortfilm-global-prompt" title="Ask SIA to enhance premise">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+    </div>
 
-                        <div class="text-soft" style="font-size:12px;margin-bottom:4px;">
-                            Segments
-                        </div>
-                        <div
-                            id="shortfilm-segments-container"
-                            style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"
-                        >
-                            <!-- Segment rows will be injected by JS -->
-                        </div>
+    <input
+        id="shortfilm-title-input"
+        type="text"
+        placeholder="Title of your short film"
+        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);font-size:12px;margin-bottom:8px;"
+    />
+    <textarea
+        id="shortfilm-global-prompt"
+        rows="3"
+        placeholder="Describe the overall story, tone, characters, and style..."
+        style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:70px;margin-bottom:12px;"
+    ></textarea>
 
-                        <button
-                            type="button"
-                            id="shortfilm-add-segment-btn"
-                            style="width:100%;border-radius:12px;border:1px dashed rgba(55,65,81,0.9);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
-                                <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                            </svg>
-                            <span>Add segment</span>
-                        </button>
+    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">
+        Segments
+    </div>
+    <div
+        id="shortfilm-segments-container"
+        style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"
+    >
+        </div>
 
-                        <div style="display:flex;gap:10px;margin-bottom:10px;font-size:11px;color:var(--text-secondary);">
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
-                                <div class="pill-switch" id="shortfilm-aspect-switch">
-                                    <button
-                                        type="button"
-                                        class="pill-switch__btn pill-switch__btn--active"
-                                        data-shortfilm-aspect="16:9"
-                                    >
-                                        16:9
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="pill-switch__btn"
-                                        data-shortfilm-aspect="9:16"
-                                    >
-                                        9:16
-                                    </button>
-                                </div>
-                            </div>
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Total length</div>
-                                <div id="shortfilm-total-length">~ 20 sec</div>
-                                <div class="text-muted" style="font-size:10px;">Based on segment durations</div>
-                            </div>
-                        </div>
-                    </div>
+    <button
+        type="button"
+        id="shortfilm-add-segment-btn"
+        style="width:100%;border-radius:12px;border:1px dashed rgba(55,65,81,0.9);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;"
+    >
+        <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
+            <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
+            <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
+        </svg>
+        <span>Add segment</span>
+    </button>
 
+    <div style="display:flex;gap:10px;margin-bottom:10px;font-size:11px;color:var(--text-secondary);">
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
+            <div class="pill-switch" id="shortfilm-aspect-switch">
+                <button
+                    type="button"
+                    class="pill-switch__btn pill-switch__btn--active"
+                    data-shortfilm-aspect="16:9"
+                >
+                    16:9
+                </button>
+                <button
+                    type="button"
+                    class="pill-switch__btn"
+                    data-shortfilm-aspect="9:16"
+                >
+                    9:16
+                </button>
+            </div>
+        </div>
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Total length</div>
+            <div id="shortfilm-total-length">~ 20 sec</div>
+            <div class="text-muted" style="font-size:10px;">Based on segment durations</div>
+        </div>
+    </div>
+</div>
                     <!-- =================================================== -->
                     <!--  MY FILES / ASSETS CONFIG                          -->
                     <!-- =================================================== -->
