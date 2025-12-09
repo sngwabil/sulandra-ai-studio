@@ -4651,6 +4651,59 @@ function wireMainButtonsAndToggles() {
     // Random prompt button
     wireRandomPromptButton();
 }
+/* =============================== */
+/* ASK SIA LOGIC                   */
+/* =============================== */
+let askSiaState = {
+  mode: 'general',
+  context: ''
+};
+
+function openAskSia(mode, contextText) {
+  askSiaState.mode = mode || 'general';
+  askSiaState.context = contextText || '';
+
+  const backdrop = document.getElementById('askSiaBackdrop');
+  const ctxBox = document.getElementById('askSiaContext');
+  const answerBox = document.getElementById('askSiaAnswer');
+  const questionBox = document.getElementById('askSiaQuestion');
+
+  // Populate UI
+  ctxBox.textContent = contextText || "No context selected.";
+  questionBox.value = ""; // Clear previous question
+  answerBox.innerHTML = '<span style="color:#6b7280; font-style:italic;">How can I help with this prompt?</span>';
+  
+  // Show Panel
+  backdrop.style.display = 'flex';
+}
+
+function closeAskSia() {
+  document.getElementById('askSiaBackdrop').style.display = 'none';
+}
+
+async function sendAskSia() {
+  const question = document.getElementById('askSiaQuestion').value;
+  const answerBox = document.getElementById('askSiaAnswer');
+  
+  if (!question.trim()) {
+      answerBox.innerHTML = '<span style="color:#ef4444;">Please type a request first.</span>';
+      return;
+  }
+
+  // Loading State
+  answerBox.innerHTML = '<span style="color:#4ade80;">SIA is thinking...</span>';
+
+  // 🔌 SIMULATED API CALL (Replace with your Real API)
+  setTimeout(() => {
+      const mockResponse = `<strong>Suggestion for ${askSiaState.mode}:</strong><br><br>Based on your input "${askSiaState.context}", try adding "volumetric lighting, 8k resolution, shot on 35mm" to enhance the cinematic feel.`;
+      answerBox.innerHTML = mockResponse;
+  }, 1500);
+}
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAskSia();
+});
 
 /* -------------------------- INITIAL UI WIRING ENTRY --------------------- */
 
