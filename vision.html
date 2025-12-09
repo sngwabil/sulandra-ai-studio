@@ -4407,47 +4407,43 @@ function setGeneratingState(active, labelText) {
     }
 }
 
-/* --------------------------- RUNPOD API STUB --------------------------- */
+/* ====================================================================== */
+/* SULANDRA API GATEWAY – REAL CONNECTION                                */
+/* ====================================================================== */
+
+// Your actual RunPod endpoint
+const SULANDRA_API_BASE = "https://tq8zw4nuj2yrvx-8188.proxy.runpod.net";
 
 async function callSulandraAPI(path, payload) {
-    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD-ENDPOINT")) {
-        // Stub: simulate success with placeholder image/video so UI is still testable
-        console.warn("[Sulandra] SULANDRA_API_BASE is not configured. Returning stub object.");
-        await new Promise(res => setTimeout(res, 800));
-        const kind = payload.kind || "image";
-        const url = kind === "image"
-            ? "https://dummyimage.com/1280x720/0f172a/ffffff.png&text=Sulandra+Image"
-            : "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4";
-        return {
-            ok: true,
-            kind: kind,
-            url: url,
-            thumb: url,
-            meta: {
-                model: "Sulandra Vision Flux 2.0 (stub)",
-                guidance: payload.guidance,
-                steps: payload.steps,
-                seed: payload.seed || null,
-                creditsUsed: 1
-            }
-        };
+    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
+        window.alert("Please configure your RunPod URL in the code.");
+        throw new Error("Missing API URL");
     }
 
+    // Clean up URL and make the request
     const url = SULANDRA_API_BASE.replace(/\/+$/, "") + path;
-    const res = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    });
+    console.log(`[Sulandra] Calling: ${url}`, payload);
 
-    if (!res.ok) {
-        const txt = await res.text();
-        throw new Error("Sulandra API error: " + res.status + " – " + txt);
+    try {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                // "ngrok-skip-browser-warning": "true" // Uncomment if using ngrok
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Server Error (${res.status}): ${errorText}`);
+        }
+
+        return await res.json();
+    } catch (err) {
+        console.error("[Sulandra] API Failed:", err);
+        throw err;
     }
-
-    return res.json();
 }
 
 /* ---------------------- BUILD PAYLOADS FROM UI -------------------------- */
