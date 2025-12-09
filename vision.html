@@ -1251,214 +1251,147 @@
                     <!-- =================================================== -->
                     <!--  IMAGE LAB CONFIG                                   -->
                     <!-- =================================================== -->
-                    <div class="lab-config" id="lab-config-image" data-lab="image">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                            <div>
-                                <div style="font-size:15px;font-weight:600;">Image Generator</div>
-                                <div class="text-muted" style="font-size:12px;margin-top:2px;">
-                                    Text-to-Image · Image-to-Image · Styles · Aspect ratios
-                                </div>
-                            </div>
-                            <div class="pill-switch" id="image-mode-switch">
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn pill-switch__btn--active"
-                                    data-image-mode="text"
-                                >
-                                    Text → Image
-                                </button>
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn"
-                                    data-image-mode="image"
-                                >
-                                    Image → Image
-                                </button>
-                            </div>
-                        </div>
+<div class="lab-config" id="lab-config-image" data-lab="image">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+            <div style="font-size:15px;font-weight:600;">Image Generator</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px;">
+                Text-to-Image · Image-to-Image · Styles · Aspect ratios
+            </div>
+        </div>
+        <div class="pill-switch" id="image-mode-switch">
+            <button
+                type="button"
+                class="pill-switch__btn pill-switch__btn--active"
+                data-image-mode="text"
+            >
+                Text → Image
+            </button>
+            <button
+                type="button"
+                class="pill-switch__btn"
+                data-image-mode="image"
+            >
+                Image → Image
+            </button>
+        </div>
+    </div>
 
-                        <!-- Prompt blocks -->
-                        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
-                            <div>
-                                <label for="image-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="image-main-prompt"
-                                        rows="4"
-                                        placeholder="Describe the image you want Sulandra to create..."
-                                        style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
-                                    ></textarea>
-                                </div>
-                            </div>
+    <div id="image-reference-block" style="margin-bottom:16px;display:none;">
+        <div id="image-reference-preview-large" class="reference-preview-large"></div>
 
-                            <div>
-                                <label for="image-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="image-negative-prompt"
-                                        rows="2"
-                                        placeholder="Things to avoid (blur, watermark, distortion, etc.)"
-                                        style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
-                                    ></textarea>
-                                </div>
-                            </div>
-                        </div>
+        <label
+            for="image-reference-input"
+            style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
+        >
+            <div>
+                <div style="font-size:12px;">Upload reference</div>
+                <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
+            </div>
+            <div style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
+                    <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
+                    <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </label>
+        <input id="image-reference-input" type="file" accept="image/*" class="visually-hidden" />
+    </div>
 
-                        <!-- Reference image upload (visible in Image→Image) -->
-                        <div
-                            id="image-reference-block"
-                            style="margin-bottom:16px;display:none;"
-                        >
-                            <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                                Reference image (Image → Image)
-                            </div>
-                            <label
-                                for="image-reference-input"
-                                style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
-                            >
-                                <div>
-                                    <div style="font-size:12px;">Upload reference</div>
-                                    <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
-                                </div>
-                                <div
-                                    style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
-                                        <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                        <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                            </label>
-                            <input id="image-reference-input" type="file" accept="image/*" class="visually-hidden" />
-                            <div
-                                id="image-reference-preview"
-                                style="margin-top:8px;font-size:11px;color:var(--text-secondary);display:none;"
-                            ></div>
-                        </div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+        <div>
+            <div class="prompt-label-row">
+                <label for="image-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
+                <button type="button" class="ask-sia-prompt-btn" data-target-prompt="image-main-prompt" title="Ask SIA to enhance prompt">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea
+                    id="image-main-prompt"
+                    rows="4"
+                    placeholder="Describe the image you want Sulandra to create..."
+                    style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
+                ></textarea>
+            </div>
+        </div>
 
-                        <!-- Resolution & style row -->
-                        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-                            <div style="display:flex;gap:10px;">
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
-                                    <div class="pill-switch" id="image-aspect-switch">
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn pill-switch__btn--active"
-                                            data-image-aspect="1:1"
-                                        >
-                                            1:1
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-image-aspect="16:9"
-                                        >
-                                            16:9
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-image-aspect="9:16"
-                                        >
-                                            9:16
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+        <div>
+            <div class="prompt-label-row">
+                <label for="image-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
+                <button type="button" class="ask-sia-prompt-btn" data-target-prompt="image-negative-prompt" title="Ask SIA for negative ideas">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea
+                    id="image-negative-prompt"
+                    rows="2"
+                    placeholder="Things to avoid (blur, watermark, distortion, etc.)"
+                    style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
+                ></textarea>
+            </div>
+        </div>
+    </div>
 
-                            <div style="display:flex;gap:10px;">
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Style preset</div>
-                                    <select
-                                        id="image-style-select"
-                                        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                    >
-                                        <option value="natural">Natural photo</option>
-                                        <option value="cinematic">Cinematic</option>
-                                        <option value="anime">Anime / Stylized</option>
-                                        <option value="digital-art">Digital art</option>
-                                        <option value="3d">3D render</option>
-                                        <option value="illustration">Illustration</option>
-                                    </select>
-                                </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+        <div style="display:flex;gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
+                <div class="pill-switch" id="image-aspect-switch">
+                    <button type="button" class="pill-switch__btn pill-switch__btn--active" data-image-aspect="1:1">1:1</button>
+                    <button type="button" class="pill-switch__btn" data-image-aspect="16:9">16:9</button>
+                    <button type="button" class="pill-switch__btn" data-image-aspect="9:16">9:16</button>
+                </div>
+            </div>
+        </div>
 
-                                <div style="width:120px;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Guidance</div>
-                                    <input
-                                        type="range"
-                                        id="image-guidance-slider"
-                                        min="1"
-                                        max="20"
-                                        value="7"
-                                        style="width:100%;"
-                                    />
-                                    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:2px;">
-                                        <span>Loose</span>
-                                        <span id="image-guidance-value">7</span>
-                                        <span>Strict</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <div style="display:flex;gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Style preset</div>
+                <select id="image-style-select" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;">
+                    <option value="natural">Natural photo</option>
+                    <option value="cinematic">Cinematic</option>
+                    <option value="anime">Anime / Stylized</option>
+                    <option value="digital-art">Digital art</option>
+                    <option value="3d">3D render</option>
+                    <option value="illustration">Illustration</option>
+                </select>
+            </div>
+            <div style="width:120px;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Guidance</div>
+                <input type="range" id="image-guidance-slider" min="1" max="20" value="7" style="width:100%;" />
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:2px;">
+                    <span>Loose</span><span id="image-guidance-value">7</span><span>Strict</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        <!-- Advanced row -->
-                        <div style="display:flex;gap:10px;margin-bottom:10px;">
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps</div>
-                                <input
-                                    type="number"
-                                    id="image-steps-input"
-                                    value="30"
-                                    min="10"
-                                    max="80"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps</div>
+            <input type="number" id="image-steps-input" value="30" min="10" max="80" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
+            <input type="number" id="image-seed-input" placeholder="Random" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+    </div>
 
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
-                                <input
-                                    type="number"
-                                    id="image-seed-input"
-                                    placeholder="Random"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
-                        </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
+        <div><span id="image-estimate-res">1024 × 1024</span><span>&nbsp;•</span><span id="image-estimate-cost">~1 credit</span></div>
+        <button type="button" id="image-toggle-advanced" style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;">Advanced settings</button>
+    </div>
 
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
-                            <div>
-                                <span id="image-estimate-res">1024 × 1024</span>
-                                <span>&nbsp;•</span>
-                                <span id="image-estimate-cost">~1 credit</span>
-                            </div>
-                            <button
-                                type="button"
-                                id="image-toggle-advanced"
-                                style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;"
-                            >
-                                Advanced settings
-                            </button>
-                        </div>
-
-                        <div id="image-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
-                            <div style="display:flex;flex-direction:column;gap:6px;">
-                                <label>
-                                    <input type="checkbox" id="image-enable-upscale" />
-                                    <span>&nbsp;Upscale after generation</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="image-enable-face-fix" />
-                                    <span>&nbsp;Face enhancement</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="image-enable-tiling" />
-                                    <span>&nbsp;Seamless tiling</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+    <div id="image-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+            <label><input type="checkbox" id="image-enable-upscale" /><span>&nbsp;Upscale after generation</span></label>
+            <label><input type="checkbox" id="image-enable-face-fix" /><span>&nbsp;Face enhancement</span></label>
+            <label><input type="checkbox" id="image-enable-tiling" /><span>&nbsp;Seamless tiling</span></label>
+        </div>
+    </div>
+</div>
 
                     <!-- =================================================== -->
                     <!--  VIDEO LAB CONFIG                                   -->
