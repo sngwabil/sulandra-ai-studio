@@ -2405,13 +2405,6 @@ function uuidv4() {
     });
 }
 
-function $(id) { return document.getElementById(id); }
-
-function setTextContent(id, text) {
-    const el = $(id);
-    if (el) el.textContent = text;
-}
-
 async function generateImageFromUI() {
     if (isGenerating) return;
 
