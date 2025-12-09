@@ -2387,14 +2387,14 @@
 </div>
 <script>
 /* ====================================================================== */
-/* SULANDRA CONFIGURATION                                                */
+/* SULANDRA CONFIGURATION - CUSTOM API MODE                              */
 /* ====================================================================== */
 
-// YOUR RUNPOD URL (Port 8188 for ComfyUI)
+// YOUR RUNPOD URL (Custom Python Backend)
 const SULANDRA_API_BASE = "https://tq8zw4nuj2yrvx-8188.proxy.runpod.net";
 
 /* ====================================================================== */
-/* CORE UTILITIES                                                        */
+/* UTILITIES                                                             */
 /* ====================================================================== */
 
 function uuidv4() {
@@ -2413,122 +2413,95 @@ function setTextContent(id, text) {
 }
 
 /* ====================================================================== */
-/* API & GENERATION LOGIC (COMFYUI FLUX ADAPTER)                        */
+/* API LOGIC (CUSTOM BACKEND)                                            */
 /* ====================================================================== */
+
+async function callSulandraAPI(path, payload) {
+    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
+        window.alert("Please configure your RunPod URL in the code.");
+        throw new Error("Missing API URL");
+    }
+
+    const url = SULANDRA_API_BASE.replace(/\/+$/, "") + path;
+    console.log(`[Sulandra] Calling: ${url}`, payload);
+
+    try {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`API Error ${res.status}: ${text}`);
+        }
+        return await res.json();
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
 
 async function generateImageFromUI() {
     if (isGenerating) return;
 
-    // 1. Gather Inputs (FIXED IDS HERE)
-    // We changed "image-prompt-input" to "image-main-prompt" to match your HTML
-    const prompt = $("image-main-prompt")?.value || "";
+    // --- FIX 1: USE CORRECT HTML IDS ---
+    const promptInput = $("image-main-prompt");        // Was "image-prompt-input" (WRONG)
+    const negativeInput = $("image-negative-prompt");  // Was "image-negative-input" (WRONG)
+    const stepsInput = $("image-steps-input");
+    const seedInput = $("image-seed-input");
+
+    const prompt = (promptInput?.value || "").trim();
     if (!prompt) { window.alert("Please enter a prompt."); return; }
-    
-    const negative_prompt = $("image-negative-prompt")?.value || "";
-    const steps = parseInt($("image-steps-input")?.value || "20", 10);
-    const seedInput = $("image-seed-input")?.value;
-    const seed = seedInput ? Number(seedInput) : Math.floor(Math.random() * 1000000000);
-    
-    // 2. Aspect Ratio Logic
+
+    const negative_prompt = (negativeInput?.value || "").trim();
+    const steps = parseInt(stepsInput?.value || "30", 10);
+    const seedRaw = (seedInput?.value || "").trim();
+    const seed = seedRaw === "" ? null : Number(seedRaw);
+
+    // --- Aspect Ratio Logic ---
     const btn = document.querySelector("#image-aspect-switch .pill-switch__btn--active");
     const aspect = btn ? btn.dataset.imageAspect : "1:1";
     let width = 1024, height = 1024;
     if (aspect === "16:9") { width = 1280; height = 720; }
     if (aspect === "9:16") { width = 720; height = 1280; }
 
-    setGeneratingState(true, "Queuing...");
+    // --- Build Payload for Custom API ---
+    const payload = {
+        prompt: prompt,
+        negative_prompt: negative_prompt,
+        steps: steps,
+        seed: seed,
+        width: width,
+        height: height,
+        aspect_ratio: aspect // Sending this just in case your backend uses it
+    };
+
+    setGeneratingState(true, "Generating...");
 
     try {
-        // 3. Define the Flux Workflow (Standard ComfyUI Graph)
-        const workflow = {
-            "3": {
-                "class_type": "KSampler",
-                "inputs": {
-                    "model": ["4", 0],
-                    "positive": ["6", 0],
-                    "negative": ["7", 0],
-                    "latent_image": ["5", 0],
-                    "seed": seed,
-                    "steps": steps,
-                    "cfg": 1.0, 
-                    "sampler_name": "euler",
-                    "scheduler": "simple",
-                    "denoise": 1
-                }
-            },
-            "4": {
-                "class_type": "CheckpointLoaderSimple",
-                "inputs": {
-                    // IMPORTANT: Make sure this filename matches exactly what is in your RunPod
-                    "ckpt_name": "flux1-dev-fp8.safetensors" 
-                }
-            },
-            "5": {
-                "class_type": "EmptyLatentImage",
-                "inputs": { "width": width, "height": height, "batch_size": 1 }
-            },
-            "6": {
-                "class_type": "CLIPTextEncode",
-                "inputs": { "text": prompt, "clip": ["4", 1] }
-            },
-            "7": {
-                "class_type": "CLIPTextEncode",
-                "inputs": { "text": negative_prompt, "clip": ["4", 1] }
-            },
-            "8": {
-                "class_type": "VAEDecode",
-                "inputs": { "samples": ["3", 0], "vae": ["4", 2] }
-            },
-            "9": {
-                "class_type": "SaveImage",
-                "inputs": { "filename_prefix": "Sulandra_Flux" }
-            }
-        };
-
-        // 4. Send to ComfyUI (Correct Endpoint: /prompt)
-        const clientId = uuidv4();
-        // Remove trailing slash just in case
-        const apiBase = SULANDRA_API_BASE.replace(/\/+$/, "");
+        // --- FIX 2: CALL YOUR CUSTOM ENDPOINT ---
+        // Ensure your Python code has a route for /api/image/txt2img
+        const result = await callSulandraAPI("/api/image/txt2img", payload);
         
-        const res = await fetch(`${apiBase}/prompt`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: workflow, client_id: clientId })
-        });
+        // EXPECTED RESULT FORMAT: { "url": "...", "seed": 12345 }
+        // If your API returns something else, adjust `result.url` below.
+        
+        const imageUrl = result.url || result.image_url; 
+        
+        if (!imageUrl) throw new Error("API did not return an image URL");
 
-        if (!res.ok) throw new Error(`ComfyUI Error: ${res.status} ${res.statusText}`);
-        const data = await res.json();
-        const promptId = data.prompt_id;
-
-        setGeneratingState(true, "Rendering...");
-
-        // 5. Poll for result
-        let imageUrl = null;
-        while (!imageUrl) {
-            await new Promise(r => setTimeout(r, 1000));
-            const histRes = await fetch(`${apiBase}/history/${promptId}`);
-            const histData = await histRes.json();
-            
-            if (histData[promptId] && histData[promptId].outputs) {
-                const outputs = histData[promptId].outputs;
-                // Find the image output (Node 9)
-                if (outputs["9"] && outputs["9"].images.length > 0) {
-                    const img = outputs["9"].images[0];
-                    imageUrl = `${apiBase}/view?filename=${img.filename}&subfolder=${img.subfolder}&type=${img.type}`;
-                }
-            }
-        }
-
-        // 6. Add to UI Gallery
+        // Add to history
         addHistoryItem({
             kind: "image",
             url: imageUrl,
             thumb: imageUrl,
-            title: "Flux Gen",
+            title: "Generated Image",
             prompt: prompt,
             aspect: aspect,
             createdAt: Date.now(),
-            meta: { seed: seed, steps: steps }
+            meta: { seed: result.seed || seed, steps: steps }
         });
 
         refreshAllHistoryDisplays();
@@ -2542,7 +2515,7 @@ async function generateImageFromUI() {
 }
 
 /* ====================================================================== */
-/* UI STATE & DOM WIRING                                                 */
+/* UI STATE & WIRING                                                     */
 /* ====================================================================== */
 
 let historyInMemory = [];
@@ -2550,7 +2523,7 @@ let currentLab = "image";
 let currentMode = "create";
 let isGenerating = false;
 
-// Helper to save/load history
+// History Helpers
 function loadHistoryFromStorage() {
     try {
         const raw = localStorage.getItem("sulandra_history");
@@ -2564,20 +2537,15 @@ function addHistoryItem(item) {
     return item;
 }
 
-// Render the gallery
 function refreshAllHistoryDisplays() {
     const container = $("gallery-items-container");
-    const emptyState = $("gallery-empty-state");
     if(!container) return;
-    
     container.innerHTML = "";
     
-    if (historyInMemory.length === 0) {
-        if(emptyState) emptyState.style.display = "flex";
+    if(historyInMemory.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#666;">No images yet</div>`;
         return;
     }
-    
-    if(emptyState) emptyState.style.display = "none";
 
     historyInMemory.forEach(item => {
         const div = document.createElement("div");
@@ -2630,7 +2598,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    console.log("Sulandra UI Loaded (ComfyUI Mode). API:", SULANDRA_API_BASE);
+    console.log("Sulandra UI Loaded (Custom API Mode). Target:", SULANDRA_API_BASE);
 });
 
 </script>
