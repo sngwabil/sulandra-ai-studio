@@ -1804,7 +1804,7 @@
                 <textarea id="image-main-prompt" rows="4" placeholder="Describe the image you want Sulandra to create..." style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"></textarea>
             </div>
         </div>
-        
+
         <div>
             <div class="prompt-label-row">
                 <label for="image-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
@@ -1859,10 +1859,12 @@
             <input type="number" id="image-seed-input" placeholder="Random" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
         </div>
     </div>
+
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
         <div><span id="image-estimate-res">1024 × 1024</span><span>&nbsp;•</span><span id="image-estimate-cost">~1 credit</span></div>
         <button type="button" id="image-toggle-advanced" style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;">Advanced settings</button>
     </div>
+
     <div id="image-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
         <div style="display:flex;flex-direction:column;gap:6px;">
             <label><input type="checkbox" id="image-enable-upscale" /><span>&nbsp;Upscale after generation</span></label>
