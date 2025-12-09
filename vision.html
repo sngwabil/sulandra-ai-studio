@@ -3637,112 +3637,104 @@ function wireShortFilmControls() {
 
 let shortFilmSegmentCounter = 0;
 
+/* 2. REPLACE THIS FUNCTION */
 function addShortFilmSegmentRow() {
-    const container = $("shortfilm-segments-container");
+    const container = document.getElementById("shortfilm-segments-container");
     if (!container) return;
 
     shortFilmSegmentCounter++;
     const id = shortFilmSegmentCounter;
-    const promptId = `shortfilm-segment-prompt-${id}`; // Unique ID for the textarea
+    const promptId = `shortfilm-segment-prompt-${id}`;
 
     const row = document.createElement("div");
     row.className = "shortfilm-segment-row";
     row.dataset.segmentId = String(id);
+    row.style.borderBottom = "1px solid rgba(31,41,55,0.5)";
+    row.style.paddingBottom = "12px";
     
-    // HTML Structure with Ask SIA Button included
+    // Updated HTML with Upload Box
     row.innerHTML = `
-        <div style="display:flex;gap:6px;align-items:flex-start;">
-            <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
-                <input
-                    type="text"
-                    class="shortfilm-segment-title"
-                    placeholder="Scene ${id} title"
-                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;"
-                />
+        <div style="display:flex; gap:10px;">
+            <div style="width: 100px; flex-shrink: 0;">
+                <div class="text-soft" style="font-size:10px;margin-bottom:4px;">Ref Image</div>
+                <label class="sulandra-upload-box compact" id="shortfilm-seg-box-${id}" for="shortfilm-seg-input-${id}" style="aspect-ratio:1/1; height:auto;">
+                    <div class="sulandra-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <img id="shortfilm-seg-img-${id}" class="sulandra-preview-img" alt="Scene Ref" />
+                    <button type="button" class="sulandra-remove-btn" onclick="clearReference('seg-${id}'); event.preventDefault();">×</button>
+                    <input id="shortfilm-seg-input-${id}" type="file" accept="image/*" class="visually-hidden" />
+                </label>
+            </div>
+
+            <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <input type="text" class="shortfilm-segment-title" placeholder="Scene ${id} Title" 
+                        style="flex:1; background:transparent; border:none; color:#e5e7eb; font-weight:600; font-size:12px; outline:none;" />
+                    <button type="button" class="shortfilm-segment-remove" style="color:#ef4444; font-size:10px;">Remove</button>
+                </div>
                 
                 <div style="position:relative;">
-                    <textarea
-                        id="${promptId}"
-                        class="shortfilm-segment-prompt"
-                        rows="2"
-                        placeholder="Describe what happens in this segment (camera, action, emotion)..."
-                        style="width:100%;border-radius:10px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px 6px 36px; /* Extra left padding for button */ background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;resize:vertical;min-height:48px;"
-                    ></textarea>
+                    <textarea id="${promptId}" class="shortfilm-segment-prompt" rows="2" placeholder="Describe scene action..." 
+                        style="width:100%; border-radius:10px; border:1px solid rgba(31,41,55,0.95); padding:6px 8px 6px 36px; background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%); color:#e5e7eb; font-size:11px; resize:vertical; min-height:60px;"></textarea>
                     
-                    <button 
-                        type="button" 
-                        class="ask-sia-prompt-btn dynamic-ask-btn" 
-                        data-target-prompt="${promptId}" 
-                        title="Ask SIA to enhance segment"
-                        style="position:absolute; left:6px; top:6px; border:none; background:rgba(34, 197, 94, 0.1);"
-                    >
+                    <button type="button" class="ask-sia-prompt-btn dynamic-ask-btn" data-target-prompt="${promptId}" 
+                        style="position:absolute; left:6px; top:6px; border:none; background:rgba(34, 197, 94, 0.1);">
                         <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                     </button>
                 </div>
-            </div>
-            
-            <div style="width:76px;display:flex;flex-direction:column;gap:4px;font-size:11px;color:#9ca3af;">
-                <label>
-                    <span>Sec</span>
-                    <input
-                        type="number"
-                        class="shortfilm-segment-duration"
-                        value="4"
-                        min="1"
-                        max="12"
-                        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 6px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;margin-top:2px;"
-                    />
-                </label>
-                <button
-                    type="button"
-                    class="shortfilm-segment-remove"
-                    style="width:100%;border-radius:999px;border:1px solid rgba(71,85,105,0.95);padding:4px 6px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#f97373;font-size:10px;"
-                >
-                    Remove
-                </button>
+
+                <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                    <span class="text-soft" style="font-size:10px;">Duration:</span>
+                    <input type="number" class="shortfilm-segment-duration" value="4" min="1" max="10" 
+                        style="width:40px; background:#0f172a; border:1px solid #1f2937; border-radius:4px; color:#fff; font-size:10px; padding-left:4px;" />
+                    <span class="text-soft" style="font-size:10px;">sec</span>
+                </div>
             </div>
         </div>
     `;
 
     container.appendChild(row);
 
-    // --- Wire up logic for this new row ---
+    // --- Wire up Logic ---
 
-    // 1. Attach Ask SIA listener manually for this new button
-    const askBtn = row.querySelector(".dynamic-ask-btn");
-    if (askBtn) {
-        askBtn.addEventListener("click", () => {
-            const textarea = document.getElementById(promptId);
-            // Visual feedback
-            const originalColor = askBtn.style.color;
-            askBtn.style.color = "#22c55e"; 
-            setTimeout(() => askBtn.style.color = originalColor, 300);
+    // 1. Image Preview Wiring for this specific row
+    const input = document.getElementById(`shortfilm-seg-input-${id}`);
+    const box = document.getElementById(`shortfilm-seg-box-${id}`);
+    const img = document.getElementById(`shortfilm-seg-img-${id}`);
 
-            if (textarea) {
-                const text = textarea.value.trim();
-                if(!text) {
-                    window.alert("Ask SIA: Please type a basic idea for this segment first!");
-                } else {
-                    window.alert(`SIA is analyzing segment ${id}: "${text.substring(0, 20)}..."\n(API connection required)`);
-                }
+    if (input) {
+        input.addEventListener("change", () => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                    box.classList.add("has-file");
+                };
+                reader.readAsDataURL(input.files[0]);
             }
         });
     }
 
-    // 2. Duration listener
-    const durationInput = row.querySelector(".shortfilm-segment-duration");
-    if (durationInput) {
-        durationInput.addEventListener("input", updateShortFilmTotalLength);
-    }
-
-    // 3. Remove listener
-    const removeBtn = row.querySelector(".shortfilm-segment-remove");
-    if (removeBtn) {
-        removeBtn.addEventListener("click", () => {
-            row.remove();
-            updateShortFilmTotalLength();
+    // 2. Ask SIA Listener
+    const askBtn = row.querySelector(".dynamic-ask-btn");
+    if (askBtn) {
+        askBtn.addEventListener("click", () => {
+            const txt = document.getElementById(promptId);
+            if (txt && txt.value.trim()) {
+                window.alert(`SIA is optimizing segment ${id}...`);
+            } else {
+                window.alert("Please write a draft description first.");
+            }
         });
     }
+
+    // 3. Remove & Duration Listeners
+    const removeBtn = row.querySelector(".shortfilm-segment-remove");
+    const durInput = row.querySelector(".shortfilm-segment-duration");
+    
+    if (removeBtn) removeBtn.addEventListener("click", () => { row.remove(); updateShortFilmTotalLength(); });
+    if (durInput) durInput.addEventListener("input", updateShortFilmTotalLength);
 
     updateShortFilmTotalLength();
 }
