@@ -2393,13 +2393,13 @@
 const SULANDRA_API_BASE = "https://tq8zw4nuj2yrvx-8188.proxy.runpod.net";
 
 async function callSulandraAPI(path, payload) {
-    if (!SULANDRA_API_BASE) {
-        alert("SULANDRA_API_BASE is not set.");
+    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
+        window.alert("Please configure your RunPod URL in the code.");
         throw new Error("Missing API URL");
     }
 
+    // Direct FastAPI call to SIA Brain (Flux 1)
     const url = SULANDRA_API_BASE.replace(/\/+$/, "") + path;
-    console.log("[Sulandra] POST", url, payload);
 
     const res = await fetch(url, {
         method: "POST",
@@ -2408,13 +2408,14 @@ async function callSulandraAPI(path, payload) {
     });
 
     if (!res.ok) {
-        const txt = await res.text().catch(() => "");
-        console.error("Sulandra API error:", res.status, txt);
-        throw new Error("Sulandra API error: " + res.status + " – " + txt);
+        const text = await res.text().catch(() => "");
+        console.error("[Sulandra] API Error:", res.status, text);
+        throw new Error("API Error: " + res.status + " " + text);
     }
 
     return res.json();
 }
+
 
 /**
  * COMFYUI ADAPTER
