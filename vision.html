@@ -4104,16 +4104,14 @@ function addShortFilmSegmentRow() {
         });
     }
 
-    // 2. Ask SIA Listener
+    // 2. Ask SIA Listener (Updated for Side Panel)
     const askBtn = row.querySelector(".dynamic-ask-btn");
     if (askBtn) {
         askBtn.addEventListener("click", () => {
             const txt = document.getElementById(promptId);
-            if (txt && txt.value.trim()) {
-                window.alert(`SIA is optimizing segment ${id}...`);
-            } else {
-                window.alert("Please write a draft description first.");
-            }
+            const content = txt ? txt.value : "";
+            // Open the panel with the segment text
+            openAskSia('shortfilm-segment', content || `Segment ${id} (Empty)`);
         });
     }
 
