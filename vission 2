@@ -1024,6 +1024,43 @@
             0 0 0 1px rgba(34, 197, 94, 0.8),
             0 26px 62px rgba(34, 197, 94, 0.9);
     }
+
+/* =============================================================== */
+/* NEW LEFT VERTICAL LAB SWITCHER                                 */
+/* =============================================================== */
+
+.vision-left-labs {
+    width: 100%;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--bg-card-soft);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.vision-left-labs .lab-btn {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg-element);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.vision-left-labs .lab-btn:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.vision-left-labs .lab-btn.active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent-strong);
+}
     </style>
 </head>
 <body>
@@ -1210,6 +1247,16 @@
             <!-- ======================================================= -->
             <!--  LEFT: CONFIG PANEL (per-lab controls)                 -->
             <!-- ======================================================= -->
+<!-- =============================================== -->
+<!-- NEW LEFT-SIDE LAB SWITCHER (Image / Video / Film) -->
+<!-- =============================================== -->
+<div class="vision-left-labs">
+    <button class="lab-btn" data-lab="image">Image Lab</button>
+    <button class="lab-btn" data-lab="video">Video Lab</button>
+    <button class="lab-btn" data-lab="film">Short Film Lab</button>
+</div>
+<!-- ========== END LAB SWITCHER ========== -->
+
             <section class="vision-config-panel" aria-label="Generation controls">
                 <div class="vision-config-panel__body">
 
