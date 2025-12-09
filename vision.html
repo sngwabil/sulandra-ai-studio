@@ -1087,6 +1087,103 @@
     align-items: center;
     margin-bottom: 6px;
 }
+/* ====================================================================== */
+/* SULANDRA UPLOAD BOX STYLE                                             */
+/* ====================================================================== */
+
+.sulandra-upload-box {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Cinematic shape */
+    background: #0f172a;  /* Darker background */
+    border-radius: 16px;
+    border: 1px dashed rgba(51, 65, 85, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.sulandra-upload-box:hover {
+    border-color: #22c55e; /* Green accent on hover */
+    background: #1e293b;
+}
+
+/* The Placeholder content (Icon + Text) */
+.sulandra-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #9ca3af;
+    pointer-events: none; /* Clicks pass through to the label */
+    padding: 20px;
+}
+
+.sulandra-placeholder svg {
+    width: 32px;
+    height: 32px;
+    color: #4ade80; /* Accent color icon */
+    opacity: 0.8;
+}
+
+.sulandra-placeholder-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.sulandra-placeholder-sub {
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* The Image Preview (Hidden by default) */
+.sulandra-preview-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Show full image */
+    background: #000;
+    z-index: 10;
+    display: none;
+}
+
+/* State: When file is selected */
+.sulandra-upload-box.has-file .sulandra-preview-img {
+    display: block;
+}
+
+.sulandra-upload-box.has-file .sulandra-placeholder {
+    display: none;
+}
+
+/* Remove button (appears on hover when file exists) */
+.sulandra-remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.sulandra-upload-box.has-file:hover .sulandra-remove-btn {
+    display: flex;
+}
 </style>
 </head>
 <body>
