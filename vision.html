@@ -2395,18 +2395,14 @@
 /* ----------------------------- API CONFIG ------------------------------ */
 
 /**
- * Base URL for your Sulandra Vision backend on RunPod.
- * Replace this with your own endpoint. All generate calls will use it.
- *
- * Example:
- *   const SULANDRA_API_BASE = "https://xxxxxxxx-xxxx-xxxx.runpod.endpoint";
+ * CONNECTED: Your active RunPod FastAPI backend.
  */
-const SULANDRA_API_BASE = "https://tq8zw4nuj2yrvx-8188.proxy.runpod.net/";
+const SULANDRA_API_BASE = "https://7vv2yd27eb3sm7-8188.proxy.runpod.net";
+
 /**
- * Optional: SIA Brain endpoint (Ask SIA).
- * Replace with your FastAPI / Node endpoint that accepts a JSON payload.
+ * CONNECTED: SIA Brain uses the same backend via the /ask_sia endpoint.
  */
-const SIA_BRAIN_ENDPOINT = "https://YOUR-SIA-BRAIN-ENDPOINT-HERE";
+const SIA_BRAIN_ENDPOINT = `${SULANDRA_API_BASE}/ask_sia`;
 
 /* --------------------------- STORAGE KEYS ------------------------------ */
 
@@ -4328,47 +4324,116 @@ function setGeneratingState(active, labelText) {
     }
 }
 
-/* --------------------------- RUNPOD API STUB --------------------------- */
+/* --------------------------- REAL API INTEGRATION --------------------------- */
 
-async function callSulandraAPI(path, payload) {
-    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD-ENDPOINT")) {
-        // Stub: simulate success with placeholder image/video so UI is still testable
-        console.warn("[Sulandra] SULANDRA_API_BASE is not configured. Returning stub object.");
-        await new Promise(res => setTimeout(res, 800));
-        const kind = payload.kind || "image";
-        const url = kind === "image"
-            ? "https://dummyimage.com/1280x720/0f172a/ffffff.png&text=Sulandra+Image"
-            : "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4";
-        return {
-            ok: true,
-            kind: kind,
-            url: url,
-            thumb: url,
-            meta: {
-                model: "Sulandra Vision Flux 2.0 (stub)",
-                guidance: payload.guidance,
+/**
+ * Helper: Convert Aspect Ratio string to Width/Height for Flux
+ */
+function getDimensionsFromAspect(aspect) {
+    // Defaults for Flux.1 Dev
+    if (aspect === "16:9") return { width: 1344, height: 768 };
+    if (aspect === "9:16") return { width: 768, height: 1344 };
+    return { width: 1024, height: 1024 }; // 1:1
+}
+
+/**
+ * Real API Call Handler
+ * Routes generic UI requests to your specific main.py endpoints
+ */
+async function callSulandraAPI(uiPath, payload) {
+    // 1. Check if backend is configured
+    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
+        alert("Please set your SULANDRA_API_BASE URL in the code.");
+        throw new Error("API URL not configured");
+    }
+
+    let endpoint = "";
+    let body = {};
+
+    // 2. Route Logic: Map UI Payload to main.py Pydantic Models
+    if (payload.kind === "image") {
+        const dims = getDimensionsFromAspect(payload.aspect);
+        
+        if (payload.mode === "image" && payload.reference_image) {
+            // Image-to-Image Endpoint
+            endpoint = "/api/image/img2img";
+            body = {
+                prompt: payload.prompt,
+                negative_prompt: payload.negative_prompt,
+                init_image_base64: payload.reference_image, // Base64 from UI
+                strength: 0.75, // Default strength
                 steps: payload.steps,
-                seed: payload.seed || null,
-                creditsUsed: 1
-            }
+                guidance_scale: payload.guidance,
+                seed: payload.seed,
+                width: dims.width,
+                height: dims.height
+            };
+        } else {
+            // Text-to-Image Endpoint
+            endpoint = "/api/image/txt2img";
+            body = {
+                prompt: payload.prompt,
+                negative_prompt: payload.negative_prompt,
+                steps: payload.steps,
+                guidance_scale: payload.guidance,
+                seed: payload.seed,
+                width: dims.width,
+                height: dims.height
+            };
+        }
+    } 
+    else {
+        // VIDEO / SHORT FILM HANDLER
+        // Note: Your main.py currently ONLY has Flux (Image). 
+        // We will throw a friendly error or return a stub if you try video.
+        console.warn("Backend does not yet support Video/Film endpoints.");
+        await new Promise(r => setTimeout(r, 1500)); // Fake delay
+        return {
+             ok: true,
+             kind: payload.kind,
+             url: "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+             thumb: "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+             meta: { note: "Simulation (Backend update required for Video)" }
         };
     }
 
-    const url = SULANDRA_API_BASE.replace(/\/+$/, "") + path;
-    const res = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    });
+    // 3. Perform the actual Fetch
+    try {
+        const response = await fetch(`${SULANDRA_API_BASE}${endpoint}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
 
-    if (!res.ok) {
-        const txt = await res.text();
-        throw new Error("Sulandra API error: " + res.status + " – " + txt);
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Server Error ${response.status}: ${errText}`);
+        }
+
+        const data = await response.json();
+
+        // 4. Normalize Response
+        // Your backend returns relative path: "/api/image/file/filename.png"
+        // We need to prepend the domain to display it.
+        const fullUrl = `${SULANDRA_API_BASE}${data.image_url}`;
+
+        return {
+            ok: true,
+            kind: "image",
+            url: fullUrl,
+            thumb: fullUrl,
+            meta: {
+                seed: data.seed,
+                model: "Flux.1 Dev",
+                steps: body.steps,
+                guidance: body.guidance_scale
+            }
+        };
+
+    } catch (err) {
+        console.error("API Call Failed:", err);
+        throw err; // Re-throw to be caught by the UI button handler
     }
-
-    return res.json();
 }
 
 /* ---------------------- BUILD PAYLOADS FROM UI -------------------------- */
@@ -4815,39 +4880,12 @@ document.querySelectorAll(".sulandra-neon-trigger").forEach(el => {
     });
 });
 }
-/* =============================== */
-/* ASK SIA LOGIC                   */
-/* =============================== */
-let askSiaState = {
-  mode: 'general',
-  context: ''
-};
-
-function openAskSia(mode, contextText) {
-  askSiaState.mode = mode || 'general';
-  askSiaState.context = contextText || '';
-
-  const backdrop = document.getElementById('askSiaBackdrop');
-  const ctxBox = document.getElementById('askSiaContext');
-  const answerBox = document.getElementById('askSiaAnswer');
-  const questionBox = document.getElementById('askSiaQuestion');
-
-  // Populate UI
-  ctxBox.textContent = contextText || "No context selected.";
-  questionBox.value = ""; // Clear previous question
-  answerBox.innerHTML = '<span style="color:#6b7280; font-style:italic;">How can I help with this prompt?</span>';
-  
-  // Show Panel
-  backdrop.style.display = 'flex';
-}
-
-function closeAskSia() {
-  document.getElementById('askSiaBackdrop').style.display = 'none';
-}
+/* --------------------------- REAL ASK SIA LOGIC --------------------------- */
 
 async function sendAskSia() {
-  const question = document.getElementById('askSiaQuestion').value;
+  const questionBox = document.getElementById('askSiaQuestion');
   const answerBox = document.getElementById('askSiaAnswer');
+  const question = questionBox.value;
   
   if (!question.trim()) {
       answerBox.innerHTML = '<span style="color:#ef4444;">Please type a request first.</span>';
@@ -4857,11 +4895,43 @@ async function sendAskSia() {
   // Loading State
   answerBox.innerHTML = '<span style="color:#4ade80;">SIA is thinking...</span>';
 
-  // 🔌 SIMULATED API CALL (Replace with your Real API)
-  setTimeout(() => {
-      const mockResponse = `<strong>Suggestion for ${askSiaState.mode}:</strong><br><br>Based on your input "${askSiaState.context}", try adding "volumetric lighting, 8k resolution, shot on 35mm" to enhance the cinematic feel.`;
-      answerBox.innerHTML = mockResponse;
-  }, 1500);
+  const payload = {
+      user_input: question,
+      context: askSiaState.context || "General Query"
+  };
+
+  try {
+      const res = await fetch(SIA_BRAIN_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("SIA is offline");
+
+      const data = await res.json();
+      
+      // Update UI with real AI response
+      if (data.reply) {
+          answerBox.innerHTML = `
+            <strong>SIA Says:</strong><br><br>
+            ${data.reply}
+            ${data.payload ? `<br><br><em style="color:#60a5fa">Suggested Prompt:</em><br><div style="background:#000;padding:5px;border-radius:5px;">${data.payload}</div>` : ''}
+          `;
+          
+          // Auto-fill prompt if SIA suggests one (Optional UX improvement)
+          if(data.payload && data.action !== "none") {
+              const promptBox = document.getElementById("image-main-prompt");
+              if(promptBox) promptBox.value = data.payload;
+          }
+      } else {
+          answerBox.innerHTML = "SIA returned an empty response.";
+      }
+
+  } catch (err) {
+      console.error(err);
+      answerBox.innerHTML = `<span style="color:#ef4444;">Connection Error. Is the backend running?</span>`;
+  }
 }
 
 // Close on Escape key
