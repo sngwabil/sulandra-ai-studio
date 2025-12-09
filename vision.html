@@ -1813,21 +1813,24 @@
 
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
         <div>
-            <div class="prompt-label-row">
-                <label for="image-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
-                <button type="button" class="ask-sia-prompt-btn" data-target-prompt="image-main-prompt" title="Ask SIA to enhance prompt">
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                </button>
-            </div>
-            <div style="margin-top:6px;">
-                <textarea
-                    id="image-main-prompt"
-                    rows="4"
-                    placeholder="Describe the image you want Sulandra to create..."
-                    style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
-                ></textarea>
-            </div>
-        </div>
+    <div class="prompt-label-row">
+        <label for="image-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
+        <span class="sulandra-neon-trigger" data-target-prompt="image-main-prompt">Ask SIA</span>
+    </div>
+    <div style="margin-top:6px;">
+        <textarea id="image-main-prompt" ... (keep existing attributes) ...></textarea>
+    </div>
+</div>
+
+<div>
+    <div class="prompt-label-row">
+        <label for="image-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
+        <span class="sulandra-neon-trigger" data-target-prompt="image-negative-prompt">Ask SIA</span>
+    </div>
+    <div style="margin-top:6px;">
+        <textarea id="image-negative-prompt" ... (keep existing attributes) ...></textarea>
+    </div>
+</div>
 
         <div>
             <div class="prompt-label-row">
