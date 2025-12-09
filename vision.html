@@ -4906,30 +4906,29 @@ function wireMainButtonsAndToggles() {
 
     // Random prompt button
     wireRandomPromptButton();
-// --- ASK SIA BUTTONS WIRING ---
-    document.querySelectorAll(".ask-sia-prompt-btn").forEach(btn => {
-        // Remove old listeners (clone node trick) to prevent duplicates if function runs twice
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
+// --- ASK SIA WIRING (Updated for Neon Text) ---
+document.querySelectorAll(".sulandra-neon-trigger").forEach(el => {
+    // Clone to remove old listeners
+    const newEl = el.cloneNode(true);
+    el.parentNode.replaceChild(newEl, el);
 
-        newBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+    newEl.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-            const targetId = newBtn.dataset.targetPrompt;
-            const textarea = document.getElementById(targetId);
-            
-            let contextText = "General Help";
-            if (textarea && textarea.value.trim()) {
-                contextText = textarea.value.trim();
-            } else if (textarea) {
-                contextText = "Empty prompt field";
-            }
+        const targetId = newEl.dataset.targetPrompt;
+        const textarea = document.getElementById(targetId);
+        
+        let contextText = "General Help";
+        if (textarea && textarea.value.trim()) {
+            contextText = textarea.value.trim();
+        } else if (textarea) {
+            contextText = "Empty prompt field";
+        }
 
-            // Open the panel with the text from the prompt box
-            openAskSia(currentLab, contextText);
-        });
+        openAskSia(currentLab, contextText);
     });
+});
 }
 /* =============================== */
 /* ASK SIA LOGIC                   */
