@@ -1184,6 +1184,30 @@
 .sulandra-upload-box.has-file:hover .sulandra-remove-btn {
     display: flex;
 }
+/* Compact version for dual frames and list items */
+.sulandra-upload-box.compact {
+    aspect-ratio: 16 / 9;
+    min-height: 80px;
+    margin-bottom: 8px;
+}
+
+.sulandra-upload-box.compact .sulandra-placeholder {
+    padding: 10px;
+    gap: 4px;
+}
+
+.sulandra-upload-box.compact .sulandra-placeholder svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sulandra-upload-box.compact .sulandra-placeholder-title {
+    font-size: 11px;
+}
+
+.sulandra-upload-box.compact .sulandra-placeholder-sub {
+    display: none; /* Hide subtitle to save space */
+}
 </style>
 </head>
 <body>
