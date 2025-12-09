@@ -656,6 +656,41 @@
     .vision-header__assets-btn:hover {
         border-color: rgba(209, 213, 219, 0.95);
     }
+/* Move lab tabs into the left config panel; hide the old header row */
+.vision-header__tabs {
+    display: none;
+}
+        <!-- LAB RAIL – replaces old top-level lab tabs -->
+        <div class="vision-lab-rail">
+            <button
+                type="button"
+                class="vision-header__tab vision-header__tab--active vision-lab-rail__btn"
+                data-lab-tab="image"
+            >
+                <span>Images</span>
+            </button>
+            <button
+                type="button"
+                class="vision-header__tab vision-lab-rail__btn"
+                data-lab-tab="video"
+            >
+                <span>Videos</span>
+            </button>
+            <button
+                type="button"
+                class="vision-header__tab vision-lab-rail__btn"
+                data-lab-tab="shortfilm"
+            >
+                <span>Short Films</span>
+            </button>
+            <button
+                type="button"
+                class="vision-header__tab vision-lab-rail__btn"
+                data-lab-tab="files"
+            >
+                <span>My Files</span>
+            </button>
+        </div>
 
     /* ---------------------------------------------------------------------- */
     /*  MAIN AREA: CONFIG PANEL + STAGE                                      */
