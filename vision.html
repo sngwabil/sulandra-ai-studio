@@ -1873,7 +1873,7 @@
                     <!-- =================================================== -->
                     <!--  VIDEO LAB CONFIG                                   -->
                     <!-- =================================================== -->
-                    <div class="lab-config hidden" id="lab-config-video" data-lab="video">
+                   <div class="lab-config hidden" id="lab-config-video" data-lab="video">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
         <div>
             <div style="font-size:15px;font-weight:600;">Video Generator</div>
@@ -1882,88 +1882,57 @@
             </div>
         </div>
         <div class="pill-switch" id="video-mode-switch">
-            <button
-                type="button"
-                class="pill-switch__btn pill-switch__btn--active"
-                data-video-mode="text"
-            >
-                Text → Video
-            </button>
-            <button
-                type="button"
-                class="pill-switch__btn"
-                data-video-mode="image"
-            >
-                Image → Video
-            </button>
+            <button type="button" class="pill-switch__btn pill-switch__btn--active" data-video-mode="text">Text → Video</button>
+            <button type="button" class="pill-switch__btn" data-video-mode="image">Image → Video</button>
         </div>
     </div>
 
-<div id="video-reference-block" style="margin-bottom:16px; display:none;">
-    <div style="display:flex; gap:10px;">
-        <div style="flex:1;">
-            <div class="text-soft" style="font-size:12px;margin-bottom:6px;">Start Frame</div>
-            <label class="sulandra-upload-box compact" id="video-start-box" for="video-start-input">
-                <div class="sulandra-placeholder">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M5 12l6-6m-6 6l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <div class="sulandra-placeholder-title">Start Image</div>
-                </div>
-                <img id="video-start-img" class="sulandra-preview-img" alt="Start Preview" />
-                <button type="button" class="sulandra-remove-btn" onclick="clearReference('video-start'); event.preventDefault();">×</button>
-                <input id="video-start-input" type="file" accept="image/*" class="visually-hidden" />
-            </label>
-        </div>
-
-        <div style="flex:1;">
-            <div class="text-soft" style="font-size:12px;margin-bottom:6px;">End Frame (Opt)</div>
-            <label class="sulandra-upload-box compact" id="video-end-box" for="video-end-input">
-                <div class="sulandra-placeholder">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5m14 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <div class="sulandra-placeholder-title">End Image</div>
-                </div>
-                <img id="video-end-img" class="sulandra-preview-img" alt="End Preview" />
-                <button type="button" class="sulandra-remove-btn" onclick="clearReference('video-end'); event.preventDefault();">×</button>
-                <input id="video-end-input" type="file" accept="image/*" class="visually-hidden" />
-            </label>
+    <div id="video-reference-block" style="margin-bottom:16px; display:none;">
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:6px;">Start Frame</div>
+                <label class="sulandra-upload-box compact" id="video-start-box" for="video-start-input">
+                    <div class="sulandra-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M5 12l6-6m-6 6l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <div class="sulandra-placeholder-title">Start Image</div>
+                    </div>
+                    <img id="video-start-img" class="sulandra-preview-img" alt="Start Preview" />
+                    <button type="button" class="sulandra-remove-btn" onclick="clearReference('video-start'); event.preventDefault();">×</button>
+                    <input id="video-start-input" type="file" accept="image/*" class="visually-hidden" />
+                </label>
+            </div>
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:6px;">End Frame (Opt)</div>
+                <label class="sulandra-upload-box compact" id="video-end-box" for="video-end-input">
+                    <div class="sulandra-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5m14 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <div class="sulandra-placeholder-title">End Image</div>
+                    </div>
+                    <img id="video-end-img" class="sulandra-preview-img" alt="End Preview" />
+                    <button type="button" class="sulandra-remove-btn" onclick="clearReference('video-end'); event.preventDefault();">×</button>
+                    <input id="video-end-input" type="file" accept="image/*" class="visually-hidden" />
+                </label>
+            </div>
         </div>
     </div>
-</div>
 
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
         <div>
-    <div class="prompt-label-row">
-        <label for="video-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
-        <span class="sulandra-neon-trigger" data-target-prompt="video-main-prompt">Ask SIA</span>
-    </div>
-    <div style="margin-top:6px;">
-        <textarea id="video-main-prompt" ... (keep your existing textarea attributes) ...></textarea>
-    </div>
-</div>
-
-<div>
-    <div class="prompt-label-row">
-        <label for="video-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
-        <span class="sulandra-neon-trigger" data-target-prompt="video-negative-prompt">Ask SIA</span>
-    </div>
-    <div style="margin-top:6px;">
-        <textarea id="video-negative-prompt" ... (keep your existing textarea attributes) ...></textarea>
-    </div>
-</div>
-
+            <div class="prompt-label-row">
+                <label for="video-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
+                <span class="sulandra-neon-trigger" data-target-prompt="video-main-prompt">Ask SIA</span>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea id="video-main-prompt" rows="4" placeholder="Describe the motion, camera moves, and scene for the video..." style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"></textarea>
+            </div>
+        </div>
         <div>
             <div class="prompt-label-row">
                 <label for="video-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
-                <button type="button" class="ask-sia-prompt-btn" data-target-prompt="video-negative-prompt" title="Ask SIA for negative ideas">
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                </button>
+                <span class="sulandra-neon-trigger" data-target-prompt="video-negative-prompt">Ask SIA</span>
             </div>
             <div style="margin-top:6px;">
-                <textarea
-                    id="video-negative-prompt"
-                    rows="2"
-                    placeholder="Things to avoid (camera shake, artifacts, jitter, etc.)"
-                    style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
-                ></textarea>
+                <textarea id="video-negative-prompt" rows="2" placeholder="Things to avoid (camera shake, artifacts, jitter, etc.)" style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"></textarea>
             </div>
         </div>
     </div>
@@ -1988,7 +1957,6 @@
                 </div>
             </div>
         </div>
-
         <div style="display:flex;gap:10px;align-items:flex-end;">
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
                 <input type="checkbox" id="video-native-audio-checkbox" />
@@ -2000,7 +1968,6 @@
             </label>
         </div>
     </div>
-
     <div style="display:flex;gap:10px;margin-bottom:10px;">
         <div style="flex:1;">
             <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps / quality</div>
@@ -2011,12 +1978,10 @@
             <input type="number" id="video-seed-input" placeholder="Random" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
         </div>
     </div>
-
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
         <div><span id="video-estimate-res">720p</span><span>&nbsp;•</span><span id="video-estimate-cost">~3 credits</span></div>
         <button type="button" id="video-toggle-advanced" style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;">Advanced motion</button>
     </div>
-
     <div id="video-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
         <div style="display:flex;flex-direction:column;gap:6px;">
             <label><input type="checkbox" id="video-cam-move-checkbox" /><span>&nbsp;Enable cinematic camera moves</span></label>
