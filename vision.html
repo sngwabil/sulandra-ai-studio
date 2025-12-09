@@ -4570,71 +4570,84 @@ async function readFileAsBase64(file) {
 async function generateImageFromUI() {
     if (isGenerating) return;
 
-    // 1. Gather Data from UI
-    const prompt = document.getElementById("image-main-prompt")?.value || "";
-    const negative = document.getElementById("image-negative-prompt")?.value || "";
-    
-    // Get Aspect Ratio to calculate Width/Height for FastAPI
-    const aspectBtn = document.querySelector("#image-aspect-switch .pill-switch__btn--active");
-    const aspect = aspectBtn ? aspectBtn.dataset.imageAspect : "1:1";
-    
+    // 1. Read inputs from the UI
+    const promptInput   = $("image-prompt-input");
+    const negativeInput = $("image-negative-input");
+    const stepsInput    = $("image-steps-input");
+    const guidanceInput = $("image-guidance-range");
+    const seedInput     = $("image-seed-input");
+
+    const prompt = (promptInput?.value || "").trim();
+    if (!prompt) {
+        window.alert("Please enter a prompt first.");
+        return;
+    }
+
+    const negative_prompt = (negativeInput?.value || "").trim();
+    const steps = parseInt(stepsInput?.value || "30", 10);
+    const guidance_scale = parseFloat(guidanceInput?.value || "7");
+
+    const seedRaw = (seedInput?.value || "").trim();
+    const seed = seedRaw === "" ? null : Number(seedRaw);
+
+    // 2. Map aspect ratio to width/height for Flux
+    const aspect = getSelectedImageAspect(); // "1:1", "16:9", "9:16"
     let width = 1024;
     let height = 1024;
 
-    if (aspect === "16:9") { width = 1344; height = 768; }
-    else if (aspect === "9:16") { width = 768; height = 1344; }
-    // 1:1 remains 1024x1024
-    
-    // Get other settings
-    const steps = Number(document.getElementById("image-steps-input")?.value || 25);
-    // Note: main.py expects 'guidance_scale', UI has 'guidance'
-    const guidance = Number(document.getElementById("image-guidance-slider")?.value || 3.5);
-    const seedVal = document.getElementById("image-seed-input")?.value;
-    const seed = seedVal ? Number(seedVal) : null;
+    if (aspect === "16:9") {
+        width = 1280;
+        height = 720;
+    } else if (aspect === "9:16") {
+        width = 720;
+        height = 1280;
+    }
 
-    // 2. Build Payload matching your main.py Txt2ImgRequest class
+    // 3. Build payload for FastAPI Txt2ImgRequest
     const payload = {
-        prompt: prompt,
-        negative_prompt: negative,
-        steps: steps,
-        guidance_scale: guidance,
-        width: width,
-        height: height,
-        seed: seed
+        prompt,
+        negative_prompt,
+        steps,
+        guidance_scale,
+        seed,
+        width,
+        height
     };
 
     setGeneratingState(true, "Generating image…");
 
     try {
-        // 3. Call your Python API
-        // Note: Using the exact path defined in your main.py
+        // 4. Call your RunPod FastAPI server
         const result = await callSulandraAPI("/api/image/txt2img", payload);
+        // result = { status: "success", image_url: "/api/image/file/...", seed: ... }
 
-        // 4. Handle Success
-        // result.image_url comes back as a relative path e.g. "/api/image/file/flux_123.png"
-        const fullImageUrl = SULANDRA_API_BASE.replace(/\/+$/, "") + result.image_url;
+        // Build absolute URL for the image
+        const base = SULANDRA_API_BASE.replace(/\/+$/, "");
+        const imageUrl = base + result.image_url;
 
-        // Add to history sidebar/gallery
+        // 5. Push into Sulandra history so the UI updates
         const item = addHistoryItem({
             kind: "image",
-            url: fullImageUrl,
-            thumb: fullImageUrl, // Use same URL for thumb
-            title: "Generated Image",
-            prompt: prompt,
-            aspect: aspect,
+            url: imageUrl,
+            thumb: imageUrl,
+            title: "Image",
+            prompt,
+            negativePrompt: negative_prompt,
+            aspect,
             meta: {
-                seed: result.seed,
-                width: width,
-                height: height,
-                steps: steps
+                model: "Flux.1-dev (RunPod)",
+                guidance: guidance_scale,
+                steps,
+                seed: result.seed ?? seed,
+                creditsUsed: 1
             }
         });
 
         refreshAllHistoryDisplays();
         scrollToHistoryItem(item.id);
-
     } catch (err) {
-        window.alert("Generation Failed: " + err.message);
+        console.error("[Sulandra] Image generation failed:", err);
+        window.alert("Image generation failed. Open the browser console for details.");
     } finally {
         setGeneratingState(false);
     }
