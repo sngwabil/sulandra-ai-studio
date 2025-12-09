@@ -1024,7 +1024,70 @@
             0 0 0 1px rgba(34, 197, 94, 0.8),
             0 26px 62px rgba(34, 197, 94, 0.9);
     }
-    </style>
+    /* ====================================================================== */
+/* SURGICAL ADDITIONS - Reference Previews & Ask SIA                     */
+/* ====================================================================== */
+
+/* Kling-style prominent reference image preview container */
+.reference-preview-large {
+    width: 100%;
+    /* Default aspect, can be overridden via JS if needed */
+    aspect-ratio: 16 / 9;
+    background: #020617;
+    border-radius: 14px;
+    border: 1px solid rgba(31, 41, 55, 0.95);
+    overflow: hidden;
+    display: none; /* Hidden until image added */
+    margin-bottom: 12px;
+    position: relative;
+}
+
+/* Class added via JS when an image is loaded */
+.reference-preview-large.has-image {
+    display: block;
+}
+
+.reference-preview-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ensure whole image is visible like Kling */
+}
+
+/* Small "Ask SIA" magic button next to prompt labels */
+.ask-sia-prompt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ask-sia-prompt-btn:hover {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+.ask-sia-prompt-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Label container to hold the label text and the new button */
+.prompt-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+</style>
 </head>
 <body>
 <div class="vision-root">
