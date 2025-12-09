@@ -4792,6 +4792,30 @@ function wireMainButtonsAndToggles() {
 
     // Random prompt button
     wireRandomPromptButton();
+// --- ASK SIA BUTTONS WIRING ---
+    document.querySelectorAll(".ask-sia-prompt-btn").forEach(btn => {
+        // Remove old listeners (clone node trick) to prevent duplicates if function runs twice
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const targetId = newBtn.dataset.targetPrompt;
+            const textarea = document.getElementById(targetId);
+            
+            let contextText = "General Help";
+            if (textarea && textarea.value.trim()) {
+                contextText = textarea.value.trim();
+            } else if (textarea) {
+                contextText = "Empty prompt field";
+            }
+
+            // Open the panel with the text from the prompt box
+            openAskSia(currentLab, contextText);
+        });
+    });
 }
 /* =============================== */
 /* ASK SIA LOGIC                   */
