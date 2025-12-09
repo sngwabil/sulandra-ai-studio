@@ -3494,10 +3494,13 @@ function addShortFilmSegmentRow() {
 
     shortFilmSegmentCounter++;
     const id = shortFilmSegmentCounter;
+    const promptId = `shortfilm-segment-prompt-${id}`; // Unique ID for the textarea
 
     const row = document.createElement("div");
     row.className = "shortfilm-segment-row";
     row.dataset.segmentId = String(id);
+    
+    // HTML Structure with Ask SIA Button included
     row.innerHTML = `
         <div style="display:flex;gap:6px;align-items:flex-start;">
             <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
@@ -3507,13 +3510,28 @@ function addShortFilmSegmentRow() {
                     placeholder="Scene ${id} title"
                     style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;"
                 />
-                <textarea
-                    class="shortfilm-segment-prompt"
-                    rows="2"
-                    placeholder="Describe what happens in this segment (camera, action, emotion)..."
-                    style="width:100%;border-radius:10px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;resize:vertical;min-height:48px;"
-                ></textarea>
+                
+                <div style="position:relative;">
+                    <textarea
+                        id="${promptId}"
+                        class="shortfilm-segment-prompt"
+                        rows="2"
+                        placeholder="Describe what happens in this segment (camera, action, emotion)..."
+                        style="width:100%;border-radius:10px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px 6px 36px; /* Extra left padding for button */ background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;resize:vertical;min-height:48px;"
+                    ></textarea>
+                    
+                    <button 
+                        type="button" 
+                        class="ask-sia-prompt-btn dynamic-ask-btn" 
+                        data-target-prompt="${promptId}" 
+                        title="Ask SIA to enhance segment"
+                        style="position:absolute; left:6px; top:6px; border:none; background:rgba(34, 197, 94, 0.1);"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
+                </div>
             </div>
+            
             <div style="width:76px;display:flex;flex-direction:column;gap:4px;font-size:11px;color:#9ca3af;">
                 <label>
                     <span>Sec</span>
@@ -3539,11 +3557,36 @@ function addShortFilmSegmentRow() {
 
     container.appendChild(row);
 
+    // --- Wire up logic for this new row ---
+
+    // 1. Attach Ask SIA listener manually for this new button
+    const askBtn = row.querySelector(".dynamic-ask-btn");
+    if (askBtn) {
+        askBtn.addEventListener("click", () => {
+            const textarea = document.getElementById(promptId);
+            // Visual feedback
+            const originalColor = askBtn.style.color;
+            askBtn.style.color = "#22c55e"; 
+            setTimeout(() => askBtn.style.color = originalColor, 300);
+
+            if (textarea) {
+                const text = textarea.value.trim();
+                if(!text) {
+                    window.alert("Ask SIA: Please type a basic idea for this segment first!");
+                } else {
+                    window.alert(`SIA is analyzing segment ${id}: "${text.substring(0, 20)}..."\n(API connection required)`);
+                }
+            }
+        });
+    }
+
+    // 2. Duration listener
     const durationInput = row.querySelector(".shortfilm-segment-duration");
     if (durationInput) {
         durationInput.addEventListener("input", updateShortFilmTotalLength);
     }
 
+    // 3. Remove listener
     const removeBtn = row.querySelector(".shortfilm-segment-remove");
     if (removeBtn) {
         removeBtn.addEventListener("click", () => {
