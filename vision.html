@@ -3506,7 +3506,65 @@ function updateGalleryLayoutButtons() {
         btn.classList.toggle("pill-switch__btn--active", val === currentGalleryLayout);
     });
 }
+/* ========================================= */
+/* PREVIEW LOGIC (SULANDRA STYLE)           */
+/* ========================================= */
 
+function wireReferenceImagePreviews() {
+    // Generic setup function
+    const setupBox = (inputId, boxId, imgId) => {
+        const input = document.getElementById(inputId);
+        const box = document.getElementById(boxId);
+        const img = document.getElementById(imgId);
+
+        if (!input || !box || !img) return;
+
+        input.addEventListener("change", () => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                    box.classList.add("has-file");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    };
+
+    // 1. Image Lab
+    setupBox("image-reference-input", "image-upload-box", "image-preview-img");
+
+    // 2. Video Lab (Start & End)
+    setupBox("video-start-input", "video-start-box", "video-start-img");
+    setupBox("video-end-input", "video-end-box", "video-end-img");
+    
+    // 3. Short Film (Global Style)
+    setupBox("shortfilm-reference-input", "shortfilm-upload-box", "shortfilm-preview-img");
+}
+
+// Global Helper to clear images via the X button
+function clearReference(idKey) {
+    // Handle short film segments (idKey format: "seg-1")
+    if (idKey.startsWith("seg-")) {
+        const rowId = idKey.replace("seg-", "");
+        const box = document.getElementById(`shortfilm-seg-box-${rowId}`);
+        const img = document.getElementById(`shortfilm-seg-img-${rowId}`);
+        const input = document.getElementById(`shortfilm-seg-input-${rowId}`);
+        if(input) input.value = "";
+        if(img) img.src = "";
+        if(box) box.classList.remove("has-file");
+        return;
+    }
+
+    // Handle standard boxes
+    let input = document.getElementById(`${idKey}-input`) || document.getElementById(`${idKey}-reference-input`);
+    let box = document.getElementById(`${idKey}-box`) || document.getElementById(`${idKey}-upload-box`);
+    let img = document.getElementById(`${idKey}-img`) || document.getElementById(`${idKey}-preview-img`);
+
+    if (input) input.value = "";
+    if (img) img.src = "";
+    if (box) box.classList.remove("has-file");
+}
 /* ----------------------- IMAGE / VIDEO / FILM CONTROLS ------------------ */
 
 function wireImageControls() {
