@@ -1994,7 +1994,7 @@
                     <!-- =================================================== -->
                     <!--  SHORT FILM LAB CONFIG                             -->
                     <!-- =================================================== -->
-                    <div class="lab-config hidden" id="lab-config-shortfilm" data-lab="shortfilm">
+ <div class="lab-config hidden" id="lab-config-shortfilm" data-lab="shortfilm">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
         <div>
             <div style="font-size:15px;font-weight:600;">Short Film Builder</div>
@@ -2007,62 +2007,35 @@
             <span>Storyboard mode</span>
         </div>
     </div>
-<div style="margin-bottom:16px;">
-    <div class="text-soft" style="font-size:12px;margin-bottom:6px;">Style Reference (Optional)</div>
-    
-    <label class="sulandra-upload-box" id="shortfilm-upload-box" for="shortfilm-reference-input">
-        <div class="sulandra-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <div>
-                <div class="sulandra-placeholder-title">Set film style</div>
-                <div class="sulandra-placeholder-sub">Upload an image to guide the look</div>
+
+    <div style="margin-bottom:16px;">
+        <div class="text-soft" style="font-size:12px;margin-bottom:6px;">Style Reference (Optional)</div>
+        <label class="sulandra-upload-box" id="shortfilm-upload-box" for="shortfilm-reference-input">
+            <div class="sulandra-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div>
+                    <div class="sulandra-placeholder-title">Set film style</div>
+                    <div class="sulandra-placeholder-sub">Upload an image to guide the look</div>
+                </div>
             </div>
-        </div>
-        
-        <img id="shortfilm-preview-img" class="sulandra-preview-img" alt="Reference Preview" />
-        <button type="button" class="sulandra-remove-btn" onclick="clearReference('shortfilm'); event.preventDefault();">×</button>
-        
-        <input id="shortfilm-reference-input" type="file" accept="image/*" class="visually-hidden" />
-    </label>
-</div>
-   <div class="prompt-label-row">
-    <div class="text-soft" style="font-size:12px;">Film title &amp; global prompt</div>
-    <span class="sulandra-neon-trigger" data-target-prompt="shortfilm-global-prompt">Ask SIA</span>
-</div>
-
-    <input
-        id="shortfilm-title-input"
-        type="text"
-        placeholder="Title of your short film"
-        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);font-size:12px;margin-bottom:8px;"
-    />
-    <textarea
-        id="shortfilm-global-prompt"
-        rows="3"
-        placeholder="Describe the overall story, tone, characters, and style..."
-        style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:70px;margin-bottom:12px;"
-    ></textarea>
-
-    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">
-        Segments
+            <img id="shortfilm-preview-img" class="sulandra-preview-img" alt="Reference Preview" />
+            <button type="button" class="sulandra-remove-btn" onclick="clearReference('shortfilm'); event.preventDefault();">×</button>
+            <input id="shortfilm-reference-input" type="file" accept="image/*" class="visually-hidden" />
+        </label>
     </div>
-    <div
-        id="shortfilm-segments-container"
-        style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"
-    >
-        </div>
 
-    <button
-        type="button"
-        id="shortfilm-add-segment-btn"
-        style="width:100%;border-radius:12px;border:1px dashed rgba(55,65,81,0.9);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;"
-    >
-        <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
-            <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-            <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-        </svg>
+    <div class="prompt-label-row">
+        <div class="text-soft" style="font-size:12px;">Film title &amp; global prompt</div>
+        <span class="sulandra-neon-trigger" data-target-prompt="shortfilm-global-prompt">Ask SIA</span>
+    </div>
+    <input id="shortfilm-title-input" type="text" placeholder="Title of your short film" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);font-size:12px;margin-bottom:8px;" />
+    <textarea id="shortfilm-global-prompt" rows="3" placeholder="Describe the overall story, tone, characters, and style..." style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:70px;margin-bottom:12px;"></textarea>
+
+    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Segments</div>
+    <div id="shortfilm-segments-container" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+
+    <button type="button" id="shortfilm-add-segment-btn" style="width:100%;border-radius:12px;border:1px dashed rgba(55,65,81,0.9);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;">
+        <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;"><path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/><path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/></svg>
         <span>Add segment</span>
     </button>
 
@@ -2070,20 +2043,8 @@
         <div style="flex:1;">
             <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
             <div class="pill-switch" id="shortfilm-aspect-switch">
-                <button
-                    type="button"
-                    class="pill-switch__btn pill-switch__btn--active"
-                    data-shortfilm-aspect="16:9"
-                >
-                    16:9
-                </button>
-                <button
-                    type="button"
-                    class="pill-switch__btn"
-                    data-shortfilm-aspect="9:16"
-                >
-                    9:16
-                </button>
+                <button type="button" class="pill-switch__btn pill-switch__btn--active" data-shortfilm-aspect="16:9">16:9</button>
+                <button type="button" class="pill-switch__btn" data-shortfilm-aspect="9:16">9:16</button>
             </div>
         </div>
         <div style="flex:1;">
