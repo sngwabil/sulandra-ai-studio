@@ -3246,26 +3246,31 @@ async function askSIAAboutItem(item) {
 function setActiveLab(lab) {
     currentLab = lab;
 
-    // Header tabs
-    const tabs = document.querySelectorAll("[data-lab-tab]");
-    tabs.forEach(tab => {
-        const t = tab.dataset.labTab;
-        tab.classList.toggle("vision-header__tab--active", t === lab);
-        tab.setAttribute("aria-selected", t === lab ? "true" : "false");
+    // UPDATE: Sidebar Navigation active states
+    const navItems = document.querySelectorAll("[data-lab-nav]");
+    navItems.forEach(item => {
+        const navLab = item.dataset.labNav;
+        item.classList.toggle("vision-nav__item--active", navLab === lab);
     });
 
-    // Config panels
+    // Config panels (visibility)
     const configs = document.querySelectorAll(".lab-config");
     configs.forEach(cfg => {
         const labName = cfg.dataset.lab;
-        cfg.classList.toggle("hidden", labName !== lab && !(lab === "assets" && labName === "assets"));
+        // Hide all, unless it matches current lab OR it's assets view mode
+        let isVisible = labName === lab;
+        if (lab === 'assets' && labName === 'assets') isVisible = true;
+        cfg.classList.toggle("hidden", !isVisible);
     });
 
-    // If lab is assets, force mode to view My Files-like behaviour
+    // If switching to assets via some other means, ensure mode is view
     if (lab === "assets") {
         currentMode = "view";
-        updateModeToggleButtons();
+    } else {
+        // If switching to a creation lab, ensure mode is create
+        currentMode = "create";
     }
+    updateModeToggleButtons();
 
     // Update generate button label
     const modeLabel = $("btn-generate-mode-label");
@@ -3276,11 +3281,11 @@ function setActiveLab(lab) {
         else modeLabel.textContent = "(—)";
     }
 
-    // When switching lab, default gallery filter to that lab
+    // Default gallery filters
     if (lab === "image") currentGalleryFilter = "images";
     else if (lab === "video") currentGalleryFilter = "videos";
     else if (lab === "shortfilm") currentGalleryFilter = "films";
-    else currentGalleryFilter = "all";
+    else if (lab === "assets") currentGalleryFilter = "all";
 
     updateGalleryFilterButtons();
     refreshAllHistoryDisplays();
@@ -4060,16 +4065,12 @@ function wireRandomPromptButton() {
 /* --------------------------- MAIN BUTTON WIRING ------------------------- */
 
 function wireMainButtonsAndToggles() {
-    // Lab tabs
-    document.querySelectorAll("[data-lab-tab]").forEach(tab => {
-        tab.addEventListener("click", () => {
-            const lab = tab.dataset.labTab;
+    // UPDATE: New Sidebar Lab Navigation clicks
+    document.querySelectorAll("[data-lab-nav]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const lab = btn.dataset.labNav;
             if (!lab) return;
             setActiveLab(lab);
-            if (lab === "assets") {
-                currentMode = "view";
-                updateModeToggleButtons();
-            }
         });
     });
 
