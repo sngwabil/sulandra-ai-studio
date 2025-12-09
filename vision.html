@@ -1519,26 +1519,27 @@
         </div>
     </div>
 
-    <div id="video-reference-block" style="margin-bottom:16px;display:none;">
-        <div id="video-reference-preview-large" class="reference-preview-large"></div>
-
-        <label
-            for="video-reference-input"
-            style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
-        >
+<div id="video-reference-block" style="margin-bottom:16px; display:none;">
+    <div class="text-soft" style="font-size:12px;margin-bottom:6px;">Reference image (Start frame)</div>
+    
+    <label class="sulandra-upload-box" id="video-upload-box" for="video-reference-input">
+        <div class="sulandra-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M15 10L20 7V17L15 14V10Z" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="4" y="6" width="11" height="12" rx="2" />
+            </svg>
             <div>
-                <div style="font-size:12px;">Upload reference frame</div>
-                <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
+                <div class="sulandra-placeholder-title">Add a start frame</div>
+                <div class="sulandra-placeholder-sub">Define the first frame of video</div>
             </div>
-            <div style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;">
-                <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
-                    <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                    <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                </svg>
-            </div>
-        </label>
+        </div>
+        
+        <img id="video-preview-img" class="sulandra-preview-img" alt="Reference Preview" />
+        <button type="button" class="sulandra-remove-btn" onclick="clearReference('video'); event.preventDefault();">×</button>
+        
         <input id="video-reference-input" type="file" accept="image/*" class="visually-hidden" />
-    </div>
+    </label>
+</div>
 
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
         <div>
