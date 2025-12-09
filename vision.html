@@ -2387,38 +2387,32 @@
 </div>
 <script>
 /* ====================================================================== */
-/* SULANDRA API GATEWAY (COMFYUI ADAPTER)                                */
+/* SULANDRA API GATEWAY – DIRECT TO SIA BRAIN (FastAPI main.py)          */
 /* ====================================================================== */
 
-// Your RunPod Endpoint
 const SULANDRA_API_BASE = "https://tq8zw4nuj2yrvx-8188.proxy.runpod.net";
 
-/**
- * Main API Handler
- * Detects if we are talking to ComfyUI and handles the complex workflow automatically.
- */
 async function callSulandraAPI(path, payload) {
-    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
-        window.alert("Please configure your RunPod URL in the code.");
+    if (!SULANDRA_API_BASE) {
+        alert("SULANDRA_API_BASE is not set.");
         throw new Error("Missing API URL");
     }
 
-    // If this looks like a ComfyUI endpoint (port 8188), use the Comfy Adapter
-    if (SULANDRA_API_BASE.includes("8188")) {
-        return await runComfyUIWorkflow(payload);
-    }
-
-    // Fallback for custom middleware
     const url = SULANDRA_API_BASE.replace(/\/+$/, "") + path;
+    console.log("[Sulandra] POST", url, payload);
+
     const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
-        throw new Error("API Error: " + res.status);
+        const txt = await res.text().catch(() => "");
+        console.error("Sulandra API error:", res.status, txt);
+        throw new Error("Sulandra API error: " + res.status + " – " + txt);
     }
+
     return res.json();
 }
 
@@ -4589,28 +4583,52 @@ async function generateImageFromUI() {
     }
 
     setGeneratingState(true, "Generating image…");
-    try {
-        const result = await callSulandraAPI("/generate/image", payload);
+try {
+    // Map UI payload → FastAPI main.py request shape
+    const reqBody = {
+        prompt: payload.prompt,
+        negative_prompt: payload.negative_prompt || "",
+        steps: payload.steps,
+        guidance_scale: payload.guidance,
+        seed: payload.seed,
+        // simple aspect → width/height mapping
+        width:  payload.aspect === "16:9" ? 1280
+              : payload.aspect === "9:16" ? 768
+              : 1024,
+        height: payload.aspect === "16:9" ? 720
+               : payload.aspect === "9:16" ? 1360
+               : 1024,
+        // if you want img2img later, you’ll send init_image_base64 + strength instead
+    };
 
-        const item = addHistoryItem({
-            kind: "image",
-            url: result.url,
-            thumb: result.thumb || result.url,
-            title: "Image",
-            prompt: payload.prompt,
-            negativePrompt: payload.negative_prompt,
-            aspect: payload.aspect,
-            meta: result.meta
-        });
+    const result = await callSulandraAPI("/api/image/txt2img", reqBody);
 
-        refreshAllHistoryDisplays();
-        scrollToHistoryItem(item.id);
-    } catch (err) {
-        console.error("[Sulandra] Image generation failed:", err);
-        window.alert("Image generation failed. Check console for details.");
-    } finally {
-        setGeneratingState(false);
-    }
+    // main.py returns { status, image_url, seed }
+    const absoluteUrl = SULANDRA_API_BASE.replace(/\/+$/, "") + result.image_url;
+
+    const item = addHistoryItem({
+        kind: "image",
+        url: absoluteUrl,
+        thumb: absoluteUrl,
+        title: "Image",
+        prompt: payload.prompt,
+        negativePrompt: payload.negative_prompt,
+        aspect: payload.aspect,
+        meta: {
+            model: "Flux.1-dev (RunPod)",
+            guidance: payload.guidance,
+            steps: payload.steps,
+            seed: result.seed
+        }
+    });
+
+    refreshAllHistoryDisplays();
+    scrollToHistoryItem(item.id);
+} catch (err) {
+    console.error("[Sulandra] Image generation failed:", err);
+    window.alert("Image generation failed. Check console for details.");
+} finally {
+    setGeneratingState(false);
 }
 
 async function generateVideoFromUI() {
