@@ -4493,6 +4493,21 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
         console.error("[Sulandra] Initialization error:", err);
     }
+    function initializeSulandraVision() {
+    injectDynamicStyles();
+    applyGalleryLayout();
+
+    // ... (existing code) ...
+
+    wireImageControls();
+    wireVideoControls();
+    wireShortFilmControls();
+    
+    wireReferenceImagePreviews(); // <--- ADD THIS LINE HERE
+
+    wireMainButtonsAndToggles();
+    // ...
+}
 });
 
 /* ====================================================================== */
