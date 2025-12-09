@@ -2412,37 +2412,6 @@ function setTextContent(id, text) {
     if (el) el.textContent = text;
 }
 
-/* SULANDRA API GATEWAY – DIRECT TO SIA BRAIN (FastAPI main.py) */
-
-const SULANDRA_API_BASE = "https://7vv2yd27eb3sm7-8188.proxy.runpod.net";
-
-async function callSulandraAPI(path, payload) {
-    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
-        window.alert("Please configure your RunPod URL in the code.");
-        throw new Error("Missing API URL");
-    }
-
-    const url = SULANDRA_API_BASE.replace(/\/+$/, "") + path;
-    console.log(`[Sulandra] Calling: ${url}`, payload);
-
-    try {
-        const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) {
-            const text = await res.text();
-            throw new Error(`API Error ${res.status}: ${text}`);
-        }
-        return await res.json();
-    } catch (err) {
-        console.error(err);
-        throw err;
-    }
-}
-
 async function generateImageFromUI() {
     if (isGenerating) return;
 
