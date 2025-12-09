@@ -4043,7 +4043,7 @@ function addShortFilmSegmentRow() {
     row.style.borderBottom = "1px solid rgba(31,41,55,0.5)";
     row.style.paddingBottom = "12px";
     
-    // Updated HTML with Upload Box
+    // Updated HTML: Neon Text placed in the Header row
     row.innerHTML = `
         <div style="display:flex; gap:10px;">
             <div style="width: 100px; flex-shrink: 0;">
@@ -4062,17 +4062,16 @@ function addShortFilmSegmentRow() {
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <input type="text" class="shortfilm-segment-title" placeholder="Scene ${id} Title" 
                         style="flex:1; background:transparent; border:none; color:#e5e7eb; font-weight:600; font-size:12px; outline:none;" />
-                    <button type="button" class="shortfilm-segment-remove" style="color:#ef4444; font-size:10px;">Remove</button>
+                    
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span class="sulandra-neon-trigger dynamic-ask-trigger" data-target-prompt="${promptId}" style="font-size:9px;">Ask SIA</span>
+                        <button type="button" class="shortfilm-segment-remove" style="color:#ef4444; font-size:10px;">Remove</button>
+                    </div>
                 </div>
                 
-                <div style="position:relative;">
+                <div>
                     <textarea id="${promptId}" class="shortfilm-segment-prompt" rows="2" placeholder="Describe scene action..." 
-                        style="width:100%; border-radius:10px; border:1px solid rgba(31,41,55,0.95); padding:6px 8px 6px 36px; background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%); color:#e5e7eb; font-size:11px; resize:vertical; min-height:60px;"></textarea>
-                    
-                    <button type="button" class="ask-sia-prompt-btn dynamic-ask-btn" data-target-prompt="${promptId}" 
-                        style="position:absolute; left:6px; top:6px; border:none; background:rgba(34, 197, 94, 0.1);">
-                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                    </button>
+                        style="width:100%; border-radius:10px; border:1px solid rgba(31,41,55,0.95); padding:6px 8px; background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%); color:#e5e7eb; font-size:11px; resize:vertical; min-height:60px;"></textarea>
                 </div>
 
                 <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
@@ -4088,8 +4087,6 @@ function addShortFilmSegmentRow() {
     container.appendChild(row);
 
     // --- Wire up Logic ---
-
-    // 1. Image Preview Wiring for this specific row
     const input = document.getElementById(`shortfilm-seg-input-${id}`);
     const box = document.getElementById(`shortfilm-seg-box-${id}`);
     const img = document.getElementById(`shortfilm-seg-img-${id}`);
@@ -4107,18 +4104,16 @@ function addShortFilmSegmentRow() {
         });
     }
 
-    // 2. Ask SIA Listener (Updated for Side Panel)
-    const askBtn = row.querySelector(".dynamic-ask-btn");
-    if (askBtn) {
-        askBtn.addEventListener("click", () => {
+    // Wiring the new Neon Text trigger
+    const askTrigger = row.querySelector(".dynamic-ask-trigger");
+    if (askTrigger) {
+        askTrigger.addEventListener("click", () => {
             const txt = document.getElementById(promptId);
             const content = txt ? txt.value : "";
-            // Open the panel with the segment text
             openAskSia('shortfilm-segment', content || `Segment ${id} (Empty)`);
         });
     }
 
-    // 3. Remove & Duration Listeners
     const removeBtn = row.querySelector(".shortfilm-segment-remove");
     const durInput = row.querySelector(".shortfilm-segment-duration");
     
