@@ -4569,63 +4569,75 @@ async function readFileAsBase64(file) {
 
 async function generateImageFromUI() {
     if (isGenerating) return;
-    const payload = buildImagePayloadFromUI();
 
-    // Reference image if in image→image mode
-    if (currentImageMode === "image") {
-        const fileInput = $("image-reference-input");
-        if (fileInput && fileInput.files && fileInput.files[0]) {
-            payload.reference_image = await readFileAsBase64(fileInput.files[0]);
-        }
-    }
+    // 1. Gather Data from UI
+    const prompt = document.getElementById("image-main-prompt")?.value || "";
+    const negative = document.getElementById("image-negative-prompt")?.value || "";
+    
+    // Get Aspect Ratio to calculate Width/Height for FastAPI
+    const aspectBtn = document.querySelector("#image-aspect-switch .pill-switch__btn--active");
+    const aspect = aspectBtn ? aspectBtn.dataset.imageAspect : "1:1";
+    
+    let width = 1024;
+    let height = 1024;
 
-    setGeneratingState(true, "Generating image…");
-try {
-    // Map UI payload → FastAPI main.py request shape
-    const reqBody = {
-        prompt: payload.prompt,
-        negative_prompt: payload.negative_prompt || "",
-        steps: payload.steps,
-        guidance_scale: payload.guidance,
-        seed: payload.seed,
-        // simple aspect → width/height mapping
-        width:  payload.aspect === "16:9" ? 1280
-              : payload.aspect === "9:16" ? 768
-              : 1024,
-        height: payload.aspect === "16:9" ? 720
-               : payload.aspect === "9:16" ? 1360
-               : 1024,
-        // if you want img2img later, you’ll send init_image_base64 + strength instead
+    if (aspect === "16:9") { width = 1344; height = 768; }
+    else if (aspect === "9:16") { width = 768; height = 1344; }
+    // 1:1 remains 1024x1024
+    
+    // Get other settings
+    const steps = Number(document.getElementById("image-steps-input")?.value || 25);
+    // Note: main.py expects 'guidance_scale', UI has 'guidance'
+    const guidance = Number(document.getElementById("image-guidance-slider")?.value || 3.5);
+    const seedVal = document.getElementById("image-seed-input")?.value;
+    const seed = seedVal ? Number(seedVal) : null;
+
+    // 2. Build Payload matching your main.py Txt2ImgRequest class
+    const payload = {
+        prompt: prompt,
+        negative_prompt: negative,
+        steps: steps,
+        guidance_scale: guidance,
+        width: width,
+        height: height,
+        seed: seed
     };
 
-    const result = await callSulandraAPI("/api/image/txt2img", reqBody);
+    setGeneratingState(true, "Generating image…");
 
-    // main.py returns { status, image_url, seed }
-    const absoluteUrl = SULANDRA_API_BASE.replace(/\/+$/, "") + result.image_url;
+    try {
+        // 3. Call your Python API
+        // Note: Using the exact path defined in your main.py
+        const result = await callSulandraAPI("/api/image/txt2img", payload);
 
-    const item = addHistoryItem({
-        kind: "image",
-        url: absoluteUrl,
-        thumb: absoluteUrl,
-        title: "Image",
-        prompt: payload.prompt,
-        negativePrompt: payload.negative_prompt,
-        aspect: payload.aspect,
-        meta: {
-            model: "Flux.1-dev (RunPod)",
-            guidance: payload.guidance,
-            steps: payload.steps,
-            seed: result.seed
-        }
-    });
+        // 4. Handle Success
+        // result.image_url comes back as a relative path e.g. "/api/image/file/flux_123.png"
+        const fullImageUrl = SULANDRA_API_BASE.replace(/\/+$/, "") + result.image_url;
 
-    refreshAllHistoryDisplays();
-    scrollToHistoryItem(item.id);
-} catch (err) {
-    console.error("[Sulandra] Image generation failed:", err);
-    window.alert("Image generation failed. Check console for details.");
-} finally {
-    setGeneratingState(false);
+        // Add to history sidebar/gallery
+        const item = addHistoryItem({
+            kind: "image",
+            url: fullImageUrl,
+            thumb: fullImageUrl, // Use same URL for thumb
+            title: "Generated Image",
+            prompt: prompt,
+            aspect: aspect,
+            meta: {
+                seed: result.seed,
+                width: width,
+                height: height,
+                steps: steps
+            }
+        });
+
+        refreshAllHistoryDisplays();
+        scrollToHistoryItem(item.id);
+
+    } catch (err) {
+        window.alert("Generation Failed: " + err.message);
+    } finally {
+        setGeneratingState(false);
+    }
 }
 
 async function generateVideoFromUI() {
