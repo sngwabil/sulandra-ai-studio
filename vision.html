@@ -2387,65 +2387,149 @@
 </div>
 <script>
 /* ====================================================================== */
-/*  SULANDRA VISION LAB – SECTION 3                                       */
-/*  GLOBAL CONFIG, STATE & CORE UTILITIES                                 */
-/*  (Chunk 3 / 8 – paste right after </body>)                             */
+/* SULANDRA API GATEWAY (COMFYUI ADAPTER)                                */
 /* ====================================================================== */
 
-/* ----------------------------- API CONFIG ------------------------------ */
+// Your RunPod Endpoint
+const SULANDRA_API_BASE = "https://tq8zw4nuj2yrvx-8188.proxy.runpod.net";
 
 /**
- * Base URL for your Sulandra Vision backend on RunPod.
- * Replace this with your own endpoint. All generate calls will use it.
- *
- * Example:
- *   const SULANDRA_API_BASE = "https://xxxxxxxx-xxxx-xxxx.runpod.endpoint";
+ * Main API Handler
+ * Detects if we are talking to ComfyUI and handles the complex workflow automatically.
  */
-const SULANDRA_API_BASE = "https://tq8zw4nuj2yrvx-8188.proxy.runpod.net/";
-/**
- * Optional: SIA Brain endpoint (Ask SIA).
- * Replace with your FastAPI / Node endpoint that accepts a JSON payload.
- */
-const SIA_BRAIN_ENDPOINT = "https://YOUR-SIA-BRAIN-ENDPOINT-HERE";
-
-/* --------------------------- STORAGE KEYS ------------------------------ */
-
-const STORAGE_KEYS = {
-    history:   "sulandra_vision_history_v1",
-    settings:  "sulandra_vision_settings_v1",
-    favorites: "sulandra_vision_favorites_v1",
-    assets:    "sulandra_vision_assets_v1"
-};
-
-/* --------------------------- GLOBAL STATE ------------------------------ */
-
-let currentLab            = "image";     // 'image' | 'video' | 'shortfilm' | 'assets'
-let currentMode           = "create";    // 'create' | 'view'
-let currentGalleryFilter  = "all";       // 'all' | 'images' | 'videos' | 'films'
-let currentGalleryLayout  = "grid";      // 'grid' | 'vertical'
-let currentImageMode      = "text";      // 'text' | 'image'
-let currentVideoMode      = "text";      // 'text' | 'image'
-let currentAssetsType     = "images";    // 'images' | 'videos' | 'films'
-let currentAssetsLayout   = "grid";      // 'grid' | 'list'
-let favoritesOnlyGallery  = false;
-let favoritesOnlyAssets   = false;
-let lightboxCurrentId     = null;        // ID of the item opened in lightbox
-let historyInMemory       = [];          // In-memory cache of history items
-
-/* --------------------------- SAFE JSON HELPERS ------------------------- */
-
-/**
- * Safely parse JSON, returning a fallback value if parsing fails.
- */
-function safeParseJSON(str, fallback) {
-    try {
-        if (typeof str !== "string") return fallback;
-        const value = JSON.parse(str);
-        return value == null ? fallback : value;
-    } catch (err) {
-        console.warn("[Sulandra] Failed to parse JSON from storage:", err);
-        return fallback;
+async function callSulandraAPI(path, payload) {
+    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
+        window.alert("Please configure your RunPod URL in the code.");
+        throw new Error("Missing API URL");
     }
+
+    // If this looks like a ComfyUI endpoint (port 8188), use the Comfy Adapter
+    if (SULANDRA_API_BASE.includes("8188")) {
+        return await runComfyUIWorkflow(payload);
+    }
+
+    // Fallback for custom middleware
+    const url = SULANDRA_API_BASE.replace(/\/+$/, "") + path;
+    const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+        throw new Error("API Error: " + res.status);
+    }
+    return res.json();
+}
+
+/**
+ * COMFYUI ADAPTER
+ * Translates simple UI inputs into a Node Graph for ComfyUI
+ */
+async function runComfyUIWorkflow(payload) {
+    const clientId = uuidv4(); // Generate a session ID
+    
+    // 1. Build the Workflow JSON (Standard Stable Diffusion Graph)
+    // Note: This assumes you have a standard checkpoint loaded.
+    const prompt = {
+        "3": {
+            "inputs": {
+                "seed": payload.seed || Math.floor(Math.random() * 1000000000),
+                "steps": payload.steps || 25,
+                "cfg": payload.guidance || 7,
+                "sampler_name": "euler",
+                "scheduler": "normal",
+                "denoise": 1,
+                "model": ["4", 0],
+                "positive": ["6", 0],
+                "negative": ["7", 0],
+                "latent_image": ["5", 0]
+            },
+            "class_type": "KSampler"
+        },
+        "4": {
+            "inputs": {
+                "ckpt_name": "v1-5-pruned-emaonly.ckpt" // DEFAULT MODEL - Change if needed!
+            },
+            "class_type": "CheckpointLoaderSimple"
+        },
+        "5": {
+            "inputs": {
+                "width": payload.aspect === "16:9" ? 854 : payload.aspect === "9:16" ? 480 : 512,
+                "height": payload.aspect === "16:9" ? 480 : payload.aspect === "9:16" ? 854 : 512,
+                "batch_size": 1
+            },
+            "class_type": "EmptyLatentImage"
+        },
+        "6": {
+            "inputs": {
+                "text": payload.prompt,
+                "clip": ["4", 1]
+            },
+            "class_type": "CLIPTextEncode"
+        },
+        "7": {
+            "inputs": {
+                "text": payload.negative_prompt || "blur, watermark",
+                "clip": ["4", 1]
+            },
+            "class_type": "CLIPTextEncode"
+        },
+        "8": {
+            "inputs": {
+                "samples": ["3", 0],
+                "vae": ["4", 2]
+            },
+            "class_type": "VAEDecode"
+        },
+        "9": {
+            "inputs": {
+                "filename_prefix": "Sulandra",
+                "images": ["8", 0]
+            },
+            "class_type": "SaveImage"
+        }
+    };
+
+    // 2. Send Prompt to ComfyUI
+    const promptRes = await fetch(`${SULANDRA_API_BASE}/prompt`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: prompt, client_id: clientId })
+    });
+
+    if (!promptRes.ok) throw new Error("ComfyUI Connection Failed. Check CORS settings.");
+    const promptData = await promptRes.json();
+    const promptId = promptData.prompt_id;
+
+    // 3. Poll for Completion (Wait for the image)
+    // We loop and check history until our specific promptId is done
+    let imageUrl = "";
+    while (!imageUrl) {
+        await new Promise(r => setTimeout(r, 1000)); // Wait 1 second
+        
+        const historyRes = await fetch(`${SULANDRA_API_BASE}/history/${promptId}`);
+        const historyData = await historyRes.json();
+        
+        if (historyData[promptId] && historyData[promptId].outputs) {
+            // Job is done! Extract filename.
+            const output = historyData[promptId].outputs["9"].images[0];
+            imageUrl = `${SULANDRA_API_BASE}/view?filename=${output.filename}&subfolder=${output.subfolder}&type=${output.type}`;
+        }
+    }
+
+    // 4. Return formatted result to Sulandra UI
+    return {
+        ok: true,
+        kind: "image",
+        url: imageUrl,
+        thumb: imageUrl,
+        meta: {
+            model: "ComfyUI / Stable Diffusion",
+            seed: payload.seed,
+            steps: payload.steps
+        }
+    };
 }
 
 /**
