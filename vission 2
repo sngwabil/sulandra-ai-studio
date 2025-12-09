@@ -1024,7 +1024,167 @@
             0 0 0 1px rgba(34, 197, 94, 0.8),
             0 26px 62px rgba(34, 197, 94, 0.9);
     }
-    </style>
+    /* ====================================================================== */
+/* SURGICAL ADDITIONS - Reference Previews & Ask SIA                     */
+/* ====================================================================== */
+
+/* Kling-style prominent reference image preview container */
+.reference-preview-large {
+    width: 100%;
+    /* Default aspect, can be overridden via JS if needed */
+    aspect-ratio: 16 / 9;
+    background: #020617;
+    border-radius: 14px;
+    border: 1px solid rgba(31, 41, 55, 0.95);
+    overflow: hidden;
+    display: none; /* Hidden until image added */
+    margin-bottom: 12px;
+    position: relative;
+}
+
+/* Class added via JS when an image is loaded */
+.reference-preview-large.has-image {
+    display: block;
+}
+
+.reference-preview-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ensure whole image is visible like Kling */
+}
+
+/* Small "Ask SIA" magic button next to prompt labels */
+.ask-sia-prompt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ask-sia-prompt-btn:hover {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+.ask-sia-prompt-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Label container to hold the label text and the new button */
+.prompt-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+/* ====================================================================== */
+/* SULANDRA UPLOAD BOX STYLE                                             */
+/* ====================================================================== */
+
+.sulandra-upload-box {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Cinematic shape */
+    background: #0f172a;  /* Darker background */
+    border-radius: 16px;
+    border: 1px dashed rgba(51, 65, 85, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.sulandra-upload-box:hover {
+    border-color: #22c55e; /* Green accent on hover */
+    background: #1e293b;
+}
+
+/* The Placeholder content (Icon + Text) */
+.sulandra-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #9ca3af;
+    pointer-events: none; /* Clicks pass through to the label */
+    padding: 20px;
+}
+
+.sulandra-placeholder svg {
+    width: 32px;
+    height: 32px;
+    color: #4ade80; /* Accent color icon */
+    opacity: 0.8;
+}
+
+.sulandra-placeholder-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.sulandra-placeholder-sub {
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* The Image Preview (Hidden by default) */
+.sulandra-preview-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Show full image */
+    background: #000;
+    z-index: 10;
+    display: none;
+}
+
+/* State: When file is selected */
+.sulandra-upload-box.has-file .sulandra-preview-img {
+    display: block;
+}
+
+.sulandra-upload-box.has-file .sulandra-placeholder {
+    display: none;
+}
+
+/* Remove button (appears on hover when file exists) */
+.sulandra-remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.sulandra-upload-box.has-file:hover .sulandra-remove-btn {
+    display: flex;
+}
+</style>
 </head>
 <body>
 <div class="vision-root">
@@ -1188,498 +1348,377 @@
                     <!-- =================================================== -->
                     <!--  IMAGE LAB CONFIG                                   -->
                     <!-- =================================================== -->
-                    <div class="lab-config" id="lab-config-image" data-lab="image">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                            <div>
-                                <div style="font-size:15px;font-weight:600;">Image Generator</div>
-                                <div class="text-muted" style="font-size:12px;margin-top:2px;">
-                                    Text-to-Image · Image-to-Image · Styles · Aspect ratios
-                                </div>
-                            </div>
-                            <div class="pill-switch" id="image-mode-switch">
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn pill-switch__btn--active"
-                                    data-image-mode="text"
-                                >
-                                    Text → Image
-                                </button>
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn"
-                                    data-image-mode="image"
-                                >
-                                    Image → Image
-                                </button>
-                            </div>
-                        </div>
+<div class="lab-config" id="lab-config-image" data-lab="image">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+            <div style="font-size:15px;font-weight:600;">Image Generator</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px;">
+                Text-to-Image · Image-to-Image · Styles · Aspect ratios
+            </div>
+        </div>
+        <div class="pill-switch" id="image-mode-switch">
+            <button
+                type="button"
+                class="pill-switch__btn pill-switch__btn--active"
+                data-image-mode="text"
+            >
+                Text → Image
+            </button>
+            <button
+                type="button"
+                class="pill-switch__btn"
+                data-image-mode="image"
+            >
+                Image → Image
+            </button>
+        </div>
+    </div>
 
-                        <!-- Prompt blocks -->
-                        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
-                            <div>
-                                <label for="image-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="image-main-prompt"
-                                        rows="4"
-                                        placeholder="Describe the image you want Sulandra to create..."
-                                        style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
-                                    ></textarea>
-                                </div>
-                            </div>
+    <div id="image-reference-block" style="margin-bottom:16px;display:none;">
+        <div id="image-reference-preview-large" class="reference-preview-large"></div>
 
-                            <div>
-                                <label for="image-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="image-negative-prompt"
-                                        rows="2"
-                                        placeholder="Things to avoid (blur, watermark, distortion, etc.)"
-                                        style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
-                                    ></textarea>
-                                </div>
-                            </div>
-                        </div>
+        <label
+            for="image-reference-input"
+            style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
+        >
+            <div>
+                <div style="font-size:12px;">Upload reference</div>
+                <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
+            </div>
+            <div style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
+                    <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
+                    <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </label>
+        <input id="image-reference-input" type="file" accept="image/*" class="visually-hidden" />
+    </div>
 
-                        <!-- Reference image upload (visible in Image→Image) -->
-                        <div
-                            id="image-reference-block"
-                            style="margin-bottom:16px;display:none;"
-                        >
-                            <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                                Reference image (Image → Image)
-                            </div>
-                            <label
-                                for="image-reference-input"
-                                style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
-                            >
-                                <div>
-                                    <div style="font-size:12px;">Upload reference</div>
-                                    <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
-                                </div>
-                                <div
-                                    style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
-                                        <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                        <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                            </label>
-                            <input id="image-reference-input" type="file" accept="image/*" class="visually-hidden" />
-                            <div
-                                id="image-reference-preview"
-                                style="margin-top:8px;font-size:11px;color:var(--text-secondary);display:none;"
-                            ></div>
-                        </div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+        <div>
+            <div class="prompt-label-row">
+                <label for="image-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
+                <button type="button" class="ask-sia-prompt-btn" data-target-prompt="image-main-prompt" title="Ask SIA to enhance prompt">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea
+                    id="image-main-prompt"
+                    rows="4"
+                    placeholder="Describe the image you want Sulandra to create..."
+                    style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
+                ></textarea>
+            </div>
+        </div>
 
-                        <!-- Resolution & style row -->
-                        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-                            <div style="display:flex;gap:10px;">
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
-                                    <div class="pill-switch" id="image-aspect-switch">
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn pill-switch__btn--active"
-                                            data-image-aspect="1:1"
-                                        >
-                                            1:1
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-image-aspect="16:9"
-                                        >
-                                            16:9
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-image-aspect="9:16"
-                                        >
-                                            9:16
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+        <div>
+            <div class="prompt-label-row">
+                <label for="image-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
+                <button type="button" class="ask-sia-prompt-btn" data-target-prompt="image-negative-prompt" title="Ask SIA for negative ideas">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea
+                    id="image-negative-prompt"
+                    rows="2"
+                    placeholder="Things to avoid (blur, watermark, distortion, etc.)"
+                    style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
+                ></textarea>
+            </div>
+        </div>
+    </div>
 
-                            <div style="display:flex;gap:10px;">
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Style preset</div>
-                                    <select
-                                        id="image-style-select"
-                                        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                    >
-                                        <option value="natural">Natural photo</option>
-                                        <option value="cinematic">Cinematic</option>
-                                        <option value="anime">Anime / Stylized</option>
-                                        <option value="digital-art">Digital art</option>
-                                        <option value="3d">3D render</option>
-                                        <option value="illustration">Illustration</option>
-                                    </select>
-                                </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+        <div style="display:flex;gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
+                <div class="pill-switch" id="image-aspect-switch">
+                    <button type="button" class="pill-switch__btn pill-switch__btn--active" data-image-aspect="1:1">1:1</button>
+                    <button type="button" class="pill-switch__btn" data-image-aspect="16:9">16:9</button>
+                    <button type="button" class="pill-switch__btn" data-image-aspect="9:16">9:16</button>
+                </div>
+            </div>
+        </div>
 
-                                <div style="width:120px;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Guidance</div>
-                                    <input
-                                        type="range"
-                                        id="image-guidance-slider"
-                                        min="1"
-                                        max="20"
-                                        value="7"
-                                        style="width:100%;"
-                                    />
-                                    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:2px;">
-                                        <span>Loose</span>
-                                        <span id="image-guidance-value">7</span>
-                                        <span>Strict</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <div style="display:flex;gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Style preset</div>
+                <select id="image-style-select" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;">
+                    <option value="natural">Natural photo</option>
+                    <option value="cinematic">Cinematic</option>
+                    <option value="anime">Anime / Stylized</option>
+                    <option value="digital-art">Digital art</option>
+                    <option value="3d">3D render</option>
+                    <option value="illustration">Illustration</option>
+                </select>
+            </div>
+            <div style="width:120px;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Guidance</div>
+                <input type="range" id="image-guidance-slider" min="1" max="20" value="7" style="width:100%;" />
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:2px;">
+                    <span>Loose</span><span id="image-guidance-value">7</span><span>Strict</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        <!-- Advanced row -->
-                        <div style="display:flex;gap:10px;margin-bottom:10px;">
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps</div>
-                                <input
-                                    type="number"
-                                    id="image-steps-input"
-                                    value="30"
-                                    min="10"
-                                    max="80"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps</div>
+            <input type="number" id="image-steps-input" value="30" min="10" max="80" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
+            <input type="number" id="image-seed-input" placeholder="Random" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+    </div>
 
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
-                                <input
-                                    type="number"
-                                    id="image-seed-input"
-                                    placeholder="Random"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
-                        </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
+        <div><span id="image-estimate-res">1024 × 1024</span><span>&nbsp;•</span><span id="image-estimate-cost">~1 credit</span></div>
+        <button type="button" id="image-toggle-advanced" style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;">Advanced settings</button>
+    </div>
 
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
-                            <div>
-                                <span id="image-estimate-res">1024 × 1024</span>
-                                <span>&nbsp;•</span>
-                                <span id="image-estimate-cost">~1 credit</span>
-                            </div>
-                            <button
-                                type="button"
-                                id="image-toggle-advanced"
-                                style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;"
-                            >
-                                Advanced settings
-                            </button>
-                        </div>
-
-                        <div id="image-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
-                            <div style="display:flex;flex-direction:column;gap:6px;">
-                                <label>
-                                    <input type="checkbox" id="image-enable-upscale" />
-                                    <span>&nbsp;Upscale after generation</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="image-enable-face-fix" />
-                                    <span>&nbsp;Face enhancement</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="image-enable-tiling" />
-                                    <span>&nbsp;Seamless tiling</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+    <div id="image-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+            <label><input type="checkbox" id="image-enable-upscale" /><span>&nbsp;Upscale after generation</span></label>
+            <label><input type="checkbox" id="image-enable-face-fix" /><span>&nbsp;Face enhancement</span></label>
+            <label><input type="checkbox" id="image-enable-tiling" /><span>&nbsp;Seamless tiling</span></label>
+        </div>
+    </div>
+</div>
 
                     <!-- =================================================== -->
                     <!--  VIDEO LAB CONFIG                                   -->
                     <!-- =================================================== -->
                     <div class="lab-config hidden" id="lab-config-video" data-lab="video">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                            <div>
-                                <div style="font-size:15px;font-weight:600;">Video Generator</div>
-                                <div class="text-muted" style="font-size:12px;margin-top:2px;">
-                                    Text-to-Video · Image-to-Video · Native audio · Durations
-                                </div>
-                            </div>
-                            <div class="pill-switch" id="video-mode-switch">
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn pill-switch__btn--active"
-                                    data-video-mode="text"
-                                >
-                                    Text → Video
-                                </button>
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn"
-                                    data-video-mode="image"
-                                >
-                                    Image → Video
-                                </button>
-                            </div>
-                        </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+            <div style="font-size:15px;font-weight:600;">Video Generator</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px;">
+                Text-to-Video · Image-to-Video · Native audio · Durations
+            </div>
+        </div>
+        <div class="pill-switch" id="video-mode-switch">
+            <button
+                type="button"
+                class="pill-switch__btn pill-switch__btn--active"
+                data-video-mode="text"
+            >
+                Text → Video
+            </button>
+            <button
+                type="button"
+                class="pill-switch__btn"
+                data-video-mode="image"
+            >
+                Image → Video
+            </button>
+        </div>
+    </div>
 
-                        <!-- Prompt blocks -->
-                        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
-                            <div>
-                                <label for="video-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="video-main-prompt"
-                                        rows="4"
-                                        placeholder="Describe the motion, camera moves, and scene for the video..."
-                                        style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
-                                    ></textarea>
-                                </div>
-                            </div>
+    <div id="video-reference-block" style="margin-bottom:16px;display:none;">
+        <div id="video-reference-preview-large" class="reference-preview-large"></div>
 
-                            <div>
-                                <label for="video-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="video-negative-prompt"
-                                        rows="2"
-                                        placeholder="Things to avoid (camera shake, artifacts, jitter, etc.)"
-                                        style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
-                                    ></textarea>
-                                </div>
-                            </div>
-                        </div>
+        <label
+            for="video-reference-input"
+            style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
+        >
+            <div>
+                <div style="font-size:12px;">Upload reference frame</div>
+                <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
+            </div>
+            <div style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
+                    <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
+                    <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </label>
+        <input id="video-reference-input" type="file" accept="image/*" class="visually-hidden" />
+    </div>
 
-                        <!-- Image to video reference -->
-                        <div
-                            id="video-reference-block"
-                            style="margin-bottom:16px;display:none;"
-                        >
-                            <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                                Reference image (Image → Video)
-                            </div>
-                            <label
-                                for="video-reference-input"
-                                style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
-                            >
-                                <div>
-                                    <div style="font-size:12px;">Upload reference frame</div>
-                                    <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
-                                </div>
-                                <div
-                                    style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
-                                        <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                        <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                            </label>
-                            <input id="video-reference-input" type="file" accept="image/*" class="visually-hidden" />
-                            <div
-                                id="video-reference-preview"
-                                style="margin-top:8px;font-size:11px;color:var(--text-secondary);display:none;"
-                            ></div>
-                        </div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+        <div>
+            <div class="prompt-label-row">
+                <label for="video-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
+                <button type="button" class="ask-sia-prompt-btn" data-target-prompt="video-main-prompt" title="Ask SIA to enhance prompt">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea
+                    id="video-main-prompt"
+                    rows="4"
+                    placeholder="Describe the motion, camera moves, and scene for the video..."
+                    style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
+                ></textarea>
+            </div>
+        </div>
 
-                        <!-- Duration / resolution / audio -->
-                        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-                            <div style="display:flex;gap:10px;">
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Duration</div>
-                                    <select
-                                        id="video-duration-select"
-                                        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                    >
-                                        <option value="5">5 seconds</option>
-                                        <option value="10" selected>10 seconds</option>
-                                        <option value="15">15 seconds</option>
-                                        <option value="20">20 seconds</option>
-                                    </select>
-                                </div>
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
-                                    <div class="pill-switch" id="video-aspect-switch">
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn pill-switch__btn--active"
-                                            data-video-aspect="16:9"
-                                        >
-                                            16:9
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-video-aspect="9:16"
-                                        >
-                                            9:16
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-video-aspect="1:1"
-                                        >
-                                            1:1
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+        <div>
+            <div class="prompt-label-row">
+                <label for="video-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
+                <button type="button" class="ask-sia-prompt-btn" data-target-prompt="video-negative-prompt" title="Ask SIA for negative ideas">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea
+                    id="video-negative-prompt"
+                    rows="2"
+                    placeholder="Things to avoid (camera shake, artifacts, jitter, etc.)"
+                    style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
+                ></textarea>
+            </div>
+        </div>
+    </div>
 
-                            <div style="display:flex;gap:10px;align-items:flex-end;">
-                                <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
-                                    <input type="checkbox" id="video-native-audio-checkbox" />
-                                    <span>Generate native audio</span>
-                                </label>
-                                <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
-                                    <input type="checkbox" id="video-loop-checkbox" />
-                                    <span>Loop-friendly motion</span>
-                                </label>
-                            </div>
-                        </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+        <div style="display:flex;gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Duration</div>
+                <select id="video-duration-select" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;">
+                    <option value="5">5 seconds</option>
+                    <option value="10" selected>10 seconds</option>
+                    <option value="15">15 seconds</option>
+                    <option value="20">20 seconds</option>
+                </select>
+            </div>
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
+                <div class="pill-switch" id="video-aspect-switch">
+                    <button type="button" class="pill-switch__btn pill-switch__btn--active" data-video-aspect="16:9">16:9</button>
+                    <button type="button" class="pill-switch__btn" data-video-aspect="9:16">9:16</button>
+                    <button type="button" class="pill-switch__btn" data-video-aspect="1:1">1:1</button>
+                </div>
+            </div>
+        </div>
 
-                        <!-- Advanced video -->
-                        <div style="display:flex;gap:10px;margin-bottom:10px;">
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps / quality</div>
-                                <input
-                                    type="number"
-                                    id="video-steps-input"
-                                    value="30"
-                                    min="12"
-                                    max="80"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
-                                <input
-                                    type="number"
-                                    id="video-seed-input"
-                                    placeholder="Random"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
-                        </div>
+        <div style="display:flex;gap:10px;align-items:flex-end;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
+                <input type="checkbox" id="video-native-audio-checkbox" />
+                <span>Generate native audio</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
+                <input type="checkbox" id="video-loop-checkbox" />
+                <span>Loop-friendly motion</span>
+            </label>
+        </div>
+    </div>
 
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
-                            <div>
-                                <span id="video-estimate-res">720p</span>
-                                <span>&nbsp;•</span>
-                                <span id="video-estimate-cost">~3 credits</span>
-                            </div>
-                            <button
-                                type="button"
-                                id="video-toggle-advanced"
-                                style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;"
-                            >
-                                Advanced motion
-                            </button>
-                        </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps / quality</div>
+            <input type="number" id="video-steps-input" value="30" min="12" max="80" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
+            <input type="number" id="video-seed-input" placeholder="Random" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+    </div>
 
-                        <div id="video-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
-                            <div style="display:flex;flex-direction:column;gap:6px;">
-                                <label>
-                                    <input type="checkbox" id="video-cam-move-checkbox" />
-                                    <span>&nbsp;Enable cinematic camera moves</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="video-stabilize-checkbox" />
-                                    <span>&nbsp;Extra stabilization</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="video-high-fps-checkbox" />
-                                    <span>&nbsp;Higher FPS (slightly slower)</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
+        <div><span id="video-estimate-res">720p</span><span>&nbsp;•</span><span id="video-estimate-cost">~3 credits</span></div>
+        <button type="button" id="video-toggle-advanced" style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;">Advanced motion</button>
+    </div>
+
+    <div id="video-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+            <label><input type="checkbox" id="video-cam-move-checkbox" /><span>&nbsp;Enable cinematic camera moves</span></label>
+            <label><input type="checkbox" id="video-stabilize-checkbox" /><span>&nbsp;Extra stabilization</span></label>
+            <label><input type="checkbox" id="video-high-fps-checkbox" /><span>&nbsp;Higher FPS (slightly slower)</span></label>
+        </div>
+    </div>
+</div>
 
                     <!-- =================================================== -->
                     <!--  SHORT FILM LAB CONFIG                             -->
                     <!-- =================================================== -->
                     <div class="lab-config hidden" id="lab-config-shortfilm" data-lab="shortfilm">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                            <div>
-                                <div style="font-size:15px;font-weight:600;">Short Film Builder</div>
-                                <div class="text-muted" style="font-size:12px;margin-top:2px;">
-                                    Multi-segment storytelling · Scenes · Transitions · Narrative prompts
-                                </div>
-                            </div>
-                            <div class="badge-pill">
-                                <span class="tag-dot"></span>
-                                <span>Storyboard mode</span>
-                            </div>
-                        </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+            <div style="font-size:15px;font-weight:600;">Short Film Builder</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px;">
+                Multi-segment storytelling · Scenes · Transitions · Narrative prompts
+            </div>
+        </div>
+        <div class="badge-pill">
+            <span class="tag-dot"></span>
+            <span>Storyboard mode</span>
+        </div>
+    </div>
 
-                        <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                            Film title &amp; global prompt
-                        </div>
-                        <input
-                            id="shortfilm-title-input"
-                            type="text"
-                            placeholder="Title of your short film"
-                            style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);font-size:12px;margin-bottom:8px;"
-                        />
-                        <textarea
-                            id="shortfilm-global-prompt"
-                            rows="3"
-                            placeholder="Describe the overall story, tone, characters, and style..."
-                            style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:70px;margin-bottom:12px;"
-                        ></textarea>
+    <div class="prompt-label-row">
+        <div class="text-soft" style="font-size:12px;">Film title &amp; global prompt</div>
+        <button type="button" class="ask-sia-prompt-btn" data-target-prompt="shortfilm-global-prompt" title="Ask SIA to enhance premise">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+    </div>
 
-                        <div class="text-soft" style="font-size:12px;margin-bottom:4px;">
-                            Segments
-                        </div>
-                        <div
-                            id="shortfilm-segments-container"
-                            style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"
-                        >
-                            <!-- Segment rows will be injected by JS -->
-                        </div>
+    <input
+        id="shortfilm-title-input"
+        type="text"
+        placeholder="Title of your short film"
+        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);font-size:12px;margin-bottom:8px;"
+    />
+    <textarea
+        id="shortfilm-global-prompt"
+        rows="3"
+        placeholder="Describe the overall story, tone, characters, and style..."
+        style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:70px;margin-bottom:12px;"
+    ></textarea>
 
-                        <button
-                            type="button"
-                            id="shortfilm-add-segment-btn"
-                            style="width:100%;border-radius:12px;border:1px dashed rgba(55,65,81,0.9);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
-                                <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                            </svg>
-                            <span>Add segment</span>
-                        </button>
+    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">
+        Segments
+    </div>
+    <div
+        id="shortfilm-segments-container"
+        style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"
+    >
+        </div>
 
-                        <div style="display:flex;gap:10px;margin-bottom:10px;font-size:11px;color:var(--text-secondary);">
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
-                                <div class="pill-switch" id="shortfilm-aspect-switch">
-                                    <button
-                                        type="button"
-                                        class="pill-switch__btn pill-switch__btn--active"
-                                        data-shortfilm-aspect="16:9"
-                                    >
-                                        16:9
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="pill-switch__btn"
-                                        data-shortfilm-aspect="9:16"
-                                    >
-                                        9:16
-                                    </button>
-                                </div>
-                            </div>
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Total length</div>
-                                <div id="shortfilm-total-length">~ 20 sec</div>
-                                <div class="text-muted" style="font-size:10px;">Based on segment durations</div>
-                            </div>
-                        </div>
-                    </div>
+    <button
+        type="button"
+        id="shortfilm-add-segment-btn"
+        style="width:100%;border-radius:12px;border:1px dashed rgba(55,65,81,0.9);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;"
+    >
+        <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
+            <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
+            <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
+        </svg>
+        <span>Add segment</span>
+    </button>
 
+    <div style="display:flex;gap:10px;margin-bottom:10px;font-size:11px;color:var(--text-secondary);">
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
+            <div class="pill-switch" id="shortfilm-aspect-switch">
+                <button
+                    type="button"
+                    class="pill-switch__btn pill-switch__btn--active"
+                    data-shortfilm-aspect="16:9"
+                >
+                    16:9
+                </button>
+                <button
+                    type="button"
+                    class="pill-switch__btn"
+                    data-shortfilm-aspect="9:16"
+                >
+                    9:16
+                </button>
+            </div>
+        </div>
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Total length</div>
+            <div id="shortfilm-total-length">~ 20 sec</div>
+            <div class="text-muted" style="font-size:10px;">Based on segment durations</div>
+        </div>
+    </div>
+</div>
                     <!-- =================================================== -->
                     <!--  MY FILES / ASSETS CONFIG                          -->
                     <!-- =================================================== -->
@@ -3304,26 +3343,31 @@ async function askSIAAboutItem(item) {
 function setActiveLab(lab) {
     currentLab = lab;
 
-    // Header tabs
-    const tabs = document.querySelectorAll("[data-lab-tab]");
-    tabs.forEach(tab => {
-        const t = tab.dataset.labTab;
-        tab.classList.toggle("vision-header__tab--active", t === lab);
-        tab.setAttribute("aria-selected", t === lab ? "true" : "false");
+    // UPDATE: Sidebar Navigation active states
+    const navItems = document.querySelectorAll("[data-lab-nav]");
+    navItems.forEach(item => {
+        const navLab = item.dataset.labNav;
+        item.classList.toggle("vision-nav__item--active", navLab === lab);
     });
 
-    // Config panels
+    // Config panels (visibility)
     const configs = document.querySelectorAll(".lab-config");
     configs.forEach(cfg => {
         const labName = cfg.dataset.lab;
-        cfg.classList.toggle("hidden", labName !== lab && !(lab === "assets" && labName === "assets"));
+        // Hide all, unless it matches current lab OR it's assets view mode
+        let isVisible = labName === lab;
+        if (lab === 'assets' && labName === 'assets') isVisible = true;
+        cfg.classList.toggle("hidden", !isVisible);
     });
 
-    // If lab is assets, force mode to view My Files-like behaviour
+    // If switching to assets via some other means, ensure mode is view
     if (lab === "assets") {
         currentMode = "view";
-        updateModeToggleButtons();
+    } else {
+        // If switching to a creation lab, ensure mode is create
+        currentMode = "create";
     }
+    updateModeToggleButtons();
 
     // Update generate button label
     const modeLabel = $("btn-generate-mode-label");
@@ -3334,11 +3378,11 @@ function setActiveLab(lab) {
         else modeLabel.textContent = "(—)";
     }
 
-    // When switching lab, default gallery filter to that lab
+    // Default gallery filters
     if (lab === "image") currentGalleryFilter = "images";
     else if (lab === "video") currentGalleryFilter = "videos";
     else if (lab === "shortfilm") currentGalleryFilter = "films";
-    else currentGalleryFilter = "all";
+    else if (lab === "assets") currentGalleryFilter = "all";
 
     updateGalleryFilterButtons();
     refreshAllHistoryDisplays();
@@ -3547,10 +3591,13 @@ function addShortFilmSegmentRow() {
 
     shortFilmSegmentCounter++;
     const id = shortFilmSegmentCounter;
+    const promptId = `shortfilm-segment-prompt-${id}`; // Unique ID for the textarea
 
     const row = document.createElement("div");
     row.className = "shortfilm-segment-row";
     row.dataset.segmentId = String(id);
+    
+    // HTML Structure with Ask SIA Button included
     row.innerHTML = `
         <div style="display:flex;gap:6px;align-items:flex-start;">
             <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
@@ -3560,13 +3607,28 @@ function addShortFilmSegmentRow() {
                     placeholder="Scene ${id} title"
                     style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;"
                 />
-                <textarea
-                    class="shortfilm-segment-prompt"
-                    rows="2"
-                    placeholder="Describe what happens in this segment (camera, action, emotion)..."
-                    style="width:100%;border-radius:10px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;resize:vertical;min-height:48px;"
-                ></textarea>
+                
+                <div style="position:relative;">
+                    <textarea
+                        id="${promptId}"
+                        class="shortfilm-segment-prompt"
+                        rows="2"
+                        placeholder="Describe what happens in this segment (camera, action, emotion)..."
+                        style="width:100%;border-radius:10px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px 6px 36px; /* Extra left padding for button */ background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;resize:vertical;min-height:48px;"
+                    ></textarea>
+                    
+                    <button 
+                        type="button" 
+                        class="ask-sia-prompt-btn dynamic-ask-btn" 
+                        data-target-prompt="${promptId}" 
+                        title="Ask SIA to enhance segment"
+                        style="position:absolute; left:6px; top:6px; border:none; background:rgba(34, 197, 94, 0.1);"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </button>
+                </div>
             </div>
+            
             <div style="width:76px;display:flex;flex-direction:column;gap:4px;font-size:11px;color:#9ca3af;">
                 <label>
                     <span>Sec</span>
@@ -3592,11 +3654,36 @@ function addShortFilmSegmentRow() {
 
     container.appendChild(row);
 
+    // --- Wire up logic for this new row ---
+
+    // 1. Attach Ask SIA listener manually for this new button
+    const askBtn = row.querySelector(".dynamic-ask-btn");
+    if (askBtn) {
+        askBtn.addEventListener("click", () => {
+            const textarea = document.getElementById(promptId);
+            // Visual feedback
+            const originalColor = askBtn.style.color;
+            askBtn.style.color = "#22c55e"; 
+            setTimeout(() => askBtn.style.color = originalColor, 300);
+
+            if (textarea) {
+                const text = textarea.value.trim();
+                if(!text) {
+                    window.alert("Ask SIA: Please type a basic idea for this segment first!");
+                } else {
+                    window.alert(`SIA is analyzing segment ${id}: "${text.substring(0, 20)}..."\n(API connection required)`);
+                }
+            }
+        });
+    }
+
+    // 2. Duration listener
     const durationInput = row.querySelector(".shortfilm-segment-duration");
     if (durationInput) {
         durationInput.addEventListener("input", updateShortFilmTotalLength);
     }
 
+    // 3. Remove listener
     const removeBtn = row.querySelector(".shortfilm-segment-remove");
     if (removeBtn) {
         removeBtn.addEventListener("click", () => {
@@ -4118,16 +4205,12 @@ function wireRandomPromptButton() {
 /* --------------------------- MAIN BUTTON WIRING ------------------------- */
 
 function wireMainButtonsAndToggles() {
-    // Lab tabs
-    document.querySelectorAll("[data-lab-tab]").forEach(tab => {
-        tab.addEventListener("click", () => {
-            const lab = tab.dataset.labTab;
+    // UPDATE: New Sidebar Lab Navigation clicks
+    document.querySelectorAll("[data-lab-nav]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const lab = btn.dataset.labNav;
             if (!lab) return;
             setActiveLab(lab);
-            if (lab === "assets") {
-                currentMode = "view";
-                updateModeToggleButtons();
-            }
         });
     });
 
