@@ -1488,6 +1488,62 @@
     cursor: pointer;
 }
 .ask-sia-main-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+/* ====================================================================== */
+/* SULANDRA NEON TRIGGER (Sparkling Text)                                */
+/* ====================================================================== */
+
+.sulandra-neon-trigger {
+    font-family: 'Cinzel', serif; /* Matches your logo font for elegance */
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #e2e8f0;
+    cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    
+    /* The Neon Glow */
+    text-shadow: 
+        0 0 2px rgba(255,255,255,0.8),
+        0 0 8px rgba(34, 197, 94, 0.8),
+        0 0 15px rgba(34, 197, 94, 0.6);
+    
+    transition: all 0.3s ease;
+    animation: sulandra-pulse 3s infinite alternate;
+}
+
+/* Sparkle icon (optional pseudo-element) */
+.sulandra-neon-trigger::before {
+    content: "✦";
+    font-size: 10px;
+    color: #86efac; /* Lighter green */
+    text-shadow: 0 0 5px #fff;
+    animation: sulandra-sparkle 1.5s infinite linear;
+}
+
+.sulandra-neon-trigger:hover {
+    color: #fff;
+    text-shadow: 
+        0 0 4px #fff,
+        0 0 10px #4ade80,
+        0 0 20px #4ade80,
+        0 0 30px #22c55e;
+    transform: scale(1.02);
+}
+
+@keyframes sulandra-pulse {
+    0% { opacity: 0.9; }
+    100% { opacity: 1; text-shadow: 0 0 4px #fff, 0 0 12px #22c55e, 0 0 25px #22c55e; }
+}
+
+@keyframes sulandra-sparkle {
+    0% { opacity: 0.5; transform: scale(0.8) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+    100% { opacity: 0.5; transform: scale(0.8) rotate(360deg); }
+}
 </style>
 </head>
 <body>
