@@ -2886,144 +2886,78 @@ function clearGallery() {
 }
 
 /**
- * Render a single gallery card (Image / Video / Film)
+ * Render a single gallery card (Image / Video / Film / Placeholder)
  */
 function createGalleryCard(item) {
     const card = document.createElement("div");
-    card.className = currentGalleryLayout === "grid"
-        ? "gallery-card gallery-card--grid"
-        : "gallery-card gallery-card--vertical";
+    // Add loading class if it's a placeholder
+    const baseClass = currentGalleryLayout === "grid" ? "gallery-card gallery-card--grid" : "gallery-card gallery-card--vertical";
+    card.className = item.isPlaceholder ? `${baseClass} gallery-card--loading` : baseClass;
 
     card.dataset.historyId = item.id;
 
-    /* ---------- media element ---------- */
+    /* ---------- media element OR loading placeholder ---------- */
     let mediaHTML = "";
-    if (item.kind === "image") {
-        mediaHTML = `<img src="${item.url}" class="gallery-card__media">`;
-    } else if (item.kind === "video") {
-        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline></video>`;
+    if (item.isPlaceholder) {
+        // Futuristic loading animation
+        mediaHTML = `
+            <div class="gallery-card-loader-content">
+                <div class="neon-spinner"></div>
+                <div style="font-size:10px; letter-spacing:0.1em; text-transform:uppercase;">Generating</div>
+            </div>
+        `;
+    } else if (item.kind === "image") {
+        mediaHTML = `<img src="${item.url}" class="gallery-card__media" loading="lazy">`;
     } else {
-        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline></video>`;
+        // Video or Shortfilm
+        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>`;
     }
 
-    /* ---------- build card ---------- */
+    /* ---------- build card wrapper ---------- */
+    // Placeholders use their target aspect ratio immediately
+    const aspect = item.aspect || "1:1";
+    
     card.innerHTML = `
-    <div class="gallery-card__media-wrapper" data-aspect="${item.aspect || "1:1"}">
+    <div class="gallery-card__media-wrapper" data-aspect="${aspect}">
         ${mediaHTML}
     </div>
 
     <div class="gallery-card__info">
-        <div class="gallery-card__title">${item.title}</div>
+        <div class="gallery-card__title">${item.isPlaceholder ? "Creating..." : item.title}</div>
 
-        <div class="gallery-card__actions-row">
+        <div class="gallery-card__actions-row" style="${item.isPlaceholder ? 'opacity:0.5; pointer-events:none;' : ''}">
             <div class="gallery-card__actions-left">
-                <!-- Fullscreen -->
-                <button
-                    type="button"
-                    class="gallery-card__icon-btn"
-                    data-action="fullscreen"
-                    title="Fullscreen"
-                >
-                    ⤢
-                </button>
-
-                <!-- Use prompt -->
-                <button
-                    type="button"
-                    class="gallery-card__icon-btn"
-                    data-action="use-prompt"
-                    title="Use this prompt"
-                >
-                    ↻
-                </button>
-
-                <!-- Download to device -->
-                <a
-                    href="${item.url}"
-                    download
-                    class="gallery-card__icon-btn"
-                    data-action="download"
-                    title="Download"
-                >
-                    ⤓
-                </a>
-
-                <!-- Delete -->
-                <button
-                    type="button"
-                    class="gallery-card__icon-btn gallery-card__icon-btn--danger"
-                    data-action="delete"
-                    title="Delete"
-                >
-                    🗑
-                </button>
+                <button type="button" class="gallery-card__icon-btn" data-action="fullscreen" title="Fullscreen">⤢</button>
+                <button type="button" class="gallery-card__icon-btn" data-action="use-prompt" title="Use this prompt">↻</button>
+                <button type="button" class="gallery-card__icon-btn" data-action="download" title="Download">⤓</button>
+                <button type="button" class="gallery-card__icon-btn gallery-card__icon-btn--danger" data-action="delete" title="Delete">🗑</button>
             </div>
-
-            ${
-                item.isFavorite
-                    ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">♥</span>`
-                    : `<span class="gallery-card__fav" data-fav="${item.id}">♡</span>`
-            }
+            ${!item.isPlaceholder ? (item.isFavorite ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">♥</span>` : `<span class="gallery-card__fav" data-fav="${item.id}">♡</span>`) : ''}
         </div>
     </div>
 `;
 
+    // Don't attach listeners if it's a placeholder
+    if (item.isPlaceholder) return card;
 
-    /* ---------- favorite toggle ---------- */
-const favBtn = card.querySelector("[data-fav]");
-if (favBtn) {
-    favBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        toggleFavorite(item.id);
-        renderGallery();
-        renderHistoryRail();
-    });
-}
+    /* ---------- Attach Listeners (same as before) ---------- */
+    const favBtn = card.querySelector("[data-fav]");
+    if (favBtn) favBtn.addEventListener("click", e => { e.stopPropagation(); toggleFavorite(item.id); refreshAllHistoryDisplays(); });
 
-/* ---------- action buttons ---------- */
-const fullscreenBtn = card.querySelector('[data-action="fullscreen"]');
-if (fullscreenBtn) {
-    fullscreenBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        openLightbox(item.id); // true fullscreen overlay
-    });
-}
+    const fullscreenBtn = card.querySelector('[data-action="fullscreen"]');
+    if (fullscreenBtn) fullscreenBtn.addEventListener("click", e => { e.stopPropagation(); openLightbox(item.id); });
 
-const deleteBtn = card.querySelector('[data-action="delete"]');
-if (deleteBtn) {
-    deleteBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        const ok = window.confirm("Delete this item from your history?");
-        if (!ok) return;
-        deleteHistoryItem(item.id);
-        renderGallery();
-        renderHistoryRail();
-    });
-}
+    const deleteBtn = card.querySelector('[data-action="delete"]');
+    if (deleteBtn) deleteBtn.addEventListener("click", e => { e.stopPropagation(); if(window.confirm("Delete?")) { deleteHistoryItem(item.id); refreshAllHistoryDisplays(); } });
 
-const usePromptBtn = card.querySelector('[data-action="use-prompt"]');
-if (usePromptBtn) {
-    usePromptBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        applyHistoryPrompt(item);
-    });
-}
+    const usePromptBtn = card.querySelector('[data-action="use-prompt"]');
+    if (usePromptBtn) usePromptBtn.addEventListener("click", e => { e.stopPropagation(); applyHistoryPrompt(item); });
 
-const downloadLink = card.querySelector('[data-action="download"]');
-if (downloadLink) {
-    downloadLink.addEventListener("click", e => {
-        e.stopPropagation();
-        e.preventDefault(); // <- stop the <a> from opening the URL
-        downloadHistoryItem(item);
-    });
-}
+    // Changed download to a button listener instead of an <a> tag for better control
+    const downloadBtn = card.querySelector('[data-action="download"]');
+    if (downloadBtn) downloadBtn.addEventListener("click", e => { e.stopPropagation(); downloadHistoryItem(item); });
 
-
-/* ---------- click anywhere else opens lightbox ---------- */
-card.addEventListener("click", () => {
-    openLightbox(item.id);
-});
-
+    card.addEventListener("click", () => { openLightbox(item.id); });
 
     return card;
 }
