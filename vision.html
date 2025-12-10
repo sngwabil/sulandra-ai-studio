@@ -2691,6 +2691,31 @@ function deleteHistoryItem(historyId) {
     historyInMemory = historyInMemory.filter(x => x.id !== historyId);
     saveHistoryToStorage();
 }
+/**
+ * Apply a history item's prompt back into the appropriate lab inputs.
+ */
+function applyHistoryPrompt(item) {
+    if (!item) return;
+
+    // Switch to the matching lab
+    if (item.kind === "image") {
+        setActiveLab("image");
+        const main = $("image-main-prompt");
+        const neg = $("image-negative-prompt");
+        if (main) main.value = item.prompt || "";
+        if (neg && item.negativePrompt) neg.value = item.negativePrompt;
+    } else if (item.kind === "video") {
+        setActiveLab("video");
+        const main = $("video-main-prompt");
+        const neg = $("video-negative-prompt");
+        if (main) main.value = item.prompt || "";
+        if (neg && item.negativePrompt) neg.value = item.negativePrompt;
+    } else if (item.kind === "shortfilm") {
+        setActiveLab("shortfilm");
+        const main = $("shortfilm-global-prompt");
+        if (main) main.value = item.prompt || "";
+    }
+}
 
 /**
  * Returns filtered history according to current lab, gallery filter,
@@ -2760,36 +2785,120 @@ function createGalleryCard(item) {
 
     /* ---------- build card ---------- */
     card.innerHTML = `
-        <div class="gallery-card__media-wrapper">
-            ${mediaHTML}
-        </div>
+    <div class="gallery-card__media-wrapper" data-aspect="${item.aspect || "1:1"}">
+        ${mediaHTML}
+    </div>
 
-        <div class="gallery-card__info">
-            <div class="gallery-card__title">${item.title}</div>
-            <div class="gallery-card__prompt">${item.prompt || "No prompt"}</div>
-            <div class="gallery-card__meta">
-                <span>${new Date(item.createdAt).toLocaleString()}</span>
-                ${item.isFavorite
-                    ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">★</span>`
-                    : `<span class="gallery-card__fav" data-fav="${item.id}">☆</span>`
-                }
+    <div class="gallery-card__info">
+        <div class="gallery-card__title">${item.title}</div>
+
+        <div class="gallery-card__actions-row">
+            <div class="gallery-card__actions-left">
+                <!-- Fullscreen -->
+                <button
+                    type="button"
+                    class="gallery-card__icon-btn"
+                    data-action="fullscreen"
+                    title="Fullscreen"
+                >
+                    ⤢
+                </button>
+
+                <!-- Use prompt -->
+                <button
+                    type="button"
+                    class="gallery-card__icon-btn"
+                    data-action="use-prompt"
+                    title="Use this prompt"
+                >
+                    ↻
+                </button>
+
+                <!-- Download to device -->
+                <a
+                    href="${item.url}"
+                    download
+                    class="gallery-card__icon-btn"
+                    data-action="download"
+                    title="Download"
+                >
+                    ⤓
+                </a>
+
+                <!-- Delete -->
+                <button
+                    type="button"
+                    class="gallery-card__icon-btn gallery-card__icon-btn--danger"
+                    data-action="delete"
+                    title="Delete"
+                >
+                    🗑
+                </button>
             </div>
+
+            ${
+                item.isFavorite
+                    ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">♥</span>`
+                    : `<span class="gallery-card__fav" data-fav="${item.id}">♡</span>`
+            }
         </div>
-    `;
+    </div>
+`;
+
 
     /* ---------- favorite toggle ---------- */
-    const favBtn = card.querySelector("[data-fav]");
+const favBtn = card.querySelector("[data-fav]");
+if (favBtn) {
     favBtn.addEventListener("click", e => {
         e.stopPropagation();
         toggleFavorite(item.id);
         renderGallery();
         renderHistoryRail();
     });
+}
 
-    /* ---------- click to open lightbox ---------- */
-    card.addEventListener("click", () => {
-        openLightbox(item.id);
+/* ---------- action buttons ---------- */
+const fullscreenBtn = card.querySelector('[data-action="fullscreen"]');
+if (fullscreenBtn) {
+    fullscreenBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        openLightbox(item.id); // true fullscreen overlay
     });
+}
+
+const deleteBtn = card.querySelector('[data-action="delete"]');
+if (deleteBtn) {
+    deleteBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        const ok = window.confirm("Delete this item from your history?");
+        if (!ok) return;
+        deleteHistoryItem(item.id);
+        renderGallery();
+        renderHistoryRail();
+    });
+}
+
+const usePromptBtn = card.querySelector('[data-action="use-prompt"]');
+if (usePromptBtn) {
+    usePromptBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        applyHistoryPrompt(item);
+    });
+}
+
+const downloadLink = card.querySelector('[data-action="download"]');
+if (downloadLink) {
+    downloadLink.addEventListener("click", e => {
+        e.stopPropagation();
+        // Browser handles the actual download via the "download" attribute.
+    });
+}
+
+/* ---------- click anywhere else opens lightbox ---------- */
+card.addEventListener("click", () => {
+    openLightbox(item.id);
+});
+
 
     return card;
 }
@@ -2973,69 +3082,112 @@ function injectDynamicStyles() {
     }
 
     .gallery-card__media-wrapper {
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        background: #020617;
-        overflow: hidden;
-        position: relative;
-    }
+    width: 100%;
+    background: #020617;
+    overflow: hidden;
+    position: relative;
+}
 
-    .gallery-card__media {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
+/* Let the wrapper use the actual aspect ratio of the creation */
+.gallery-card__media-wrapper[data-aspect="1:1"] {
+    aspect-ratio: 1 / 1;
+}
+.gallery-card__media-wrapper[data-aspect="16:9"] {
+    aspect-ratio: 16 / 9;
+}
+.gallery-card__media-wrapper[data-aspect="9:16"] {
+    aspect-ratio: 9 / 16;
+}
+
+/* Show the whole image/video inside the frame without stretching */
+.gallery-card__media {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #020617;
+}
+
 
     .gallery-card__info {
-        padding: 10px 12px 12px;
-        border-top: 1px solid rgba(15, 23, 42, 0.95);
-        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        min-height: 72px;
-    }
+    padding: 8px 10px;
+    border-top: 1px solid rgba(15, 23, 42, 0.95);
+    background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: auto;
+}
 
-    .gallery-card__title {
-        font-size: 13px;
-        font-weight: 600;
-        color: #e5e7eb;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
+.gallery-card__title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #e5e7eb;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
 
-    .gallery-card__prompt {
-        font-size: 11px;
-        color: #9ca3af;
-        max-height: 3.2em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.gallery-card__actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 2px;
+}
 
-    .gallery-card__meta {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 10px;
-        color: #6b7280;
-        margin-top: 2px;
-    }
+.gallery-card__actions-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
 
-    .gallery-card__fav {
-        cursor: pointer;
-        font-size: 13px;
-        padding: 1px 4px;
-        border-radius: 999px;
-        border: 1px solid transparent;
-    }
+.gallery-card__icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    border: 1px solid rgba(31, 41, 55, 0.95);
+    background: radial-gradient(circle at 50% 0, #020617, #020617 60%, #000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #9ca3af;
+    cursor: pointer;
+    transition:
+        background 140ms ease-out,
+        color 140ms ease-out,
+        border-color 140ms ease-out,
+        box-shadow 140ms ease-out;
+}
 
-    .gallery-card__fav--active {
-        color: #fbbf24;
-        border-color: rgba(251, 191, 36, 0.4);
-        background: rgba(24, 24, 27, 0.9);
-    }
+.gallery-card__icon-btn:hover {
+    border-color: rgba(148, 163, 184, 0.95);
+    color: #e5e7eb;
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.6);
+}
+
+.gallery-card__icon-btn--danger:hover {
+    border-color: rgba(248, 113, 113, 0.85);
+    color: #fecaca;
+    box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
+}
+
+.gallery-card__fav {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.gallery-card__fav--active {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.4);
+    background: rgba(24, 24, 27, 0.9);
+}
+
 
     .history-thumb {
         position: relative;
@@ -3085,18 +3237,18 @@ function injectDynamicStyles() {
     }
 
     .vision-lightbox {
-        width: min(1120px, 95vw);
-        max-height: 90vh;
-        border-radius: 26px;
-        border: 1px solid rgba(31, 41, 55, 0.95);
-        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
-        box-shadow:
-            0 0 0 1px rgba(15, 23, 42, 0.95),
-            0 38px 90px rgba(0, 0, 0, 0.98);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 
     .vision-lightbox__header {
         padding: 10px 16px 8px;
