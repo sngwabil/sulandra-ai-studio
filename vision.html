@@ -4544,30 +4544,31 @@ async function callSulandraAPI(uiPath, payload) {
         if (payload.kind === "video" || payload.kind === "shortfilm") {
             if (!window.GradioClient) throw new Error("Gradio Client loading... try again in a second.");
 
-            // 1. Setup the Prompt & Settings
+            // 1. Setup Defaults based on your API docs
             let finalPrompt = "";
-            let steps = 50;
-            let seed = -1;
-            let resolution = "1280x720 (16:9, 720p)"; // Default
-            let duration = "5s(129f)";                  // Default
+            let steps = 50;         // param_4
+            let seed = -1;          // param_3
+            let resolution = "1280x720"; // param_1 (Default)
+            let duration = "129";        // param_2 (Default '129' frames ~5s)
+            
+            // Other sliders from your docs
+            let guidanceScale = 1;      // param_5
+            let flowShift = 7;          // param_6
+            let embeddedGuidance = 6;   // param_7
 
             // --- Logic for SHORT FILM ---
             if (payload.kind === "shortfilm") {
-                // Combine Title, Global Prompt, and Segments
                 let segmentText = "";
                 if (payload.segments) {
                     segmentText = payload.segments
                         .map((seg, i) => `Scene ${i+1}: ${seg.prompt}`)
                         .join(". ");
                 }
-                
                 finalPrompt = `Cinematic short film titled "${payload.film_title}". ${payload.global_prompt}. ${segmentText}`;
                 
-                // Map Aspect Ratio for Films
-                if (payload.aspect === "9:16") resolution = "720x1280 (9:16, 720p)";
-                
-                // Films use the longest duration available
-                duration = "5s(129f)"; 
+                // Map Aspect Ratio (Strict literals required)
+                if (payload.aspect === "9:16") resolution = "720x1280";
+                if (payload.aspect === "1:1")  resolution = "960x960";
             } 
             
             // --- Logic for STANDARD VIDEO ---
@@ -4576,44 +4577,50 @@ async function callSulandraAPI(uiPath, payload) {
                 steps = payload.steps || 50;
                 seed = payload.seed || -1;
                 
-                // Map Resolution
+                // Strict Resolution Mapping
                 const resMap = {
-                    "16:9": "1280x720 (16:9, 720p)",
-                    "9:16": "720x1280 (9:16, 720p)",
-                    "1:1":  "960x960 (1:1, 720p)"
+                    "16:9": "1280x720",
+                    "9:16": "720x1280",
+                    "1:1":  "960x960"
                 };
                 if (resMap[payload.aspect]) resolution = resMap[payload.aspect];
 
-                // Map Duration
+                // Strict Duration Mapping (65 or 129 frames)
+                // If user selects "5" or "10", we map to the closest allowed frame count
                 const lenMap = {
-                    "5": "5s(129f)",
-                    "9": "9s(225f)" 
+                    "5": "129", 
+                    "9": "129",
+                    "short": "65"
                 };
                 if (lenMap[payload.duration]) duration = lenMap[payload.duration];
             }
 
-            console.log(`[Sulandra] Calling Hunyuan Port 300... Prompt: ${finalPrompt.substring(0, 50)}...`);
+            console.log(`[Sulandra] Calling Hunyuan (/lambda_1)... Prompt: ${finalPrompt.substring(0, 50)}...`);
 
-            // 2. Connect to Gradio (Video AI)
+            // 2. Connect to Gradio
             const client = await window.GradioClient.connect(HUNYUAN_API_BASE);
 
-            // 3. Send Request
-            const result = await client.predict("/predict", [ 
-                finalPrompt,            // param_0: Prompt
-                resolution,             // param_1: Resolution dropdown
-                duration,               // param_2: Duration dropdown
-                steps,                  // param_3: Steps
-                seed,                   // param_4: Seed
-                payload.negative_prompt || "aerial view, aerial view, overexposed, low quality, distortion", // param_5: Negative
+            // 3. Send Request matching your API Docs EXACTLY
+            const result = await client.predict("/lambda_1", [ 
+                finalPrompt,       // param_0: Prompt
+                resolution,        // param_1: Resolution (e.g. "1280x720")
+                duration,          // param_2: Video Length (e.g. "129")
+                seed,              // param_3: Seed
+                steps,             // param_4: Steps
+                guidanceScale,     // param_5: Guidance Scale
+                flowShift,         // param_6: Flow Shift
+                embeddedGuidance   // param_7: Embedded Guidance Scale
             ]);
 
             // 4. Return Result
-            const videoFile = result.data[0];
+            // Gradio result is usually { data: ["path/to/video.mp4"] }
+            const videoFileUrl = result.data[0].url; // Access .url property directly
+            
             return {
                 ok: true,
                 kind: payload.kind, 
-                url: videoFile.url,
-                thumb: videoFile.url,
+                url: videoFileUrl,
+                thumb: videoFileUrl,
                 meta: { 
                     model: "HunyuanVideo",
                     steps: steps,
@@ -4638,7 +4645,6 @@ async function callSulandraAPI(uiPath, payload) {
         if (payload.aspect === "16:9") { body.width = 1344; body.height = 768; }
         if (payload.aspect === "9:16") { body.width = 768; body.height = 1344; }
 
-        // Handle Img2Img Mode
         if (payload.mode === "image" && payload.reference_image) {
             endpoint = "/api/image/img2img";
             body.init_image_base64 = payload.reference_image;
