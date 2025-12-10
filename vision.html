@@ -4538,8 +4538,8 @@ function setGeneratingState(active, labelText) {
  */
 async function callSulandraAPI(uiPath, payload) {
     try {
-        // Clean the payload to avoid 422 Errors
-        // Ensure seed is an Integer. If null/undefined, generate a random one here.
+        // --- FIX FOR 422 ERROR: SANITIZE SEED ---
+        // Ensure seed is ALWAYS an integer. If empty/null, generate one here.
         const safeSeed = (payload.seed === null || payload.seed === undefined || payload.seed === "") 
             ? Math.floor(Math.random() * 4294967295) 
             : Number(payload.seed);
@@ -4548,23 +4548,12 @@ async function callSulandraAPI(uiPath, payload) {
         //  VIDEO & SHORT FILM GENERATION (HUNYUAN PORT 300)
         // ============================================================
         if (payload.kind === "video" || payload.kind === "shortfilm") {
-            if (!window.GradioClient) throw new Error("Gradio Client loading... try again in a second.");
+            if (!window.GradioClient) throw new Error("Gradio Client loading... try again later.");
 
-            let finalPrompt = "";
-            let steps = 50;
-            let resolution = "1280x720";
-            let duration = 129;
-            let guidanceScale = 1;
-            let flowShift = 7;
-            let embeddedGuidance = 6;
-
+            let finalPrompt = "", steps = 50, resolution = "1280x720", duration = 129;
+            
             if (payload.kind === "shortfilm") {
-                let segmentText = "";
-                if (payload.segments) {
-                    segmentText = payload.segments
-                        .map((seg, i) => `Scene ${i+1}: ${seg.prompt}`)
-                        .join(". ");
-                }
+                let segmentText = payload.segments ? payload.segments.map((seg, i) => `Scene ${i+1}: ${seg.prompt}`).join(". ") : "";
                 finalPrompt = `Cinematic short film titled "${payload.film_title}". ${payload.global_prompt}. ${segmentText}`;
                 if (payload.aspect === "9:16") resolution = "720x1280";
                 if (payload.aspect === "1:1")  resolution = "960x960";
@@ -4573,37 +4562,33 @@ async function callSulandraAPI(uiPath, payload) {
                 steps = Number(payload.steps) || 50;
                 const resMap = { "16:9": "1280x720", "9:16": "720x1280", "1:1": "960x960" };
                 if (resMap[payload.aspect]) resolution = resMap[payload.aspect];
-                const lenMap = { "5": 129, "9": 129, "short": 65 };
-                if (lenMap[payload.duration]) duration = lenMap[payload.duration];
+                if (payload.duration == 5 || payload.duration == 9) duration = 129;
             }
 
             console.log(`[Sulandra] Calling Hunyuan...`);
             const client = await window.GradioClient.connect(HUNYUAN_API_BASE);
             const result = await client.predict("/lambda_1", [ 
-                finalPrompt, resolution, duration, safeSeed, steps, guidanceScale, flowShift, embeddedGuidance 
+                finalPrompt, resolution, duration, safeSeed, steps, 1, 7, 6 
             ]);
 
-            const videoFileUrl = result.data[0].url;
             return {
-                ok: true, kind: payload.kind, url: videoFileUrl, thumb: videoFileUrl,
-                meta: { model: "HunyuanVideo", steps: steps, prompt: finalPrompt, seed: safeSeed }
+                ok: true, kind: payload.kind, url: result.data[0].url, thumb: result.data[0].url,
+                meta: { model: "HunyuanVideo", steps: steps, seed: safeSeed }
             };
         }
 
         // ============================================================
         //  IMAGE GENERATION (SIA BRAIN FLUX PORT 8188)
         // ============================================================
-        
         let endpoint = "/api/image/txt2img";
         
-        // Strict Body Construction to prevent 422 Errors
+        // Construct a clean body (NO batch_size) to prevent 422 errors
         let body = {
             prompt: payload.prompt,
             steps: Number(payload.steps) || 30,
-            width: 1024, 
-            height: 1024,
+            width: 1024, height: 1024,
             guidance_scale: Number(payload.guidance) || 3.5,
-            seed: safeSeed // Send the sanitized integer seed
+            seed: safeSeed 
         };
 
         if (payload.aspect === "16:9") { body.width = 1344; body.height = 768; }
@@ -4615,8 +4600,6 @@ async function callSulandraAPI(uiPath, payload) {
             body.strength = 0.75;
         }
 
-        console.log(`[Sulandra] Calling Sia Brain Image API... Seed: ${safeSeed}`);
-
         const response = await fetch(`${SULANDRA_API_BASE}${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -4624,10 +4607,9 @@ async function callSulandraAPI(uiPath, payload) {
         });
 
         if (!response.ok) {
-            // Log the actual error text from server to help debug
-            const errText = await response.text(); 
-            console.error("Backend Error Body:", errText);
-            throw new Error(`Sia Brain Error ${response.status}: ${response.statusText}`);
+            const errText = await response.text();
+            console.error("Backend Error:", errText); // Logs exact reason for 422
+            throw new Error(`Backend Error ${response.status}`);
         }
 
         const data = await response.json();
