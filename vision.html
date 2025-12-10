@@ -1601,6 +1601,10 @@
     100% { opacity: 0.5; transform: scale(0.8) rotate(360deg); }
 }
 </style>
+<script type="module">
+        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
+        window.GradioClient = Client;
+    </script>
 </head>
 <body>
 <div class="vision-root">
@@ -2398,6 +2402,7 @@
  * CONNECTED: Your active RunPod FastAPI backend.
  */
 const SULANDRA_API_BASE = "https://9o0mn17y2qmb1t-8188.proxy.runpod.net";
+const HUNYUAN_API_BASE = "https://9o0mn17y2qmb1t-300.proxy.runpod.net";
 
 /**
  * CONNECTED: SIA Brain uses the same backend via the /ask_sia endpoint.
