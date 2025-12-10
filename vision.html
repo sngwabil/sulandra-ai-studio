@@ -3538,25 +3538,46 @@ function ensureLightboxDOM() {
     });
 
     const btnDownload = document.createElement("button");
-    btnDownload.className = "vision-lightbox__icon-btn";
-    btnDownload.title = "Download";
-    btnDownload.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
-            <path d="M12 4V14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M8 10L12 14L16 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M5 18H19" stroke="currentColor" stroke-linecap="round"/>
-        </svg>
-    `;
-    btnDownload.addEventListener("click", () => {
-        if (!lightboxCurrentItem || !lightboxCurrentItem.url) return;
+btnDownload.className = "vision-lightbox__icon-btn";
+btnDownload.title = "Download";
+btnDownload.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
+        <path d="M12 4V14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 10L12 14L16 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 18H19" stroke="currentColor" stroke-linecap="round"/>
+    </svg>
+`;
+
+btnDownload.addEventListener("click", async () => {
+    if (!lightboxCurrentItem || !lightboxCurrentItem.url) return;
+
+    try {
+        // Fetch the media as a blob so the browser treats it as a real file download
+        const response = await fetch(lightboxCurrentItem.url);
+        if (!response.ok) throw new Error("Download failed");
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
         const a = document.createElement("a");
-        a.href = lightboxCurrentItem.url;
+        a.href = objectUrl;
+
         const ext = lightboxCurrentItem.kind === "image" ? ".png" : ".mp4";
         a.download = (lightboxCurrentItem.title || "sulandra-output") + ext;
+
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-    });
+
+        // Clean up the temporary URL
+        URL.revokeObjectURL(objectUrl);
+    } catch (err) {
+        console.error("Download error:", err);
+        // Fallback: open in new tab if something goes wrong
+        window.open(lightboxCurrentItem.url, "_blank");
+    }
+});
+
 
     lightboxFavBtn = document.createElement("button");
     lightboxFavBtn.className = "vision-lightbox__icon-btn";
