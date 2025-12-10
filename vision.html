@@ -4741,208 +4741,128 @@ async function readFileAsBase64(file) {
 
 /* --------------------------- GENERATE FLOWS ----------------------------- */
 
-// Helper to create placeholder items immediately
+// Helper: Create instant loading cards
 function createPlaceholders(count, kind, prompt, aspect, negativePrompt) {
     const placeholders = [];
     for (let i = 0; i < count; i++) {
         const id = uuidv4();
         const item = {
-            id: id,
-            kind: kind,
-            title: "Generating...",
-            prompt: prompt,
-            negativePrompt: negativePrompt || "",
-            aspect: aspect || "1:1",
-            createdAt: Date.now(),
-            isPlaceholder: true, // FLAG FOR RENDERER
-            isFavorite: false,
-            meta: {}
+            id: id, kind: kind, title: "Generating...", prompt: prompt,
+            negativePrompt: negativePrompt || "", aspect: aspect || "1:1",
+            createdAt: Date.now(), isPlaceholder: true, isFavorite: false, meta: {}
         };
-        historyInMemory.unshift(item); // Add to front of memory
+        historyInMemory.unshift(item);
         placeholders.push(id);
     }
-    refreshAllHistoryDisplays(); // Render immediately
+    refreshAllHistoryDisplays();
     return placeholders;
 }
 
-// Helper to update a placeholder with real data when API returns
+// Helper: Update card when done
 function fulfillPlaceholder(placeholderId, realData) {
     const itemIdx = historyInMemory.findIndex(x => x.id === placeholderId);
     if (itemIdx === -1) return;
-
-    // Merge real data into placeholder
     historyInMemory[itemIdx] = {
-        ...historyInMemory[itemIdx],
-        ...realData,
-        isPlaceholder: false, // Remove flag
+        ...historyInMemory[itemIdx], ...realData, isPlaceholder: false,
         title: realData.title || (historyInMemory[itemIdx].kind === 'image' ? 'Image' : 'Video'),
-        createdAt: Date.now() // Update time to completion time
+        createdAt: Date.now()
     };
-    
-    saveHistoryToStorage(); // Persist to local storage
-    refreshAllHistoryDisplays(); // Re-render updated card
+    saveHistoryToStorage();
+    refreshAllHistoryDisplays();
 }
 
+// Read batch size from dropdown
+function buildImagePayloadFromUI() {
+    const prompt = $("image-main-prompt")?.value || "";
+    const neg = $("image-negative-prompt")?.value || "";
+    const aspect = getSelectedImageAspect();
+    const batchSize = Number($("image-variations-select")?.value || 1); // Get 1-4
+    const steps = Number($("image-steps-input")?.value || 30);
+    const seedVal = $("image-seed-input")?.value;
+    
+    return {
+        kind: "image", prompt: prompt, negative_prompt: neg, aspect: aspect,
+        steps: steps, seed: seedVal === "" ? null : Number(seedVal),
+        mode: currentImageMode, batch_size: batchSize
+    };
+}
 
 async function generateImageFromUI() {
     const payload = buildImagePayloadFromUI();
-    const batchCount = Number(payload.batch_size) || 1;
+    const batchCount = payload.batch_size || 1;
 
-    // 1. Handle Reference Image (needs await)
     if (currentImageMode === "image") {
         const fileInput = $("image-reference-input");
-        if (fileInput && fileInput.files && fileInput.files[0]) {
-            setGeneratingState(true, "Preparing upload...");
-            try {
-                payload.reference_image = await readFileAsBase64(fileInput.files[0]);
-            } catch(e) {
-                 setGeneratingState(false);
-                 showSulandraToast("Failed to read reference image.", "error");
-                 return;
-            }
-            setGeneratingState(false);
+        if (fileInput?.files?.[0]) {
+            try { payload.reference_image = await readFileAsBase64(fileInput.files[0]); }
+            catch(e) { showSulandraToast("Ref image error", "error"); return; }
         }
     }
 
-    // 2. Create Placeholders immediately (1 to 4 cards)
+    // 1. Create Instant Cards (1 to 4)
     const placeholderIds = createPlaceholders(batchCount, "image", payload.prompt, payload.aspect, payload.negative_prompt);
 
-    // 3. Loop and Fire API calls asynchronously
-    // We loop here on the client side to prevent Server 422 errors regarding batch_size
+    // 2. Loop Client-Side (Prevents Batch Size Error on Server)
     placeholderIds.forEach(async (pid, index) => {
-        // Create a unique payload for this specific variation
         const singlePayload = { ...payload };
+        // Increment seed for variety if user set one, else random is handled in API call
+        if (singlePayload.seed !== null) singlePayload.seed += index;
         
-        // Handle Seed Variations:
-        // If user provided a specific seed, increment it for variations (Seed, Seed+1, Seed+2...)
-        // If random (null), generate a specific random seed for this instance
-        if (singlePayload.seed !== null && singlePayload.seed !== undefined && singlePayload.seed !== "") {
-            singlePayload.seed = Number(singlePayload.seed) + index;
-        } else {
-            singlePayload.seed = Math.floor(Math.random() * 4294967295);
-        }
-
         try {
             const result = await callSulandraAPI("/generate/image", singlePayload);
             fulfillPlaceholder(pid, {
-                url: result.url,
-                thumb: result.thumb || result.url,
-                meta: result.meta
+                url: result.url, thumb: result.url, meta: result.meta
             });
         } catch (err) {
-            console.error(`[Sulandra] Image generation failed for item ${index}:`, err);
-            // On error, remove the specific placeholder so it doesn't spin forever
-            deleteHistoryItem(pid);
+            console.error(`Gen failed for ${pid}`, err);
+            deleteHistoryItem(pid); // Remove failed placeholder
             refreshAllHistoryDisplays();
-            // Only show toast once
-            if (index === 0) showSulandraToast("Generation failed. Check console.", "error");
+            if (index === 0) showSulandraToast("Generation failed", "error");
         }
     });
-
-    // 4. Function exits immediately, button remains clickable.
 }
-
 
 async function generateVideoFromUI() {
     const payload = buildVideoPayloadFromUI();
-
-    // 1. Handle Reference Image (await needed)
     if (currentVideoMode === "image") {
         const fileInput = $("video-start-input");
-        if (fileInput && fileInput.files && fileInput.files[0]) {
-             setGeneratingState(true, "Preparing upload...");
-             try {
-                payload.reference_image = await readFileAsBase64(fileInput.files[0]);
-             } catch(e) {
-                setGeneratingState(false);
-                showSulandraToast("Failed to read start image.", "error");
-                return;
-             }
-             setGeneratingState(false);
-        }
-        const endInput = $("video-end-input");
-        if (endInput && endInput.files && endInput.files[0]) {
-             payload.end_image = await readFileAsBase64(endInput.files[0]);
-        }
+        if (fileInput?.files?.[0]) payload.reference_image = await readFileAsBase64(fileInput.files[0]);
     }
-
-    // 2. Create 1 Placeholder
+    // Create 1 placeholder for video
     const [placeholderId] = createPlaceholders(1, "video", payload.prompt, payload.aspect, payload.negative_prompt);
-
-    // 3. Fire API Async
-    callSulandraAPI("/generate/video", payload)
-        .then(result => {
-             fulfillPlaceholder(placeholderId, {
-                url: result.url,
-                thumb: result.thumb || result.url,
-                duration: payload.duration,
-                meta: result.meta
-            });
-        })
-        .catch(err => {
-            console.error("[Sulandra] Video generation failed:", err);
-            showSulandraToast("Video generation failed.", "error");
-            deleteHistoryItem(placeholderId);
-            refreshAllHistoryDisplays();
-        });
+    
+    callSulandraAPI("/generate/video", payload).then(result => {
+        fulfillPlaceholder(placeholderId, { url: result.url, thumb: result.url, meta: result.meta });
+    }).catch(err => {
+        deleteHistoryItem(placeholderId);
+        refreshAllHistoryDisplays();
+        showSulandraToast("Video failed", "error");
+    });
 }
-
 
 async function generateShortFilmFromUI() {
     const payload = buildShortFilmPayloadFromUI();
-    if (!payload.segments || !payload.segments.length) {
-        showSulandraToast("Add at least one segment.", "warning");
-        return;
-    }
-
-    // 1. Handle Reference Image
-    const fileInput = $("shortfilm-reference-input");
-    if (fileInput && fileInput.files && fileInput.files[0]) {
-          setGeneratingState(true, "Preparing upload...");
-          try {
-            payload.style_reference = await readFileAsBase64(fileInput.files[0]);
-          } catch (e) {
-             setGeneratingState(false);
-             showSulandraToast("Failed to read reference image.", "error");
-             return;
-          }
-          setGeneratingState(false);
-    }
-
-    // 2. Create 1 Placeholder
-    const estDuration = payload.segments.reduce((s, seg) => s + (seg.duration || 0), 0);
-    const [placeholderId] = createPlaceholders(1, "shortfilm", payload.film_title + ": " + payload.global_prompt, payload.aspect, "");
-
-    // 3. Fire API Async
-    callSulandraAPI("/generate/shortfilm", payload)
-        .then(result => {
-             fulfillPlaceholder(placeholderId, {
-                url: result.url,
-                thumb: result.thumb || result.url,
-                title: payload.film_title,
-                duration: estDuration,
-                meta: result.meta
-            });
-        })
-        .catch(err => {
-            console.error("[Sulandra] Short film generation failed:", err);
-            showSulandraToast("Film generation failed.", "error");
-            deleteHistoryItem(placeholderId);
-            refreshAllHistoryDisplays();
-        });
+    if (!payload.segments?.length) return showSulandraToast("Add segments", "warning");
+    
+    const [placeholderId] = createPlaceholders(1, "shortfilm", payload.film_title, payload.aspect, "");
+    callSulandraAPI("/generate/shortfilm", payload).then(result => {
+        fulfillPlaceholder(placeholderId, { url: result.url, thumb: result.url, meta: result.meta });
+    }).catch(err => {
+        deleteHistoryItem(placeholderId);
+        refreshAllHistoryDisplays();
+    });
 }
 
-// Hook up the button
+// Ensure Button is Non-Blocking
 const generateBtn = $("btn-generate");
 if (generateBtn) {
     generateBtn.addEventListener("click", () => {
+        // Removed `isGenerating` check to allow multiple clicks
         if (currentLab === "image") generateImageFromUI();
         else if (currentLab === "video") generateVideoFromUI();
         else if (currentLab === "shortfilm") generateShortFilmFromUI();
     });
 }
-
-/* END OF UPDATED GENERATE FLOWS */
 
 /* ------------------------ RANDOM PROMPT BUTTON -------------------------- */
 
