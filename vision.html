@@ -4534,67 +4534,119 @@ function getDimensionsFromAspect(aspect) {
 
 /**
  * Real API Call Handler
- * Routes generic UI requests to your specific main.py endpoints
+ * Routes requests to SIA Brain (Images) or Hunyuan (Videos & Films)
  */
 async function callSulandraAPI(uiPath, payload) {
-    // 1. Check if backend is configured
-    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
-        alert("Please set your SULANDRA_API_BASE URL in the code.");
-        throw new Error("API URL not configured");
-    }
+    try {
+        // ============================================================
+        //  VIDEO & SHORT FILM GENERATION (HUNYUAN PORT 300)
+        // ============================================================
+        if (payload.kind === "video" || payload.kind === "shortfilm") {
+            if (!window.GradioClient) throw new Error("Gradio Client loading... try again in a second.");
 
-    let endpoint = "";
-    let body = {};
+            // 1. Setup the Prompt & Settings
+            let finalPrompt = "";
+            let steps = 50;
+            let seed = -1;
+            let resolution = "1280x720 (16:9, 720p)"; // Default
+            let duration = "5s(129f)";                  // Default
 
-    // 2. Route Logic: Map UI Payload to main.py Pydantic Models
-    if (payload.kind === "image") {
-        const dims = getDimensionsFromAspect(payload.aspect);
-        
-        if (payload.mode === "image" && payload.reference_image) {
-            // Image-to-Image Endpoint
-            endpoint = "/api/image/img2img";
-            body = {
-                prompt: payload.prompt,
-                negative_prompt: payload.negative_prompt,
-                init_image_base64: payload.reference_image, // Base64 from UI
-                strength: 0.75, // Default strength
-                steps: payload.steps,
-                guidance_scale: payload.guidance,
-                seed: payload.seed,
-                width: dims.width,
-                height: dims.height
-            };
-        } else {
-            // Text-to-Image Endpoint
-            endpoint = "/api/image/txt2img";
-            body = {
-                prompt: payload.prompt,
-                negative_prompt: payload.negative_prompt,
-                steps: payload.steps,
-                guidance_scale: payload.guidance,
-                seed: payload.seed,
-                width: dims.width,
-                height: dims.height
+            // --- Logic for SHORT FILM ---
+            if (payload.kind === "shortfilm") {
+                // Combine Title, Global Prompt, and Segments
+                let segmentText = "";
+                if (payload.segments) {
+                    segmentText = payload.segments
+                        .map((seg, i) => `Scene ${i+1}: ${seg.prompt}`)
+                        .join(". ");
+                }
+                
+                finalPrompt = `Cinematic short film titled "${payload.film_title}". ${payload.global_prompt}. ${segmentText}`;
+                
+                // Map Aspect Ratio for Films
+                if (payload.aspect === "9:16") resolution = "720x1280 (9:16, 720p)";
+                
+                // Films use the longest duration available
+                duration = "5s(129f)"; 
+            } 
+            
+            // --- Logic for STANDARD VIDEO ---
+            else {
+                finalPrompt = payload.prompt;
+                steps = payload.steps || 50;
+                seed = payload.seed || -1;
+                
+                // Map Resolution
+                const resMap = {
+                    "16:9": "1280x720 (16:9, 720p)",
+                    "9:16": "720x1280 (9:16, 720p)",
+                    "1:1":  "960x960 (1:1, 720p)"
+                };
+                if (resMap[payload.aspect]) resolution = resMap[payload.aspect];
+
+                // Map Duration
+                const lenMap = {
+                    "5": "5s(129f)",
+                    "9": "9s(225f)" 
+                };
+                if (lenMap[payload.duration]) duration = lenMap[payload.duration];
+            }
+
+            console.log(`[Sulandra] Calling Hunyuan Port 300... Prompt: ${finalPrompt.substring(0, 50)}...`);
+
+            // 2. Connect to Gradio (Video AI)
+            const client = await window.GradioClient.connect(HUNYUAN_API_BASE);
+
+            // 3. Send Request
+            const result = await client.predict("/predict", [ 
+                finalPrompt,            // param_0: Prompt
+                resolution,             // param_1: Resolution dropdown
+                duration,               // param_2: Duration dropdown
+                steps,                  // param_3: Steps
+                seed,                   // param_4: Seed
+                payload.negative_prompt || "aerial view, aerial view, overexposed, low quality, distortion", // param_5: Negative
+            ]);
+
+            // 4. Return Result
+            const videoFile = result.data[0];
+            return {
+                ok: true,
+                kind: payload.kind, 
+                url: videoFile.url,
+                thumb: videoFile.url,
+                meta: { 
+                    model: "HunyuanVideo",
+                    steps: steps,
+                    prompt: finalPrompt
+                }
             };
         }
-    } 
-    else {
-        // VIDEO / SHORT FILM HANDLER
-        // Note: Your main.py currently ONLY has Flux (Image). 
-        // We will throw a friendly error or return a stub if you try video.
-        console.warn("Backend does not yet support Video/Film endpoints.");
-        await new Promise(r => setTimeout(r, 1500)); // Fake delay
-        return {
-             ok: true,
-             kind: payload.kind,
-             url: "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
-             thumb: "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
-             meta: { note: "Simulation (Backend update required for Video)" }
-        };
-    }
 
-    // 3. Perform the actual Fetch
-    try {
+        // ============================================================
+        //  IMAGE GENERATION (SIA BRAIN FLUX PORT 8188)
+        // ============================================================
+        
+        let endpoint = "/api/image/txt2img";
+        let body = {
+            prompt: payload.prompt,
+            steps: payload.steps || 30,
+            width: 1024, height: 1024,
+            guidance_scale: payload.guidance || 3.5,
+            seed: payload.seed
+        };
+
+        if (payload.aspect === "16:9") { body.width = 1344; body.height = 768; }
+        if (payload.aspect === "9:16") { body.width = 768; body.height = 1344; }
+
+        // Handle Img2Img Mode
+        if (payload.mode === "image" && payload.reference_image) {
+            endpoint = "/api/image/img2img";
+            body.init_image_base64 = payload.reference_image;
+            body.strength = 0.75;
+        }
+
+        console.log(`[Sulandra] Calling Sia Brain Port 8188...`);
+
         const response = await fetch(`${SULANDRA_API_BASE}${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -4602,15 +4654,10 @@ async function callSulandraAPI(uiPath, payload) {
         });
 
         if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`Server Error ${response.status}: ${errText}`);
+            throw new Error(`Sia Brain Error: ${response.statusText}`);
         }
 
         const data = await response.json();
-
-        // 4. Normalize Response
-        // Your backend returns relative path: "/api/image/file/filename.png"
-        // We need to prepend the domain to display it.
         const fullUrl = `${SULANDRA_API_BASE}${data.image_url}`;
 
         return {
@@ -4618,11 +4665,9 @@ async function callSulandraAPI(uiPath, payload) {
             kind: "image",
             url: fullUrl,
             thumb: fullUrl,
-            meta: {
-                seed: data.seed,
-                model: "Flux.1 Dev",
-                steps: body.steps,
-                guidance: body.guidance_scale
+            meta: { 
+                model: "Flux.1 Dev", 
+                seed: data.seed 
             }
         };
 
