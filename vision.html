@@ -2747,10 +2747,15 @@ async function downloadHistoryItem(item) {
         document.body.removeChild(a);
 
         URL.revokeObjectURL(objectUrl);
-    } catch (err) {
+        } catch (err) {
         console.error("Download error:", err);
-        // Fallback: open the URL in a new tab if blob download fails (CORS, etc.)
-        window.open(item.url, "_blank");
+
+        // Do NOT open a new tab anymore.
+        // Show a toast / alert instead so the user can manually save.
+        alert(
+            "Download failed inside the browser.\n" +
+            "Please right-click the image or video and choose 'Save As…' to download."
+        );
     }
 }
 
