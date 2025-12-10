@@ -2716,6 +2716,43 @@ function applyHistoryPrompt(item) {
         if (main) main.value = item.prompt || "";
     }
 }
+/**
+ * Force a browser download of a history item's media (image or video).
+ */
+async function downloadHistoryItem(item) {
+    if (!item || !item.url) return;
+
+    try {
+        // Fetch media as a blob so we can force a "real" download
+        const response = await fetch(item.url);
+        if (!response.ok) throw new Error("Download failed");
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+
+        // Decide extension based on type
+        let ext = "";
+        if (item.kind === "image") ext = ".png";
+        else if (item.kind === "video" || item.kind === "shortfilm") ext = ".mp4";
+
+        const safeTitle = (item.title || "sulandra-output").replace(/[^\w\-]+/g, "_");
+
+        a.href = objectUrl;
+        a.download = safeTitle + ext;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(objectUrl);
+    } catch (err) {
+        console.error("Download error:", err);
+        // Fallback: open the URL in a new tab if blob download fails (CORS, etc.)
+        window.open(item.url, "_blank");
+    }
+}
 
 /**
  * Returns filtered history according to current lab, gallery filter,
@@ -2890,9 +2927,11 @@ const downloadLink = card.querySelector('[data-action="download"]');
 if (downloadLink) {
     downloadLink.addEventListener("click", e => {
         e.stopPropagation();
-        // Browser handles the actual download via the "download" attribute.
+        e.preventDefault(); // <- stop the <a> from opening the URL
+        downloadHistoryItem(item);
     });
 }
+
 
 /* ---------- click anywhere else opens lightbox ---------- */
 card.addEventListener("click", () => {
@@ -3548,36 +3587,10 @@ btnDownload.innerHTML = `
     </svg>
 `;
 
-btnDownload.addEventListener("click", async () => {
-    if (!lightboxCurrentItem || !lightboxCurrentItem.url) return;
-
-    try {
-        // Fetch the media as a blob so the browser treats it as a real file download
-        const response = await fetch(lightboxCurrentItem.url);
-        if (!response.ok) throw new Error("Download failed");
-
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = objectUrl;
-
-        const ext = lightboxCurrentItem.kind === "image" ? ".png" : ".mp4";
-        a.download = (lightboxCurrentItem.title || "sulandra-output") + ext;
-
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        // Clean up the temporary URL
-        URL.revokeObjectURL(objectUrl);
-    } catch (err) {
-        console.error("Download error:", err);
-        // Fallback: open in new tab if something goes wrong
-        window.open(lightboxCurrentItem.url, "_blank");
-    }
+btnDownload.addEventListener("click", () => {
+    if (!lightboxCurrentItem) return;
+    downloadHistoryItem(lightboxCurrentItem);
 });
-
 
     lightboxFavBtn = document.createElement("button");
     lightboxFavBtn.className = "vision-lightbox__icon-btn";
