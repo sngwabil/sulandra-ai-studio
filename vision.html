@@ -2798,46 +2798,29 @@ function applyHistoryPrompt(item) {
     }
 }
 /**
- * Force a browser download of a history item's media (image or video).
+ * Force a download. Simplified for better cross-origin compatibility.
  */
 async function downloadHistoryItem(item) {
     if (!item || !item.url) return;
 
-    try {
-        // Fetch media as a blob so we can force a "real" download
-        const response = await fetch(item.url);
-        if (!response.ok) throw new Error("Download failed");
+    // Create a temporary anchor tag
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = item.url;
+    
+    // Generate a safe filename
+    let ext = "png";
+    if (item.kind === "video" || item.kind === "shortfilm") ext = "mp4";
+    const safeTitle = (item.title || "sulandra-" + item.id.slice(0,8)).replace(/[^\w\-]+/g, "_");
+    a.download = `${safeTitle}.${ext}`;
 
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-
-        // Decide extension based on type
-        let ext = "";
-        if (item.kind === "image") ext = ".png";
-        else if (item.kind === "video" || item.kind === "shortfilm") ext = ".mp4";
-
-        const safeTitle = (item.title || "sulandra-output").replace(/[^\w\-]+/g, "_");
-
-        a.href = objectUrl;
-        a.download = safeTitle + ext;
-
-        document.body.appendChild(a);
-        a.click();
+    document.body.appendChild(a);
+    a.click();
+    
+    // Cleanup immediately
+    setTimeout(() => {
         document.body.removeChild(a);
-
-        URL.revokeObjectURL(objectUrl);
-        } catch (err) {
-        console.error("Download error:", err);
-
-        // Do NOT open a new tab anymore.
-        // Show a toast / alert instead so the user can manually save.
-        alert(
-            "Download failed inside the browser.\n" +
-            "Please right-click the image or video and choose 'Save As…' to download."
-        );
-    }
+    }, 100);
 }
 
 /**
