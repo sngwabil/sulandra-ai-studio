@@ -4797,20 +4797,20 @@ function fulfillPlaceholder(placeholderId, realData) {
         createdAt: Date.now() // Update time to completion time
     };
     
-    saveHistoryToStorage(); // Persist to local storage now that it's real
+    saveHistoryToStorage(); // Persist to local storage
     refreshAllHistoryDisplays(); // Re-render updated card
 }
 
 
 async function generateImageFromUI() {
     const payload = buildImagePayloadFromUI();
-    const batchCount = payload.batch_size || 1;
+    const batchCount = Number(payload.batch_size) || 1;
 
     // 1. Handle Reference Image (needs await)
     if (currentImageMode === "image") {
         const fileInput = $("image-reference-input");
         if (fileInput && fileInput.files && fileInput.files[0]) {
-            setGeneratingState(true, "Preparing upload..."); // Brief lock for file read
+            setGeneratingState(true, "Preparing upload...");
             try {
                 payload.reference_image = await readFileAsBase64(fileInput.files[0]);
             } catch(e) {
@@ -4818,43 +4818,46 @@ async function generateImageFromUI() {
                  showSulandraToast("Failed to read reference image.", "error");
                  return;
             }
-            setGeneratingState(false); // Release immediately
+            setGeneratingState(false);
         }
     }
 
-    // 2. Create Placeholders immediately
+    // 2. Create Placeholders immediately (1 to 4 cards)
     const placeholderIds = createPlaceholders(batchCount, "image", payload.prompt, payload.aspect, payload.negative_prompt);
 
-    // 3. Fire API call asynchronously (DO NOT AWAIT)
-    callSulandraAPI("/generate/image", payload)
-        .then(result => {
-            // API should return array of results if batch > 1, or single object if batch = 1.
-            // Normalize to array.
-            const resultsArray = Array.isArray(result) ? result : [result];
-            
-            // Fulfill placeholders sequentially
-            placeholderIds.forEach((pid, idx) => {
-                if (resultsArray[idx]) {
-                    fulfillPlaceholder(pid, {
-                        url: resultsArray[idx].url,
-                        thumb: resultsArray[idx].thumb || resultsArray[idx].url,
-                        meta: resultsArray[idx].meta
-                    });
-                } else {
-                    // Handle case where API returned fewer results than requested
-                    deleteHistoryItem(pid); 
-                }
+    // 3. Loop and Fire API calls asynchronously
+    // We loop here on the client side to prevent Server 422 errors regarding batch_size
+    placeholderIds.forEach(async (pid, index) => {
+        // Create a unique payload for this specific variation
+        const singlePayload = { ...payload };
+        
+        // Handle Seed Variations:
+        // If user provided a specific seed, increment it for variations (Seed, Seed+1, Seed+2...)
+        // If random (null), generate a specific random seed for this instance
+        if (singlePayload.seed !== null && singlePayload.seed !== undefined && singlePayload.seed !== "") {
+            singlePayload.seed = Number(singlePayload.seed) + index;
+        } else {
+            singlePayload.seed = Math.floor(Math.random() * 4294967295);
+        }
+
+        try {
+            const result = await callSulandraAPI("/generate/image", singlePayload);
+            fulfillPlaceholder(pid, {
+                url: result.url,
+                thumb: result.thumb || result.url,
+                meta: result.meta
             });
-        })
-        .catch(err => {
-            console.error("[Sulandra] Image generation failed:", err);
-            showSulandraToast("Generation failed. See console.", "error");
-            // Remove placeholders on failure
-            placeholderIds.forEach(pid => deleteHistoryItem(pid));
+        } catch (err) {
+            console.error(`[Sulandra] Image generation failed for item ${index}:`, err);
+            // On error, remove the specific placeholder so it doesn't spin forever
+            deleteHistoryItem(pid);
             refreshAllHistoryDisplays();
-        });
-    
-    // 4. Function exits immediately, button remains clickable for next task.
+            // Only show toast once
+            if (index === 0) showSulandraToast("Generation failed. Check console.", "error");
+        }
+    });
+
+    // 4. Function exits immediately, button remains clickable.
 }
 
 
@@ -4875,7 +4878,6 @@ async function generateVideoFromUI() {
              }
              setGeneratingState(false);
         }
-         // Handle End Image (optional)
         const endInput = $("video-end-input");
         if (endInput && endInput.files && endInput.files[0]) {
              payload.end_image = await readFileAsBase64(endInput.files[0]);
@@ -4911,7 +4913,7 @@ async function generateShortFilmFromUI() {
         return;
     }
 
-    // 1. Handle Reference Image (await needed)
+    // 1. Handle Reference Image
     const fileInput = $("shortfilm-reference-input");
     if (fileInput && fileInput.files && fileInput.files[0]) {
           setGeneratingState(true, "Preparing upload...");
@@ -4924,10 +4926,6 @@ async function generateShortFilmFromUI() {
           }
           setGeneratingState(false);
     }
-
-    // NOTE: Handling segment reference images async is complex. 
-    // For simplicity in this non-blocking flow, we skip gathering segment images here.
-    // A robust implementation would need to gather all base64s before firing the main async call.
 
     // 2. Create 1 Placeholder
     const estDuration = payload.segments.reduce((s, seg) => s + (seg.duration || 0), 0);
@@ -4952,12 +4950,10 @@ async function generateShortFilmFromUI() {
         });
 }
 
-// UPDATE: Remove the isGenerating check from the button click handler
-// Find this around line 3150 and update it:
+// Hook up the button
 const generateBtn = $("btn-generate");
 if (generateBtn) {
     generateBtn.addEventListener("click", () => {
-        // Removed: if (isGenerating) return; 
         if (currentLab === "image") generateImageFromUI();
         else if (currentLab === "video") generateVideoFromUI();
         else if (currentLab === "shortfilm") generateShortFilmFromUI();
