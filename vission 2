@@ -1600,6 +1600,74 @@
     50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
     100% { opacity: 0.5; transform: scale(0.8) rotate(360deg); }
 }
+/* ====================================================================== */
+/* PLACEHOLDER & LOADING STATES                                         */
+/* ====================================================================== */
+
+.gallery-card--loading .gallery-card__media-wrapper {
+    background: #020617;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Futuristic Shimmer Animation */
+.gallery-card--loading .gallery-card__media-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 300%;
+    height: 100%;
+    background: linear-gradient(
+        115deg,
+        transparent 20%,
+        rgba(34, 197, 94, 0.1) 40%,
+        rgba(96, 165, 250, 0.2) 50%,
+        rgba(34, 197, 94, 0.1) 60%,
+        transparent 80%
+    );
+    animation: futuristic-shimmer 2.5s infinite linear;
+    z-index: 1;
+}
+
+@keyframes futuristic-shimmer {
+    0% { transform: translateX(0) skewX(-20deg); }
+    100% { transform: translateX(50%) skewX(-20deg); }
+}
+
+/* Loading Spinner/Text container */
+.gallery-card-loader-content {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: var(--accent-primary);
+}
+
+/* Neon Spinner */
+.neon-spinner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--accent-primary);
+    border-right-color: var(--accent-secondary);
+    box-shadow: 0 0 15px var(--accent-primary-soft), inset 0 0 15px var(--accent-secondary-soft);
+    animation: neon-spin 1.2s linear infinite;
+}
+
+@keyframes neon-spin {
+    to { transform: rotate(360deg); }
+}
+
+.gallery-card--loading .gallery-card__title {
+    color: var(--text-muted);
+    font-style: italic;
+}
 </style>
 <script type="module">
         import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
