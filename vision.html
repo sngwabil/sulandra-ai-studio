@@ -4789,37 +4789,52 @@ function buildImagePayloadFromUI() {
 
 async function generateImageFromUI() {
     const payload = buildImagePayloadFromUI();
-    const batchCount = payload.batch_size || 1;
+    const batchCount = Number(payload.batch_size) || 1;
 
+    // 1. Handle Reference Image (needs await)
     if (currentImageMode === "image") {
         const fileInput = $("image-reference-input");
-        if (fileInput?.files?.[0]) {
-            try { payload.reference_image = await readFileAsBase64(fileInput.files[0]); }
-            catch(e) { showSulandraToast("Ref image error", "error"); return; }
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            setGeneratingState(true, "Preparing upload...");
+            try {
+                payload.reference_image = await readFileAsBase64(fileInput.files[0]);
+            } catch(e) {
+                 setGeneratingState(false);
+                 showSulandraToast("Failed to read reference image.", "error");
+                 return;
+            }
+            setGeneratingState(false);
         }
     }
 
-    // 1. Create Instant Cards (1 to 4)
+    // 2. Create Placeholders immediately (1 to 4 cards)
     const placeholderIds = createPlaceholders(batchCount, "image", payload.prompt, payload.aspect, payload.negative_prompt);
 
-    // 2. Loop Client-Side (Prevents Batch Size Error on Server)
-    placeholderIds.forEach(async (pid, index) => {
+    // 3. Loop and Fire API calls SEQUENTIALLY (One by One)
+    // We use a 'for...of' loop with await to prevent crashing the backend with parallel requests
+    for (let i = 0; i < placeholderIds.length; i++) {
+        const pid = placeholderIds[i];
         const singlePayload = { ...payload };
-        // Increment seed for variety if user set one, else random is handled in API call
-        if (singlePayload.seed !== null) singlePayload.seed += index;
         
+        // Increment seed for variety if user set one, else random is handled in API call
+        if (singlePayload.seed !== null) singlePayload.seed += i;
+
         try {
+            // Wait for this request to finish before starting the next one
             const result = await callSulandraAPI("/generate/image", singlePayload);
+            
             fulfillPlaceholder(pid, {
-                url: result.url, thumb: result.url, meta: result.meta
+                url: result.url,
+                thumb: result.thumb || result.url,
+                meta: result.meta
             });
         } catch (err) {
             console.error(`Gen failed for ${pid}`, err);
             deleteHistoryItem(pid); // Remove failed placeholder
             refreshAllHistoryDisplays();
-            if (index === 0) showSulandraToast("Generation failed", "error");
+            if (i === 0) showSulandraToast("Generation failed", "error");
         }
-    });
+    }
 }
 
 async function generateVideoFromUI() {
