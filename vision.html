@@ -4533,40 +4533,31 @@ function setGeneratingState(active, labelText) {
 /* --------------------------- REAL API INTEGRATION --------------------------- */
 
 /**
- * Helper: Convert Aspect Ratio string to Width/Height for Flux
- */
-function getDimensionsFromAspect(aspect) {
-    // Defaults for Flux.1 Dev
-    if (aspect === "16:9") return { width: 1344, height: 768 };
-    if (aspect === "9:16") return { width: 768, height: 1344 };
-    return { width: 1024, height: 1024 }; // 1:1
-}
-
-/**
  * Real API Call Handler
  * Routes requests to SIA Brain (Images) or Hunyuan (Videos & Films)
  */
 async function callSulandraAPI(uiPath, payload) {
     try {
+        // Clean the payload to avoid 422 Errors
+        // Ensure seed is an Integer. If null/undefined, generate a random one here.
+        const safeSeed = (payload.seed === null || payload.seed === undefined || payload.seed === "") 
+            ? Math.floor(Math.random() * 4294967295) 
+            : Number(payload.seed);
+
         // ============================================================
         //  VIDEO & SHORT FILM GENERATION (HUNYUAN PORT 300)
         // ============================================================
         if (payload.kind === "video" || payload.kind === "shortfilm") {
             if (!window.GradioClient) throw new Error("Gradio Client loading... try again in a second.");
 
-            // 1. Setup Defaults (INTEGERS for numbers, STRINGS for text)
             let finalPrompt = "";
-            let steps = 50;             // Number
-            let seed = -1;              // Number
-            let resolution = "1280x720"; // String
-            let duration = 129;         // Number (Fixed: was "129")
-            
-            // Other sliders
-            let guidanceScale = 1;      // Number
-            let flowShift = 7;          // Number
-            let embeddedGuidance = 6;   // Number
+            let steps = 50;
+            let resolution = "1280x720";
+            let duration = 129;
+            let guidanceScale = 1;
+            let flowShift = 7;
+            let embeddedGuidance = 6;
 
-            // --- Logic for SHORT FILM ---
             if (payload.kind === "shortfilm") {
                 let segmentText = "";
                 if (payload.segments) {
@@ -4575,66 +4566,27 @@ async function callSulandraAPI(uiPath, payload) {
                         .join(". ");
                 }
                 finalPrompt = `Cinematic short film titled "${payload.film_title}". ${payload.global_prompt}. ${segmentText}`;
-                
                 if (payload.aspect === "9:16") resolution = "720x1280";
                 if (payload.aspect === "1:1")  resolution = "960x960";
-                
-                duration = 129; // Number
-            } 
-            
-            // --- Logic for STANDARD VIDEO ---
-            else {
+            } else {
                 finalPrompt = payload.prompt;
                 steps = Number(payload.steps) || 50;
-                seed = Number(payload.seed) || -1;
-                
-                // Resolution Map
-                const resMap = {
-                    "16:9": "1280x720",
-                    "9:16": "720x1280",
-                    "1:1":  "960x960"
-                };
+                const resMap = { "16:9": "1280x720", "9:16": "720x1280", "1:1": "960x960" };
                 if (resMap[payload.aspect]) resolution = resMap[payload.aspect];
-
-                // Duration Map (Strings from UI -> Numbers for API)
-                const lenMap = {
-                    "5": 129, 
-                    "9": 129,
-                    "short": 65
-                };
+                const lenMap = { "5": 129, "9": 129, "short": 65 };
                 if (lenMap[payload.duration]) duration = lenMap[payload.duration];
             }
 
-            console.log(`[Sulandra] Calling Hunyuan (/lambda_1)... Duration: ${duration} (Type: ${typeof duration})`);
-
-            // 2. Connect to Gradio
+            console.log(`[Sulandra] Calling Hunyuan...`);
             const client = await window.GradioClient.connect(HUNYUAN_API_BASE);
-
-            // 3. Send Request (Matches API Docs types exactly)
             const result = await client.predict("/lambda_1", [ 
-                finalPrompt,       // param_0: Prompt (String)
-                resolution,        // param_1: Resolution (String)
-                duration,          // param_2: Video Length (Number: 129)
-                seed,              // param_3: Seed (Number)
-                steps,             // param_4: Steps (Number)
-                guidanceScale,     // param_5: Guidance (Number)
-                flowShift,         // param_6: Flow Shift (Number)
-                embeddedGuidance   // param_7: Embedded (Number)
+                finalPrompt, resolution, duration, safeSeed, steps, guidanceScale, flowShift, embeddedGuidance 
             ]);
 
-            // 4. Return Result
             const videoFileUrl = result.data[0].url;
-            
             return {
-                ok: true,
-                kind: payload.kind, 
-                url: videoFileUrl,
-                thumb: videoFileUrl,
-                meta: { 
-                    model: "HunyuanVideo",
-                    steps: steps,
-                    prompt: finalPrompt
-                }
+                ok: true, kind: payload.kind, url: videoFileUrl, thumb: videoFileUrl,
+                meta: { model: "HunyuanVideo", steps: steps, prompt: finalPrompt, seed: safeSeed }
             };
         }
 
@@ -4643,12 +4595,15 @@ async function callSulandraAPI(uiPath, payload) {
         // ============================================================
         
         let endpoint = "/api/image/txt2img";
+        
+        // Strict Body Construction to prevent 422 Errors
         let body = {
             prompt: payload.prompt,
-            steps: payload.steps || 30,
-            width: 1024, height: 1024,
-            guidance_scale: payload.guidance || 3.5,
-            seed: payload.seed
+            steps: Number(payload.steps) || 30,
+            width: 1024, 
+            height: 1024,
+            guidance_scale: Number(payload.guidance) || 3.5,
+            seed: safeSeed // Send the sanitized integer seed
         };
 
         if (payload.aspect === "16:9") { body.width = 1344; body.height = 768; }
@@ -4660,7 +4615,7 @@ async function callSulandraAPI(uiPath, payload) {
             body.strength = 0.75;
         }
 
-        console.log(`[Sulandra] Calling Sia Brain Port 8188...`);
+        console.log(`[Sulandra] Calling Sia Brain Image API... Seed: ${safeSeed}`);
 
         const response = await fetch(`${SULANDRA_API_BASE}${endpoint}`, {
             method: "POST",
@@ -4669,21 +4624,18 @@ async function callSulandraAPI(uiPath, payload) {
         });
 
         if (!response.ok) {
-            throw new Error(`Sia Brain Error: ${response.statusText}`);
+            // Log the actual error text from server to help debug
+            const errText = await response.text(); 
+            console.error("Backend Error Body:", errText);
+            throw new Error(`Sia Brain Error ${response.status}: ${response.statusText}`);
         }
 
         const data = await response.json();
         const fullUrl = `${SULANDRA_API_BASE}${data.image_url}`;
 
         return {
-            ok: true,
-            kind: "image",
-            url: fullUrl,
-            thumb: fullUrl,
-            meta: { 
-                model: "Flux.1 Dev", 
-                seed: data.seed 
-            }
+            ok: true, kind: "image", url: fullUrl, thumb: fullUrl,
+            meta: { model: "Flux.1 Dev", seed: safeSeed }
         };
 
     } catch (err) {
