@@ -1601,6 +1601,10 @@
     100% { opacity: 0.5; transform: scale(0.8) rotate(360deg); }
 }
 </style>
+<script type="module">
+        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
+        window.GradioClient = Client;
+    </script>
 </head>
 <body>
 <div class="vision-root">
@@ -2398,6 +2402,7 @@
  * CONNECTED: Your active RunPod FastAPI backend.
  */
 const SULANDRA_API_BASE = "https://9o0mn17y2qmb1t-8188.proxy.runpod.net";
+const HUNYUAN_API_BASE = "https://9o0mn17y2qmb1t-300.proxy.runpod.net";
 
 /**
  * CONNECTED: SIA Brain uses the same backend via the /ask_sia endpoint.
@@ -2691,6 +2696,73 @@ function deleteHistoryItem(historyId) {
     historyInMemory = historyInMemory.filter(x => x.id !== historyId);
     saveHistoryToStorage();
 }
+/**
+ * Apply a history item's prompt back into the appropriate lab inputs.
+ */
+function applyHistoryPrompt(item) {
+    if (!item) return;
+
+    // Switch to the matching lab
+    if (item.kind === "image") {
+        setActiveLab("image");
+        const main = $("image-main-prompt");
+        const neg = $("image-negative-prompt");
+        if (main) main.value = item.prompt || "";
+        if (neg && item.negativePrompt) neg.value = item.negativePrompt;
+    } else if (item.kind === "video") {
+        setActiveLab("video");
+        const main = $("video-main-prompt");
+        const neg = $("video-negative-prompt");
+        if (main) main.value = item.prompt || "";
+        if (neg && item.negativePrompt) neg.value = item.negativePrompt;
+    } else if (item.kind === "shortfilm") {
+        setActiveLab("shortfilm");
+        const main = $("shortfilm-global-prompt");
+        if (main) main.value = item.prompt || "";
+    }
+}
+/**
+ * Force a browser download of a history item's media (image or video).
+ */
+async function downloadHistoryItem(item) {
+    if (!item || !item.url) return;
+
+    try {
+        // Fetch media as a blob so we can force a "real" download
+        const response = await fetch(item.url);
+        if (!response.ok) throw new Error("Download failed");
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+
+        // Decide extension based on type
+        let ext = "";
+        if (item.kind === "image") ext = ".png";
+        else if (item.kind === "video" || item.kind === "shortfilm") ext = ".mp4";
+
+        const safeTitle = (item.title || "sulandra-output").replace(/[^\w\-]+/g, "_");
+
+        a.href = objectUrl;
+        a.download = safeTitle + ext;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(objectUrl);
+        } catch (err) {
+        console.error("Download error:", err);
+
+        // Do NOT open a new tab anymore.
+        // Show a toast / alert instead so the user can manually save.
+        alert(
+            "Download failed inside the browser.\n" +
+            "Please right-click the image or video and choose 'Save As…' to download."
+        );
+    }
+}
 
 /**
  * Returns filtered history according to current lab, gallery filter,
@@ -2760,36 +2832,122 @@ function createGalleryCard(item) {
 
     /* ---------- build card ---------- */
     card.innerHTML = `
-        <div class="gallery-card__media-wrapper">
-            ${mediaHTML}
-        </div>
+    <div class="gallery-card__media-wrapper" data-aspect="${item.aspect || "1:1"}">
+        ${mediaHTML}
+    </div>
 
-        <div class="gallery-card__info">
-            <div class="gallery-card__title">${item.title}</div>
-            <div class="gallery-card__prompt">${item.prompt || "No prompt"}</div>
-            <div class="gallery-card__meta">
-                <span>${new Date(item.createdAt).toLocaleString()}</span>
-                ${item.isFavorite
-                    ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">★</span>`
-                    : `<span class="gallery-card__fav" data-fav="${item.id}">☆</span>`
-                }
+    <div class="gallery-card__info">
+        <div class="gallery-card__title">${item.title}</div>
+
+        <div class="gallery-card__actions-row">
+            <div class="gallery-card__actions-left">
+                <!-- Fullscreen -->
+                <button
+                    type="button"
+                    class="gallery-card__icon-btn"
+                    data-action="fullscreen"
+                    title="Fullscreen"
+                >
+                    ⤢
+                </button>
+
+                <!-- Use prompt -->
+                <button
+                    type="button"
+                    class="gallery-card__icon-btn"
+                    data-action="use-prompt"
+                    title="Use this prompt"
+                >
+                    ↻
+                </button>
+
+                <!-- Download to device -->
+                <a
+                    href="${item.url}"
+                    download
+                    class="gallery-card__icon-btn"
+                    data-action="download"
+                    title="Download"
+                >
+                    ⤓
+                </a>
+
+                <!-- Delete -->
+                <button
+                    type="button"
+                    class="gallery-card__icon-btn gallery-card__icon-btn--danger"
+                    data-action="delete"
+                    title="Delete"
+                >
+                    🗑
+                </button>
             </div>
+
+            ${
+                item.isFavorite
+                    ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">♥</span>`
+                    : `<span class="gallery-card__fav" data-fav="${item.id}">♡</span>`
+            }
         </div>
-    `;
+    </div>
+`;
+
 
     /* ---------- favorite toggle ---------- */
-    const favBtn = card.querySelector("[data-fav]");
+const favBtn = card.querySelector("[data-fav]");
+if (favBtn) {
     favBtn.addEventListener("click", e => {
         e.stopPropagation();
         toggleFavorite(item.id);
         renderGallery();
         renderHistoryRail();
     });
+}
 
-    /* ---------- click to open lightbox ---------- */
-    card.addEventListener("click", () => {
-        openLightbox(item.id);
+/* ---------- action buttons ---------- */
+const fullscreenBtn = card.querySelector('[data-action="fullscreen"]');
+if (fullscreenBtn) {
+    fullscreenBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        openLightbox(item.id); // true fullscreen overlay
     });
+}
+
+const deleteBtn = card.querySelector('[data-action="delete"]');
+if (deleteBtn) {
+    deleteBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        const ok = window.confirm("Delete this item from your history?");
+        if (!ok) return;
+        deleteHistoryItem(item.id);
+        renderGallery();
+        renderHistoryRail();
+    });
+}
+
+const usePromptBtn = card.querySelector('[data-action="use-prompt"]');
+if (usePromptBtn) {
+    usePromptBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        applyHistoryPrompt(item);
+    });
+}
+
+const downloadLink = card.querySelector('[data-action="download"]');
+if (downloadLink) {
+    downloadLink.addEventListener("click", e => {
+        e.stopPropagation();
+        e.preventDefault(); // <- stop the <a> from opening the URL
+        downloadHistoryItem(item);
+    });
+}
+
+
+/* ---------- click anywhere else opens lightbox ---------- */
+card.addEventListener("click", () => {
+    openLightbox(item.id);
+});
+
 
     return card;
 }
@@ -2973,69 +3131,112 @@ function injectDynamicStyles() {
     }
 
     .gallery-card__media-wrapper {
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        background: #020617;
-        overflow: hidden;
-        position: relative;
-    }
+    width: 100%;
+    background: #020617;
+    overflow: hidden;
+    position: relative;
+}
 
-    .gallery-card__media {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
+/* Let the wrapper use the actual aspect ratio of the creation */
+.gallery-card__media-wrapper[data-aspect="1:1"] {
+    aspect-ratio: 1 / 1;
+}
+.gallery-card__media-wrapper[data-aspect="16:9"] {
+    aspect-ratio: 16 / 9;
+}
+.gallery-card__media-wrapper[data-aspect="9:16"] {
+    aspect-ratio: 9 / 16;
+}
+
+/* Show the whole image/video inside the frame without stretching */
+.gallery-card__media {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #020617;
+}
+
 
     .gallery-card__info {
-        padding: 10px 12px 12px;
-        border-top: 1px solid rgba(15, 23, 42, 0.95);
-        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        min-height: 72px;
-    }
+    padding: 8px 10px;
+    border-top: 1px solid rgba(15, 23, 42, 0.95);
+    background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: auto;
+}
 
-    .gallery-card__title {
-        font-size: 13px;
-        font-weight: 600;
-        color: #e5e7eb;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
+.gallery-card__title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #e5e7eb;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
 
-    .gallery-card__prompt {
-        font-size: 11px;
-        color: #9ca3af;
-        max-height: 3.2em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.gallery-card__actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 2px;
+}
 
-    .gallery-card__meta {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 10px;
-        color: #6b7280;
-        margin-top: 2px;
-    }
+.gallery-card__actions-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
 
-    .gallery-card__fav {
-        cursor: pointer;
-        font-size: 13px;
-        padding: 1px 4px;
-        border-radius: 999px;
-        border: 1px solid transparent;
-    }
+.gallery-card__icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    border: 1px solid rgba(31, 41, 55, 0.95);
+    background: radial-gradient(circle at 50% 0, #020617, #020617 60%, #000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #9ca3af;
+    cursor: pointer;
+    transition:
+        background 140ms ease-out,
+        color 140ms ease-out,
+        border-color 140ms ease-out,
+        box-shadow 140ms ease-out;
+}
 
-    .gallery-card__fav--active {
-        color: #fbbf24;
-        border-color: rgba(251, 191, 36, 0.4);
-        background: rgba(24, 24, 27, 0.9);
-    }
+.gallery-card__icon-btn:hover {
+    border-color: rgba(148, 163, 184, 0.95);
+    color: #e5e7eb;
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.6);
+}
+
+.gallery-card__icon-btn--danger:hover {
+    border-color: rgba(248, 113, 113, 0.85);
+    color: #fecaca;
+    box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
+}
+
+.gallery-card__fav {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.gallery-card__fav--active {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.4);
+    background: rgba(24, 24, 27, 0.9);
+}
+
 
     .history-thumb {
         position: relative;
@@ -3085,18 +3286,18 @@ function injectDynamicStyles() {
     }
 
     .vision-lightbox {
-        width: min(1120px, 95vw);
-        max-height: 90vh;
-        border-radius: 26px;
-        border: 1px solid rgba(31, 41, 55, 0.95);
-        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
-        box-shadow:
-            0 0 0 1px rgba(15, 23, 42, 0.95),
-            0 38px 90px rgba(0, 0, 0, 0.98);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 
     .vision-lightbox__header {
         padding: 10px 16px 8px;
@@ -3386,25 +3587,20 @@ function ensureLightboxDOM() {
     });
 
     const btnDownload = document.createElement("button");
-    btnDownload.className = "vision-lightbox__icon-btn";
-    btnDownload.title = "Download";
-    btnDownload.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
-            <path d="M12 4V14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M8 10L12 14L16 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M5 18H19" stroke="currentColor" stroke-linecap="round"/>
-        </svg>
-    `;
-    btnDownload.addEventListener("click", () => {
-        if (!lightboxCurrentItem || !lightboxCurrentItem.url) return;
-        const a = document.createElement("a");
-        a.href = lightboxCurrentItem.url;
-        const ext = lightboxCurrentItem.kind === "image" ? ".png" : ".mp4";
-        a.download = (lightboxCurrentItem.title || "sulandra-output") + ext;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    });
+btnDownload.className = "vision-lightbox__icon-btn";
+btnDownload.title = "Download";
+btnDownload.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
+        <path d="M12 4V14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 10L12 14L16 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 18H19" stroke="currentColor" stroke-linecap="round"/>
+    </svg>
+`;
+
+btnDownload.addEventListener("click", () => {
+    if (!lightboxCurrentItem) return;
+    downloadHistoryItem(lightboxCurrentItem);
+});
 
     lightboxFavBtn = document.createElement("button");
     lightboxFavBtn.className = "vision-lightbox__icon-btn";
@@ -4338,67 +4534,124 @@ function getDimensionsFromAspect(aspect) {
 
 /**
  * Real API Call Handler
- * Routes generic UI requests to your specific main.py endpoints
+ * Routes requests to SIA Brain (Images) or Hunyuan (Videos & Films)
  */
 async function callSulandraAPI(uiPath, payload) {
-    // 1. Check if backend is configured
-    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD")) {
-        alert("Please set your SULANDRA_API_BASE URL in the code.");
-        throw new Error("API URL not configured");
-    }
+    try {
+        // ============================================================
+        //  VIDEO & SHORT FILM GENERATION (HUNYUAN PORT 300)
+        // ============================================================
+        if (payload.kind === "video" || payload.kind === "shortfilm") {
+            if (!window.GradioClient) throw new Error("Gradio Client loading... try again in a second.");
 
-    let endpoint = "";
-    let body = {};
+            // 1. Setup Defaults (INTEGERS for numbers, STRINGS for text)
+            let finalPrompt = "";
+            let steps = 50;             // Number
+            let seed = -1;              // Number
+            let resolution = "1280x720"; // String
+            let duration = 129;         // Number (Fixed: was "129")
+            
+            // Other sliders
+            let guidanceScale = 1;      // Number
+            let flowShift = 7;          // Number
+            let embeddedGuidance = 6;   // Number
 
-    // 2. Route Logic: Map UI Payload to main.py Pydantic Models
-    if (payload.kind === "image") {
-        const dims = getDimensionsFromAspect(payload.aspect);
-        
-        if (payload.mode === "image" && payload.reference_image) {
-            // Image-to-Image Endpoint
-            endpoint = "/api/image/img2img";
-            body = {
-                prompt: payload.prompt,
-                negative_prompt: payload.negative_prompt,
-                init_image_base64: payload.reference_image, // Base64 from UI
-                strength: 0.75, // Default strength
-                steps: payload.steps,
-                guidance_scale: payload.guidance,
-                seed: payload.seed,
-                width: dims.width,
-                height: dims.height
-            };
-        } else {
-            // Text-to-Image Endpoint
-            endpoint = "/api/image/txt2img";
-            body = {
-                prompt: payload.prompt,
-                negative_prompt: payload.negative_prompt,
-                steps: payload.steps,
-                guidance_scale: payload.guidance,
-                seed: payload.seed,
-                width: dims.width,
-                height: dims.height
+            // --- Logic for SHORT FILM ---
+            if (payload.kind === "shortfilm") {
+                let segmentText = "";
+                if (payload.segments) {
+                    segmentText = payload.segments
+                        .map((seg, i) => `Scene ${i+1}: ${seg.prompt}`)
+                        .join(". ");
+                }
+                finalPrompt = `Cinematic short film titled "${payload.film_title}". ${payload.global_prompt}. ${segmentText}`;
+                
+                if (payload.aspect === "9:16") resolution = "720x1280";
+                if (payload.aspect === "1:1")  resolution = "960x960";
+                
+                duration = 129; // Number
+            } 
+            
+            // --- Logic for STANDARD VIDEO ---
+            else {
+                finalPrompt = payload.prompt;
+                steps = Number(payload.steps) || 50;
+                seed = Number(payload.seed) || -1;
+                
+                // Resolution Map
+                const resMap = {
+                    "16:9": "1280x720",
+                    "9:16": "720x1280",
+                    "1:1":  "960x960"
+                };
+                if (resMap[payload.aspect]) resolution = resMap[payload.aspect];
+
+                // Duration Map (Strings from UI -> Numbers for API)
+                const lenMap = {
+                    "5": 129, 
+                    "9": 129,
+                    "short": 65
+                };
+                if (lenMap[payload.duration]) duration = lenMap[payload.duration];
+            }
+
+            console.log(`[Sulandra] Calling Hunyuan (/lambda_1)... Duration: ${duration} (Type: ${typeof duration})`);
+
+            // 2. Connect to Gradio
+            const client = await window.GradioClient.connect(HUNYUAN_API_BASE);
+
+            // 3. Send Request (Matches API Docs types exactly)
+            const result = await client.predict("/lambda_1", [ 
+                finalPrompt,       // param_0: Prompt (String)
+                resolution,        // param_1: Resolution (String)
+                duration,          // param_2: Video Length (Number: 129)
+                seed,              // param_3: Seed (Number)
+                steps,             // param_4: Steps (Number)
+                guidanceScale,     // param_5: Guidance (Number)
+                flowShift,         // param_6: Flow Shift (Number)
+                embeddedGuidance   // param_7: Embedded (Number)
+            ]);
+
+            // 4. Return Result
+            const videoFileUrl = result.data[0].url;
+            
+            return {
+                ok: true,
+                kind: payload.kind, 
+                url: videoFileUrl,
+                thumb: videoFileUrl,
+                meta: { 
+                    model: "HunyuanVideo",
+                    steps: steps,
+                    prompt: finalPrompt
+                }
             };
         }
-    } 
-    else {
-        // VIDEO / SHORT FILM HANDLER
-        // Note: Your main.py currently ONLY has Flux (Image). 
-        // We will throw a friendly error or return a stub if you try video.
-        console.warn("Backend does not yet support Video/Film endpoints.");
-        await new Promise(r => setTimeout(r, 1500)); // Fake delay
-        return {
-             ok: true,
-             kind: payload.kind,
-             url: "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
-             thumb: "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
-             meta: { note: "Simulation (Backend update required for Video)" }
-        };
-    }
 
-    // 3. Perform the actual Fetch
-    try {
+        // ============================================================
+        //  IMAGE GENERATION (SIA BRAIN FLUX PORT 8188)
+        // ============================================================
+        
+        let endpoint = "/api/image/txt2img";
+        let body = {
+            prompt: payload.prompt,
+            steps: payload.steps || 30,
+            width: 1024, height: 1024,
+            guidance_scale: payload.guidance || 3.5,
+            seed: payload.seed
+        };
+
+        if (payload.aspect === "16:9") { body.width = 1344; body.height = 768; }
+        if (payload.aspect === "9:16") { body.width = 768; body.height = 1344; }
+
+        if (payload.mode === "image" && payload.reference_image) {
+            endpoint = "/api/image/img2img";
+            body.init_image_base64 = payload.reference_image;
+            body.strength = 0.75;
+        }
+
+        console.log(`[Sulandra] Calling Sia Brain Port 8188...`);
+
         const response = await fetch(`${SULANDRA_API_BASE}${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -4406,15 +4659,10 @@ async function callSulandraAPI(uiPath, payload) {
         });
 
         if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`Server Error ${response.status}: ${errText}`);
+            throw new Error(`Sia Brain Error: ${response.statusText}`);
         }
 
         const data = await response.json();
-
-        // 4. Normalize Response
-        // Your backend returns relative path: "/api/image/file/filename.png"
-        // We need to prepend the domain to display it.
         const fullUrl = `${SULANDRA_API_BASE}${data.image_url}`;
 
         return {
@@ -4422,17 +4670,15 @@ async function callSulandraAPI(uiPath, payload) {
             kind: "image",
             url: fullUrl,
             thumb: fullUrl,
-            meta: {
-                seed: data.seed,
-                model: "Flux.1 Dev",
-                steps: body.steps,
-                guidance: body.guidance_scale
+            meta: { 
+                model: "Flux.1 Dev", 
+                seed: data.seed 
             }
         };
 
     } catch (err) {
         console.error("API Call Failed:", err);
-        throw err; // Re-throw to be caught by the UI button handler
+        throw err; 
     }
 }
 
