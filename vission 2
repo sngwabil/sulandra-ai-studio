@@ -2477,8 +2477,8 @@
 /**
  * CONNECTED: Your active RunPod FastAPI backend.
  */
-const SULANDRA_API_BASE = "https://9o0mn17y2qmb1t-8188.proxy.runpod.net";
-const HUNYUAN_API_BASE = "https://9o0mn17y2qmb1t-300.proxy.runpod.net";
+const SULANDRA_API_BASE = "https://d2r0ul0h7pe8gt-8188.proxy.runpod.net";
+const HUNYUAN_API_BASE  = "https://d2r0ul0h7pe8gt-300.proxy.runpod.net";
 
 /**
  * CONNECTED: SIA Brain uses the same backend via the /ask_sia endpoint.
@@ -2886,144 +2886,78 @@ function clearGallery() {
 }
 
 /**
- * Render a single gallery card (Image / Video / Film)
+ * Render a single gallery card (Image / Video / Film / Placeholder)
  */
 function createGalleryCard(item) {
     const card = document.createElement("div");
-    card.className = currentGalleryLayout === "grid"
-        ? "gallery-card gallery-card--grid"
-        : "gallery-card gallery-card--vertical";
+    // Add loading class if it's a placeholder
+    const baseClass = currentGalleryLayout === "grid" ? "gallery-card gallery-card--grid" : "gallery-card gallery-card--vertical";
+    card.className = item.isPlaceholder ? `${baseClass} gallery-card--loading` : baseClass;
 
     card.dataset.historyId = item.id;
 
-    /* ---------- media element ---------- */
+    /* ---------- media element OR loading placeholder ---------- */
     let mediaHTML = "";
-    if (item.kind === "image") {
-        mediaHTML = `<img src="${item.url}" class="gallery-card__media">`;
-    } else if (item.kind === "video") {
-        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline></video>`;
+    if (item.isPlaceholder) {
+        // Futuristic loading animation
+        mediaHTML = `
+            <div class="gallery-card-loader-content">
+                <div class="neon-spinner"></div>
+                <div style="font-size:10px; letter-spacing:0.1em; text-transform:uppercase;">Generating</div>
+            </div>
+        `;
+    } else if (item.kind === "image") {
+        mediaHTML = `<img src="${item.url}" class="gallery-card__media" loading="lazy">`;
     } else {
-        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline></video>`;
+        // Video or Shortfilm
+        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>`;
     }
 
-    /* ---------- build card ---------- */
+    /* ---------- build card wrapper ---------- */
+    // Placeholders use their target aspect ratio immediately
+    const aspect = item.aspect || "1:1";
+    
     card.innerHTML = `
-    <div class="gallery-card__media-wrapper" data-aspect="${item.aspect || "1:1"}">
+    <div class="gallery-card__media-wrapper" data-aspect="${aspect}">
         ${mediaHTML}
     </div>
 
     <div class="gallery-card__info">
-        <div class="gallery-card__title">${item.title}</div>
+        <div class="gallery-card__title">${item.isPlaceholder ? "Creating..." : item.title}</div>
 
-        <div class="gallery-card__actions-row">
+        <div class="gallery-card__actions-row" style="${item.isPlaceholder ? 'opacity:0.5; pointer-events:none;' : ''}">
             <div class="gallery-card__actions-left">
-                <!-- Fullscreen -->
-                <button
-                    type="button"
-                    class="gallery-card__icon-btn"
-                    data-action="fullscreen"
-                    title="Fullscreen"
-                >
-                    ⤢
-                </button>
-
-                <!-- Use prompt -->
-                <button
-                    type="button"
-                    class="gallery-card__icon-btn"
-                    data-action="use-prompt"
-                    title="Use this prompt"
-                >
-                    ↻
-                </button>
-
-                <!-- Download to device -->
-                <a
-                    href="${item.url}"
-                    download
-                    class="gallery-card__icon-btn"
-                    data-action="download"
-                    title="Download"
-                >
-                    ⤓
-                </a>
-
-                <!-- Delete -->
-                <button
-                    type="button"
-                    class="gallery-card__icon-btn gallery-card__icon-btn--danger"
-                    data-action="delete"
-                    title="Delete"
-                >
-                    🗑
-                </button>
+                <button type="button" class="gallery-card__icon-btn" data-action="fullscreen" title="Fullscreen">⤢</button>
+                <button type="button" class="gallery-card__icon-btn" data-action="use-prompt" title="Use this prompt">↻</button>
+                <button type="button" class="gallery-card__icon-btn" data-action="download" title="Download">⤓</button>
+                <button type="button" class="gallery-card__icon-btn gallery-card__icon-btn--danger" data-action="delete" title="Delete">🗑</button>
             </div>
-
-            ${
-                item.isFavorite
-                    ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">♥</span>`
-                    : `<span class="gallery-card__fav" data-fav="${item.id}">♡</span>`
-            }
+            ${!item.isPlaceholder ? (item.isFavorite ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">♥</span>` : `<span class="gallery-card__fav" data-fav="${item.id}">♡</span>`) : ''}
         </div>
     </div>
 `;
 
+    // Don't attach listeners if it's a placeholder
+    if (item.isPlaceholder) return card;
 
-    /* ---------- favorite toggle ---------- */
-const favBtn = card.querySelector("[data-fav]");
-if (favBtn) {
-    favBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        toggleFavorite(item.id);
-        renderGallery();
-        renderHistoryRail();
-    });
-}
+    /* ---------- Attach Listeners (same as before) ---------- */
+    const favBtn = card.querySelector("[data-fav]");
+    if (favBtn) favBtn.addEventListener("click", e => { e.stopPropagation(); toggleFavorite(item.id); refreshAllHistoryDisplays(); });
 
-/* ---------- action buttons ---------- */
-const fullscreenBtn = card.querySelector('[data-action="fullscreen"]');
-if (fullscreenBtn) {
-    fullscreenBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        openLightbox(item.id); // true fullscreen overlay
-    });
-}
+    const fullscreenBtn = card.querySelector('[data-action="fullscreen"]');
+    if (fullscreenBtn) fullscreenBtn.addEventListener("click", e => { e.stopPropagation(); openLightbox(item.id); });
 
-const deleteBtn = card.querySelector('[data-action="delete"]');
-if (deleteBtn) {
-    deleteBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        const ok = window.confirm("Delete this item from your history?");
-        if (!ok) return;
-        deleteHistoryItem(item.id);
-        renderGallery();
-        renderHistoryRail();
-    });
-}
+    const deleteBtn = card.querySelector('[data-action="delete"]');
+    if (deleteBtn) deleteBtn.addEventListener("click", e => { e.stopPropagation(); if(window.confirm("Delete?")) { deleteHistoryItem(item.id); refreshAllHistoryDisplays(); } });
 
-const usePromptBtn = card.querySelector('[data-action="use-prompt"]');
-if (usePromptBtn) {
-    usePromptBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        applyHistoryPrompt(item);
-    });
-}
+    const usePromptBtn = card.querySelector('[data-action="use-prompt"]');
+    if (usePromptBtn) usePromptBtn.addEventListener("click", e => { e.stopPropagation(); applyHistoryPrompt(item); });
 
-const downloadLink = card.querySelector('[data-action="download"]');
-if (downloadLink) {
-    downloadLink.addEventListener("click", e => {
-        e.stopPropagation();
-        e.preventDefault(); // <- stop the <a> from opening the URL
-        downloadHistoryItem(item);
-    });
-}
+    // Changed download to a button listener instead of an <a> tag for better control
+    const downloadBtn = card.querySelector('[data-action="download"]');
+    if (downloadBtn) downloadBtn.addEventListener("click", e => { e.stopPropagation(); downloadHistoryItem(item); });
 
-
-/* ---------- click anywhere else opens lightbox ---------- */
-card.addEventListener("click", () => {
-    openLightbox(item.id);
-});
-
+    card.addEventListener("click", () => { openLightbox(item.id); });
 
     return card;
 }
@@ -4599,122 +4533,62 @@ function setGeneratingState(active, labelText) {
 /* --------------------------- REAL API INTEGRATION --------------------------- */
 
 /**
- * Helper: Convert Aspect Ratio string to Width/Height for Flux
- */
-function getDimensionsFromAspect(aspect) {
-    // Defaults for Flux.1 Dev
-    if (aspect === "16:9") return { width: 1344, height: 768 };
-    if (aspect === "9:16") return { width: 768, height: 1344 };
-    return { width: 1024, height: 1024 }; // 1:1
-}
-
-/**
  * Real API Call Handler
  * Routes requests to SIA Brain (Images) or Hunyuan (Videos & Films)
  */
 async function callSulandraAPI(uiPath, payload) {
     try {
+        // --- FIX FOR 422 ERROR: SANITIZE SEED ---
+        // Ensure seed is ALWAYS an integer. If empty/null, generate one here.
+        const safeSeed = (payload.seed === null || payload.seed === undefined || payload.seed === "") 
+            ? Math.floor(Math.random() * 4294967295) 
+            : Number(payload.seed);
+
         // ============================================================
         //  VIDEO & SHORT FILM GENERATION (HUNYUAN PORT 300)
         // ============================================================
         if (payload.kind === "video" || payload.kind === "shortfilm") {
-            if (!window.GradioClient) throw new Error("Gradio Client loading... try again in a second.");
+            if (!window.GradioClient) throw new Error("Gradio Client loading... try again later.");
 
-            // 1. Setup Defaults (INTEGERS for numbers, STRINGS for text)
-            let finalPrompt = "";
-            let steps = 50;             // Number
-            let seed = -1;              // Number
-            let resolution = "1280x720"; // String
-            let duration = 129;         // Number (Fixed: was "129")
+            let finalPrompt = "", steps = 50, resolution = "1280x720", duration = 129;
             
-            // Other sliders
-            let guidanceScale = 1;      // Number
-            let flowShift = 7;          // Number
-            let embeddedGuidance = 6;   // Number
-
-            // --- Logic for SHORT FILM ---
             if (payload.kind === "shortfilm") {
-                let segmentText = "";
-                if (payload.segments) {
-                    segmentText = payload.segments
-                        .map((seg, i) => `Scene ${i+1}: ${seg.prompt}`)
-                        .join(". ");
-                }
+                let segmentText = payload.segments ? payload.segments.map((seg, i) => `Scene ${i+1}: ${seg.prompt}`).join(". ") : "";
                 finalPrompt = `Cinematic short film titled "${payload.film_title}". ${payload.global_prompt}. ${segmentText}`;
-                
                 if (payload.aspect === "9:16") resolution = "720x1280";
                 if (payload.aspect === "1:1")  resolution = "960x960";
-                
-                duration = 129; // Number
-            } 
-            
-            // --- Logic for STANDARD VIDEO ---
-            else {
+            } else {
                 finalPrompt = payload.prompt;
                 steps = Number(payload.steps) || 50;
-                seed = Number(payload.seed) || -1;
-                
-                // Resolution Map
-                const resMap = {
-                    "16:9": "1280x720",
-                    "9:16": "720x1280",
-                    "1:1":  "960x960"
-                };
+                const resMap = { "16:9": "1280x720", "9:16": "720x1280", "1:1": "960x960" };
                 if (resMap[payload.aspect]) resolution = resMap[payload.aspect];
-
-                // Duration Map (Strings from UI -> Numbers for API)
-                const lenMap = {
-                    "5": 129, 
-                    "9": 129,
-                    "short": 65
-                };
-                if (lenMap[payload.duration]) duration = lenMap[payload.duration];
+                if (payload.duration == 5 || payload.duration == 9) duration = 129;
             }
 
-            console.log(`[Sulandra] Calling Hunyuan (/lambda_1)... Duration: ${duration} (Type: ${typeof duration})`);
-
-            // 2. Connect to Gradio
+            console.log(`[Sulandra] Calling Hunyuan...`);
             const client = await window.GradioClient.connect(HUNYUAN_API_BASE);
-
-            // 3. Send Request (Matches API Docs types exactly)
             const result = await client.predict("/lambda_1", [ 
-                finalPrompt,       // param_0: Prompt (String)
-                resolution,        // param_1: Resolution (String)
-                duration,          // param_2: Video Length (Number: 129)
-                seed,              // param_3: Seed (Number)
-                steps,             // param_4: Steps (Number)
-                guidanceScale,     // param_5: Guidance (Number)
-                flowShift,         // param_6: Flow Shift (Number)
-                embeddedGuidance   // param_7: Embedded (Number)
+                finalPrompt, resolution, duration, safeSeed, steps, 1, 7, 6 
             ]);
 
-            // 4. Return Result
-            const videoFileUrl = result.data[0].url;
-            
             return {
-                ok: true,
-                kind: payload.kind, 
-                url: videoFileUrl,
-                thumb: videoFileUrl,
-                meta: { 
-                    model: "HunyuanVideo",
-                    steps: steps,
-                    prompt: finalPrompt
-                }
+                ok: true, kind: payload.kind, url: result.data[0].url, thumb: result.data[0].url,
+                meta: { model: "HunyuanVideo", steps: steps, seed: safeSeed }
             };
         }
 
         // ============================================================
         //  IMAGE GENERATION (SIA BRAIN FLUX PORT 8188)
         // ============================================================
-        
         let endpoint = "/api/image/txt2img";
+        
+        // Construct a clean body (NO batch_size) to prevent 422 errors
         let body = {
             prompt: payload.prompt,
-            steps: payload.steps || 30,
+            steps: Number(payload.steps) || 30,
             width: 1024, height: 1024,
-            guidance_scale: payload.guidance || 3.5,
-            seed: payload.seed
+            guidance_scale: Number(payload.guidance) || 3.5,
+            seed: safeSeed 
         };
 
         if (payload.aspect === "16:9") { body.width = 1344; body.height = 768; }
@@ -4726,8 +4600,6 @@ async function callSulandraAPI(uiPath, payload) {
             body.strength = 0.75;
         }
 
-        console.log(`[Sulandra] Calling Sia Brain Port 8188...`);
-
         const response = await fetch(`${SULANDRA_API_BASE}${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -4735,21 +4607,17 @@ async function callSulandraAPI(uiPath, payload) {
         });
 
         if (!response.ok) {
-            throw new Error(`Sia Brain Error: ${response.statusText}`);
+            const errText = await response.text();
+            console.error("Backend Error:", errText); // Logs exact reason for 422
+            throw new Error(`Backend Error ${response.status}`);
         }
 
         const data = await response.json();
         const fullUrl = `${SULANDRA_API_BASE}${data.image_url}`;
 
         return {
-            ok: true,
-            kind: "image",
-            url: fullUrl,
-            thumb: fullUrl,
-            meta: { 
-                model: "Flux.1 Dev", 
-                seed: data.seed 
-            }
+            ok: true, kind: "image", url: fullUrl, thumb: fullUrl,
+            meta: { model: "Flux.1 Dev", seed: safeSeed }
         };
 
     } catch (err) {
@@ -4776,26 +4644,20 @@ function getSelectedShortFilmAspect() {
 }
 
 function buildImagePayloadFromUI() {
-    const prompt = $("image-main-prompt")?.value || "";
-    const negativePrompt = $("image-negative-prompt")?.value || "";
-    const aspect = getSelectedImageAspect();
-    const style = $("image-style-select")?.value || "natural";
-    const guidance = Number($("image-guidance-slider")?.value || 7);
+    // ... existing code ...
     const steps = Number($("image-steps-input")?.value || 30);
     const seedVal = $("image-seed-input")?.value;
     const seed = seedVal === "" ? null : Number(seedVal);
+    // NEW: Get batch size
+    const batchSize = Number($("image-variations-select")?.value || 1);
 
     return {
         kind: "image",
         prompt: prompt,
-        negative_prompt: negativePrompt,
-        aspect: aspect,
-        style: style,
-        guidance: guidance,
-        steps: steps,
+        // ... existing props ...
         seed: seed,
-        mode: currentImageMode
-        // reference image will be added later if needed
+        mode: currentImageMode,
+        batch_size: batchSize // Add to payload
     };
 }
 
@@ -4879,113 +4741,142 @@ async function readFileAsBase64(file) {
 
 /* --------------------------- GENERATE FLOWS ----------------------------- */
 
-async function generateImageFromUI() {
-    if (isGenerating) return;
-    const payload = buildImagePayloadFromUI();
+// Helper: Create instant loading cards
+function createPlaceholders(count, kind, prompt, aspect, negativePrompt) {
+    const placeholders = [];
+    for (let i = 0; i < count; i++) {
+        const id = uuidv4();
+        const item = {
+            id: id, kind: kind, title: "Generating...", prompt: prompt,
+            negativePrompt: negativePrompt || "", aspect: aspect || "1:1",
+            createdAt: Date.now(), isPlaceholder: true, isFavorite: false, meta: {}
+        };
+        historyInMemory.unshift(item);
+        placeholders.push(id);
+    }
+    refreshAllHistoryDisplays();
+    return placeholders;
+}
 
-    // Reference image if in image→image mode
+// Helper: Update card when done
+function fulfillPlaceholder(placeholderId, realData) {
+    const itemIdx = historyInMemory.findIndex(x => x.id === placeholderId);
+    if (itemIdx === -1) return;
+    historyInMemory[itemIdx] = {
+        ...historyInMemory[itemIdx], ...realData, isPlaceholder: false,
+        title: realData.title || (historyInMemory[itemIdx].kind === 'image' ? 'Image' : 'Video'),
+        createdAt: Date.now()
+    };
+    saveHistoryToStorage();
+    refreshAllHistoryDisplays();
+}
+
+// Read batch size from dropdown
+function buildImagePayloadFromUI() {
+    const prompt = $("image-main-prompt")?.value || "";
+    const neg = $("image-negative-prompt")?.value || "";
+    const aspect = getSelectedImageAspect();
+    const batchSize = Number($("image-variations-select")?.value || 1); // Get 1-4
+    const steps = Number($("image-steps-input")?.value || 30);
+    const seedVal = $("image-seed-input")?.value;
+    
+    return {
+        kind: "image", prompt: prompt, negative_prompt: neg, aspect: aspect,
+        steps: steps, seed: seedVal === "" ? null : Number(seedVal),
+        mode: currentImageMode, batch_size: batchSize
+    };
+}
+
+async function generateImageFromUI() {
+    const payload = buildImagePayloadFromUI();
+    const batchCount = Number(payload.batch_size) || 1;
+
+    // 1. Handle Reference Image (needs await)
     if (currentImageMode === "image") {
         const fileInput = $("image-reference-input");
         if (fileInput && fileInput.files && fileInput.files[0]) {
-            payload.reference_image = await readFileAsBase64(fileInput.files[0]);
+            setGeneratingState(true, "Preparing upload...");
+            try {
+                payload.reference_image = await readFileAsBase64(fileInput.files[0]);
+            } catch(e) {
+                 setGeneratingState(false);
+                 showSulandraToast("Failed to read reference image.", "error");
+                 return;
+            }
+            setGeneratingState(false);
         }
     }
 
-    setGeneratingState(true, "Generating image…");
-    try {
-        const result = await callSulandraAPI("/generate/image", payload);
+    // 2. Create Placeholders immediately (1 to 4 cards)
+    const placeholderIds = createPlaceholders(batchCount, "image", payload.prompt, payload.aspect, payload.negative_prompt);
 
-        const item = addHistoryItem({
-            kind: "image",
-            url: result.url,
-            thumb: result.thumb || result.url,
-            title: "Image",
-            prompt: payload.prompt,
-            negativePrompt: payload.negative_prompt,
-            aspect: payload.aspect,
-            meta: result.meta
-        });
+    // 3. Loop and Fire API calls SEQUENTIALLY (One by One)
+    // We use a 'for...of' loop with await to prevent crashing the backend with parallel requests
+    for (let i = 0; i < placeholderIds.length; i++) {
+        const pid = placeholderIds[i];
+        const singlePayload = { ...payload };
+        
+        // Increment seed for variety if user set one, else random is handled in API call
+        if (singlePayload.seed !== null) singlePayload.seed += i;
 
-        refreshAllHistoryDisplays();
-        scrollToHistoryItem(item.id);
-    } catch (err) {
-        console.error("[Sulandra] Image generation failed:", err);
-        window.alert("Image generation failed. Check console for details.");
-    } finally {
-        setGeneratingState(false);
+        try {
+            // Wait for this request to finish before starting the next one
+            const result = await callSulandraAPI("/generate/image", singlePayload);
+            
+            fulfillPlaceholder(pid, {
+                url: result.url,
+                thumb: result.thumb || result.url,
+                meta: result.meta
+            });
+        } catch (err) {
+            console.error(`Gen failed for ${pid}`, err);
+            deleteHistoryItem(pid); // Remove failed placeholder
+            refreshAllHistoryDisplays();
+            if (i === 0) showSulandraToast("Generation failed", "error");
+        }
     }
 }
 
 async function generateVideoFromUI() {
-    if (isGenerating) return;
     const payload = buildVideoPayloadFromUI();
-
     if (currentVideoMode === "image") {
-        const fileInput = $("video-reference-input");
-        if (fileInput && fileInput.files && fileInput.files[0]) {
-            payload.reference_image = await readFileAsBase64(fileInput.files[0]);
-        }
+        const fileInput = $("video-start-input");
+        if (fileInput?.files?.[0]) payload.reference_image = await readFileAsBase64(fileInput.files[0]);
     }
-
-    setGeneratingState(true, "Generating video…");
-    try {
-        const result = await callSulandraAPI("/generate/video", payload);
-
-        const item = addHistoryItem({
-            kind: "video",
-            url: result.url,
-            thumb: result.thumb || result.url,
-            title: "Video",
-            prompt: payload.prompt,
-            negativePrompt: payload.negative_prompt,
-            aspect: payload.aspect,
-            duration: payload.duration,
-            meta: result.meta
-        });
-
+    // Create 1 placeholder for video
+    const [placeholderId] = createPlaceholders(1, "video", payload.prompt, payload.aspect, payload.negative_prompt);
+    
+    callSulandraAPI("/generate/video", payload).then(result => {
+        fulfillPlaceholder(placeholderId, { url: result.url, thumb: result.url, meta: result.meta });
+    }).catch(err => {
+        deleteHistoryItem(placeholderId);
         refreshAllHistoryDisplays();
-        scrollToHistoryItem(item.id);
-    } catch (err) {
-        console.error("[Sulandra] Video generation failed:", err);
-        window.alert("Video generation failed. Check console for details.");
-    } finally {
-        setGeneratingState(false);
-    }
+        showSulandraToast("Video failed", "error");
+    });
 }
 
 async function generateShortFilmFromUI() {
-    if (isGenerating) return;
     const payload = buildShortFilmPayloadFromUI();
-
-    if (!payload.segments || !payload.segments.length) {
-        window.alert("Add at least one segment to your short film.");
-        return;
-    }
-
-    setGeneratingState(true, "Generating short film…");
-    try {
-        const result = await callSulandraAPI("/generate/shortfilm", payload);
-
-        const item = addHistoryItem({
-            kind: "shortfilm",
-            url: result.url,
-            thumb: result.thumb || result.url,
-            title: payload.film_title,
-            prompt: payload.global_prompt,
-            negativePrompt: "",
-            aspect: payload.aspect,
-            duration: payload.segments.reduce((s, seg) => s + (seg.duration || 0), 0),
-            meta: result.meta
-        });
-
+    if (!payload.segments?.length) return showSulandraToast("Add segments", "warning");
+    
+    const [placeholderId] = createPlaceholders(1, "shortfilm", payload.film_title, payload.aspect, "");
+    callSulandraAPI("/generate/shortfilm", payload).then(result => {
+        fulfillPlaceholder(placeholderId, { url: result.url, thumb: result.url, meta: result.meta });
+    }).catch(err => {
+        deleteHistoryItem(placeholderId);
         refreshAllHistoryDisplays();
-        scrollToHistoryItem(item.id);
-    } catch (err) {
-        console.error("[Sulandra] Short film generation failed:", err);
-        window.alert("Short film generation failed. Check console for details.");
-    } finally {
-        setGeneratingState(false);
-    }
+    });
+}
+
+// Ensure Button is Non-Blocking
+const generateBtn = $("btn-generate");
+if (generateBtn) {
+    generateBtn.addEventListener("click", () => {
+        // Removed `isGenerating` check to allow multiple clicks
+        if (currentLab === "image") generateImageFromUI();
+        else if (currentLab === "video") generateVideoFromUI();
+        else if (currentLab === "shortfilm") generateShortFilmFromUI();
+    });
 }
 
 /* ------------------------ RANDOM PROMPT BUTTON -------------------------- */
