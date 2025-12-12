@@ -4868,17 +4868,6 @@ async function generateShortFilmFromUI() {
     });
 }
 
-// Ensure Button is Non-Blocking
-const generateBtn = $("btn-generate");
-if (generateBtn) {
-    generateBtn.addEventListener("click", () => {
-        // Removed `isGenerating` check to allow multiple clicks
-        if (currentLab === "image") generateImageFromUI();
-        else if (currentLab === "video") generateVideoFromUI();
-        else if (currentLab === "shortfilm") generateShortFilmFromUI();
-    });
-}
-
 /* ------------------------ RANDOM PROMPT BUTTON -------------------------- */
 
 function wireRandomPromptButton() {
