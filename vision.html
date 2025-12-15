@@ -5123,9 +5123,8 @@ document.querySelectorAll(".sulandra-neon-trigger").forEach(el => {
 }
     
 /* ====================================================================== */
-/* UPDATED: SIA CHAT LOGIC WITH "USE PROMPT" BUTTON                      */
+/* UPDATED: SIA CHAT WITH VISION (Sends Image to Backend)                */
 /* ====================================================================== */
-// Global history array
 let askSiaHistory = [];
 
 async function sendAskSia() {
@@ -5135,28 +5134,36 @@ async function sendAskSia() {
   
     if (!question.trim()) return;
 
-    // 1. ADD USER MESSAGE TO UI IMMEDIATELY
+    // 1. ADD USER MESSAGE
     const userBubble = document.createElement('div');
     userBubble.style.cssText = "align-self: flex-end; background: #334155; color: white; padding: 8px 12px; border-radius: 12px; margin-bottom: 8px; max-width: 80%; font-size: 13px;";
     userBubble.textContent = question;
     answerBox.appendChild(userBubble);
-    
-    // Scroll to bottom
     answerBox.scrollTop = answerBox.scrollHeight;
-
-    // Clear input
     questionBox.value = "";
 
-    // 2. SHOW LOADING BUBBLE
+    // 2. CHECK FOR ACTIVE IMAGE (To send to SIA)
+    let activeImageBase64 = null;
+    
+    // Check Image Lab Upload
+    const imgPreview = document.getElementById("image-preview-img");
+    // Only send if visible and has data
+    if (imgPreview && imgPreview.style.display !== "none" && imgPreview.src.startsWith("data:")) {
+        activeImageBase64 = imgPreview.src;
+    }
+
+    // 3. SHOW LOADING
     const loadingBubble = document.createElement('div');
     loadingBubble.id = "sia-loading-bubble";
     loadingBubble.innerHTML = `<div class="neon-spinner" style="width:16px; height:16px; border-width:2px;"></div>`;
     answerBox.appendChild(loadingBubble);
 
+    // 4. PREPARE PAYLOAD
     const payload = {
         user_input: question,
         context: window.askSiaState.context || "General Query",
-        history: askSiaHistory // Send past history
+        history: askSiaHistory,
+        image: activeImageBase64 // Send the image data!
     };
 
     try {
@@ -5167,21 +5174,18 @@ async function sendAskSia() {
         });
 
         if (!res.ok) throw new Error("SIA Offline");
-
         const data = await res.json();
         
-        // Remove loading bubble
         const loader = document.getElementById("sia-loading-bubble");
         if(loader) loader.remove();
 
-        // 3. ADD SIA RESPONSE TO UI
+        // 5. RENDER RESPONSE
         const siaBubble = document.createElement('div');
         siaBubble.style.cssText = "align-self: flex-start; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #e2e8f0; padding: 10px; border-radius: 12px; margin-bottom: 12px; max-width: 90%; font-size: 13px;";
         
         let html = `<div>${data.reply}</div>`;
 
-        // Add "Use Prompt" button if there is a payload
-        if (data.payload && data.payload.length > 5) {
+        if (data.payload && data.action !== "none") {
              const safePayload = data.payload.replace(/"/g, '&quot;').replace(/\n/g, ' ');
              html += `
                 <div style="margin-top:8px; padding:8px; background:rgba(0,0,0,0.3); border-radius:6px; font-family:monospace; color:#86efac; font-size:11px;">
@@ -5195,12 +5199,8 @@ async function sendAskSia() {
         
         siaBubble.innerHTML = html;
         answerBox.appendChild(siaBubble);
-
-        // 4. SAVE HISTORY (Update memory)
         askSiaHistory.push({ "role": "user", "content": question });
         askSiaHistory.push({ "role": "assistant", "content": data.reply });
-
-        // Scroll to bottom
         answerBox.scrollTop = answerBox.scrollHeight;
 
     } catch (err) {
