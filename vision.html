@@ -3213,16 +3213,29 @@ function renderHistoryRail() {
 }
 
 /**
- * Scroll the gallery to a specific history item.
+ * Safely scroll the gallery container to a specific item
+ * without moving the rest of the page.
  */
 function scrollToHistoryItem(historyId) {
-    const container = $("gallery-items-container");
+    const container = document.getElementById("gallery-scroll");
     if (!container) return;
 
     const card = container.querySelector(`[data-history-id="${historyId}"]`);
     if (!card) return;
 
-    smoothScrollIntoView(card, "center");
+    // 1. Get the position of the card relative to the viewport
+    const cardRect = card.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    // 2. Calculate offset inside the container
+    const relativeTop = cardRect.top - containerRect.top;
+    const currentScroll = container.scrollTop;
+
+    // 3. Scroll ONLY the container (with 20px breathing room at top)
+    container.scrollTo({
+        top: currentScroll + relativeTop - 20,
+        behavior: "smooth"
+    });
 }
 
 /* --------------------------- GALLERY LAYOUT ----------------------------- */
