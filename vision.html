@@ -1674,6 +1674,33 @@
     color: var(--text-muted);
     font-style: italic;
 }
+        /* ====================================================================== */
+/* FORCE LEFT SIDEBAR (Overrides any previous Right-side settings)      */
+/* ====================================================================== */
+
+.ask-sia-panel-backdrop {
+    /* Force alignment to the START (Left) instead of End (Right) */
+    justify-content: flex-start !important; 
+    
+    /* Position it exactly 80px from the left (next to your nav bar) */
+    left: 80px !important; 
+    right: 0;
+}
+
+.ask-sia-panel {
+    /* Flip the borders so the line is on the right side of the panel */
+    border-right: 1px solid rgba(255,255,255,0.1) !important;
+    border-left: none !important;
+    
+    /* Force the Left-side animation */
+    animation: forceSlideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Define the left-side slide animation */
+@keyframes forceSlideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
 </style>
 <script type="module">
     import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
@@ -1694,7 +1721,7 @@
         const questionBox = document.getElementById("askSiaQuestion");
 
         if (backdrop) {
-            backdrop.style.display = "flex"; // Shows panel on the LEFT
+            backdrop.style.display = "flex"; // Shows panel (CSS handles position)
             if (questionBox) {
                 questionBox.value = "";
                 questionBox.focus();
@@ -1755,34 +1782,7 @@
             // Strict mode: Toast error only, NO new window opening.
             showSulandraToast("Download failed. The server blocked the request.", "error");
         }
-        /* ====================================================================== */
-/* FORCE LEFT SIDEBAR (Overrides any previous Right-side settings)      */
-/* ====================================================================== */
-
-.ask-sia-panel-backdrop {
-    /* Force alignment to the START (Left) instead of End (Right) */
-    justify-content: flex-start !important; 
-    
-    /* Position it exactly 80px from the left (next to your nav bar) */
-    left: 80px !important; 
-    right: 0;
-}
-
-.ask-sia-panel {
-    /* Flip the borders so the line is on the right side of the panel */
-    border-right: 1px solid rgba(255,255,255,0.1) !important;
-    border-left: none !important;
-    
-    /* Force the Left-side animation */
-    animation: forceSlideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-/* Define the left-side slide animation */
-@keyframes forceSlideInLeft {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
-      }
-  };
+    };
 </script>
 </head>
 <body>
