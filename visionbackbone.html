@@ -1024,44 +1024,831 @@
             0 0 0 1px rgba(34, 197, 94, 0.8),
             0 26px 62px rgba(34, 197, 94, 0.9);
     }
+    /* ====================================================================== */
+/* SURGICAL ADDITIONS - Reference Previews & Ask SIA                     */
+/* ====================================================================== */
 
-/* =============================================================== */
-/* NEW LEFT VERTICAL LAB SWITCHER                                 */
-/* =============================================================== */
-
-.vision-left-labs {
+/* Kling-style prominent reference image preview container */
+.reference-preview-large {
     width: 100%;
-    padding: 12px;
+    /* Default aspect, can be overridden via JS if needed */
+    aspect-ratio: 16 / 9;
+    background: #020617;
+    border-radius: 14px;
+    border: 1px solid rgba(31, 41, 55, 0.95);
+    overflow: hidden;
+    display: none; /* Hidden until image added */
+    margin-bottom: 12px;
+    position: relative;
+}
+
+/* Class added via JS when an image is loaded */
+.reference-preview-large.has-image {
+    display: block;
+}
+
+.reference-preview-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ensure whole image is visible like Kling */
+}
+
+/* Small "Ask SIA" magic button next to prompt labels */
+.ask-sia-prompt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ask-sia-prompt-btn:hover {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+.ask-sia-prompt-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Label container to hold the label text and the new button */
+.prompt-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+/* ====================================================================== */
+/* SULANDRA UPLOAD BOX STYLE                                             */
+/* ====================================================================== */
+
+.sulandra-upload-box {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Cinematic shape */
+    background: #0f172a;  /* Darker background */
+    border-radius: 16px;
+    border: 1px dashed rgba(51, 65, 85, 0.8);
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    background: var(--bg-card-soft);
-    border-bottom: 1px solid var(--border-subtle);
-}
-
-.vision-left-labs .lab-btn {
-    width: 100%;
-    padding: 10px 14px;
-    background: var(--bg-element);
-    border: 1px solid var(--border-subtle);
-    color: var(--text-primary);
-    border-radius: 6px;
-    text-align: left;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: 0.25s;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+    text-align: center;
 }
 
-.vision-left-labs .lab-btn:hover {
-    background: var(--accent-soft);
-    border-color: var(--accent);
+.sulandra-upload-box:hover {
+    border-color: #22c55e; /* Green accent on hover */
+    background: #1e293b;
 }
 
-.vision-left-labs .lab-btn.active {
-    background: var(--accent-soft);
-    border-color: var(--accent);
-    color: var(--accent-strong);
+/* The Placeholder content (Icon + Text) */
+.sulandra-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #9ca3af;
+    pointer-events: none; /* Clicks pass through to the label */
+    padding: 20px;
 }
-    </style>
+
+.sulandra-placeholder svg {
+    width: 32px;
+    height: 32px;
+    color: #4ade80; /* Accent color icon */
+    opacity: 0.8;
+}
+
+.sulandra-placeholder-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.sulandra-placeholder-sub {
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* The Image Preview (Hidden by default) */
+.sulandra-preview-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Show full image */
+    background: #000;
+    z-index: 10;
+    display: none;
+}
+
+/* State: When file is selected */
+.sulandra-upload-box.has-file .sulandra-preview-img {
+    display: block;
+}
+
+.sulandra-upload-box.has-file .sulandra-placeholder {
+    display: none;
+}
+
+/* Remove button (appears on hover when file exists) */
+.sulandra-remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.sulandra-upload-box.has-file:hover .sulandra-remove-btn {
+    display: flex;
+}
+/* Compact version for dual frames and list items */
+.sulandra-upload-box.compact {
+    aspect-ratio: 16 / 9;
+    min-height: 80px;
+    margin-bottom: 8px;
+}
+
+.sulandra-upload-box.compact .sulandra-placeholder {
+    padding: 10px;
+    gap: 4px;
+}
+
+.sulandra-upload-box.compact .sulandra-placeholder svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sulandra-upload-box.compact .sulandra-placeholder-title {
+    font-size: 11px;
+}
+
+.sulandra-upload-box.compact .sulandra-placeholder-sub {
+    display: none; /* Hide subtitle to save space */
+}
+/* ====================================================================== */
+/* ASK SIA - MODERN CHAT UI (Left Sidebar & Green Branding)              */
+/* ====================================================================== */
+
+.ask-sia-panel-backdrop {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 80px; /* Locked next to nav bar */
+    right: 0;
+    background: rgba(0,0,0,0.4);
+    display: none; 
+    justify-content: flex-start; /* Aligns panel to the LEFT */
+    z-index: 99999;
+    backdrop-filter: blur(4px);
+}
+
+.ask-sia-panel {
+    width: 400px;
+    max-width: 90%;
+    height: 100%;
+    background: #020617; /* Matches app theme */
+    border-right: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 10px 0 50px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* Header & Logo */
+.ask-sia-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.ask-sia-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* FIXED LOGO: Sulandra Green Gradient */
+/* ====================================================================== */
+/* FIXED: SPARKLE ICON & NEON TEXT (Matches Lab Buttons)                 */
+/* ====================================================================== */
+
+.ask-sia-icon-large {
+    width: 32px;
+    height: 32px;
+    background: transparent; /* Removes the green box */
+    border: none;
+    box-shadow: none;
+    
+    /* Center the sparkle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Hide the letter 'S' */
+    color: transparent;
+    font-size: 0;
+    
+    position: relative;
+}
+
+/* The Neon Sparkle */
+.ask-sia-icon-large::after {
+    content: "✦";
+    font-size: 22px;        /* Large visible sparkle */
+    color: #86efac;         /* Neon Green */
+    text-shadow: 
+        0 0 5px #fff,
+        0 0 12px #22c55e,
+        0 0 20px #22c55e;
+    
+    /* Use the same animation defined in your neon triggers */
+    animation: sulandra-sparkle 2s infinite ease-in-out;
+}
+
+/* Force the "Ask SIA" title text to match the Neon look */
+.ask-sia-title > div:last-child > div:first-child {
+    font-family: 'Cinzel', serif !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase;
+    color: #fff !important;
+    
+    /* The Neon Glow Effect */
+    text-shadow: 
+        0 0 4px rgba(255,255,255,0.6),
+        0 0 10px rgba(34, 197, 94, 0.8),
+        0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+.ask-sia-close {
+    cursor: pointer;
+    color: #64748b;
+    transition: color 0.2s;
+}
+.ask-sia-close:hover { color: #fff; }
+
+/* Scrollable Chat Area */
+.ask-sia-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Context Bubble */
+.ask-sia-context-box {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 11px;
+    color: #94a3b8;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 10px;
+}
+
+/* AI Response Text */
+.ask-sia-answer-box {
+    font-size: 13px;
+    color: #e2e8f0;
+    line-height: 1.6;
+}
+
+/* Footer (Input Area) */
+.ask-sia-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    background: #020617;
+}
+
+.ask-sia-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.ask-sia-textarea {
+    width: 100%;
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 12px 45px 12px 16px;
+    color: #fff;
+    font-size: 13px;
+    resize: none;
+    height: 48px;
+    transition: all 0.2s;
+}
+
+.ask-sia-textarea:focus {
+    background: #0f172a;
+    border-color: #22c55e;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.ask-sia-send-btn {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #022c22;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.ask-sia-send-btn:hover { transform: scale(1.05); }
+
+/* "Use Prompt" Button Style */
+.ask-sia-suggestion {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.ask-sia-suggestion-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #86efac;
+    background: rgba(0,0,0,0.3);
+    padding: 8px;
+    border-radius: 6px;
+}
+.ask-sia-use-btn {
+    align-self: flex-start;
+    background: #22c55e;
+    color: #022c22;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 99px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.ask-sia-use-btn:hover { background: #4ade80; }
+/* ====================================================================== */
+/* ASK SIA - SIDE PANEL STYLES                                            */
+/* ====================================================================== */
+
+.ask-sia-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none; /* Hidden by default */
+    justify-content: flex-end;
+    z-index: 99999;
+    backdrop-filter: blur(2px);
+}
+
+.ask-sia-panel {
+    width: 380px;
+    max-width: 90%;
+    height: 100%;
+    background: radial-gradient(circle at 0% 0%, rgba(69,241,255,0.1), transparent 60%),
+                radial-gradient(circle at 100% 100%, rgba(34, 197, 94, 0.1), transparent 60%),
+                #020617;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    box-shadow: -8px 0 40px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.ask-sia-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.ask-sia-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.ask-sia-close {
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 4px;
+}
+.ask-sia-close:hover { color: #fff; }
+
+.ask-sia-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.ask-sia-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.ask-sia-context-box {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 11px;
+    color: #9ca3af;
+    font-family: 'JetBrains Mono', monospace;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.ask-sia-textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px;
+    color: #fff;
+    font-size: 12px;
+    resize: vertical;
+    min-height: 80px;
+}
+.ask-sia-textarea:focus { border-color: #4ade80; }
+
+.ask-sia-answer-box {
+    flex: 1;
+    overflow-y: auto; /* ENABLE SCROLLING */
+    display: flex;
+    flex-direction: column; /* Stack bubbles vertically */
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    /* Optional: custom scrollbar looks nicer */
+    scrollbar-width: thin; 
+    scrollbar-color: #334155 transparent;
+}
+
+.ask-sia-main-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 99px;
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    color: #022c22;
+    font-weight: 600;
+    font-size: 12px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+/* ====================================================================== */
+/* SULANDRA NEON TRIGGER (Sparkling Text)                                */
+/* ====================================================================== */
+
+.sulandra-neon-trigger {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #e2e8f0;
+    cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto; /* Push to right */
+    
+    /* The Neon Glow */
+    text-shadow: 
+        0 0 2px rgba(255,255,255,0.8),
+        0 0 8px rgba(34, 197, 94, 0.8),
+        0 0 15px rgba(34, 197, 94, 0.6);
+    
+    transition: all 0.3s ease;
+    animation: sulandra-pulse 3s infinite alternate;
+}
+
+/* Sparkle icon pseudo-element */
+.sulandra-neon-trigger::before {
+    content: "✦";
+    font-size: 10px;
+    color: #86efac;
+    text-shadow: 0 0 5px #fff;
+    animation: sulandra-sparkle 1.5s infinite linear;
+}
+
+.sulandra-neon-trigger:hover {
+    color: #fff;
+    text-shadow: 
+        0 0 4px #fff,
+        0 0 10px #4ade80,
+        0 0 20px #4ade80,
+        0 0 30px #22c55e;
+    transform: scale(1.02);
+}
+
+@keyframes sulandra-pulse {
+    0% { opacity: 0.9; }
+    100% { opacity: 1; text-shadow: 0 0 4px #fff, 0 0 12px #22c55e, 0 0 25px #22c55e; }
+}
+
+@keyframes sulandra-sparkle {
+    0% { opacity: 0.5; transform: scale(0.8) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+    100% { opacity: 0.5; transform: scale(0.8) rotate(360deg); }
+}
+/* ====================================================================== */
+/* SULANDRA NEON TRIGGER (Sparkling Text)                                */
+/* ====================================================================== */
+
+.sulandra-neon-trigger {
+    font-family: 'Cinzel', serif; /* Matches your logo font for elegance */
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #e2e8f0;
+    cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    
+    /* The Neon Glow */
+    text-shadow: 
+        0 0 2px rgba(255,255,255,0.8),
+        0 0 8px rgba(34, 197, 94, 0.8),
+        0 0 15px rgba(34, 197, 94, 0.6);
+    
+    transition: all 0.3s ease;
+    animation: sulandra-pulse 3s infinite alternate;
+}
+
+/* Sparkle icon (optional pseudo-element) */
+.sulandra-neon-trigger::before {
+    content: "✦";
+    font-size: 10px;
+    color: #86efac; /* Lighter green */
+    text-shadow: 0 0 5px #fff;
+    animation: sulandra-sparkle 1.5s infinite linear;
+}
+
+.sulandra-neon-trigger:hover {
+    color: #fff;
+    text-shadow: 
+        0 0 4px #fff,
+        0 0 10px #4ade80,
+        0 0 20px #4ade80,
+        0 0 30px #22c55e;
+    transform: scale(1.02);
+}
+
+@keyframes sulandra-pulse {
+    0% { opacity: 0.9; }
+    100% { opacity: 1; text-shadow: 0 0 4px #fff, 0 0 12px #22c55e, 0 0 25px #22c55e; }
+}
+
+@keyframes sulandra-sparkle {
+    0% { opacity: 0.5; transform: scale(0.8) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+    100% { opacity: 0.5; transform: scale(0.8) rotate(360deg); }
+}
+/* ====================================================================== */
+/* PLACEHOLDER & LOADING STATES                                         */
+/* ====================================================================== */
+
+.gallery-card--loading .gallery-card__media-wrapper {
+    background: #020617;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Futuristic Shimmer Animation */
+.gallery-card--loading .gallery-card__media-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 300%;
+    height: 100%;
+    background: linear-gradient(
+        115deg,
+        transparent 20%,
+        rgba(34, 197, 94, 0.1) 40%,
+        rgba(96, 165, 250, 0.2) 50%,
+        rgba(34, 197, 94, 0.1) 60%,
+        transparent 80%
+    );
+    animation: futuristic-shimmer 2.5s infinite linear;
+    z-index: 1;
+}
+
+@keyframes futuristic-shimmer {
+    0% { transform: translateX(0) skewX(-20deg); }
+    100% { transform: translateX(50%) skewX(-20deg); }
+}
+
+/* Loading Spinner/Text container */
+.gallery-card-loader-content {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: var(--accent-primary);
+}
+
+/* Neon Spinner */
+.neon-spinner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--accent-primary);
+    border-right-color: var(--accent-secondary);
+    box-shadow: 0 0 15px var(--accent-primary-soft), inset 0 0 15px var(--accent-secondary-soft);
+    animation: neon-spin 1.2s linear infinite;
+}
+
+@keyframes neon-spin {
+    to { transform: rotate(360deg); }
+}
+
+.gallery-card--loading .gallery-card__title {
+    color: var(--text-muted);
+    font-style: italic;
+}
+        /* ====================================================================== */
+/* FORCE LEFT SIDEBAR (Overrides any previous Right-side settings)      */
+/* ====================================================================== */
+
+.ask-sia-panel-backdrop {
+    /* Force alignment to the START (Left) instead of End (Right) */
+    justify-content: flex-start !important; 
+    
+    /* Position it exactly 80px from the left (next to your nav bar) */
+    left: 80px !important; 
+    right: 0;
+}
+
+.ask-sia-panel {
+    /* Flip the borders so the line is on the right side of the panel */
+    border-right: 1px solid rgba(255,255,255,0.1) !important;
+    border-left: none !important;
+    
+    /* Force the Left-side animation */
+    animation: forceSlideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Define the left-side slide animation */
+@keyframes forceSlideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+</style>
+<script type="module">
+    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
+    window.GradioClient = Client;
+
+    /* ====================================================================== */
+    /* FIXED: GLOBAL SIA & DOWNLOAD FUNCTIONS                                */
+    /* ====================================================================== */
+
+    // 1. Initialize State (FIXED: Attached to window so Send Button can see it)
+    window.askSiaState = { context: "" };
+
+    // 2. Open SIA (Attached to Window so HTML can see it)
+    window.openAskSia = function(contextType, contextText) {
+        const backdrop = document.getElementById("askSiaBackdrop");
+        const contextBox = document.getElementById("askSiaContext");
+        const answerBox = document.getElementById("askSiaAnswer");
+        const questionBox = document.getElementById("askSiaQuestion");
+
+        if (backdrop) {
+            backdrop.style.display = "flex"; // Shows panel (CSS handles position)
+            if (questionBox) {
+                questionBox.value = "";
+                questionBox.focus();
+            }
+        }
+
+        if (contextBox) {
+            const cleanText = (contextText || "General Query").substring(0, 150);
+            contextBox.textContent = `[${contextType.toUpperCase()}] ${cleanText}${contextText.length > 150 ? "..." : ""}`;
+            // FIX: Update the global state
+            window.askSiaState.context = contextText;
+        }
+
+        if (answerBox) {
+            answerBox.innerHTML = '<span style="color:#6b7280; font-style:italic;">I am listening. How can I help with this?</span>';
+        }
+    };
+
+    // 3. Close SIA
+    window.closeAskSia = function() {
+        const backdrop = document.getElementById("askSiaBackdrop");
+        if (backdrop) backdrop.style.display = "none";
+    };
+
+    // 4. Strict Download (Attached to Window)
+    window.downloadHistoryItem = async function(item) {
+        if (!item || !item.url) {
+            showSulandraToast("Error: No file URL found.", "error");
+            return;
+        }
+
+        showSulandraToast("Downloading...", "info");
+
+        try {
+            const response = await fetch(item.url);
+            if (!response.ok) throw new Error("File fetch failed");
+            
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            
+            const a = document.createElement("a");
+            let ext = item.kind === "video" || item.kind === "shortfilm" ? ".mp4" : ".png";
+            
+            // Clean title for filename
+            const safeTitle = (item.title || "sulandra_creation").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            
+            a.href = objectUrl;
+            a.download = `${safeTitle}${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+            
+            showSulandraToast("Download complete.", "success");
+
+        } catch (err) {
+            console.error("Download error:", err);
+            // Strict mode: Toast error only, NO new window opening.
+            showSulandraToast("Download failed. The server blocked the request.", "error");
+        }
+    };
+</script>
 </head>
 <body>
 <div class="vision-root">
@@ -1086,12 +1873,17 @@
             </button>
 
             <!-- Vision Lab (current) -->
-            <button class="vision-nav__item vision-nav__item--active" data-nav="vision" title="Vision Lab">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M3 12C4.8 8.8 8 6.5 12 6.5C16 6.5 19.2 8.8 21 12C19.2 15.2 16 17.5 12 17.5C8 17.5 4.8 15.2 3 12Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="12" cy="12" r="3" stroke="currentColor"/>
-                </svg>
-            </button>
+<button class="vision-nav__item vision-nav__item--active" data-lab-nav="image" title="Image Lab">
+    <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15L16 10L5 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<button class="vision-nav__item" data-lab-nav="video" title="Video Lab">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M15 10L20 7V17L15 14V10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="4" y="6" width="11" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+</button>
+
+<button class="vision-nav__item" data-lab-nav="shortfilm" title="Short Film Lab">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M19.82 2H4.18C2.97602 2 2 2.97602 2 4.18V19.82C2 21.024 2.97602 22 4.18 22H19.82C21.024 22 22 21.024 22 19.82V4.18C22 2.97602 21.024 2 19.82 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 2V22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 2V22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12H22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 7H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 17H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 17H22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7H22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
 
             <!-- Sound Lab placeholder -->
             <button class="vision-nav__item" data-nav="sound" title="Sound Lab">
@@ -1166,40 +1958,7 @@
                 </button>
 
                 <!-- Main lab tabs -->
-                <div class="vision-header__tabs" role="tablist" aria-label="Vision Lab">
-                    <button
-                        class="vision-header__tab vision-header__tab--active"
-                        data-lab-tab="image"
-                        role="tab"
-                        aria-selected="true"
-                    >
-                        Images
-                    </button>
-                    <button
-                        class="vision-header__tab"
-                        data-lab-tab="video"
-                        role="tab"
-                        aria-selected="false"
-                    >
-                        Videos
-                    </button>
-                    <button
-                        class="vision-header__tab"
-                        data-lab-tab="shortfilm"
-                        role="tab"
-                        aria-selected="false"
-                    >
-                        Short Films
-                    </button>
-                    <button
-                        class="vision-header__tab"
-                        data-lab-tab="assets"
-                        role="tab"
-                        aria-selected="false"
-                    >
-                        My Files
-                    </button>
-                </div>
+               
             </div>
 
             <div class="vision-header__right">
@@ -1247,514 +2006,314 @@
             <!-- ======================================================= -->
             <!--  LEFT: CONFIG PANEL (per-lab controls)                 -->
             <!-- ======================================================= -->
-<!-- =============================================== -->
-<!-- NEW LEFT-SIDE LAB SWITCHER (Image / Video / Film) -->
-<!-- =============================================== -->
-<div class="vision-left-labs">
-    <button class="lab-btn" data-lab="image">Image Lab</button>
-    <button class="lab-btn" data-lab="video">Video Lab</button>
-    <button class="lab-btn" data-lab="film">Short Film Lab</button>
-</div>
-<!-- ========== END LAB SWITCHER ========== -->
-
             <section class="vision-config-panel" aria-label="Generation controls">
                 <div class="vision-config-panel__body">
 
                     <!-- =================================================== -->
                     <!--  IMAGE LAB CONFIG                                   -->
                     <!-- =================================================== -->
-                    <div class="lab-config" id="lab-config-image" data-lab="image">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                            <div>
-                                <div style="font-size:15px;font-weight:600;">Image Generator</div>
-                                <div class="text-muted" style="font-size:12px;margin-top:2px;">
-                                    Text-to-Image · Image-to-Image · Styles · Aspect ratios
-                                </div>
-                            </div>
-                            <div class="pill-switch" id="image-mode-switch">
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn pill-switch__btn--active"
-                                    data-image-mode="text"
-                                >
-                                    Text → Image
-                                </button>
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn"
-                                    data-image-mode="image"
-                                >
-                                    Image → Image
-                                </button>
-                            </div>
-                        </div>
+<div class="lab-config" id="lab-config-image" data-lab="image">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+            <div style="font-size:15px;font-weight:600;">Image Generator</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px;">
+                Text-to-Image · Image-to-Image · Styles · Aspect ratios
+            </div>
+        </div>
+        <div class="pill-switch" id="image-mode-switch">
+            <button type="button" class="pill-switch__btn pill-switch__btn--active" data-image-mode="text">Text → Image</button>
+            <button type="button" class="pill-switch__btn" data-image-mode="image">Image → Image</button>
+        </div>
+    </div>
 
-                        <!-- Prompt blocks -->
-                        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
-                            <div>
-                                <label for="image-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="image-main-prompt"
-                                        rows="4"
-                                        placeholder="Describe the image you want Sulandra to create..."
-                                        style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
-                                    ></textarea>
-                                </div>
-                            </div>
+    <div id="image-reference-block" style="margin-bottom:16px; display:none;">
+        <div class="text-soft" style="font-size:12px;margin-bottom:6px;">Reference image</div>
+        <label class="sulandra-upload-box" id="image-upload-box" for="image-reference-input">
+            <div class="sulandra-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5V19M5 12H19" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div>
+                    <div class="sulandra-placeholder-title">Add a start image</div>
+                    <div class="sulandra-placeholder-sub">Click to upload (JPG/PNG)</div>
+                </div>
+            </div>
+            <img id="image-preview-img" class="sulandra-preview-img" alt="Reference Preview" />
+            <button type="button" class="sulandra-remove-btn" onclick="clearReference('image'); event.preventDefault();">×</button>
+            <input id="image-reference-input" type="file" accept="image/*" class="visually-hidden" />
+        </label>
+    </div>
 
-                            <div>
-                                <label for="image-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="image-negative-prompt"
-                                        rows="2"
-                                        placeholder="Things to avoid (blur, watermark, distortion, etc.)"
-                                        style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
-                                    ></textarea>
-                                </div>
-                            </div>
-                        </div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+        <div>
+            <div class="prompt-label-row">
+                <label for="image-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
+                <span class="sulandra-neon-trigger" data-target-prompt="image-main-prompt">Ask SIA</span>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea id="image-main-prompt" rows="4" placeholder="Describe the image you want Sulandra to create..." style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"></textarea>
+            </div>
+        </div>
 
-                        <!-- Reference image upload (visible in Image→Image) -->
-                        <div
-                            id="image-reference-block"
-                            style="margin-bottom:16px;display:none;"
-                        >
-                            <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                                Reference image (Image → Image)
-                            </div>
-                            <label
-                                for="image-reference-input"
-                                style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
-                            >
-                                <div>
-                                    <div style="font-size:12px;">Upload reference</div>
-                                    <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
-                                </div>
-                                <div
-                                    style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
-                                        <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                        <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                            </label>
-                            <input id="image-reference-input" type="file" accept="image/*" class="visually-hidden" />
-                            <div
-                                id="image-reference-preview"
-                                style="margin-top:8px;font-size:11px;color:var(--text-secondary);display:none;"
-                            ></div>
-                        </div>
+        <div>
+            <div class="prompt-label-row">
+                <label for="image-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
+                <span class="sulandra-neon-trigger" data-target-prompt="image-negative-prompt">Ask SIA</span>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea id="image-negative-prompt" rows="2" placeholder="Things to avoid (blur, watermark, distortion, etc.)" style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"></textarea>
+            </div>
+        </div>
+    </div>
 
-                        <!-- Resolution & style row -->
-                        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-                            <div style="display:flex;gap:10px;">
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
-                                    <div class="pill-switch" id="image-aspect-switch">
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn pill-switch__btn--active"
-                                            data-image-aspect="1:1"
-                                        >
-                                            1:1
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-image-aspect="16:9"
-                                        >
-                                            16:9
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-image-aspect="9:16"
-                                        >
-                                            9:16
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <div style="flex:2;">
+             <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
+             <div class="pill-switch" id="image-aspect-switch" style="width:100%; display:flex;">
+                 <button type="button" class="pill-switch__btn pill-switch__btn--active" style="flex:1; justify-content:center;" data-image-aspect="1:1">1:1</button>
+                 <button type="button" class="pill-switch__btn" style="flex:1; justify-content:center;" data-image-aspect="16:9">16:9</button>
+                 <button type="button" class="pill-switch__btn" style="flex:1; justify-content:center;" data-image-aspect="9:16">9:16</button>
+             </div>
+         </div>
+         <div style="flex:1;">
+             <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Variations</div>
+             <select id="image-variations-select" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px; text-align:center;">
+                 <option value="1" selected>1</option>
+                 <option value="2">2</option>
+                 <option value="3">3</option>
+                 <option value="4">4</option>
+             </select>
+         </div>
+     
+     <div style="display:flex;gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Style preset</div>
+                <select id="image-style-select" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;">
+                    <option value="natural">Natural photo</option>
+                    <option value="cinematic">Cinematic</option>
+                    <option value="anime">Anime / Stylized</option>
+                    <option value="digital-art">Digital art</option>
+                    <option value="3d">3D render</option>
+                    <option value="illustration">Illustration</option>
+                </select>
+            </div>
+            <div style="width:120px;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Guidance</div>
+                <input type="range" id="image-guidance-slider" min="1" max="20" value="7" style="width:100%;" />
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:2px;">
+                    <span>Loose</span><span id="image-guidance-value">7</span><span>Strict</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                            <div style="display:flex;gap:10px;">
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Style preset</div>
-                                    <select
-                                        id="image-style-select"
-                                        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                    >
-                                        <option value="natural">Natural photo</option>
-                                        <option value="cinematic">Cinematic</option>
-                                        <option value="anime">Anime / Stylized</option>
-                                        <option value="digital-art">Digital art</option>
-                                        <option value="3d">3D render</option>
-                                        <option value="illustration">Illustration</option>
-                                    </select>
-                                </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps</div>
+            <input type="number" id="image-steps-input" value="30" min="10" max="80" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
+            <input type="number" id="image-seed-input" placeholder="Random" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+    </div>
 
-                                <div style="width:120px;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Guidance</div>
-                                    <input
-                                        type="range"
-                                        id="image-guidance-slider"
-                                        min="1"
-                                        max="20"
-                                        value="7"
-                                        style="width:100%;"
-                                    />
-                                    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:2px;">
-                                        <span>Loose</span>
-                                        <span id="image-guidance-value">7</span>
-                                        <span>Strict</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
+        <div><span id="image-estimate-res">1024 × 1024</span><span>&nbsp;•</span><span id="image-estimate-cost">~1 credit</span></div>
+        <button type="button" id="image-toggle-advanced" style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;">Advanced settings</button>
+    </div>
 
-                        <!-- Advanced row -->
-                        <div style="display:flex;gap:10px;margin-bottom:10px;">
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps</div>
-                                <input
-                                    type="number"
-                                    id="image-steps-input"
-                                    value="30"
-                                    min="10"
-                                    max="80"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
-
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
-                                <input
-                                    type="number"
-                                    id="image-seed-input"
-                                    placeholder="Random"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
-                        </div>
-
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
-                            <div>
-                                <span id="image-estimate-res">1024 × 1024</span>
-                                <span>&nbsp;•</span>
-                                <span id="image-estimate-cost">~1 credit</span>
-                            </div>
-                            <button
-                                type="button"
-                                id="image-toggle-advanced"
-                                style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;"
-                            >
-                                Advanced settings
-                            </button>
-                        </div>
-
-                        <div id="image-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
-                            <div style="display:flex;flex-direction:column;gap:6px;">
-                                <label>
-                                    <input type="checkbox" id="image-enable-upscale" />
-                                    <span>&nbsp;Upscale after generation</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="image-enable-face-fix" />
-                                    <span>&nbsp;Face enhancement</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="image-enable-tiling" />
-                                    <span>&nbsp;Seamless tiling</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+    <div id="image-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+            <label><input type="checkbox" id="image-enable-upscale" /><span>&nbsp;Upscale after generation</span></label>
+            <label><input type="checkbox" id="image-enable-face-fix" /><span>&nbsp;Face enhancement</span></label>
+            <label><input type="checkbox" id="image-enable-tiling" /><span>&nbsp;Seamless tiling</span></label>
+        </div>
+    </div>
+</div>
 
                     <!-- =================================================== -->
                     <!--  VIDEO LAB CONFIG                                   -->
                     <!-- =================================================== -->
-                    <div class="lab-config hidden" id="lab-config-video" data-lab="video">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                            <div>
-                                <div style="font-size:15px;font-weight:600;">Video Generator</div>
-                                <div class="text-muted" style="font-size:12px;margin-top:2px;">
-                                    Text-to-Video · Image-to-Video · Native audio · Durations
-                                </div>
-                            </div>
-                            <div class="pill-switch" id="video-mode-switch">
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn pill-switch__btn--active"
-                                    data-video-mode="text"
-                                >
-                                    Text → Video
-                                </button>
-                                <button
-                                    type="button"
-                                    class="pill-switch__btn"
-                                    data-video-mode="image"
-                                >
-                                    Image → Video
-                                </button>
-                            </div>
-                        </div>
+                   <div class="lab-config hidden" id="lab-config-video" data-lab="video">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+            <div style="font-size:15px;font-weight:600;">Video Generator</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px;">
+                Text-to-Video · Image-to-Video · Native audio · Durations
+            </div>
+        </div>
+        <div class="pill-switch" id="video-mode-switch">
+            <button type="button" class="pill-switch__btn pill-switch__btn--active" data-video-mode="text">Text → Video</button>
+            <button type="button" class="pill-switch__btn" data-video-mode="image">Image → Video</button>
+        </div>
+    </div>
 
-                        <!-- Prompt blocks -->
-                        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
-                            <div>
-                                <label for="video-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="video-main-prompt"
-                                        rows="4"
-                                        placeholder="Describe the motion, camera moves, and scene for the video..."
-                                        style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"
-                                    ></textarea>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="video-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
-                                <div style="margin-top:6px;">
-                                    <textarea
-                                        id="video-negative-prompt"
-                                        rows="2"
-                                        placeholder="Things to avoid (camera shake, artifacts, jitter, etc.)"
-                                        style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"
-                                    ></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Image to video reference -->
-                        <div
-                            id="video-reference-block"
-                            style="margin-bottom:16px;display:none;"
-                        >
-                            <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                                Reference image (Image → Video)
-                            </div>
-                            <label
-                                for="video-reference-input"
-                                style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;border:1px dashed rgba(55,65,81,0.9);padding:10px 12px;cursor:pointer;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);"
-                            >
-                                <div>
-                                    <div style="font-size:12px;">Upload reference frame</div>
-                                    <div class="text-muted" style="font-size:11px;">PNG · JPG · WEBP · up to 8&nbsp;MB</div>
-                                </div>
-                                <div
-                                    style="width:32px;height:32px;border-radius:999px;border:1px solid rgba(55,65,81,0.95);display:flex;align-items:center;justify-content:center;"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
-                                        <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                        <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                                    </svg>
-                                </div>
-                            </label>
-                            <input id="video-reference-input" type="file" accept="image/*" class="visually-hidden" />
-                            <div
-                                id="video-reference-preview"
-                                style="margin-top:8px;font-size:11px;color:var(--text-secondary);display:none;"
-                            ></div>
-                        </div>
-
-                        <!-- Duration / resolution / audio -->
-                        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-                            <div style="display:flex;gap:10px;">
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Duration</div>
-                                    <select
-                                        id="video-duration-select"
-                                        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                    >
-                                        <option value="5">5 seconds</option>
-                                        <option value="10" selected>10 seconds</option>
-                                        <option value="15">15 seconds</option>
-                                        <option value="20">20 seconds</option>
-                                    </select>
-                                </div>
-                                <div style="flex:1;">
-                                    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
-                                    <div class="pill-switch" id="video-aspect-switch">
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn pill-switch__btn--active"
-                                            data-video-aspect="16:9"
-                                        >
-                                            16:9
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-video-aspect="9:16"
-                                        >
-                                            9:16
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="pill-switch__btn"
-                                            data-video-aspect="1:1"
-                                        >
-                                            1:1
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style="display:flex;gap:10px;align-items:flex-end;">
-                                <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
-                                    <input type="checkbox" id="video-native-audio-checkbox" />
-                                    <span>Generate native audio</span>
-                                </label>
-                                <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
-                                    <input type="checkbox" id="video-loop-checkbox" />
-                                    <span>Loop-friendly motion</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Advanced video -->
-                        <div style="display:flex;gap:10px;margin-bottom:10px;">
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps / quality</div>
-                                <input
-                                    type="number"
-                                    id="video-steps-input"
-                                    value="30"
-                                    min="12"
-                                    max="80"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
-                                <input
-                                    type="number"
-                                    id="video-seed-input"
-                                    placeholder="Random"
-                                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;"
-                                />
-                            </div>
-                        </div>
-
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
-                            <div>
-                                <span id="video-estimate-res">720p</span>
-                                <span>&nbsp;•</span>
-                                <span id="video-estimate-cost">~3 credits</span>
-                            </div>
-                            <button
-                                type="button"
-                                id="video-toggle-advanced"
-                                style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;"
-                            >
-                                Advanced motion
-                            </button>
-                        </div>
-
-                        <div id="video-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
-                            <div style="display:flex;flex-direction:column;gap:6px;">
-                                <label>
-                                    <input type="checkbox" id="video-cam-move-checkbox" />
-                                    <span>&nbsp;Enable cinematic camera moves</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="video-stabilize-checkbox" />
-                                    <span>&nbsp;Extra stabilization</span>
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="video-high-fps-checkbox" />
-                                    <span>&nbsp;Higher FPS (slightly slower)</span>
-                                </label>
-                            </div>
-                        </div>
+    <div id="video-reference-block" style="margin-bottom:16px; display:none;">
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:6px;">Start Frame</div>
+                <label class="sulandra-upload-box compact" id="video-start-box" for="video-start-input">
+                    <div class="sulandra-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M5 12l6-6m-6 6l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <div class="sulandra-placeholder-title">Start Image</div>
                     </div>
+                    <img id="video-start-img" class="sulandra-preview-img" alt="Start Preview" />
+                    <button type="button" class="sulandra-remove-btn" onclick="clearReference('video-start'); event.preventDefault();">×</button>
+                    <input id="video-start-input" type="file" accept="image/*" class="visually-hidden" />
+                </label>
+            </div>
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:6px;">End Frame (Opt)</div>
+                <label class="sulandra-upload-box compact" id="video-end-box" for="video-end-input">
+                    <div class="sulandra-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5m14 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <div class="sulandra-placeholder-title">End Image</div>
+                    </div>
+                    <img id="video-end-img" class="sulandra-preview-img" alt="End Preview" />
+                    <button type="button" class="sulandra-remove-btn" onclick="clearReference('video-end'); event.preventDefault();">×</button>
+                    <input id="video-end-input" type="file" accept="image/*" class="visually-hidden" />
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+        <div>
+            <div class="prompt-label-row">
+                <label for="video-main-prompt" class="text-soft" style="font-size:12px;">Prompt</label>
+                <span class="sulandra-neon-trigger" data-target-prompt="video-main-prompt">Ask SIA</span>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea id="video-main-prompt" rows="4" placeholder="Describe the motion, camera moves, and scene for the video..." style="width:100%;border-radius:16px;border:1px solid rgba(31,41,55,0.95);padding:10px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:90px;"></textarea>
+            </div>
+        </div>
+        <div>
+            <div class="prompt-label-row">
+                <label for="video-negative-prompt" class="text-soft" style="font-size:12px;">Negative prompt</label>
+                <span class="sulandra-neon-trigger" data-target-prompt="video-negative-prompt">Ask SIA</span>
+            </div>
+            <div style="margin-top:6px;">
+                <textarea id="video-negative-prompt" rows="2" placeholder="Things to avoid (camera shake, artifacts, jitter, etc.)" style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:60px;"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+        <div style="display:flex;gap:10px;">
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Duration</div>
+                <select id="video-duration-select" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 12px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;">
+                    <option value="5">5 seconds</option>
+                    <option value="10" selected>10 seconds</option>
+                    <option value="15">15 seconds</option>
+                    <option value="20">20 seconds</option>
+                </select>
+            </div>
+            <div style="flex:1;">
+                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
+                <div class="pill-switch" id="video-aspect-switch">
+                    <button type="button" class="pill-switch__btn pill-switch__btn--active" data-video-aspect="16:9">16:9</button>
+                    <button type="button" class="pill-switch__btn" data-video-aspect="9:16">9:16</button>
+                    <button type="button" class="pill-switch__btn" data-video-aspect="1:1">1:1</button>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-end;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
+                <input type="checkbox" id="video-native-audio-checkbox" />
+                <span>Generate native audio</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);">
+                <input type="checkbox" id="video-loop-checkbox" />
+                <span>Loop-friendly motion</span>
+            </label>
+        </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Steps / quality</div>
+            <input type="number" id="video-steps-input" value="30" min="12" max="80" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Seed</div>
+            <input type="number" id="video-seed-input" placeholder="Random" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;" />
+        </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11px;color:var(--text-muted);">
+        <div><span id="video-estimate-res">720p</span><span>&nbsp;•</span><span id="video-estimate-cost">~3 credits</span></div>
+        <button type="button" id="video-toggle-advanced" style="border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:11px;">Advanced motion</button>
+    </div>
+    <div id="video-advanced-panel" class="hidden" style="margin-top:8px;font-size:11px;color:var(--text-secondary);border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+            <label><input type="checkbox" id="video-cam-move-checkbox" /><span>&nbsp;Enable cinematic camera moves</span></label>
+            <label><input type="checkbox" id="video-stabilize-checkbox" /><span>&nbsp;Extra stabilization</span></label>
+            <label><input type="checkbox" id="video-high-fps-checkbox" /><span>&nbsp;Higher FPS (slightly slower)</span></label>
+        </div>
+    </div>
+</div>
 
                     <!-- =================================================== -->
                     <!--  SHORT FILM LAB CONFIG                             -->
                     <!-- =================================================== -->
-                    <div class="lab-config hidden" id="lab-config-shortfilm" data-lab="shortfilm">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-                            <div>
-                                <div style="font-size:15px;font-weight:600;">Short Film Builder</div>
-                                <div class="text-muted" style="font-size:12px;margin-top:2px;">
-                                    Multi-segment storytelling · Scenes · Transitions · Narrative prompts
-                                </div>
-                            </div>
-                            <div class="badge-pill">
-                                <span class="tag-dot"></span>
-                                <span>Storyboard mode</span>
-                            </div>
-                        </div>
+ <div class="lab-config hidden" id="lab-config-shortfilm" data-lab="shortfilm">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+            <div style="font-size:15px;font-weight:600;">Short Film Builder</div>
+            <div class="text-muted" style="font-size:12px;margin-top:2px;">
+                Multi-segment storytelling · Scenes · Transitions · Narrative prompts
+            </div>
+        </div>
+        <div class="badge-pill">
+            <span class="tag-dot"></span>
+            <span>Storyboard mode</span>
+        </div>
+    </div>
 
-                        <div class="text-soft" style="font-size:12px;margin-bottom:6px;">
-                            Film title &amp; global prompt
-                        </div>
-                        <input
-                            id="shortfilm-title-input"
-                            type="text"
-                            placeholder="Title of your short film"
-                            style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);font-size:12px;margin-bottom:8px;"
-                        />
-                        <textarea
-                            id="shortfilm-global-prompt"
-                            rows="3"
-                            placeholder="Describe the overall story, tone, characters, and style..."
-                            style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:70px;margin-bottom:12px;"
-                        ></textarea>
+    <div style="margin-bottom:16px;">
+        <div class="text-soft" style="font-size:12px;margin-bottom:6px;">Style Reference (Optional)</div>
+        <label class="sulandra-upload-box" id="shortfilm-upload-box" for="shortfilm-reference-input">
+            <div class="sulandra-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div>
+                    <div class="sulandra-placeholder-title">Set film style</div>
+                    <div class="sulandra-placeholder-sub">Upload an image to guide the look</div>
+                </div>
+            </div>
+            <img id="shortfilm-preview-img" class="sulandra-preview-img" alt="Reference Preview" />
+            <button type="button" class="sulandra-remove-btn" onclick="clearReference('shortfilm'); event.preventDefault();">×</button>
+            <input id="shortfilm-reference-input" type="file" accept="image/*" class="visually-hidden" />
+        </label>
+    </div>
 
-                        <div class="text-soft" style="font-size:12px;margin-bottom:4px;">
-                            Segments
-                        </div>
-                        <div
-                            id="shortfilm-segments-container"
-                            style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"
-                        >
-                            <!-- Segment rows will be injected by JS -->
-                        </div>
+    <div class="prompt-label-row">
+        <div class="text-soft" style="font-size:12px;">Film title &amp; global prompt</div>
+        <span class="sulandra-neon-trigger" data-target-prompt="shortfilm-global-prompt">Ask SIA</span>
+    </div>
+    <input id="shortfilm-title-input" type="text" placeholder="Title of your short film" style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);font-size:12px;margin-bottom:8px;" />
+    <textarea id="shortfilm-global-prompt" rows="3" placeholder="Describe the overall story, tone, characters, and style..." style="width:100%;border-radius:14px;border:1px solid rgba(31,41,55,0.95);padding:8px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-primary);resize:vertical;min-height:70px;margin-bottom:12px;"></textarea>
 
-                        <button
-                            type="button"
-                            id="shortfilm-add-segment-btn"
-                            style="width:100%;border-radius:12px;border:1px dashed rgba(55,65,81,0.9);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
-                                <path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/>
-                                <path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                            </svg>
-                            <span>Add segment</span>
-                        </button>
+    <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Segments</div>
+    <div id="shortfilm-segments-container" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
 
-                        <div style="display:flex;gap:10px;margin-bottom:10px;font-size:11px;color:var(--text-secondary);">
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
-                                <div class="pill-switch" id="shortfilm-aspect-switch">
-                                    <button
-                                        type="button"
-                                        class="pill-switch__btn pill-switch__btn--active"
-                                        data-shortfilm-aspect="16:9"
-                                    >
-                                        16:9
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="pill-switch__btn"
-                                        data-shortfilm-aspect="9:16"
-                                    >
-                                        9:16
-                                    </button>
-                                </div>
-                            </div>
-                            <div style="flex:1;">
-                                <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Total length</div>
-                                <div id="shortfilm-total-length">~ 20 sec</div>
-                                <div class="text-muted" style="font-size:10px;">Based on segment durations</div>
-                            </div>
-                        </div>
-                    </div>
+    <button type="button" id="shortfilm-add-segment-btn" style="width:100%;border-radius:12px;border:1px dashed rgba(55,65,81,0.9);padding:7px 10px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:var(--text-secondary);font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;">
+        <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;"><path d="M12 5V19" stroke="currentColor" stroke-linecap="round"/><path d="M5 12H19" stroke="currentColor" stroke-linecap="round"/></svg>
+        <span>Add segment</span>
+    </button>
 
+    <div style="display:flex;gap:10px;margin-bottom:10px;font-size:11px;color:var(--text-secondary);">
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Aspect ratio</div>
+            <div class="pill-switch" id="shortfilm-aspect-switch">
+                <button type="button" class="pill-switch__btn pill-switch__btn--active" data-shortfilm-aspect="16:9">16:9</button>
+                <button type="button" class="pill-switch__btn" data-shortfilm-aspect="9:16">9:16</button>
+            </div>
+        </div>
+        <div style="flex:1;">
+            <div class="text-soft" style="font-size:12px;margin-bottom:4px;">Total length</div>
+            <div id="shortfilm-total-length">~ 20 sec</div>
+            <div class="text-muted" style="font-size:10px;">Based on segment durations</div>
+        </div>
+    </div>
+</div>
                     <!-- =================================================== -->
                     <!--  MY FILES / ASSETS CONFIG                          -->
                     <!-- =================================================== -->
@@ -2032,6 +2591,56 @@
     </div>
 </div>
 </body>
+<div class="ask-sia-panel-backdrop" id="askSiaBackdrop">
+    <div class="ask-sia-panel">
+        <div class="ask-sia-header">
+            <div class="ask-sia-title">
+                <div class="ask-sia-icon-large">S</div>
+                <div>
+                    <div style="font-weight:700; color:#fff;">Ask SIA</div>
+                    <div style="font-size: 10px; color:#94a3b8;">Sulandra Intelligent Assistant</div>
+                </div>
+            </div>
+            <div class="ask-sia-close" onclick="closeAskSia()">
+                <svg viewBox="0 0 24 24" fill="none" style="width:20px;height:20px;">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="ask-sia-body">
+            <div>
+                <div style="font-size:10px; text-transform:uppercase; color:#64748b; margin-bottom:6px; letter-spacing:0.05em;">Context</div>
+                <div class="ask-sia-context-box" id="askSiaContext">
+                    No active context.
+                </div>
+            </div>
+
+            <div id="askSiaAnswer" class="ask-sia-answer-box">
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; opacity:0.3; margin-top:40px;">
+                    <svg viewBox="0 0 24 24" fill="none" style="width:40px;height:40px;margin-bottom:10px;color:#64748b;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>How can I help you create?</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ask-sia-footer">
+            <div class="ask-sia-input-wrapper">
+                <textarea
+                    id="askSiaQuestion"
+                    class="ask-sia-textarea"
+                    placeholder="Ask SIA to refine your prompt..."
+                    onkeydown="if(event.key === 'Enter' && !event.shiftKey){ event.preventDefault(); sendAskSia(); }"
+                ></textarea>
+                <button type="button" class="ask-sia-send-btn" onclick="sendAskSia()">
+                    <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
+                        <path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
 /* ====================================================================== */
 /*  SULANDRA VISION LAB – SECTION 3                                       */
@@ -2042,19 +2651,15 @@
 /* ----------------------------- API CONFIG ------------------------------ */
 
 /**
- * Base URL for your Sulandra Vision backend on RunPod.
- * Replace this with your own endpoint. All generate calls will use it.
- *
- * Example:
- *   const SULANDRA_API_BASE = "https://xxxxxxxx-xxxx-xxxx.runpod.endpoint";
+ * CONNECTED: Your active RunPod FastAPI backend.
  */
-const SULANDRA_API_BASE = "https://YOUR-RUNPOD-ENDPOINT-HERE";
+const SULANDRA_API_BASE = "https://tz9i9ot0o6003r-8188.proxy.runpod.net";
+const HUNYUAN_API_BASE  = "https://d2r0ul0h7pe8gt-300.proxy.runpod.net";
 
 /**
- * Optional: SIA Brain endpoint (Ask SIA).
- * Replace with your FastAPI / Node endpoint that accepts a JSON payload.
+ * CONNECTED: SIA Brain uses the same backend via the /ask_sia endpoint.
  */
-const SIA_BRAIN_ENDPOINT = "https://YOUR-SIA-BRAIN-ENDPOINT-HERE";
+const SIA_BRAIN_ENDPOINT = `${SULANDRA_API_BASE}/ask_sia`;
 
 /* --------------------------- STORAGE KEYS ------------------------------ */
 
@@ -2343,6 +2948,73 @@ function deleteHistoryItem(historyId) {
     historyInMemory = historyInMemory.filter(x => x.id !== historyId);
     saveHistoryToStorage();
 }
+/**
+ * Apply a history item's prompt back into the appropriate lab inputs.
+ */
+function applyHistoryPrompt(item) {
+    if (!item) return;
+
+    // Switch to the matching lab
+    if (item.kind === "image") {
+        setActiveLab("image");
+        const main = $("image-main-prompt");
+        const neg = $("image-negative-prompt");
+        if (main) main.value = item.prompt || "";
+        if (neg && item.negativePrompt) neg.value = item.negativePrompt;
+    } else if (item.kind === "video") {
+        setActiveLab("video");
+        const main = $("video-main-prompt");
+        const neg = $("video-negative-prompt");
+        if (main) main.value = item.prompt || "";
+        if (neg && item.negativePrompt) neg.value = item.negativePrompt;
+    } else if (item.kind === "shortfilm") {
+        setActiveLab("shortfilm");
+        const main = $("shortfilm-global-prompt");
+        if (main) main.value = item.prompt || "";
+    }
+}
+/**
+ * Force a browser download of a history item's media (image or video).
+ */
+async function downloadHistoryItem(item) {
+    if (!item || !item.url) return;
+
+    try {
+        // Fetch media as a blob so we can force a "real" download
+        const response = await fetch(item.url);
+        if (!response.ok) throw new Error("Download failed");
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+
+        // Decide extension based on type
+        let ext = "";
+        if (item.kind === "image") ext = ".png";
+        else if (item.kind === "video" || item.kind === "shortfilm") ext = ".mp4";
+
+        const safeTitle = (item.title || "sulandra-output").replace(/[^\w\-]+/g, "_");
+
+        a.href = objectUrl;
+        a.download = safeTitle + ext;
+
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(objectUrl);
+        } catch (err) {
+        console.error("Download error:", err);
+
+        // Do NOT open a new tab anymore.
+        // Show a toast / alert instead so the user can manually save.
+        alert(
+            "Download failed inside the browser.\n" +
+            "Please right-click the image or video and choose 'Save As…' to download."
+        );
+    }
+}
 
 /**
  * Returns filtered history according to current lab, gallery filter,
@@ -2390,58 +3062,78 @@ function clearGallery() {
 }
 
 /**
- * Render a single gallery card (Image / Video / Film)
+ * Render a single gallery card (Image / Video / Film / Placeholder)
  */
 function createGalleryCard(item) {
     const card = document.createElement("div");
-    card.className = currentGalleryLayout === "grid"
-        ? "gallery-card gallery-card--grid"
-        : "gallery-card gallery-card--vertical";
+    // Add loading class if it's a placeholder
+    const baseClass = currentGalleryLayout === "grid" ? "gallery-card gallery-card--grid" : "gallery-card gallery-card--vertical";
+    card.className = item.isPlaceholder ? `${baseClass} gallery-card--loading` : baseClass;
 
     card.dataset.historyId = item.id;
 
-    /* ---------- media element ---------- */
+    /* ---------- media element OR loading placeholder ---------- */
     let mediaHTML = "";
-    if (item.kind === "image") {
-        mediaHTML = `<img src="${item.url}" class="gallery-card__media">`;
-    } else if (item.kind === "video") {
-        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline></video>`;
+    if (item.isPlaceholder) {
+        // Futuristic loading animation
+        mediaHTML = `
+            <div class="gallery-card-loader-content">
+                <div class="neon-spinner"></div>
+                <div style="font-size:10px; letter-spacing:0.1em; text-transform:uppercase;">Generating</div>
+            </div>
+        `;
+    } else if (item.kind === "image") {
+        mediaHTML = `<img src="${item.url}" class="gallery-card__media" loading="lazy">`;
     } else {
-        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline></video>`;
+        // Video or Shortfilm
+        mediaHTML = `<video src="${item.url}" class="gallery-card__media" muted playsinline onmouseover="this.play()" onmouseout="this.pause();this.currentTime=0;"></video>`;
     }
 
-    /* ---------- build card ---------- */
+    /* ---------- build card wrapper ---------- */
+    // Placeholders use their target aspect ratio immediately
+    const aspect = item.aspect || "1:1";
+    
     card.innerHTML = `
-        <div class="gallery-card__media-wrapper">
-            ${mediaHTML}
-        </div>
+    <div class="gallery-card__media-wrapper" data-aspect="${aspect}">
+        ${mediaHTML}
+    </div>
 
-        <div class="gallery-card__info">
-            <div class="gallery-card__title">${item.title}</div>
-            <div class="gallery-card__prompt">${item.prompt || "No prompt"}</div>
-            <div class="gallery-card__meta">
-                <span>${new Date(item.createdAt).toLocaleString()}</span>
-                ${item.isFavorite
-                    ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">★</span>`
-                    : `<span class="gallery-card__fav" data-fav="${item.id}">☆</span>`
-                }
+    <div class="gallery-card__info">
+        <div class="gallery-card__title">${item.isPlaceholder ? "Creating..." : item.title}</div>
+
+        <div class="gallery-card__actions-row" style="${item.isPlaceholder ? 'opacity:0.5; pointer-events:none;' : ''}">
+            <div class="gallery-card__actions-left">
+                <button type="button" class="gallery-card__icon-btn" data-action="fullscreen" title="Fullscreen">⤢</button>
+                <button type="button" class="gallery-card__icon-btn" data-action="use-prompt" title="Use this prompt">↻</button>
+                <button type="button" class="gallery-card__icon-btn" data-action="download" title="Download">⤓</button>
+                <button type="button" class="gallery-card__icon-btn gallery-card__icon-btn--danger" data-action="delete" title="Delete">🗑</button>
             </div>
+            ${!item.isPlaceholder ? (item.isFavorite ? `<span class="gallery-card__fav gallery-card__fav--active" data-fav="${item.id}">♥</span>` : `<span class="gallery-card__fav" data-fav="${item.id}">♡</span>`) : ''}
         </div>
-    `;
+    </div>
+`;
 
-    /* ---------- favorite toggle ---------- */
+    // Don't attach listeners if it's a placeholder
+    if (item.isPlaceholder) return card;
+
+    /* ---------- Attach Listeners (same as before) ---------- */
     const favBtn = card.querySelector("[data-fav]");
-    favBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        toggleFavorite(item.id);
-        renderGallery();
-        renderHistoryRail();
-    });
+    if (favBtn) favBtn.addEventListener("click", e => { e.stopPropagation(); toggleFavorite(item.id); refreshAllHistoryDisplays(); });
 
-    /* ---------- click to open lightbox ---------- */
-    card.addEventListener("click", () => {
-        openLightbox(item.id);
-    });
+    const fullscreenBtn = card.querySelector('[data-action="fullscreen"]');
+    if (fullscreenBtn) fullscreenBtn.addEventListener("click", e => { e.stopPropagation(); openLightbox(item.id); });
+
+    const deleteBtn = card.querySelector('[data-action="delete"]');
+    if (deleteBtn) deleteBtn.addEventListener("click", e => { e.stopPropagation(); if(window.confirm("Delete?")) { deleteHistoryItem(item.id); refreshAllHistoryDisplays(); } });
+
+    const usePromptBtn = card.querySelector('[data-action="use-prompt"]');
+    if (usePromptBtn) usePromptBtn.addEventListener("click", e => { e.stopPropagation(); applyHistoryPrompt(item); });
+
+    // Changed download to a button listener instead of an <a> tag for better control
+    const downloadBtn = card.querySelector('[data-action="download"]');
+    if (downloadBtn) downloadBtn.addEventListener("click", e => { e.stopPropagation(); downloadHistoryItem(item); });
+
+    card.addEventListener("click", () => { openLightbox(item.id); });
 
     return card;
 }
@@ -2625,69 +3317,112 @@ function injectDynamicStyles() {
     }
 
     .gallery-card__media-wrapper {
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        background: #020617;
-        overflow: hidden;
-        position: relative;
-    }
+    width: 100%;
+    background: #020617;
+    overflow: hidden;
+    position: relative;
+}
 
-    .gallery-card__media {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
+/* Let the wrapper use the actual aspect ratio of the creation */
+.gallery-card__media-wrapper[data-aspect="1:1"] {
+    aspect-ratio: 1 / 1;
+}
+.gallery-card__media-wrapper[data-aspect="16:9"] {
+    aspect-ratio: 16 / 9;
+}
+.gallery-card__media-wrapper[data-aspect="9:16"] {
+    aspect-ratio: 9 / 16;
+}
+
+/* Show the whole image/video inside the frame without stretching */
+.gallery-card__media {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #020617;
+}
+
 
     .gallery-card__info {
-        padding: 10px 12px 12px;
-        border-top: 1px solid rgba(15, 23, 42, 0.95);
-        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        min-height: 72px;
-    }
+    padding: 8px 10px;
+    border-top: 1px solid rgba(15, 23, 42, 0.95);
+    background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: auto;
+}
 
-    .gallery-card__title {
-        font-size: 13px;
-        font-weight: 600;
-        color: #e5e7eb;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
+.gallery-card__title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #e5e7eb;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
 
-    .gallery-card__prompt {
-        font-size: 11px;
-        color: #9ca3af;
-        max-height: 3.2em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.gallery-card__actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 2px;
+}
 
-    .gallery-card__meta {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 10px;
-        color: #6b7280;
-        margin-top: 2px;
-    }
+.gallery-card__actions-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
 
-    .gallery-card__fav {
-        cursor: pointer;
-        font-size: 13px;
-        padding: 1px 4px;
-        border-radius: 999px;
-        border: 1px solid transparent;
-    }
+.gallery-card__icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    border: 1px solid rgba(31, 41, 55, 0.95);
+    background: radial-gradient(circle at 50% 0, #020617, #020617 60%, #000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #9ca3af;
+    cursor: pointer;
+    transition:
+        background 140ms ease-out,
+        color 140ms ease-out,
+        border-color 140ms ease-out,
+        box-shadow 140ms ease-out;
+}
 
-    .gallery-card__fav--active {
-        color: #fbbf24;
-        border-color: rgba(251, 191, 36, 0.4);
-        background: rgba(24, 24, 27, 0.9);
-    }
+.gallery-card__icon-btn:hover {
+    border-color: rgba(148, 163, 184, 0.95);
+    color: #e5e7eb;
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.6);
+}
+
+.gallery-card__icon-btn--danger:hover {
+    border-color: rgba(248, 113, 113, 0.85);
+    color: #fecaca;
+    box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
+}
+
+.gallery-card__fav {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.gallery-card__fav--active {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.4);
+    background: rgba(24, 24, 27, 0.9);
+}
+
 
     .history-thumb {
         position: relative;
@@ -2737,18 +3472,18 @@ function injectDynamicStyles() {
     }
 
     .vision-lightbox {
-        width: min(1120px, 95vw);
-        max-height: 90vh;
-        border-radius: 26px;
-        border: 1px solid rgba(31, 41, 55, 0.95);
-        background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
-        box-shadow:
-            0 0 0 1px rgba(15, 23, 42, 0.95),
-            0 38px 90px rgba(0, 0, 0, 0.98);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    background: radial-gradient(circle at 0 0, #020617, #020617 60%, #000 100%);
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 
     .vision-lightbox__header {
         padding: 10px 16px 8px;
@@ -3038,25 +3773,20 @@ function ensureLightboxDOM() {
     });
 
     const btnDownload = document.createElement("button");
-    btnDownload.className = "vision-lightbox__icon-btn";
-    btnDownload.title = "Download";
-    btnDownload.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
-            <path d="M12 4V14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M8 10L12 14L16 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M5 18H19" stroke="currentColor" stroke-linecap="round"/>
-        </svg>
-    `;
-    btnDownload.addEventListener("click", () => {
-        if (!lightboxCurrentItem || !lightboxCurrentItem.url) return;
-        const a = document.createElement("a");
-        a.href = lightboxCurrentItem.url;
-        const ext = lightboxCurrentItem.kind === "image" ? ".png" : ".mp4";
-        a.download = (lightboxCurrentItem.title || "sulandra-output") + ext;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    });
+btnDownload.className = "vision-lightbox__icon-btn";
+btnDownload.title = "Download";
+btnDownload.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;">
+        <path d="M12 4V14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 10L12 14L16 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 18H19" stroke="currentColor" stroke-linecap="round"/>
+    </svg>
+`;
+
+btnDownload.addEventListener("click", () => {
+    if (!lightboxCurrentItem) return;
+    downloadHistoryItem(lightboxCurrentItem);
+});
 
     lightboxFavBtn = document.createElement("button");
     lightboxFavBtn.className = "vision-lightbox__icon-btn";
@@ -3379,26 +4109,31 @@ async function askSIAAboutItem(item) {
 function setActiveLab(lab) {
     currentLab = lab;
 
-    // Header tabs
-    const tabs = document.querySelectorAll("[data-lab-tab]");
-    tabs.forEach(tab => {
-        const t = tab.dataset.labTab;
-        tab.classList.toggle("vision-header__tab--active", t === lab);
-        tab.setAttribute("aria-selected", t === lab ? "true" : "false");
+    // UPDATE: Sidebar Navigation active states
+    const navItems = document.querySelectorAll("[data-lab-nav]");
+    navItems.forEach(item => {
+        const navLab = item.dataset.labNav;
+        item.classList.toggle("vision-nav__item--active", navLab === lab);
     });
 
-    // Config panels
+    // Config panels (visibility)
     const configs = document.querySelectorAll(".lab-config");
     configs.forEach(cfg => {
         const labName = cfg.dataset.lab;
-        cfg.classList.toggle("hidden", labName !== lab && !(lab === "assets" && labName === "assets"));
+        // Hide all, unless it matches current lab OR it's assets view mode
+        let isVisible = labName === lab;
+        if (lab === 'assets' && labName === 'assets') isVisible = true;
+        cfg.classList.toggle("hidden", !isVisible);
     });
 
-    // If lab is assets, force mode to view My Files-like behaviour
+    // If switching to assets via some other means, ensure mode is view
     if (lab === "assets") {
         currentMode = "view";
-        updateModeToggleButtons();
+    } else {
+        // If switching to a creation lab, ensure mode is create
+        currentMode = "create";
     }
+    updateModeToggleButtons();
 
     // Update generate button label
     const modeLabel = $("btn-generate-mode-label");
@@ -3409,11 +4144,11 @@ function setActiveLab(lab) {
         else modeLabel.textContent = "(—)";
     }
 
-    // When switching lab, default gallery filter to that lab
+    // Default gallery filters
     if (lab === "image") currentGalleryFilter = "images";
     else if (lab === "video") currentGalleryFilter = "videos";
     else if (lab === "shortfilm") currentGalleryFilter = "films";
-    else currentGalleryFilter = "all";
+    else if (lab === "assets") currentGalleryFilter = "all";
 
     updateGalleryFilterButtons();
     refreshAllHistoryDisplays();
@@ -3485,7 +4220,65 @@ function updateGalleryLayoutButtons() {
         btn.classList.toggle("pill-switch__btn--active", val === currentGalleryLayout);
     });
 }
+/* ========================================= */
+/* PREVIEW LOGIC (SULANDRA STYLE)           */
+/* ========================================= */
 
+function wireReferenceImagePreviews() {
+    // Generic setup function
+    const setupBox = (inputId, boxId, imgId) => {
+        const input = document.getElementById(inputId);
+        const box = document.getElementById(boxId);
+        const img = document.getElementById(imgId);
+
+        if (!input || !box || !img) return;
+
+        input.addEventListener("change", () => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                    box.classList.add("has-file");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    };
+
+    // 1. Image Lab
+    setupBox("image-reference-input", "image-upload-box", "image-preview-img");
+
+    // 2. Video Lab (Start & End)
+    setupBox("video-start-input", "video-start-box", "video-start-img");
+    setupBox("video-end-input", "video-end-box", "video-end-img");
+    
+    // 3. Short Film (Global Style)
+    setupBox("shortfilm-reference-input", "shortfilm-upload-box", "shortfilm-preview-img");
+}
+
+// Global Helper to clear images via the X button
+function clearReference(idKey) {
+    // Handle short film segments (idKey format: "seg-1")
+    if (idKey.startsWith("seg-")) {
+        const rowId = idKey.replace("seg-", "");
+        const box = document.getElementById(`shortfilm-seg-box-${rowId}`);
+        const img = document.getElementById(`shortfilm-seg-img-${rowId}`);
+        const input = document.getElementById(`shortfilm-seg-input-${rowId}`);
+        if(input) input.value = "";
+        if(img) img.src = "";
+        if(box) box.classList.remove("has-file");
+        return;
+    }
+
+    // Handle standard boxes
+    let input = document.getElementById(`${idKey}-input`) || document.getElementById(`${idKey}-reference-input`);
+    let box = document.getElementById(`${idKey}-box`) || document.getElementById(`${idKey}-upload-box`);
+    let img = document.getElementById(`${idKey}-img`) || document.getElementById(`${idKey}-preview-img`);
+
+    if (input) input.value = "";
+    if (img) img.src = "";
+    if (box) box.classList.remove("has-file");
+}
 /* ----------------------- IMAGE / VIDEO / FILM CONTROLS ------------------ */
 
 function wireImageControls() {
@@ -3616,69 +4409,97 @@ function wireShortFilmControls() {
 
 let shortFilmSegmentCounter = 0;
 
+/* 2. REPLACE THIS FUNCTION */
 function addShortFilmSegmentRow() {
-    const container = $("shortfilm-segments-container");
+    const container = document.getElementById("shortfilm-segments-container");
     if (!container) return;
 
     shortFilmSegmentCounter++;
     const id = shortFilmSegmentCounter;
+    const promptId = `shortfilm-segment-prompt-${id}`;
 
     const row = document.createElement("div");
     row.className = "shortfilm-segment-row";
     row.dataset.segmentId = String(id);
+    row.style.borderBottom = "1px solid rgba(31,41,55,0.5)";
+    row.style.paddingBottom = "12px";
+    
+    // Updated HTML: Neon Text placed in the Header row
     row.innerHTML = `
-        <div style="display:flex;gap:6px;align-items:flex-start;">
-            <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
-                <input
-                    type="text"
-                    class="shortfilm-segment-title"
-                    placeholder="Scene ${id} title"
-                    style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;"
-                />
-                <textarea
-                    class="shortfilm-segment-prompt"
-                    rows="2"
-                    placeholder="Describe what happens in this segment (camera, action, emotion)..."
-                    style="width:100%;border-radius:10px;border:1px solid rgba(31,41,55,0.95);padding:6px 8px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;resize:vertical;min-height:48px;"
-                ></textarea>
-            </div>
-            <div style="width:76px;display:flex;flex-direction:column;gap:4px;font-size:11px;color:#9ca3af;">
-                <label>
-                    <span>Sec</span>
-                    <input
-                        type="number"
-                        class="shortfilm-segment-duration"
-                        value="4"
-                        min="1"
-                        max="12"
-                        style="width:100%;border-radius:999px;border:1px solid rgba(31,41,55,0.95);padding:4px 6px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#e5e7eb;font-size:11px;margin-top:2px;"
-                    />
+        <div style="display:flex; gap:10px;">
+            <div style="width: 100px; flex-shrink: 0;">
+                <div class="text-soft" style="font-size:10px;margin-bottom:4px;">Ref Image</div>
+                <label class="sulandra-upload-box compact" id="shortfilm-seg-box-${id}" for="shortfilm-seg-input-${id}" style="aspect-ratio:1/1; height:auto;">
+                    <div class="sulandra-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <img id="shortfilm-seg-img-${id}" class="sulandra-preview-img" alt="Scene Ref" />
+                    <button type="button" class="sulandra-remove-btn" onclick="clearReference('seg-${id}'); event.preventDefault();">×</button>
+                    <input id="shortfilm-seg-input-${id}" type="file" accept="image/*" class="visually-hidden" />
                 </label>
-                <button
-                    type="button"
-                    class="shortfilm-segment-remove"
-                    style="width:100%;border-radius:999px;border:1px solid rgba(71,85,105,0.95);padding:4px 6px;background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%);color:#f97373;font-size:10px;"
-                >
-                    Remove
-                </button>
+            </div>
+
+            <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <input type="text" class="shortfilm-segment-title" placeholder="Scene ${id} Title" 
+                        style="flex:1; background:transparent; border:none; color:#e5e7eb; font-weight:600; font-size:12px; outline:none;" />
+                    
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span class="sulandra-neon-trigger dynamic-ask-trigger" data-target-prompt="${promptId}" style="font-size:9px;">Ask SIA</span>
+                        <button type="button" class="shortfilm-segment-remove" style="color:#ef4444; font-size:10px;">Remove</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <textarea id="${promptId}" class="shortfilm-segment-prompt" rows="2" placeholder="Describe scene action..." 
+                        style="width:100%; border-radius:10px; border:1px solid rgba(31,41,55,0.95); padding:6px 8px; background:radial-gradient(circle at 0 0,#020617,#020617 60%,#000 100%); color:#e5e7eb; font-size:11px; resize:vertical; min-height:60px;"></textarea>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                    <span class="text-soft" style="font-size:10px;">Duration:</span>
+                    <input type="number" class="shortfilm-segment-duration" value="4" min="1" max="10" 
+                        style="width:40px; background:#0f172a; border:1px solid #1f2937; border-radius:4px; color:#fff; font-size:10px; padding-left:4px;" />
+                    <span class="text-soft" style="font-size:10px;">sec</span>
+                </div>
             </div>
         </div>
     `;
 
     container.appendChild(row);
 
-    const durationInput = row.querySelector(".shortfilm-segment-duration");
-    if (durationInput) {
-        durationInput.addEventListener("input", updateShortFilmTotalLength);
+    // --- Wire up Logic ---
+    const input = document.getElementById(`shortfilm-seg-input-${id}`);
+    const box = document.getElementById(`shortfilm-seg-box-${id}`);
+    const img = document.getElementById(`shortfilm-seg-img-${id}`);
+
+    if (input) {
+        input.addEventListener("change", () => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                    box.classList.add("has-file");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    }
+
+    // Wiring the new Neon Text trigger
+    const askTrigger = row.querySelector(".dynamic-ask-trigger");
+    if (askTrigger) {
+        askTrigger.addEventListener("click", () => {
+            const txt = document.getElementById(promptId);
+            const content = txt ? txt.value : "";
+            openAskSia('shortfilm-segment', content || `Segment ${id} (Empty)`);
+        });
     }
 
     const removeBtn = row.querySelector(".shortfilm-segment-remove");
-    if (removeBtn) {
-        removeBtn.addEventListener("click", () => {
-            row.remove();
-            updateShortFilmTotalLength();
-        });
-    }
+    const durInput = row.querySelector(".shortfilm-segment-duration");
+    
+    if (removeBtn) removeBtn.addEventListener("click", () => { row.remove(); updateShortFilmTotalLength(); });
+    if (durInput) durInput.addEventListener("input", updateShortFilmTotalLength);
 
     updateShortFilmTotalLength();
 }
@@ -3885,47 +4706,100 @@ function setGeneratingState(active, labelText) {
     }
 }
 
-/* --------------------------- RUNPOD API STUB --------------------------- */
+/* --------------------------- REAL API INTEGRATION --------------------------- */
 
-async function callSulandraAPI(path, payload) {
-    if (!SULANDRA_API_BASE || SULANDRA_API_BASE.includes("YOUR-RUNPOD-ENDPOINT")) {
-        // Stub: simulate success with placeholder image/video so UI is still testable
-        console.warn("[Sulandra] SULANDRA_API_BASE is not configured. Returning stub object.");
-        await new Promise(res => setTimeout(res, 800));
-        const kind = payload.kind || "image";
-        const url = kind === "image"
-            ? "https://dummyimage.com/1280x720/0f172a/ffffff.png&text=Sulandra+Image"
-            : "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4";
-        return {
-            ok: true,
-            kind: kind,
-            url: url,
-            thumb: url,
-            meta: {
-                model: "Sulandra Vision Flux 2.0 (stub)",
-                guidance: payload.guidance,
-                steps: payload.steps,
-                seed: payload.seed || null,
-                creditsUsed: 1
+/**
+ * Real API Call Handler
+ * Routes requests to SIA Brain (Images) or Hunyuan (Videos & Films)
+ */
+async function callSulandraAPI(uiPath, payload) {
+    try {
+        // --- FIX FOR 422 ERROR: SANITIZE SEED ---
+        // Ensure seed is ALWAYS an integer. If empty/null, generate one here.
+        const safeSeed = (payload.seed === null || payload.seed === undefined || payload.seed === "") 
+            ? Math.floor(Math.random() * 4294967295) 
+            : Number(payload.seed);
+
+        // ============================================================
+        //  VIDEO & SHORT FILM GENERATION (HUNYUAN PORT 300)
+        // ============================================================
+        if (payload.kind === "video" || payload.kind === "shortfilm") {
+            if (!window.GradioClient) throw new Error("Gradio Client loading... try again later.");
+
+            let finalPrompt = "", steps = 50, resolution = "1280x720", duration = 129;
+            
+            if (payload.kind === "shortfilm") {
+                let segmentText = payload.segments ? payload.segments.map((seg, i) => `Scene ${i+1}: ${seg.prompt}`).join(". ") : "";
+                finalPrompt = `Cinematic short film titled "${payload.film_title}". ${payload.global_prompt}. ${segmentText}`;
+                if (payload.aspect === "9:16") resolution = "720x1280";
+                if (payload.aspect === "1:1")  resolution = "960x960";
+            } else {
+                finalPrompt = payload.prompt;
+                steps = Number(payload.steps) || 50;
+                const resMap = { "16:9": "1280x720", "9:16": "720x1280", "1:1": "960x960" };
+                if (resMap[payload.aspect]) resolution = resMap[payload.aspect];
+                if (payload.duration == 5 || payload.duration == 9) duration = 129;
             }
+
+            console.log(`[Sulandra] Calling Hunyuan...`);
+            const client = await window.GradioClient.connect(HUNYUAN_API_BASE);
+            const result = await client.predict("/lambda_1", [ 
+                finalPrompt, resolution, duration, safeSeed, steps, 1, 7, 6 
+            ]);
+
+            return {
+                ok: true, kind: payload.kind, url: result.data[0].url, thumb: result.data[0].url,
+                meta: { model: "HunyuanVideo", steps: steps, seed: safeSeed }
+            };
+        }
+
+        // ============================================================
+        //  IMAGE GENERATION (SIA BRAIN FLUX PORT 8188)
+        // ============================================================
+        let endpoint = "/api/image/txt2img";
+        
+        // Construct a clean body (NO batch_size) to prevent 422 errors
+        let body = {
+            prompt: payload.prompt,
+            steps: Number(payload.steps) || 30,
+            width: 1024, height: 1024,
+            guidance_scale: Number(payload.guidance) || 3.5,
+            seed: safeSeed 
         };
+
+        if (payload.aspect === "16:9") { body.width = 1344; body.height = 768; }
+        if (payload.aspect === "9:16") { body.width = 768; body.height = 1344; }
+
+        if (payload.mode === "image" && payload.reference_image) {
+            endpoint = "/api/image/img2img";
+            body.init_image_base64 = payload.reference_image;
+            body.strength = 0.75;
+        }
+
+        const response = await fetch(`${SULANDRA_API_BASE}${endpoint}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error("Backend Error:", errText); // Logs exact reason for 422
+            throw new Error(`Backend Error ${response.status}`);
+        }
+
+        const data = await response.json();
+        const fullUrl = `${SULANDRA_API_BASE}${data.image_url}`;
+
+        return {
+            ok: true, kind: "image", url: fullUrl, thumb: fullUrl,
+            meta: { model: "Flux.1 Dev", seed: safeSeed }
+        };
+
+    } catch (err) {
+        console.error("API Call Failed:", err);
+        throw err; 
     }
-
-    const url = SULANDRA_API_BASE.replace(/\/+$/, "") + path;
-    const res = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) {
-        const txt = await res.text();
-        throw new Error("Sulandra API error: " + res.status + " – " + txt);
-    }
-
-    return res.json();
 }
 
 /* ---------------------- BUILD PAYLOADS FROM UI -------------------------- */
@@ -3946,26 +4820,20 @@ function getSelectedShortFilmAspect() {
 }
 
 function buildImagePayloadFromUI() {
-    const prompt = $("image-main-prompt")?.value || "";
-    const negativePrompt = $("image-negative-prompt")?.value || "";
-    const aspect = getSelectedImageAspect();
-    const style = $("image-style-select")?.value || "natural";
-    const guidance = Number($("image-guidance-slider")?.value || 7);
+    // ... existing code ...
     const steps = Number($("image-steps-input")?.value || 30);
     const seedVal = $("image-seed-input")?.value;
     const seed = seedVal === "" ? null : Number(seedVal);
+    // NEW: Get batch size
+    const batchSize = Number($("image-variations-select")?.value || 1);
 
     return {
         kind: "image",
         prompt: prompt,
-        negative_prompt: negativePrompt,
-        aspect: aspect,
-        style: style,
-        guidance: guidance,
-        steps: steps,
+        // ... existing props ...
         seed: seed,
-        mode: currentImageMode
-        // reference image will be added later if needed
+        mode: currentImageMode,
+        batch_size: batchSize // Add to payload
     };
 }
 
@@ -4049,113 +4917,131 @@ async function readFileAsBase64(file) {
 
 /* --------------------------- GENERATE FLOWS ----------------------------- */
 
-async function generateImageFromUI() {
-    if (isGenerating) return;
-    const payload = buildImagePayloadFromUI();
+// Helper: Create instant loading cards
+function createPlaceholders(count, kind, prompt, aspect, negativePrompt) {
+    const placeholders = [];
+    for (let i = 0; i < count; i++) {
+        const id = uuidv4();
+        const item = {
+            id: id, kind: kind, title: "Generating...", prompt: prompt,
+            negativePrompt: negativePrompt || "", aspect: aspect || "1:1",
+            createdAt: Date.now(), isPlaceholder: true, isFavorite: false, meta: {}
+        };
+        historyInMemory.unshift(item);
+        placeholders.push(id);
+    }
+    refreshAllHistoryDisplays();
+    return placeholders;
+}
 
-    // Reference image if in image→image mode
+// Helper: Update card when done
+function fulfillPlaceholder(placeholderId, realData) {
+    const itemIdx = historyInMemory.findIndex(x => x.id === placeholderId);
+    if (itemIdx === -1) return;
+    historyInMemory[itemIdx] = {
+        ...historyInMemory[itemIdx], ...realData, isPlaceholder: false,
+        title: realData.title || (historyInMemory[itemIdx].kind === 'image' ? 'Image' : 'Video'),
+        createdAt: Date.now()
+    };
+    saveHistoryToStorage();
+    refreshAllHistoryDisplays();
+}
+
+// Read batch size from dropdown
+function buildImagePayloadFromUI() {
+    const prompt = $("image-main-prompt")?.value || "";
+    const neg = $("image-negative-prompt")?.value || "";
+    const aspect = getSelectedImageAspect();
+    const batchSize = Number($("image-variations-select")?.value || 1); // Get 1-4
+    const steps = Number($("image-steps-input")?.value || 30);
+    const seedVal = $("image-seed-input")?.value;
+    
+    return {
+        kind: "image", prompt: prompt, negative_prompt: neg, aspect: aspect,
+        steps: steps, seed: seedVal === "" ? null : Number(seedVal),
+        mode: currentImageMode, batch_size: batchSize
+    };
+}
+
+async function generateImageFromUI() {
+    const payload = buildImagePayloadFromUI();
+    const batchCount = Number(payload.batch_size) || 1;
+
+    // 1. Handle Reference Image (needs await)
     if (currentImageMode === "image") {
         const fileInput = $("image-reference-input");
         if (fileInput && fileInput.files && fileInput.files[0]) {
-            payload.reference_image = await readFileAsBase64(fileInput.files[0]);
+            setGeneratingState(true, "Preparing upload...");
+            try {
+                payload.reference_image = await readFileAsBase64(fileInput.files[0]);
+            } catch(e) {
+                 setGeneratingState(false);
+                 showSulandraToast("Failed to read reference image.", "error");
+                 return;
+            }
+            setGeneratingState(false);
         }
     }
 
-    setGeneratingState(true, "Generating image…");
-    try {
-        const result = await callSulandraAPI("/generate/image", payload);
+    // 2. Create Placeholders immediately (1 to 4 cards)
+    const placeholderIds = createPlaceholders(batchCount, "image", payload.prompt, payload.aspect, payload.negative_prompt);
 
-        const item = addHistoryItem({
-            kind: "image",
-            url: result.url,
-            thumb: result.thumb || result.url,
-            title: "Image",
-            prompt: payload.prompt,
-            negativePrompt: payload.negative_prompt,
-            aspect: payload.aspect,
-            meta: result.meta
-        });
+    // 3. Loop and Fire API calls SEQUENTIALLY (One by One)
+    // We use a 'for...of' loop with await to prevent crashing the backend with parallel requests
+    for (let i = 0; i < placeholderIds.length; i++) {
+        const pid = placeholderIds[i];
+        const singlePayload = { ...payload };
+        
+        // Increment seed for variety if user set one, else random is handled in API call
+        if (singlePayload.seed !== null) singlePayload.seed += i;
 
-        refreshAllHistoryDisplays();
-        scrollToHistoryItem(item.id);
-    } catch (err) {
-        console.error("[Sulandra] Image generation failed:", err);
-        window.alert("Image generation failed. Check console for details.");
-    } finally {
-        setGeneratingState(false);
+        try {
+            // Wait for this request to finish before starting the next one
+            const result = await callSulandraAPI("/generate/image", singlePayload);
+            
+            fulfillPlaceholder(pid, {
+                url: result.url,
+                thumb: result.thumb || result.url,
+                meta: result.meta
+            });
+        } catch (err) {
+            console.error(`Gen failed for ${pid}`, err);
+            deleteHistoryItem(pid); // Remove failed placeholder
+            refreshAllHistoryDisplays();
+            if (i === 0) showSulandraToast("Generation failed", "error");
+        }
     }
 }
 
 async function generateVideoFromUI() {
-    if (isGenerating) return;
     const payload = buildVideoPayloadFromUI();
-
     if (currentVideoMode === "image") {
-        const fileInput = $("video-reference-input");
-        if (fileInput && fileInput.files && fileInput.files[0]) {
-            payload.reference_image = await readFileAsBase64(fileInput.files[0]);
-        }
+        const fileInput = $("video-start-input");
+        if (fileInput?.files?.[0]) payload.reference_image = await readFileAsBase64(fileInput.files[0]);
     }
-
-    setGeneratingState(true, "Generating video…");
-    try {
-        const result = await callSulandraAPI("/generate/video", payload);
-
-        const item = addHistoryItem({
-            kind: "video",
-            url: result.url,
-            thumb: result.thumb || result.url,
-            title: "Video",
-            prompt: payload.prompt,
-            negativePrompt: payload.negative_prompt,
-            aspect: payload.aspect,
-            duration: payload.duration,
-            meta: result.meta
-        });
-
+    // Create 1 placeholder for video
+    const [placeholderId] = createPlaceholders(1, "video", payload.prompt, payload.aspect, payload.negative_prompt);
+    
+    callSulandraAPI("/generate/video", payload).then(result => {
+        fulfillPlaceholder(placeholderId, { url: result.url, thumb: result.url, meta: result.meta });
+    }).catch(err => {
+        deleteHistoryItem(placeholderId);
         refreshAllHistoryDisplays();
-        scrollToHistoryItem(item.id);
-    } catch (err) {
-        console.error("[Sulandra] Video generation failed:", err);
-        window.alert("Video generation failed. Check console for details.");
-    } finally {
-        setGeneratingState(false);
-    }
+        showSulandraToast("Video failed", "error");
+    });
 }
 
 async function generateShortFilmFromUI() {
-    if (isGenerating) return;
     const payload = buildShortFilmPayloadFromUI();
-
-    if (!payload.segments || !payload.segments.length) {
-        window.alert("Add at least one segment to your short film.");
-        return;
-    }
-
-    setGeneratingState(true, "Generating short film…");
-    try {
-        const result = await callSulandraAPI("/generate/shortfilm", payload);
-
-        const item = addHistoryItem({
-            kind: "shortfilm",
-            url: result.url,
-            thumb: result.thumb || result.url,
-            title: payload.film_title,
-            prompt: payload.global_prompt,
-            negativePrompt: "",
-            aspect: payload.aspect,
-            duration: payload.segments.reduce((s, seg) => s + (seg.duration || 0), 0),
-            meta: result.meta
-        });
-
+    if (!payload.segments?.length) return showSulandraToast("Add segments", "warning");
+    
+    const [placeholderId] = createPlaceholders(1, "shortfilm", payload.film_title, payload.aspect, "");
+    callSulandraAPI("/generate/shortfilm", payload).then(result => {
+        fulfillPlaceholder(placeholderId, { url: result.url, thumb: result.url, meta: result.meta });
+    }).catch(err => {
+        deleteHistoryItem(placeholderId);
         refreshAllHistoryDisplays();
-        scrollToHistoryItem(item.id);
-    } catch (err) {
-        console.error("[Sulandra] Short film generation failed:", err);
-        window.alert("Short film generation failed. Check console for details.");
-    } finally {
-        setGeneratingState(false);
-    }
+    });
 }
 
 /* ------------------------ RANDOM PROMPT BUTTON -------------------------- */
@@ -4193,16 +5079,12 @@ function wireRandomPromptButton() {
 /* --------------------------- MAIN BUTTON WIRING ------------------------- */
 
 function wireMainButtonsAndToggles() {
-    // Lab tabs
-    document.querySelectorAll("[data-lab-tab]").forEach(tab => {
-        tab.addEventListener("click", () => {
-            const lab = tab.dataset.labTab;
+    // UPDATE: New Sidebar Lab Navigation clicks
+    document.querySelectorAll("[data-lab-nav]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const lab = btn.dataset.labNav;
             if (!lab) return;
             setActiveLab(lab);
-            if (lab === "assets") {
-                currentMode = "view";
-                updateModeToggleButtons();
-            }
         });
     });
 
@@ -4352,7 +5234,153 @@ function wireMainButtonsAndToggles() {
 
     // Random prompt button
     wireRandomPromptButton();
+// --- ASK SIA WIRING (Updated for Neon Text) ---
+document.querySelectorAll(".sulandra-neon-trigger").forEach(el => {
+    // Clone to remove old listeners
+    const newEl = el.cloneNode(true);
+    el.parentNode.replaceChild(newEl, el);
+
+    newEl.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const targetId = newEl.dataset.targetPrompt;
+        const textarea = document.getElementById(targetId);
+        
+        let contextText = "General Help";
+        if (textarea && textarea.value.trim()) {
+            contextText = textarea.value.trim();
+        } else if (textarea) {
+            contextText = "Empty prompt field";
+        }
+
+        openAskSia(currentLab, contextText);
+    });
+});
 }
+    
+/* ====================================================================== */
+/* UPDATED: SIA CHAT LOGIC WITH "USE PROMPT" BUTTON                      */
+/* ====================================================================== */
+// Global history array
+let askSiaHistory = [];
+
+async function sendAskSia() {
+    const questionBox = document.getElementById('askSiaQuestion');
+    const answerBox = document.getElementById('askSiaAnswer');
+    const question = questionBox.value;
+  
+    if (!question.trim()) return;
+
+    // 1. ADD USER MESSAGE TO UI IMMEDIATELY
+    const userBubble = document.createElement('div');
+    userBubble.style.cssText = "align-self: flex-end; background: #334155; color: white; padding: 8px 12px; border-radius: 12px; margin-bottom: 8px; max-width: 80%; font-size: 13px;";
+    userBubble.textContent = question;
+    answerBox.appendChild(userBubble);
+    
+    // Scroll to bottom
+    answerBox.scrollTop = answerBox.scrollHeight;
+
+    // Clear input
+    questionBox.value = "";
+
+    // 2. SHOW LOADING BUBBLE
+    const loadingBubble = document.createElement('div');
+    loadingBubble.id = "sia-loading-bubble";
+    loadingBubble.innerHTML = `<div class="neon-spinner" style="width:16px; height:16px; border-width:2px;"></div>`;
+    answerBox.appendChild(loadingBubble);
+
+    const payload = {
+        user_input: question,
+        context: window.askSiaState.context || "General Query",
+        history: askSiaHistory // Send past history
+    };
+
+    try {
+        const res = await fetch(SIA_BRAIN_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error("SIA Offline");
+
+        const data = await res.json();
+        
+        // Remove loading bubble
+        const loader = document.getElementById("sia-loading-bubble");
+        if(loader) loader.remove();
+
+        // 3. ADD SIA RESPONSE TO UI
+        const siaBubble = document.createElement('div');
+        siaBubble.style.cssText = "align-self: flex-start; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #e2e8f0; padding: 10px; border-radius: 12px; margin-bottom: 12px; max-width: 90%; font-size: 13px;";
+        
+        let html = `<div>${data.reply}</div>`;
+
+        // Add "Use Prompt" button if there is a payload
+        if (data.payload && data.payload.length > 5) {
+             const safePayload = data.payload.replace(/"/g, '&quot;').replace(/\n/g, ' ');
+             html += `
+                <div style="margin-top:8px; padding:8px; background:rgba(0,0,0,0.3); border-radius:6px; font-family:monospace; color:#86efac; font-size:11px;">
+                    ${data.payload}
+                </div>
+                <button class="ask-sia-use-btn" onclick="useSiaPrompt('${safePayload}')" style="margin-top:6px;">
+                    <span>Use this Prompt</span>
+                </button>
+            `;
+        }
+        
+        siaBubble.innerHTML = html;
+        answerBox.appendChild(siaBubble);
+
+        // 4. SAVE HISTORY (Update memory)
+        askSiaHistory.push({ "role": "user", "content": question });
+        askSiaHistory.push({ "role": "assistant", "content": data.reply });
+
+        // Scroll to bottom
+        answerBox.scrollTop = answerBox.scrollHeight;
+
+    } catch (err) {
+        console.error(err);
+        const loader = document.getElementById("sia-loading-bubble");
+        if(loader) loader.innerHTML = "<span style='color:red'>Error</span>";
+    }
+}
+
+// 3. New Helper: Insert text into the correct active box
+window.useSiaPrompt = function(text) {
+    let targetId = "";
+
+    // Decide which box to target based on current Lab
+    if (currentLab === "image") {
+        targetId = "image-main-prompt";
+    } else if (currentLab === "video") {
+        targetId = "video-main-prompt";
+    } else if (currentLab === "shortfilm") {
+        targetId = "shortfilm-global-prompt";
+    }
+
+    const input = document.getElementById(targetId);
+    if (input) {
+        input.value = text;
+        showSulandraToast("Prompt updated!", "success");
+        
+        // Highlight the box briefly
+        input.scrollIntoView({ behavior: "smooth", block: "center" });
+        input.style.borderColor = "#4ade80";
+        setTimeout(() => input.style.borderColor = "", 1000);
+        
+        // Optional: Close the panel after using
+        // closeAskSia(); 
+    } else {
+        showSulandraToast("Could not find active prompt box.", "error");
+    }
+};
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAskSia();
+});
 
 /* -------------------------- INITIAL UI WIRING ENTRY --------------------- */
 
@@ -4383,6 +5411,21 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
         console.error("[Sulandra] Initialization error:", err);
     }
+    function initializeSulandraVision() {
+    injectDynamicStyles();
+    applyGalleryLayout();
+
+    // ... (existing code) ...
+
+    wireImageControls();
+    wireVideoControls();
+    wireShortFilmControls();
+    
+    wireReferenceImagePreviews(); // <--- ADD THIS LINE HERE
+
+    wireMainButtonsAndToggles();
+    // ...
+}
 });
 
 /* ====================================================================== */
