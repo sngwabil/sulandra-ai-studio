@@ -1773,8 +1773,8 @@
     /* FIXED: GLOBAL SIA & DOWNLOAD FUNCTIONS                                */
     /* ====================================================================== */
 
-    // 1. Initialize State
-    let askSiaState = { context: "" };
+    // 1. Initialize State (FIXED: Attached to window so Send Button can see it)
+    window.askSiaState = { context: "" };
 
     // 2. Open SIA (Attached to Window so HTML can see it)
     window.openAskSia = function(contextType, contextText) {
@@ -1794,7 +1794,8 @@
         if (contextBox) {
             const cleanText = (contextText || "General Query").substring(0, 150);
             contextBox.textContent = `[${contextType.toUpperCase()}] ${cleanText}${contextText.length > 150 ? "..." : ""}`;
-            askSiaState.context = contextText;
+            // FIX: Update the global state
+            window.askSiaState.context = contextText;
         }
 
         if (answerBox) {
@@ -5278,7 +5279,7 @@ async function sendAskSia() {
 
     const payload = {
         user_input: question,
-        context: askSiaState.context || "General Query"
+        context: window.askSiaState.context || "General Query"
     };
 
     try {
