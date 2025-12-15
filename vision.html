@@ -1531,14 +1531,15 @@
 
 .ask-sia-answer-box {
     flex: 1;
-    background: rgba(34, 197, 94, 0.03);
-    border: 1px solid rgba(34, 197, 94, 0.15);
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 12px;
-    color: #e5e7eb;
-    line-height: 1.6;
-    overflow-y: auto;
+    overflow-y: auto; /* ENABLE SCROLLING */
+    display: flex;
+    flex-direction: column; /* Stack bubbles vertically */
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    /* Optional: custom scrollbar looks nicer */
+    scrollbar-width: thin; 
+    scrollbar-color: #334155 transparent;
 }
 
 .ask-sia-main-btn {
@@ -5261,6 +5262,8 @@ document.querySelectorAll(".sulandra-neon-trigger").forEach(el => {
 /* ====================================================================== */
 /* UPDATED: SIA CHAT LOGIC WITH "USE PROMPT" BUTTON                      */
 /* ====================================================================== */
+// Global history array
+let askSiaHistory = [];
 
 async function sendAskSia() {
     const questionBox = document.getElementById('askSiaQuestion');
@@ -5269,17 +5272,28 @@ async function sendAskSia() {
   
     if (!question.trim()) return;
 
-    // Loading State inside the chat bubble
-    answerBox.innerHTML = `
-        <div style="display:flex; gap:10px; align-items:center; color:#9ca3af; padding-top:10px;">
-            <div class="neon-spinner" style="width:20px; height:20px; border-width:2px;"></div>
-            <span>SIA is thinking...</span>
-        </div>
-    `;
+    // 1. ADD USER MESSAGE TO UI IMMEDIATELY
+    const userBubble = document.createElement('div');
+    userBubble.style.cssText = "align-self: flex-end; background: #334155; color: white; padding: 8px 12px; border-radius: 12px; margin-bottom: 8px; max-width: 80%; font-size: 13px;";
+    userBubble.textContent = question;
+    answerBox.appendChild(userBubble);
+    
+    // Scroll to bottom
+    answerBox.scrollTop = answerBox.scrollHeight;
+
+    // Clear input
+    questionBox.value = "";
+
+    // 2. SHOW LOADING BUBBLE
+    const loadingBubble = document.createElement('div');
+    loadingBubble.id = "sia-loading-bubble";
+    loadingBubble.innerHTML = `<div class="neon-spinner" style="width:16px; height:16px; border-width:2px;"></div>`;
+    answerBox.appendChild(loadingBubble);
 
     const payload = {
         user_input: question,
-        context: window.askSiaState.context || "General Query"
+        context: window.askSiaState.context || "General Query",
+        history: askSiaHistory // Send past history
     };
 
     try {
@@ -5293,33 +5307,43 @@ async function sendAskSia() {
 
         const data = await res.json();
         
-        // 1. Build the HTML Response
-        let html = `<div style="margin-bottom:8px; font-weight:600; color:#e2e8f0;">SIA Says:</div>
-                    <div style="color:#cbd5e1; line-height:1.6;">${data.reply}</div>`;
+        // Remove loading bubble
+        const loader = document.getElementById("sia-loading-bubble");
+        if(loader) loader.remove();
 
-        // 2. If there is a suggested prompt, render the "Use" button
-        if (data.payload && data.action !== "none") {
-            // Clean up the text so it doesn't break the HTML attribute
-            const safePayload = data.payload.replace(/"/g, '&quot;').replace(/\n/g, ' ');
-            
-            html += `
-                <div class="ask-sia-suggestion">
-                    <div style="font-size:10px; color:#4ade80; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Suggested Prompt</div>
-                    <div class="ask-sia-suggestion-text">${data.payload}</div>
-                    <button class="ask-sia-use-btn" onclick="useSiaPrompt('${safePayload}')">
-                        <svg viewBox="0 0 24 24" fill="none" style="width:14px;height:14px;stroke-width:2.5;"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        <span>Use this Prompt</span>
-                    </button>
+        // 3. ADD SIA RESPONSE TO UI
+        const siaBubble = document.createElement('div');
+        siaBubble.style.cssText = "align-self: flex-start; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #e2e8f0; padding: 10px; border-radius: 12px; margin-bottom: 12px; max-width: 90%; font-size: 13px;";
+        
+        let html = `<div>${data.reply}</div>`;
+
+        // Add "Use Prompt" button if there is a payload
+        if (data.payload && data.payload.length > 5) {
+             const safePayload = data.payload.replace(/"/g, '&quot;').replace(/\n/g, ' ');
+             html += `
+                <div style="margin-top:8px; padding:8px; background:rgba(0,0,0,0.3); border-radius:6px; font-family:monospace; color:#86efac; font-size:11px;">
+                    ${data.payload}
                 </div>
+                <button class="ask-sia-use-btn" onclick="useSiaPrompt('${safePayload}')" style="margin-top:6px;">
+                    <span>Use this Prompt</span>
+                </button>
             `;
         }
+        
+        siaBubble.innerHTML = html;
+        answerBox.appendChild(siaBubble);
 
-        answerBox.innerHTML = html;
-        questionBox.value = ""; // Clear input on success
+        // 4. SAVE HISTORY (Update memory)
+        askSiaHistory.push({ "role": "user", "content": question });
+        askSiaHistory.push({ "role": "assistant", "content": data.reply });
+
+        // Scroll to bottom
+        answerBox.scrollTop = answerBox.scrollHeight;
 
     } catch (err) {
         console.error(err);
-        answerBox.innerHTML = `<span style="color:#ef4444;">Connection Error: Could not reach SIA Brain.</span>`;
+        const loader = document.getElementById("sia-loading-bubble");
+        if(loader) loader.innerHTML = "<span style='color:red'>Error</span>";
     }
 }
 
