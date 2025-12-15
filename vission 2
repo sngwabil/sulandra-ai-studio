@@ -1209,16 +1209,20 @@
     display: none; /* Hide subtitle to save space */
 }
 /* ====================================================================== */
-/* ASK SIA - SIDE PANEL & STYLES                                        */
+/* ASK SIA - LEFT SIDEBAR & STYLES                                      */
 /* ====================================================================== */
 
 .ask-sia-panel-backdrop {
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
+    top: 0;
+    bottom: 0;
+    /* 80px matches your nav width so it sits next to the sidebar */
+    left: 80px; 
+    right: 0;
+    background: rgba(0,0,0,0.4);
     display: none; /* Hidden by default */
-    justify-content: flex-end;
-    z-index: 99999; /* Above everything */
+    justify-content: flex-start; /* Aligns panel to the LEFT */
+    z-index: 99999;
     backdrop-filter: blur(2px);
 }
 
@@ -1229,16 +1233,19 @@
     background: radial-gradient(circle at 0% 0%, rgba(69,241,255,0.1), transparent 60%),
                 radial-gradient(circle at 100% 100%, rgba(34, 197, 94, 0.1), transparent 60%),
                 #020617;
-    border-left: 1px solid rgba(255,255,255,0.1);
-    box-shadow: -8px 0 40px rgba(0,0,0,0.8);
+    /* Border is now on the RIGHT */
+    border-right: 1px solid rgba(255,255,255,0.1);
+    border-left: none; 
+    box-shadow: 10px 0 40px rgba(0,0,0,0.8);
     display: flex;
     flex-direction: column;
     padding: 16px;
-    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Animation slides in from the LEFT */
+    animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slideInRight {
-    from { transform: translateX(100%); }
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); }
     to { transform: translateX(0); }
 }
 
@@ -1250,7 +1257,6 @@
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-
 .ask-sia-title {
     display: flex;
     align-items: center;
@@ -1668,11 +1674,116 @@
     color: var(--text-muted);
     font-style: italic;
 }
+        /* ====================================================================== */
+/* FORCE LEFT SIDEBAR (Overrides any previous Right-side settings)      */
+/* ====================================================================== */
+
+.ask-sia-panel-backdrop {
+    /* Force alignment to the START (Left) instead of End (Right) */
+    justify-content: flex-start !important; 
+    
+    /* Position it exactly 80px from the left (next to your nav bar) */
+    left: 80px !important; 
+    right: 0;
+}
+
+.ask-sia-panel {
+    /* Flip the borders so the line is on the right side of the panel */
+    border-right: 1px solid rgba(255,255,255,0.1) !important;
+    border-left: none !important;
+    
+    /* Force the Left-side animation */
+    animation: forceSlideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Define the left-side slide animation */
+@keyframes forceSlideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
 </style>
 <script type="module">
-        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
-        window.GradioClient = Client;
-    </script>
+    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
+    window.GradioClient = Client;
+
+    /* ====================================================================== */
+    /* FIXED: GLOBAL SIA & DOWNLOAD FUNCTIONS                                */
+    /* ====================================================================== */
+
+    // 1. Initialize State
+    let askSiaState = { context: "" };
+
+    // 2. Open SIA (Attached to Window so HTML can see it)
+    window.openAskSia = function(contextType, contextText) {
+        const backdrop = document.getElementById("askSiaBackdrop");
+        const contextBox = document.getElementById("askSiaContext");
+        const answerBox = document.getElementById("askSiaAnswer");
+        const questionBox = document.getElementById("askSiaQuestion");
+
+        if (backdrop) {
+            backdrop.style.display = "flex"; // Shows panel (CSS handles position)
+            if (questionBox) {
+                questionBox.value = "";
+                questionBox.focus();
+            }
+        }
+
+        if (contextBox) {
+            const cleanText = (contextText || "General Query").substring(0, 150);
+            contextBox.textContent = `[${contextType.toUpperCase()}] ${cleanText}${contextText.length > 150 ? "..." : ""}`;
+            askSiaState.context = contextText;
+        }
+
+        if (answerBox) {
+            answerBox.innerHTML = '<span style="color:#6b7280; font-style:italic;">I am listening. How can I help with this?</span>';
+        }
+    };
+
+    // 3. Close SIA
+    window.closeAskSia = function() {
+        const backdrop = document.getElementById("askSiaBackdrop");
+        if (backdrop) backdrop.style.display = "none";
+    };
+
+    // 4. Strict Download (Attached to Window)
+    window.downloadHistoryItem = async function(item) {
+        if (!item || !item.url) {
+            showSulandraToast("Error: No file URL found.", "error");
+            return;
+        }
+
+        showSulandraToast("Downloading...", "info");
+
+        try {
+            const response = await fetch(item.url);
+            if (!response.ok) throw new Error("File fetch failed");
+            
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            
+            const a = document.createElement("a");
+            let ext = item.kind === "video" || item.kind === "shortfilm" ? ".mp4" : ".png";
+            
+            // Clean title for filename
+            const safeTitle = (item.title || "sulandra_creation").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            
+            a.href = objectUrl;
+            a.download = `${safeTitle}${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+            
+            showSulandraToast("Download complete.", "success");
+
+        } catch (err) {
+            console.error("Download error:", err);
+            // Strict mode: Toast error only, NO new window opening.
+            showSulandraToast("Download failed. The server blocked the request.", "error");
+        }
+    };
+</script>
 </head>
 <body>
 <div class="vision-root">
