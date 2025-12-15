@@ -1259,18 +1259,57 @@
 }
 
 /* FIXED LOGO: Sulandra Green Gradient */
+/* ====================================================================== */
+/* FIXED: SPARKLE ICON & NEON TEXT (Matches Lab Buttons)                 */
+/* ====================================================================== */
+
 .ask-sia-icon-large {
     width: 32px;
     height: 32px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #22c55e, #166534); /* Professional Green */
+    background: transparent; /* Removes the green box */
+    border: none;
+    box-shadow: none;
+    
+    /* Center the sparkle */
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    font-weight: 800;
-    font-size: 16px;
-    box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+    
+    /* Hide the letter 'S' */
+    color: transparent;
+    font-size: 0;
+    
+    position: relative;
+}
+
+/* The Neon Sparkle */
+.ask-sia-icon-large::after {
+    content: "✦";
+    font-size: 22px;        /* Large visible sparkle */
+    color: #86efac;         /* Neon Green */
+    text-shadow: 
+        0 0 5px #fff,
+        0 0 12px #22c55e,
+        0 0 20px #22c55e;
+    
+    /* Use the same animation defined in your neon triggers */
+    animation: sulandra-sparkle 2s infinite ease-in-out;
+}
+
+/* Force the "Ask SIA" title text to match the Neon look */
+.ask-sia-title > div:last-child > div:first-child {
+    font-family: 'Cinzel', serif !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase;
+    color: #fff !important;
+    
+    /* The Neon Glow Effect */
+    text-shadow: 
+        0 0 4px rgba(255,255,255,0.6),
+        0 0 10px rgba(34, 197, 94, 0.8),
+        0 0 20px rgba(34, 197, 94, 0.4);
 }
 
 .ask-sia-close {
@@ -1440,21 +1479,6 @@
     font-size: 14px;
     font-weight: 700;
     color: #e5e7eb;
-}
-
-/* FIXED LOGO: Professional Green Gradient */
-.ask-sia-icon-large {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px; /* Modern rounded square */
-    background: linear-gradient(135deg, #22c55e, #15803d); /* Green -> Dark Green */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-weight: 800;
-    font-size: 16px;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 }
 
 .ask-sia-close {
