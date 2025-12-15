@@ -1676,90 +1676,86 @@
 }
 </style>
 <script type="module">
-        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
-        window.GradioClient = Client;
+    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client";
+    window.GradioClient = Client;
 
-/* ====================================================================== */
-/* MISSING LOGIC FIXES: LEFT-SIDE SIA & STRICT DOWNLOAD                  */
-/* ====================================================================== */
+    /* ====================================================================== */
+    /* FIXED: GLOBAL SIA & DOWNLOAD FUNCTIONS                                */
+    /* ====================================================================== */
 
-// 1. Initialize State for SIA
-let askSiaState = { context: "" };
+    // 1. Initialize State
+    let askSiaState = { context: "" };
 
-// 2. Open SIA (Slides from Left)
-function openAskSia(contextType, contextText) {
-    const backdrop = document.getElementById("askSiaBackdrop");
-    const contextBox = document.getElementById("askSiaContext");
-    const answerBox = document.getElementById("askSiaAnswer");
-    const questionBox = document.getElementById("askSiaQuestion");
+    // 2. Open SIA (Attached to Window so HTML can see it)
+    window.openAskSia = function(contextType, contextText) {
+        const backdrop = document.getElementById("askSiaBackdrop");
+        const contextBox = document.getElementById("askSiaContext");
+        const answerBox = document.getElementById("askSiaAnswer");
+        const questionBox = document.getElementById("askSiaQuestion");
 
-    if (backdrop) {
-        backdrop.style.display = "flex"; // Triggers CSS to show panel on left
-        if (questionBox) {
-            questionBox.value = "";
-            questionBox.focus();
+        if (backdrop) {
+            backdrop.style.display = "flex"; // Shows panel on the LEFT
+            if (questionBox) {
+                questionBox.value = "";
+                questionBox.focus();
+            }
         }
-    }
 
-    if (contextBox) {
-        // Show a short snippet of the text we are asking about
-        const cleanText = (contextText || "General Query").substring(0, 150);
-        contextBox.textContent = `[${contextType.toUpperCase()}] ${cleanText}${contextText.length > 150 ? "..." : ""}`;
-        askSiaState.context = contextText;
-    }
+        if (contextBox) {
+            const cleanText = (contextText || "General Query").substring(0, 150);
+            contextBox.textContent = `[${contextType.toUpperCase()}] ${cleanText}${contextText.length > 150 ? "..." : ""}`;
+            askSiaState.context = contextText;
+        }
 
-    if (answerBox) {
-        answerBox.innerHTML = '<span style="color:#6b7280; font-style:italic;">I am listening. How can I help with this?</span>';
-    }
-}
+        if (answerBox) {
+            answerBox.innerHTML = '<span style="color:#6b7280; font-style:italic;">I am listening. How can I help with this?</span>';
+        }
+    };
 
-// 3. Close SIA
-function closeAskSia() {
-    const backdrop = document.getElementById("askSiaBackdrop");
-    if (backdrop) backdrop.style.display = "none";
-}
+    // 3. Close SIA
+    window.closeAskSia = function() {
+        const backdrop = document.getElementById("askSiaBackdrop");
+        if (backdrop) backdrop.style.display = "none";
+    };
 
-// 4. STRICT DOWNLOADER (No New Windows)
-async function downloadHistoryItem(item) {
-    if (!item || !item.url) {
-        showSulandraToast("Error: No file URL found.", "error");
-        return;
-    }
+    // 4. Strict Download (Attached to Window)
+    window.downloadHistoryItem = async function(item) {
+        if (!item || !item.url) {
+            showSulandraToast("Error: No file URL found.", "error");
+            return;
+        }
 
-    showSulandraToast("Downloading...", "info");
+        showSulandraToast("Downloading...", "info");
 
-    try {
-        // Fetch the file as a "Blob" (Binary Large Object)
-        const response = await fetch(item.url);
-        
-        if (!response.ok) throw new Error("File fetch failed");
-        
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        
-        const a = document.createElement("a");
-        let ext = item.kind === "video" || item.kind === "shortfilm" ? ".mp4" : ".png";
-        
-        // Clean title for filename
-        const safeTitle = (item.title || "sulandra_creation").replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        
-        a.href = objectUrl;
-        a.download = `${safeTitle}${ext}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        
-        // Cleanup memory
-        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-        
-        showSulandraToast("Download complete.", "success");
+        try {
+            const response = await fetch(item.url);
+            if (!response.ok) throw new Error("File fetch failed");
+            
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            
+            const a = document.createElement("a");
+            let ext = item.kind === "video" || item.kind === "shortfilm" ? ".mp4" : ".png";
+            
+            // Clean title for filename
+            const safeTitle = (item.title || "sulandra_creation").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            
+            a.href = objectUrl;
+            a.download = `${safeTitle}${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+            
+            showSulandraToast("Download complete.", "success");
 
-    } catch (err) {
-        console.error("Download error:", err);
-        // We catch the error and show a toast. We DO NOT open a window.
-        showSulandraToast("Download failed. The server blocked the request.", "error");
-    }
-}
+        } catch (err) {
+            console.error("Download error:", err);
+            // Strict mode: Toast error only, NO new window opening.
+            showSulandraToast("Download failed. The server blocked the request.", "error");
+        }
+    };
 </script>
 </head>
 <body>
