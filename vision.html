@@ -4620,21 +4620,30 @@ async function callSulandraAPI(uiPath, payload) {
         //  IMAGE GENERATION (SIA BRAIN FLUX PORT 8188)
         // ============================================================
         let endpoint = "/api/image/txt2img";
-        
+        // If you want ChatGPT-level creativity, set payload.engine = "pro"
+if ((payload.engine || "local") === "pro") {
+  endpoint = "/api/image/pro/txt2img";
+}
+
         // Construct a clean body (NO batch_size) to prevent 422 errors
         let body = {
-            prompt: payload.prompt,
-            steps: Number(payload.steps) || 30,
-            width: 1024, height: 1024,
-            guidance_scale: Number(payload.guidance) || 3.5,
-            seed: safeSeed 
-        };
+  prompt: payload.prompt,
+  negative_prompt: payload.negative_prompt || "",
+  steps: Number(payload.steps) || 30,
+  width: 1024, height: 1024,
+  guidance_scale: Number(payload.guidance) || 3.5,
+  seed: safeSeed,
+  batch_size: Number(payload.batch_size || 1),
+  engine: (payload.engine || "local") // "local" or "pro"
+};
+
 
         if (payload.aspect === "16:9") { body.width = 1344; body.height = 768; }
         if (payload.aspect === "9:16") { body.width = 768; body.height = 1344; }
 
         if (payload.mode === "image" && payload.reference_image) {
-            endpoint = "/api/image/img2img";
+            endpoint = ((payload.engine || "local") === "pro") ? "/api/image/pro/img2img" : "/api/image/img2img";
+
             body.init_image_base64 = payload.reference_image;
             body.strength = 0.75;
         }
@@ -4652,12 +4661,22 @@ async function callSulandraAPI(uiPath, payload) {
         }
 
         const data = await response.json();
-        const fullUrl = `${SULANDRA_API_BASE}${data.image_url}`;
+       const urls = data.image_urls || (data.image_url ? [data.image_url] : []);
+if (!urls.length) throw new Error("No image returned from backend.");
 
-        return {
-            ok: true, kind: "image", url: fullUrl, thumb: fullUrl,
-            meta: { model: "Flux.1 Dev", seed: safeSeed }
-        };
+const fullUrls = urls.map(u => `${SULANDRA_API_BASE}${u}`);
+
+// If your UI expects ONE, return the first as the primary,
+// but ALSO attach all variants so your gallery/history can add them all.
+return {
+  ok: true,
+  kind: "image",
+  url: fullUrls[0],
+  thumb: fullUrls[0],
+  variants: fullUrls,
+  meta: { model: (body.engine === "pro" ? "gpt-image-1" : "Flux.1 Dev"), seed: safeSeed }
+};
+
 
     } catch (err) {
         console.error("API Call Failed:", err);
